@@ -24,7 +24,7 @@ ssprea-nvidia-control is a GUI overclocking tool for NVidia GPUs that supports b
 
 ```bash
   git clone https://github.com/ssprea/ssprea-nvidia-control.git
-  cd giono-nvidia-control
+  cd ssprea-nvidia-control
   dotnet build
 ```
 
