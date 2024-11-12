@@ -34,11 +34,4 @@ To run:
   cd ssprea-nvidia-control
   dotnet run
 ```
-    
-## Roadmap
 
-- Better gui
-
-- Settings
-
-- Show gpu usage
