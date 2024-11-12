@@ -1,0 +1,76 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:vm="using:ssprea_nvidia_control.ViewModels"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:system="clr-namespace:System;assembly=System.Runtime"
+        mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="450"
+        Width="400" Height="450"
+        x:Class="ssprea_nvidia_control.Views.NewOcProfileWindow"
+        x:DataType="vm:NewOcProfileWindowViewModel"
+        Title="Create new profile">
+    
+    
+
+        <Panel>
+        <ExperimentalAcrylicBorder IsHitTestVisible="False">
+            <ExperimentalAcrylicBorder.Material>
+                <ExperimentalAcrylicMaterial
+                    BackgroundSource="Digger"
+                    TintColor="Black"
+                    TintOpacity="1"
+                    MaterialOpacity="0.65" />
+            </ExperimentalAcrylicBorder.Material>
+        </ExperimentalAcrylicBorder>
+
+        <Grid Margin="10"
+              RowDefinitions="*,10*,*"
+              >
+            
+                <Label HorizontalAlignment="Center" VerticalAlignment="Top">Create new profile</Label>
+            
+                <Grid Grid.Row="1"
+                      RowDefinitions="*,*,*,*,*"
+                      ColumnDefinitions="2*,*,*">
+            
+                
+                
+                    <Label Grid.Column="0"  Grid.Row="0">Name:</Label>
+                    <Label Grid.Column="0"  Grid.Row="1">Gpu Clock Offset:</Label>
+                    <Label Grid.Column="0"  Grid.Row="2">Memory Clock Offset:</Label>
+                    <Label Grid.Column="0"  Grid.Row="3">Power Limit:</Label>
+                    <Label Grid.Column="0"  Grid.Row="4">Fan curve profile:</Label>
+                        
+                    <TextBox Text="{Binding Name}" Grid.Column="1"  Grid.Row="0" VerticalAlignment="Top"></TextBox>
+                    <Slider Value="{Binding GpuClockOffsetSliderValue}" Minimum="0" Maximum="500" Grid.Column="1" Grid.Row="1"></Slider>
+                    <Slider Value="{Binding MemClockOffsetSliderValue}" Minimum="0" Maximum="500" Grid.Column="1" Grid.Row="2"></Slider>
+                    <Slider Value="{Binding PowerLimitSliderValue}" Minimum="0" Maximum="{Binding SelectedGpu.PowerLimitMaxMw, FallbackValue=0}" Grid.Column="1"  Grid.Row="3"></Slider>
+                    
+                    <ComboBox ItemsSource="{Binding FanCurvesList}" SelectedItem="{Binding SelectedFanCurve}" Grid.Row="4" Grid.Column="1" SelectedIndex="1" VerticalAlignment="Top" HorizontalAlignment="Left">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <Label Content="{Binding Name} " />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    
+                    <Label Grid.Column="2"  Grid.Row="0" HorizontalAlignment="Center" Content="{Binding Name}"></Label>
+                    <Label Grid.Column="2"  Grid.Row="1" HorizontalAlignment="Center" Content="{Binding GpuClockOffsetSliderValue, StringFormat=\{0:0\}}"></Label>
+                    <Label Grid.Column="2"  Grid.Row="2" HorizontalAlignment="Center" Content="{Binding MemClockOffsetSliderValue, StringFormat=\{0:0\}}"></Label>
+                    <Label Grid.Column="2"  Grid.Row="3" HorizontalAlignment="Center" Content="{Binding PowerLimitSliderValue, StringFormat=\{0:0\}}"></Label>
+
+                    
+                
+                
+                </Grid>
+            
+            <Button Grid.Row="2" Command="{Binding CreateProfileCommand}" VerticalAlignment="Bottom" HorizontalAlignment="Right">Save</Button>
+            <Button Grid.Row="2" Command="{Binding CancelButtonCommand}" CommandParameter="" VerticalAlignment="Bottom" HorizontalAlignment="Left">Cancel</Button>
+        </Grid>
+        
+    </Panel>
+    
+    
+    
+    
+</Window>

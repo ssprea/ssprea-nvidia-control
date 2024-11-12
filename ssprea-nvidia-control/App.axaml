@@ -1,0 +1,34 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="ssprea_nvidia_control.App"
+             xmlns:local="using:ssprea_nvidia_control"
+
+             RequestedThemeVariant="Dark">
+             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
+
+    <Application.DataTemplates>
+        <local:ViewLocator/>
+    </Application.DataTemplates>
+  
+     <Application.Styles>
+         <FluentTheme />
+         <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
+     </Application.Styles>
+             
+
+             
+     <TrayIcon.Icons>
+         <TrayIcons>
+             <TrayIcon Icon="/Assets/tray-icon.ico" 
+                       ToolTipText="Giono NVidia Control"
+                       Clicked="TrayIcon_OnClicked"
+                       >
+                 <TrayIcon.Menu>
+                     <NativeMenu>
+                         <NativeMenuItem Header="Close" Click="NativeMenuItem_OnClick"/>
+                     </NativeMenu>
+                 </TrayIcon.Menu>
+             </TrayIcon>
+         </TrayIcons>
+     </TrayIcon.Icons>
+</Application>
