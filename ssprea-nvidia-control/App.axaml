@@ -20,7 +20,7 @@
      <TrayIcon.Icons>
          <TrayIcons>
              <TrayIcon Icon="/Assets/tray-icon.ico" 
-                       ToolTipText="Giono NVidia Control"
+                       ToolTipText="ssprea NVidia Control"
                        Clicked="TrayIcon_OnClicked"
                        >
                  <TrayIcon.Menu>

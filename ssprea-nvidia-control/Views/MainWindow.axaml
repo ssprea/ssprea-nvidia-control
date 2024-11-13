@@ -11,7 +11,7 @@
         x:Class="ssprea_nvidia_control.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
-        Title="Giono NVidia Control"
+        Title="ssprea NVidia Control"
         Name="MainOcWindow"
         Closed="Window_OnClosed"
         >

@@ -38,7 +38,7 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
     
    
     
-    private async Task DoShowNewProfileDialogAsync(InteractionContext<NewOcProfileWindowViewModel, OcProfile?> interaction)
+    private async Task DoShowNewProfileDialogAsync(IInteractionContext<NewOcProfileWindowViewModel, OcProfile?> interaction)
     {
         var dialog = new NewOcProfileWindow();
         dialog.DataContext = interaction.Input;
@@ -47,7 +47,7 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
         interaction.SetOutput(result);
     }
     
-    private async Task DoShowFanCurveEditorDialogAsync(InteractionContext<FanCurveEditorWindowViewModel, FanCurveViewModel?> interaction)
+    private async Task DoShowFanCurveEditorDialogAsync(IInteractionContext<FanCurveEditorWindowViewModel, FanCurveViewModel?> interaction)
     {
         var dialog = new FanCurveEditorWindow();
         dialog.DataContext = interaction.Input;
