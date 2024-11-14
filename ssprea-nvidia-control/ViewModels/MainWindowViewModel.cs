@@ -141,12 +141,25 @@ public partial class MainWindowViewModel : ViewModelBase
 
 
     
-    //public IReadOnlyList<NvmlGpuVM> AvailableGpus = NvmlService.GpuListVm;
 
+    public void DeleteOcProfile()
+    {
+        if (SelectedOcProfile is not null)
+            OcProfilesList.Remove(SelectedOcProfile);
+        FanCurvesFileManager.SaveFanCurves("fan_curves.json", FanCurvesList.Select(x => x.BaseFanCurve));
+    }
+    
     public void OcProfileApplyCommand()
     {
-        if (SelectedGpu is not null)
-            SelectedOcProfile?.Apply(SelectedGpu);
+        if (SelectedGpu is null)
+        {
+            Console.WriteLine("No gpu selected!");
+            return;
+        }
+        
+        
+        
+        SelectedOcProfile?.Apply(SelectedGpu);
     }
 
     bool CanOcProfileApplyCommand()

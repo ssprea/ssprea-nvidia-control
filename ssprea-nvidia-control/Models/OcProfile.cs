@@ -15,8 +15,7 @@ public class OcProfile
         GpuClockOffset = gpuClockOffset;
         MemClockOffset = memClockOffset;
         PowerLimitMw = powerLimitMw;
-        if (fanCurve != null)
-            _fanCurveName= fanCurve.Name;
+        _fanCurveName = fanCurve != null ? fanCurve.Name : "";
     }
 
     [JsonConstructor]
@@ -35,9 +34,9 @@ public class OcProfile
     public uint PowerLimitMw { get; set; }
     
     [JsonIgnore]
-    public FanCurve? FanCurve => MainWindowViewModel.FanCurvesList.First(x => x.Name == _fanCurveName).BaseFanCurve;
+    public FanCurve? FanCurve => String.IsNullOrEmpty(_fanCurveName) ? null : MainWindowViewModel.FanCurvesList.First(x => x.Name == _fanCurveName).BaseFanCurve;
 
-    
+
     [JsonProperty("fanCurveName")]
     private string _fanCurveName;
 

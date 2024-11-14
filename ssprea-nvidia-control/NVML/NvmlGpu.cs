@@ -245,7 +245,7 @@ namespace ssprea_nvidia_control.NVML;
 
         private void UpdateProperties()
         {
-            Console.WriteLine("update");
+            //Console.WriteLine("update");
             //OnPropertyChanged(nameof(GpuClockCurrent));
             foreach (var p in GetType().GetProperties())
             { 

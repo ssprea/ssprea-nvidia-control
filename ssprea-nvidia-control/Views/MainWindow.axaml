@@ -203,13 +203,13 @@
                 
             
         >
-            <Grid ColumnDefinitions="*,*,*"
+            <Grid ColumnDefinitions="8*,*,*,*"
                   
                   
                   >
                 <!-- oc profiles  -->
                 <Label Grid.Row="0"
-                       Grid.Column="1"
+                       Grid.Column="0"
                        ZIndex="2"
                        VerticalAlignment="Top"
                        HorizontalAlignment="Center"
@@ -223,7 +223,6 @@
                           SelectedIndex="1"
                           VerticalAlignment="Bottom" 
                           HorizontalAlignment="Stretch"
-                          Grid.ColumnSpan="2"
                           >
                     
                     <ComboBox.ItemTemplate>
@@ -233,8 +232,9 @@
                     </ComboBox.ItemTemplate>
                 </ComboBox>
 
-                <Button  Grid.Column="2" Command="{Binding OpenNewProfileWindowCommand}" VerticalAlignment="Center" HorizontalAlignment="Left" >New</Button>
-                <Button  Grid.Column="2" Command="{Binding OcProfileApplyCommand}" VerticalAlignment="Center" HorizontalAlignment="Right" >Apply</Button>
+                <Button  Grid.Column="1" Command="{Binding OcProfileApplyCommand}" VerticalAlignment="Center" HorizontalAlignment="Center" >V</Button>
+                <Button  Grid.Column="3" Command="{Binding OpenNewProfileWindowCommand}" VerticalAlignment="Center" HorizontalAlignment="Center" >+</Button>
+                <Button  Grid.Column="2" Command="{Binding DeleteOcProfile}" VerticalAlignment="Center" HorizontalAlignment="Center" >-</Button>
 
             </Grid>
         </Border>
