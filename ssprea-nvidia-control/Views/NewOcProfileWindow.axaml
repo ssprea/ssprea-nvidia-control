@@ -43,7 +43,7 @@
                         
                     <TextBox Text="{Binding Name}" Grid.Column="1"  Grid.Row="0" VerticalAlignment="Top"></TextBox>
                     <Slider Value="{Binding GpuClockOffsetSliderValue}" Minimum="0" Maximum="500" Grid.Column="1" Grid.Row="1"></Slider>
-                    <Slider Value="{Binding MemClockOffsetSliderValue}" Minimum="0" Maximum="500" Grid.Column="1" Grid.Row="2"></Slider>
+                    <Slider Value="{Binding MemClockOffsetSliderValue}" Minimum="0" Maximum="2000" Grid.Column="1" Grid.Row="2"></Slider>
                     <Slider Value="{Binding PowerLimitSliderValue}" Minimum="0" Maximum="{Binding SelectedGpu.PowerLimitMaxMw, FallbackValue=0}" Grid.Column="1"  Grid.Row="3"></Slider>
                     
                     <ComboBox ItemsSource="{Binding FanCurvesList}" SelectedItem="{Binding SelectedFanCurve}" Grid.Row="4" Grid.Column="1" SelectedIndex="1" VerticalAlignment="Top" HorizontalAlignment="Left">
