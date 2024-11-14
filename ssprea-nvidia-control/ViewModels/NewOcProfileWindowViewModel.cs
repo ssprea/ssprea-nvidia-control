@@ -14,7 +14,7 @@ public partial class NewOcProfileWindowViewModel : ViewModelBase
     [ObservableProperty] private uint _powerLimitSliderValue;
     [ObservableProperty] private uint _gpuClockOffsetSliderValue;
     [ObservableProperty] private uint _memClockOffsetSliderValue;
-    [ObservableProperty] private string _name;
+    [ObservableProperty] private string? _name;
     [ObservableProperty] private FanCurveViewModel? _selectedFanCurve;
     
     
@@ -25,8 +25,9 @@ public partial class NewOcProfileWindowViewModel : ViewModelBase
     public NewOcProfileWindowViewModel(MainWindowViewModel mainWindowViewModel)
     {
         _mainWindowViewModel = mainWindowViewModel;
+
         
-        CreateProfileCommand = ReactiveCommand.Create(() => new OcProfile(Name,GpuClockOffsetSliderValue,MemClockOffsetSliderValue,PowerLimitSliderValue,SelectedFanCurve.BaseFanCurve));
+        CreateProfileCommand = ReactiveCommand.Create(() => new OcProfile(Name ?? "New Profile",GpuClockOffsetSliderValue,MemClockOffsetSliderValue,PowerLimitSliderValue,SelectedFanCurve?.BaseFanCurve));
         
     }
     

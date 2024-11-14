@@ -19,7 +19,10 @@
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
       <Optimize>true</Optimize>
     </PropertyGroup>
-    
+
+
+
+
     <ItemGroup>
         <AvaloniaResource Include="Assets\**"/>
         

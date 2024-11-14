@@ -297,7 +297,6 @@
 
                         <RadioButton Command="{Binding FanRadioButtonClicked}" CommandParameter="0" GroupName="FanControlMode" IsChecked="True" Grid.Row="3" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Left">Auto</RadioButton>
                         <RadioButton Command="{Binding FanRadioButtonClicked}" CommandParameter="1" GroupName="FanControlMode" Grid.Row="3" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Center">Manual</RadioButton>
-                        <RadioButton Command="{Binding FanRadioButtonClicked}" CommandParameter="2" GroupName="FanControlMode" Grid.Row="3" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Right">Curve</RadioButton>
 
 
 
