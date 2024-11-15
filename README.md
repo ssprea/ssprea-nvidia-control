@@ -18,21 +18,23 @@ ssprea-nvidia-control is a GUI overclocking tool for NVidia GPUs that supports b
 - NVidia proprietary driver 555+
 - .NET core 8
 
-## Building and running
+## Building and installing
 
 APT repository coming soon
 
 ```bash
   git clone https://github.com/ssprea/ssprea-nvidia-control.git
   cd ssprea-nvidia-control
-  dotnet build
+  make publish
+  sudo make install
 ```
 
-To run:
+Without make
 
 ```bash
+  git clone https://github.com/ssprea/ssprea-nvidia-control.git
   cd ssprea-nvidia-control
-  dotnet run
+  dotnet run --configuration Release
 ```
 
 If you get an "NVML_ERROR_NO_PERMISSION" error in the console when applying a profile, try running the tool with sudo.
