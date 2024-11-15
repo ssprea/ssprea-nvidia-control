@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Name=ssprea NVidia Control
+GenericName=NVidia GPU Manager
+Comment=NVidia GPU Manager
+Exec=/usr/local/bin/ssprea-nvidia-control
+StartupNotify=true
+Terminal=false
+Icon=ssprea-nvidia-control
+Type=Application
+Categories=Settings;System;
