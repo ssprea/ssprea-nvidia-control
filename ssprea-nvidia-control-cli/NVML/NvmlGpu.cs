@@ -32,6 +32,9 @@ namespace ssprea_nvidia_control_cli.NVML;
         /// </summary>
         public string Name { get; }
 
+        public uint DeviceIndex { private set; get; }
+        
+        
         /// <summary>
         /// Initializes a new instance of NvGpu, using device index
         /// to initialize handle and name for the device
@@ -39,6 +42,7 @@ namespace ssprea_nvidia_control_cli.NVML;
         /// <param name="deviceIdx">device index</param>
         public NvmlGpu(uint deviceIdx)
         {
+            DeviceIndex = deviceIdx;
             var r = NvmlWrapper.nvmlDeviceGetHandleByIndex(deviceIdx, out _handle);
             if(r != NvmlReturnCode.NVML_SUCCESS)
             {
