@@ -23,10 +23,10 @@ public class Program
     public static uint PowerLimit { get; set; }= 0;
     
     [Option(CommandOptionType.SingleValue, Description = "set fan speed", LongName = "fanSpeed",ShortName = "fs")]
-    public static int FanSpeed { get; set; }= 0;
+    public static int FanSpeed { get; set; }= -1;
     
-    [Option(CommandOptionType.MultipleValue, Description = "select fan id", LongName = "fanId",ShortName = "fi")]
-    public static int[] FanId { get; set; }
+    // [Option(CommandOptionType.MultipleValue, Description = "select fan id", LongName = "fanId",ShortName = "fi")]
+    // public static int[] FanIds { get; set; }
     
     
     
@@ -73,6 +73,11 @@ public class Program
         if (PowerLimit > 0)
             Console.WriteLine(selectedGpu.SetPowerLimit(PowerLimit));
 
+        if (FanSpeed >= 0)
+        {
+            selectedGpu.ApplySpeedToAllFans((uint)FanSpeed);
+        }
+        
         
     }
 

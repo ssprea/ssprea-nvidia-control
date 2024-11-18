@@ -20,10 +20,9 @@ install:
 	cp -r bin/Release/net8.0/publish/* /usr/share/ssprea-nvidia-control
 	cp Assets/ssprea-nvidia-control.desktop /usr/share/applications/ssprea-nvidia-control.desktop
 
-	ln -s /usr/share/ssprea-nvidia-control/ssprea-nvidia-control /usr/local/bin
+	ln -s /usr/share/ssprea-nvidia-control/ssprea-nvidia-control /usr/local/bin/snvctl-gui
 		
 uninstall:
 	rm -r /usr/share/ssprea-nvidia-control
 	rm /usr/share/applications/ssprea-nvidia-control.desktop
-	rm /usr/local/bin/ssprea-nvidia-control
-			
+	rm /usr/local/bin/snvctl-gui
