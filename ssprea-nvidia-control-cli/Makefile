@@ -16,10 +16,9 @@ run: build
 
 install:
 	mkdir -p /usr/share/ssprea-nvidia-control-cli
-	mkdir -p /usr/share/applications/
 	cp -r bin/Release/net8.0/publish/* /usr/share/ssprea-nvidia-control-cli
 
-	ln -s /usr/share/ssprea-nvidia-control/ssprea-nvidia-control-cli /usr/local/bin/snvctl
+	ln -s /usr/share/ssprea-nvidia-control-cli/ssprea-nvidia-control-cli /usr/local/bin/snvctl
 		
 uninstall:
 	rm -r /usr/share/ssprea-nvidia-control-cli

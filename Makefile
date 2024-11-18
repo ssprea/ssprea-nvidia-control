@@ -3,12 +3,12 @@ installcli:
 	make -C ssprea-nvidia-control-cli install
 
 
-install: installcli
+installgui: installcli
 	make -C ssprea-nvidia-control publish
 	make -C ssprea-nvidia-control install
 
-uninstallcli: uninstall
+uninstallcli: uninstallgui
 	make -C ssprea-nvidia-control-cli uninstall
 
-uninstall:
+uninstallgui:
 	make -C ssprea-nvidia-control uninstall
