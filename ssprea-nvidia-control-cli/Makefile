@@ -22,4 +22,4 @@ install:
 		
 uninstall:
 	rm -r /usr/share/ssprea-nvidia-control-cli
-	rm /usr/local/bin/ssprea-nvidia-control-cli
+	rm /usr/local/bin/snvctl
