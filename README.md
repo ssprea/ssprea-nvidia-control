@@ -20,13 +20,20 @@ ssprea-nvidia-control is a GUI overclocking tool for NVidia GPUs that supports b
 
 ## Building and installing
 
-
+To install GUI and CLI:
 ```bash
   git clone https://github.com/ssprea/ssprea-nvidia-control.git
   cd ssprea-nvidia-control
-  make publish
-  sudo make install
+  sudo make installgui
 ```
+
+Install CLI only:
+```bash
+  git clone https://github.com/ssprea/ssprea-nvidia-control.git
+  cd ssprea-nvidia-control
+  sudo make installcli
+```
+
 
 Without make:
 
