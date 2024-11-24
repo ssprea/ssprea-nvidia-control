@@ -25,6 +25,9 @@ public class Program
     [Option(CommandOptionType.SingleValue, Description = "set fan speed", LongName = "fanSpeed",ShortName = "fs")]
     public static int FanSpeed { get; set; }= -1;
     
+    [Option(CommandOptionType.NoValue, Description = "enable auto fan speed", LongName = "autoFanSpeed",ShortName = "afs")]
+    public static bool AutoFanSpeed { get; set; }= false;
+    
     // [Option(CommandOptionType.MultipleValue, Description = "select fan id", LongName = "fanId",ShortName = "fi")]
     // public static int[] FanIds { get; set; }
     
@@ -77,8 +80,10 @@ public class Program
         {
             selectedGpu.ApplySpeedToAllFans((uint)FanSpeed);
         }
-        
-        
+
+        if (AutoFanSpeed)
+            selectedGpu.ApplyPolicyToAllFans(NvmlFanControlPolicy.NVML_FAN_POLICY_TEMPERATURE_CONTINOUS_SW);
+
     }
 
    
