@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel.Design;
 using McMaster.Extensions.CommandLineUtils;
+using Newtonsoft.Json;
 using ssprea_nvidia_control_cli.NVML;
 using ssprea_nvidia_control_cli.NVML.NvmlTypes;
+using ssprea_nvidia_control_cli.Types;
 
 namespace ssprea_nvidia_control_cli;
 
@@ -28,21 +30,33 @@ public class Program
     [Option(CommandOptionType.NoValue, Description = "enable auto fan speed", LongName = "autoFanSpeed",ShortName = "afs")]
     public static bool AutoFanSpeed { get; set; }= false;
     
+    [Option(CommandOptionType.SingleValue, Description = "load a fan speed curve json.", LongName = "fanProfile",ShortName = "fp")]
+    public static string FanSpeedCurveJson { get; set; }= "";
+    
     // [Option(CommandOptionType.MultipleValue, Description = "select fan id", LongName = "fanId",ShortName = "fi")]
     // public static int[] FanIds { get; set; }
     
     
     
     static NvmlService? _nvmlService;
-    
+    NvmlGpu? _selectedGpu = null;
     
     public static void Main(string[] args)
         => CommandLineApplication.Execute<Program>(args);
+
+    // public static void Main(string[] args)
+    // {
+    //     var fancurve = FanCurve.DefaultFanCurve();
+    //     Console.WriteLine(fancurve.ToString());
+    //     return;
+    // }
     
 
 
     private void OnExecute()
     {
+        var cancelTokenSource = new CancellationTokenSource();
+        
         _nvmlService = new NvmlService();
 
         if (DoListGpus)
@@ -54,15 +68,18 @@ public class Program
 
             return;
         }
+        
+        
+        
 
-        NvmlGpu? selectedGpu = null;
+        
         foreach (var gpu in _nvmlService.GpuList)
         {
             if (gpu.DeviceIndex == GpuId)
-                selectedGpu = gpu;
+                _selectedGpu = gpu;
         }
 
-        if (selectedGpu == null)
+        if (_selectedGpu == null)
         {
             Console.WriteLine("GPU index not found");
             return;
@@ -70,20 +87,46 @@ public class Program
         
         
         if (CoreOffset >= 0)
-            Console.WriteLine(selectedGpu.SetClockOffset(NvmlClockType.NVML_CLOCK_GRAPHICS, NvmlPStates.NVML_PSTATE_0, CoreOffset));
+            Console.WriteLine(_selectedGpu.SetClockOffset(NvmlClockType.NVML_CLOCK_GRAPHICS, NvmlPStates.NVML_PSTATE_0, CoreOffset));
         if (MemoryOffset >= 0)
-            Console.WriteLine(selectedGpu.SetClockOffset(NvmlClockType.NVML_CLOCK_MEM, NvmlPStates.NVML_PSTATE_0, MemoryOffset));
+            Console.WriteLine(_selectedGpu.SetClockOffset(NvmlClockType.NVML_CLOCK_MEM, NvmlPStates.NVML_PSTATE_0, MemoryOffset));
         if (PowerLimit > 0)
-            Console.WriteLine(selectedGpu.SetPowerLimit(PowerLimit));
+            Console.WriteLine(_selectedGpu.SetPowerLimit(PowerLimit));
 
         if (FanSpeed >= 0)
         {
-            selectedGpu.ApplySpeedToAllFans((uint)FanSpeed);
+            _selectedGpu.ApplySpeedToAllFans((uint)FanSpeed);
         }
 
         if (AutoFanSpeed)
-            selectedGpu.ApplyPolicyToAllFans(NvmlFanControlPolicy.NVML_FAN_POLICY_TEMPERATURE_CONTINOUS_SW);
+            _selectedGpu.ApplyPolicyToAllFans(NvmlFanControlPolicy.NVML_FAN_POLICY_TEMPERATURE_CONTINOUS_SW);
 
+        if (FanSpeedCurveJson != "")
+        {
+            var curve = JsonConvert.DeserializeObject<FanCurve>(FanSpeedCurveJson);
+            if (curve is null)
+            {
+                Console.WriteLine("Fan curve not valid.");
+                return;
+            }
+            Thread t = new Thread(() => FanSpeedProfileThread(500,curve,cancelTokenSource.Token));
+            t.Start();
+        }
+
+    }
+
+    private void FanSpeedProfileThread(int updateDelayMilliseconds, FanCurve fanCurve,CancellationToken cancelToken)
+    {
+        while (!cancelToken.IsCancellationRequested)
+        {
+            Thread.Sleep(updateDelayMilliseconds);
+            //get gpu temperature
+            if (_selectedGpu is null) 
+                continue;
+            
+            Console.WriteLine($"Gpu temp: {_selectedGpu.GpuTemperature}, Fan Speed: {fanCurve.GpuTempToFanSpeedMap[_selectedGpu.GpuTemperature]}");
+            _selectedGpu.ApplySpeedToAllFans(fanCurve.GpuTempToFanSpeedMap[_selectedGpu.GpuTemperature]);
+        }
     }
 
    
