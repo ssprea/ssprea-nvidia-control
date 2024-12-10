@@ -30,7 +30,7 @@ public class Program
     [Option(CommandOptionType.NoValue, Description = "enable auto fan speed", LongName = "autoFanSpeed",ShortName = "afs")]
     public static bool AutoFanSpeed { get; set; }= false;
     
-    [Option(CommandOptionType.SingleValue, Description = "load a fan speed curve json.", LongName = "fanProfile",ShortName = "fp")]
+    [Option(CommandOptionType.SingleValue, Description = "load a fan speed curve json from the specified path.", LongName = "fanProfile",ShortName = "fp")]
     public static string FanSpeedCurveJson { get; set; }= "";
     
     // [Option(CommandOptionType.MultipleValue, Description = "select fan id", LongName = "fanId",ShortName = "fi")]
@@ -103,7 +103,7 @@ public class Program
 
         if (FanSpeedCurveJson != "")
         {
-            var curve = JsonConvert.DeserializeObject<FanCurve>(FanSpeedCurveJson);
+            var curve = JsonConvert.DeserializeObject<FanCurve>(File.ReadAllText(FanSpeedCurveJson));
             if (curve is null)
             {
                 Console.WriteLine("Fan curve not valid.");
@@ -115,15 +115,21 @@ public class Program
 
     }
 
+    private uint LastFanTemp = 0;
+    
     private void FanSpeedProfileThread(int updateDelayMilliseconds, FanCurve fanCurve,CancellationToken cancelToken)
     {
         while (!cancelToken.IsCancellationRequested)
         {
             Thread.Sleep(updateDelayMilliseconds);
             //get gpu temperature
-            if (_selectedGpu is null) 
+            if (_selectedGpu is null || _selectedGpu.GpuTemperature == LastFanTemp)
+            {
+                Console.WriteLine("No temp change since last update. skipping");
                 continue;
-            
+            }
+                
+            LastFanTemp = _selectedGpu.GpuTemperature;
             Console.WriteLine($"Gpu temp: {_selectedGpu.GpuTemperature}, Fan Speed: {fanCurve.GpuTempToFanSpeedMap[_selectedGpu.GpuTemperature]}");
             _selectedGpu.ApplySpeedToAllFans(fanCurve.GpuTempToFanSpeedMap[_selectedGpu.GpuTemperature]);
         }

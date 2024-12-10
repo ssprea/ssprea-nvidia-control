@@ -1,11 +1,16 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
+using System.Net;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using ssprea_nvidia_control.Models;
+using ssprea_nvidia_control.Models.Exceptions;
 using ssprea_nvidia_control.NVML.NvmlTypes;
 using ssprea_nvidia_control.ViewModels;
 
@@ -33,6 +38,9 @@ namespace ssprea_nvidia_control.NVML;
         
         private CancellationTokenSource _fanCurveTaskCancellationTokenSource = new();
 
+        private uint deviceIndex;
+        
+        
         /// <summary>
         /// GPU Name
         /// </summary>
@@ -45,6 +53,7 @@ namespace ssprea_nvidia_control.NVML;
         /// <param name="deviceIdx">device index</param>
         public NvmlGpu(uint deviceIdx)
         {
+            deviceIndex = deviceIdx;
             var r = NvmlWrapper.nvmlDeviceGetHandleByIndex(deviceIdx, out _handle);
             if(r != NvmlReturnCode.NVML_SUCCESS)
             {
@@ -121,14 +130,32 @@ namespace ssprea_nvidia_control.NVML;
         public void ApplyFanCurve(FanCurve fanCurve)
         {
             AppliedFanCurve = fanCurve;
+            try
+            {
+                RunFanProcess(fanCurve);
+            }catch (SudoPasswordExpiredException)
+            {
+                throw;
+            }
         }
 
         public bool ApplySpeedToAllFans(uint speed)
         {
-            bool result = true;
-            foreach (var f in FansList)
-                result &= f.SetSpeed(speed);
-            return result;
+            // bool result = true;
+            // foreach (var f in FansList)
+            //     result &= f.SetSpeed(speed);
+            // return result;
+
+            try
+            {
+                var result = RunSudoCliCommand($"-fs {speed}");
+                return true;
+            }catch (SudoPasswordExpiredException)
+            {
+                throw;
+            }
+            
+            
         }
 
         public bool ApplyPolicyToAllFans(NvmlFanControlPolicy policy)
@@ -137,6 +164,18 @@ namespace ssprea_nvidia_control.NVML;
             foreach (var f in FansList)
                 result &= f.SetPolicy(policy);
             return result;
+        }
+
+        public bool ApplyAutoSpeedToAllFans()
+        {
+            try
+            {
+                var result = RunSudoCliCommand($"-afs");
+                return true;
+            }catch (SudoPasswordExpiredException)
+            {
+                throw;
+            }
         }
         
         /// <summary>
@@ -177,14 +216,38 @@ namespace ssprea_nvidia_control.NVML;
         
         public NvmlReturnCode SetClockOffset(NvmlClockType clockType, NvmlPStates pState, int clockOffsetMhz)
         {
-            var clockOffset = new NvmlClockOffset_v1()
-            {
-                Type = clockType,
-                PState = pState,
-                ClockOffsetMHz = clockOffsetMhz
-            };
+            // var clockOffset = new NvmlClockOffset_v1()
+            // {
+            //     Type = clockType,
+            //     PState = pState,
+            //     ClockOffsetMHz = clockOffsetMhz
+            // };
 
-            return NvmlWrapper.nvmlDeviceSetClockOffsets(_handle, ref clockOffset);
+            //return NvmlWrapper.nvmlDeviceSetClockOffsets(_handle, ref clockOffset);
+
+            // Process? result = null;
+            
+            try
+            {
+                switch (clockType)
+                {
+                    case NvmlClockType.NVML_CLOCK_GRAPHICS:
+                        RunSudoCliCommand($"-c {clockOffsetMhz}");
+                     break;
+                    case NvmlClockType.NVML_CLOCK_MEM:
+                        RunSudoCliCommand($"-m {clockOffsetMhz}");
+                        break;
+                }
+                
+                
+                Console.WriteLine(" set clock offset: ");
+
+                return NvmlReturnCode.NVML_SUCCESS;
+            }
+            catch (SudoPasswordExpiredException)
+            {
+                throw;
+            }
         }
 
         public (NvmlReturnCode,uint) GetPowerLimitCurrent()
@@ -209,7 +272,23 @@ namespace ssprea_nvidia_control.NVML;
         
         public NvmlReturnCode SetPowerLimit(uint limitMw)
         {
-            return NvmlWrapper.nvmlDeviceSetPowerManagementLimit(_handle,limitMw);
+            try
+            {
+                var result = RunSudoCliCommand($"-p {limitMw}");
+                Console.WriteLine(" set power limit: ");
+
+                return NvmlReturnCode.NVML_SUCCESS;
+            }
+            catch (SudoPasswordExpiredException)
+            {
+                throw;
+            }
+            // if (result.Item1 != 0)
+            // {
+            //     
+            // }
+            
+            //return NvmlWrapper.nvmlDeviceSetPowerManagementLimit(_handle,limitMw);
         }
 
         public NvmlReturnCode SetFanControlPolicy(uint fanId,NvmlFanControlPolicy policy)
@@ -242,7 +321,102 @@ namespace ssprea_nvidia_control.NVML;
             return(NvmlWrapper.nvmlDeviceGetTemperatureThreshold(_handle,temperatureThresholdType,out uint temperatureThreshold),temperatureThreshold);
         }
 
+        private (int,string) RunCommandWithBash(string command)
+        {
+            var psi = new ProcessStartInfo();
+            psi.FileName = "/bin/bash";
+            psi.Arguments = command;
+            psi.RedirectStandardOutput = true;
+            psi.UseShellExecute = false;
+            psi.CreateNoWindow = true;
 
+            
+            
+            using var process = Process.Start(psi);
+
+            process.WaitForExit();
+
+            
+            var output = process.StandardOutput.ReadToEnd();
+
+            return (process.ExitCode,output);
+        }
+        
+        private (int,string) RunCliCommand(string args, string file="/usr/local/bin/snvctl")
+        {
+            var psi = new ProcessStartInfo();
+            psi.FileName = file;
+            psi.Arguments = args;
+            psi.RedirectStandardOutput = true;
+            psi.RedirectStandardInput = true;
+            psi.UseShellExecute = false;
+            psi.CreateNoWindow = true;
+
+            
+            
+            using var process = Process.Start(psi);
+
+            
+            
+            process.WaitForExit();
+
+            
+            var output = process.StandardOutput.ReadToEnd();
+
+            return (process.ExitCode,output);
+        }
+        
+        private Process RunSudoCliCommand(string args, string file="/usr/local/bin/snvctl",bool waitForExit = true)
+        {
+            if (SudoPasswordManager.CurrentPassword?.Password == null || SudoPasswordManager.CurrentPassword.IsExpired)
+            {
+                throw new SudoPasswordExpiredException("Sudo password is expired");
+            }
+            
+            
+            
+            
+            var psi = new ProcessStartInfo();
+            psi.FileName = "/usr/bin/bash";
+            psi.Arguments = $"-c \"/usr/bin/sudo -S "+file+" -g "+deviceIndex+" "+args+"\"";
+            psi.RedirectStandardInput = true;
+            psi.UseShellExecute = false;
+            psi.CreateNoWindow = true;
+
+            Console.WriteLine("Executing: "+psi.FileName+" "+psi.Arguments);
+            
+            
+            var process = Process.Start(psi);
+            
+            
+            process.StandardInput.Write(SudoPasswordManager.CurrentPassword.Password+"\n");
+            if (waitForExit)
+                process.WaitForExit();
+
+            Console.WriteLine(process.Id);
+            //var output = process.StandardOutput.ReadToEnd();
+            
+            return process;
+        }
+
+        private void RunFanProcess(FanCurve fanCurve)
+        {
+            if (Program.FanCurveProcess is not null)
+                Program.FanCurveProcess.Kill();
+            
+            try
+            {
+                var tempPath = Program.DefaultDataPath + "/temp/fanCurve-" + fanCurve.Name +
+                               DateTime.Now.ToString("yyyyMMddHHmmss")+".json";
+                File.WriteAllText(tempPath,JsonConvert.SerializeObject(fanCurve, Formatting.None));
+                
+                Program.FanCurveProcess = RunSudoCliCommand($"-fp {tempPath}",waitForExit:false);
+            }catch (SudoPasswordExpiredException)
+            {
+                throw;
+            }
+        }
+        
         private void UpdateProperties()
         {
             //Console.WriteLine("update");

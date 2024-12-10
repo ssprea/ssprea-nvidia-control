@@ -31,6 +31,8 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
             action(ViewModel!.ShowOcProfileDialog.RegisterHandler(DoShowNewProfileDialogAsync));
 
             action(ViewModel!.ShowFanCurveEditorDialog.RegisterHandler(DoShowFanCurveEditorDialogAsync));
+            
+            action(ViewModel!.ShowSudoPasswordRequestDialog.RegisterHandler(DoShowSudoPasswordRequestDialogAsync));
         });
 
         WindowsManager.AllWindows.Add(this);
@@ -40,8 +42,10 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
     
     private async Task DoShowNewProfileDialogAsync(IInteractionContext<NewOcProfileWindowViewModel, OcProfile?> interaction)
     {
-        var dialog = new NewOcProfileWindow();
-        dialog.DataContext = interaction.Input;
+        var dialog = new NewOcProfileWindow
+        {
+            DataContext = interaction.Input
+        };
 
         var result = await dialog.ShowDialog<OcProfile?>(this);
         interaction.SetOutput(result);
@@ -49,10 +53,23 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
     
     private async Task DoShowFanCurveEditorDialogAsync(IInteractionContext<FanCurveEditorWindowViewModel, FanCurveViewModel?> interaction)
     {
-        var dialog = new FanCurveEditorWindow();
-        dialog.DataContext = interaction.Input;
+        var dialog = new FanCurveEditorWindow
+        {
+            DataContext = interaction.Input
+        };
 
         var result = await dialog.ShowDialog<FanCurveViewModel?>(this);
+        interaction.SetOutput(result);
+    }
+    
+    private async Task DoShowSudoPasswordRequestDialogAsync(IInteractionContext<SudoPasswordRequestWindowViewModel, SudoPassword?> interaction)
+    {
+        var dialog = new SudoPasswordRequestWindow
+        {
+            DataContext = interaction.Input
+        };
+
+        var result = await dialog.ShowDialog<SudoPassword?>(this);
         interaction.SetOutput(result);
     }
     
