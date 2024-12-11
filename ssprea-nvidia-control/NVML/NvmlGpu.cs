@@ -110,7 +110,19 @@ namespace ssprea_nvidia_control.NVML;
         public double PowerLimitMinW => GetPowerLimitConstraints().Item2/1000d;
         public double PowerLimitMaxW => GetPowerLimitConstraints().Item3/1000d;
         public double PowerLimitDefaultW => GetPowerLimitDefault().Item2/1000d;
-    
+        
+        public ulong MemoryTotal => GetMemoryUsage().Item2.Total;
+        public ulong MemoryFree => GetMemoryUsage().Item2.Free;
+        public ulong MemoryUsed => GetMemoryUsage().Item2.Used;
+        
+        public NvmlUtilization GpuUtilization => GetUtilization().Item2;
+        
+        public uint UtilizationCore => GetUtilization().Item2.gpu;
+        public uint UtilizationMemCtl => GetUtilization().Item2.memory;
+        
+
+        public string MemoryUsageString => $"{MemoryUsed/1000000}MB/{MemoryTotal/1000000}MB (Free: {MemoryFree/1000000}MB)";
+        
     
         public uint TemperatureThresholdShutdown => GetTemperatureThreshold(NvlmTemperatureThreshold.NVML_TEMPERATURE_THRESHOLD_SHUTDOWN).Item2;
         public uint TemperatureThresholdSlowdown => GetTemperatureThreshold(NvlmTemperatureThreshold.NVML_TEMPERATURE_THRESHOLD_SLOWDOWN).Item2;
@@ -121,10 +133,10 @@ namespace ssprea_nvidia_control.NVML;
         /// Gets device utilization info
         /// </summary>
         /// <returns>utilization info and nvml return code</returns>
-        public (NvmlUtilization, NvmlReturnCode) GetUtilization()
+        public (NvmlReturnCode, NvmlUtilization) GetUtilization()
         {
             var r = NvmlWrapper.nvmlDeviceGetUtilizationRates(_handle, out NvmlUtilization u);
-            return (u, r);
+            return (r,u);
         }
 
         public void ApplyFanCurve(FanCurve fanCurve)
@@ -186,6 +198,13 @@ namespace ssprea_nvidia_control.NVML;
         {
             var r = NvmlWrapper.nvmlDeviceGetTemperature(_handle, NvmlTemperatureSensors.NVML_TEMPERATURE_GPU, out uint t);
             return (r,t);
+        }
+        
+        
+        public (NvmlReturnCode,NvmlMemory) GetMemoryUsage()
+        {
+            var r = NvmlWrapper.nvmlDeviceGetMemoryInfo(_handle, out NvmlMemory m);
+            return (r,m);
         }
 
         public (NvmlReturnCode,NvmlPStates) GetPState()

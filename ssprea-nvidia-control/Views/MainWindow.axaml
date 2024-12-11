@@ -34,7 +34,6 @@
                     <SolidColorBrush x:Key='SectionBackgroundBrush'>#2b2d30</SolidColorBrush>
                     <SolidColorBrush x:Key='SelectionColor'>#C191FF</SolidColorBrush>
                     <SolidColorBrush x:Key='TextColor'>#BDBDBD</SolidColorBrush>
-                    
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
         </ResourceDictionary>
@@ -71,6 +70,7 @@
             <Setter Property="TextElement.Foreground" Value="{DynamicResource ForegroundBrush}" />
         </Style>
         
+        
     </Window.Styles>
     
     
@@ -81,15 +81,22 @@
     </Design.DataContext>
 
     <Grid ColumnDefinitions="*,*"
-          RowDefinitions="4*,4*,6*,*"
+          RowDefinitions="2*,8*,8*,12*,2*"
           x:Name="MainGrid"
           
           >
-        <Border
+        <Menu>
+            <MenuItem Header="_File">
+                <MenuItem Header="_Open..."/>
+            </MenuItem>
+        </Menu>
+        
+        
+        <Border Grid.Row="1" Grid.Column="0"
             
             
             
-            >
+        >
             <Grid
                 
                 RowDefinitions="*,*,*,*,*,*"
@@ -118,30 +125,41 @@
         </Border>
             
         
-        <Border Grid.Row="1"
+        <Border Grid.Row="2"
                 Grid.Column="0"
             
         >
             <Grid 
                     
                     RowDefinitions="*,*,*,*,*,*"
-                    ColumnDefinitions="*,*">
+                    ColumnDefinitions="2*,4*,*">
                 <!-- usage -->
-                <Label Grid.Row="0" Grid.Column="0"  VerticalAlignment="Top" HorizontalAlignment="Right">Usage</Label>
-                <Label Grid.Row="1" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Left">Gpu</Label>
-                <Label Grid.Row="2" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Left">Mem</Label>
-                <Label Grid.Row="3" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Left">Encoder</Label>
-                <Label Grid.Row="4" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Left">Decoder</Label>
+                <Label Grid.Row="0" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Right">Usage</Label>
+                <Label Grid.Row="1" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Left">Gpu%</Label>
+                <Label Grid.Row="2" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Left">Mem ctrl%</Label>
+                <Label Grid.Row="3" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Left">Memory</Label>
+                <!-- <Label Grid.Row="4" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Left">Decoder</Label> -->
                 <Label Grid.Row="5" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Left">Power</Label>
 
 
-                <Label Grid.Row="5" Grid.Column="1" Content="{Binding SelectedGpu.GpuPowerUsage, FallbackValue=Select gpu first}" VerticalAlignment="Top" HorizontalAlignment="Left"></Label>
+                
+                <ProgressBar Grid.Row="1" Grid.Column="1" Minimum="0" Maximum="100" Value="{Binding SelectedGpu.UtilizationCore}" VerticalAlignment="Stretch"/>
+                <SelectableTextBlock Grid.Row="1" Grid.Column="2" Text="{Binding SelectedGpu.UtilizationCore, FallbackValue=Select gpu first}" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+                
+                <SelectableTextBlock Grid.Row="2" Grid.Column="2" Text="{Binding SelectedGpu.UtilizationMemCtl, FallbackValue=Select gpu first}" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+                <ProgressBar Grid.Row="2" Grid.Column="1" Minimum="0" Maximum="100" Value="{Binding SelectedGpu.UtilizationMemCtl}" VerticalAlignment="Stretch"/>
+                
+                
+                <SelectableTextBlock Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding SelectedGpu.MemoryUsageString, FallbackValue=Select gpu first}" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+                
+                <Label Grid.Row="5" Grid.Column="1" Content="{Binding SelectedGpu.GpuPowerUsage, FallbackValue=Select gpu first}" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+                <Label Grid.Row="5" Grid.Column="2" Content="mw" VerticalAlignment="Top" HorizontalAlignment="Left"/>
             </Grid>
         </Border>
             
         
         <Grid x:Name="PlOCDivider" RowDefinitions="*,*"
-              Grid.Row="2"
+              Grid.Row="3"
               Grid.Column="0"
               >
             <Border 
@@ -198,7 +216,7 @@
         </Grid>
         
             
-        <Border Grid.Row="3"
+        <Border Grid.Row="4"
                 Grid.Column="0"
                 
             
@@ -241,7 +259,7 @@
         <!-- SECONDA COLONNA -->
         
         
-        <Border Grid.Row="0"
+        <Border Grid.Row="1"
                 Grid.Column="1"
             
         >
@@ -270,7 +288,7 @@
             
         </Border>
         
-        <Border Grid.Row="1"
+        <Border Grid.Row="2"
                 Grid.Column="1"
             
         >
@@ -311,7 +329,7 @@
         
         
         
-        <Border Grid.Row="2"
+        <Border Grid.Row="3"
                 Grid.Column="1"
             
         >
@@ -381,7 +399,7 @@
         
         
         <Border Grid.Column="1"
-                Grid.Row="3"
+                Grid.Row="4"
             
         >
             
