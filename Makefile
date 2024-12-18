@@ -12,3 +12,6 @@ uninstallcli: uninstallgui
 
 uninstallgui:
 	make -C ssprea-nvidia-control uninstall
+
+reinstallall: uninstallcli installgui
+
