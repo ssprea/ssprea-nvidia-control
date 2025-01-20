@@ -20,10 +20,12 @@ ssprea-nvidia-control is a GUI overclocking tool for NVidia GPUs that supports b
 
 ## Building and installing
 
-Install .NET core 9:
+Install dependencies:
+
+
 Ubuntu:
 ```
-sudo apt install dotnet-sdk-9.0
+sudo apt install make dotnet-sdk-9.0
 ```
 
 
@@ -41,6 +43,8 @@ wget https://gist.githubusercontent.com/ssprea/d82f6fd46b15b7076df162dc66e44204/
 ```
 
 --------------------------
+
+Without quick install script:
 
 To install GUI and CLI:
 ```bash
