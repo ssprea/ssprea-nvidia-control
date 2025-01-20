@@ -153,19 +153,19 @@ namespace ssprea_nvidia_control.NVML;
 
         public bool ApplySpeedToAllFans(uint speed)
         {
-            // bool result = true;
-            // foreach (var f in FansList)
-            //     result &= f.SetSpeed(speed);
-            // return result;
+            bool result = true;
+            foreach (var f in FansList)
+                result &= f.SetSpeed(speed);
+            return result;
 
-            try
-            {
-                var result = RunSudoCliCommand($"-fs {speed}");
-                return true;
-            }catch (SudoPasswordExpiredException)
-            {
-                throw;
-            }
+            // try
+            // {
+            //     var result = RunSudoCliCommand($"-fs {speed}");
+            //     return true;
+            // }catch (SudoPasswordExpiredException)
+            // {
+            //     throw;
+            // }
             
             
         }
