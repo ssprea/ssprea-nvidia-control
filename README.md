@@ -72,3 +72,12 @@ Without make:
 
 
 If you get an "NVML_ERROR_NO_PERMISSION" error in the console when applying a profile, try running the tool with sudo.
+
+
+## Planned features
+
+- Better gui
+
+- Autorun and auto apply of profile at startup
+
+- APT repo and flatpak 
