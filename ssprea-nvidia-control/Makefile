@@ -14,6 +14,7 @@ publish: build
 run: build
 	dotnet run --configuration Release
 
+
 install:
 	mkdir -p /usr/share/ssprea-nvidia-control
 	mkdir -p /usr/share/applications/

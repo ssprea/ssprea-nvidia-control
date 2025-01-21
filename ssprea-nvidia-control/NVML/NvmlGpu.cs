@@ -38,7 +38,7 @@ namespace ssprea_nvidia_control.NVML;
         
         private CancellationTokenSource _fanCurveTaskCancellationTokenSource = new();
 
-        private uint deviceIndex;
+        public uint DeviceIndex { get; private set; }
         
         
         /// <summary>
@@ -53,7 +53,7 @@ namespace ssprea_nvidia_control.NVML;
         /// <param name="deviceIdx">device index</param>
         public NvmlGpu(uint deviceIdx)
         {
-            deviceIndex = deviceIdx;
+            DeviceIndex = deviceIdx;
             var r = NvmlWrapper.nvmlDeviceGetHandleByIndex(deviceIdx, out _handle);
             if(r != NvmlReturnCode.NVML_SUCCESS)
             {
@@ -397,7 +397,7 @@ namespace ssprea_nvidia_control.NVML;
             
             var psi = new ProcessStartInfo();
             psi.FileName = "/usr/bin/bash";
-            psi.Arguments = $"-c \"/usr/bin/sudo -S "+file+" -g "+deviceIndex+" "+args+"\"";
+            psi.Arguments = $"-c \"/usr/bin/sudo -S "+file+" -g "+DeviceIndex+" "+args+"\"";
             psi.RedirectStandardInput = true;
             psi.UseShellExecute = false;
             psi.CreateNoWindow = true;

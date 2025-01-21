@@ -1,10 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
+using Newtonsoft.Json.Linq;
 using ssprea_nvidia_control.Models;
 using ssprea_nvidia_control.NVML;
 using ssprea_nvidia_control.ViewModels;
@@ -18,9 +22,9 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
     {
         InitializeComponent();
             
-#if DEBUG
-            this.AttachDevTools();
-#endif
+// #if DEBUG
+//             this.AttachDevTools();
+// #endif
             
         Closing += (s, e) =>
         {
@@ -29,6 +33,11 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
             
             ((Window)s).Hide();
             e.Cancel = true;
+        };
+
+        Activated += (s, e) =>
+        {
+            ViewModel!.WindowLoadedHandler();
         };
         
         this.WhenActivated(action =>
@@ -41,6 +50,7 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
         });
 
         WindowsManager.AllWindows.Add(this);
+        
     }
     
    
@@ -104,4 +114,6 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
     {
         MainWindowViewModel.NvmlService.Shutdown();
     }
+
+    
 }

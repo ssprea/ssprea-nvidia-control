@@ -1,21 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Reactive.Linq;
-using System.Text.Json;
 using System.Windows.Input;
-using Avalonia.Controls;
-using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using ssprea_nvidia_control.Models;
 using ssprea_nvidia_control.NVML;
-using ssprea_nvidia_control.NVML.NvmlTypes;
-using LiveChartsCore;
-using LiveChartsCore.Defaults;
-using LiveChartsCore.SkiaSharpView;
+using Newtonsoft.Json.Linq;
 using ReactiveUI;
 using ssprea_nvidia_control.Models.Exceptions;
 
@@ -31,18 +23,45 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty] private FanCurveViewModel? _selectedFanCurve;
 
     //private ObservableCollection<ISeries> _fanCurveGraphSeries = new();
-    
-        
-   
+
+    private bool _autoApplyProfileLoaded = false;
+
+    public void WindowLoadedHandler()
+    {
+        if (!_autoApplyProfileLoaded && File.Exists(Program.DefaultDataPath + "/AutoApplyProfile.json"))
+        {
+            var jobj = JObject.Parse(File.ReadAllText(Program.DefaultDataPath + "/AutoApplyProfile.json"));
+            var gpuid = (uint)jobj["gpu"];
+            var profile = (string)jobj["profile"];
+                
+            //apply profile
+            SelectedGpu = NvmlService.GpuList.FirstOrDefault(x => x.DeviceIndex == gpuid);
+            SelectedOcProfile = OcProfilesList.FirstOrDefault(x => x.Name == profile);
+            OcProfileApplyCommand();
+            
+        }  
+    }
     
     partial void OnSelectedFanCurveChanged(FanCurveViewModel? value)
     {
         //Console.WriteLine(SelectedFanCurve.Name);
-        SelectedFanCurve.UpdateSeries();
+        SelectedFanCurve!.UpdateSeries();
         // _fanCurveGraphSeries.Clear();
         // _fanCurveGraphSeries.Add(SelectedFanCurve.CurvePointsSeries);
     }
-    
+
+    public void SaveAutoApplyProfile(OcProfile profile)
+    {
+        //File.WriteAllText(Program.DefaultDataPath + "/AutoApplyProfile.json", JsonSerializer.Serialize(GpuProfilePairString));
+
+        if (SelectedGpu == null)
+        {
+            Console.WriteLine("No gpu selected.");
+            return;
+        }
+        
+        File.WriteAllText(Program.DefaultDataPath + "/AutoApplyProfile.json", $"{{\"profile\":\"{profile.Name}\",\"gpu\":\"{SelectedGpu.DeviceIndex}\"}}");
+    }
     
     //private readonly FanCurvesFileManager _fanCurvesFileManager = new("fan_curves.json");
     private readonly ProfilesFileManager _profilesFileManager=new(Program.DefaultDataPath+"/profiles.json");
@@ -61,6 +80,15 @@ public partial class MainWindowViewModel : ViewModelBase
         }
     }
 
+    public void KillFanCurveProcessCommand( )
+    {
+        if (Program.FanCurveProcess is null || Program.FanCurveProcess.HasExited)
+        {
+            Console.WriteLine("Fan curve process not running");
+            return;
+        }
+        Program.FanCurveProcess.Kill();
+    }
     // public ObservableCollection<FanCurveViewModel> FanCurvesVMList
     // {
     //     get
@@ -82,17 +110,13 @@ public partial class MainWindowViewModel : ViewModelBase
     public Interaction<SudoPasswordRequestWindowViewModel, SudoPassword?> ShowSudoPasswordRequestDialog { get; }
 
     private uint _selectedFanRadioButton = 0;
+    
 
     private bool FanSpeedSliderVisible => _selectedFanRadioButton == 1;
     
     public ICommand OpenNewProfileWindowCommand { get; private set; }
     public ICommand OpenFanCurveEditorCommand { get; private set; }
     public ICommand OpenSudoPasswordPromptCommand { get; private set; }
-
-    
-    
-    
-
 
 
     public MainWindowViewModel()
@@ -107,6 +131,10 @@ public partial class MainWindowViewModel : ViewModelBase
             File.Delete(f);
         
         LoadFanCurvesFromFile();
+        
+        
+            
+        
         ShowOcProfileDialog = new Interaction<NewOcProfileWindowViewModel, OcProfile?>();
         OpenNewProfileWindowCommand = ReactiveCommand.CreateFromTask(async () =>
         {
@@ -145,8 +173,9 @@ public partial class MainWindowViewModel : ViewModelBase
             
             
             await FanCurvesFileManager.SaveFanCurvesAsync(Program.DefaultDataPath+"/fan_curves.json", FanCurvesList.Select(x => x.BaseFanCurve));
+
             
-                
+            
 
             //UpdateProfilesFile("profiles.json");
         });
@@ -162,6 +191,9 @@ public partial class MainWindowViewModel : ViewModelBase
                 SudoPasswordManager.CurrentPassword = result;
 
         });
+        
+        
+          
     }
 
 
@@ -186,12 +218,33 @@ public partial class MainWindowViewModel : ViewModelBase
         try
         {
             SelectedOcProfile?.Apply(SelectedGpu);
+            _autoApplyProfileLoaded = true;
         }catch (SudoPasswordExpiredException)
         {
             //sudo password expired, reprompt
             OpenSudoPasswordPromptCommand.Execute(null);
         }
     }
+    
+    public void OcProfileApplyCommand(NvmlGpu? gpu, OcProfile? profile)
+    {
+        if (gpu is null)
+        {
+            Console.WriteLine("No gpu selected!");
+            return;
+        }
+
+
+        try
+        {
+            profile?.Apply(gpu);
+        }catch (SudoPasswordExpiredException)
+        {
+            //sudo password expired, reprompt
+            OpenSudoPasswordPromptCommand.Execute(null);
+        }
+    }
+    
 
     bool CanOcProfileApplyCommand()
     {
