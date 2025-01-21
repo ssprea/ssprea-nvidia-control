@@ -35,9 +35,9 @@ Ubuntu:
 ```
 sudo apt install make dotnet-sdk-9.0
 ```
+-------------------------
 
-
-### Other:
+### Building:
 
 Quick build and install script (gui & cli):
 
@@ -52,7 +52,6 @@ Uninstall:
 wget https://gist.githubusercontent.com/ssprea/d82f6fd46b15b7076df162dc66e44204/raw/2278c05805d57e33e036ffa9011ad564900cd50f/snvctl-install.sh && chmod +x ./snvctl-install.sh && ./snvctl-install.sh uninstall
 ```
 
---------------------------
 
 ### Without quick install script:
 
