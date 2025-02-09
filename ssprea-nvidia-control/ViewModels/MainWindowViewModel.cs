@@ -20,7 +20,9 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty] private NvmlGpu? _selectedGpu;
     [ObservableProperty] private NvmlGpuFan? _selectedGpuFan;
     [ObservableProperty] private OcProfile? _selectedOcProfile;
+    [ObservableProperty] private OcProfile? _selectedAutoApplyOcProfile;
     [ObservableProperty] private FanCurveViewModel? _selectedFanCurve;
+    [ObservableProperty] private bool _isAutoApplyProfileChecked = false;
 
     //private ObservableCollection<ISeries> _fanCurveGraphSeries = new();
 
@@ -37,7 +39,12 @@ public partial class MainWindowViewModel : ViewModelBase
             //apply profile
             SelectedGpu = NvmlService.GpuList.FirstOrDefault(x => x.DeviceIndex == gpuid);
             SelectedOcProfile = OcProfilesList.FirstOrDefault(x => x.Name == profile);
+            
+            SelectedAutoApplyOcProfile = SelectedOcProfile;
+            IsAutoApplyProfileChecked = true;
+            
             OcProfileApplyCommand();
+            
             
         }  
     }

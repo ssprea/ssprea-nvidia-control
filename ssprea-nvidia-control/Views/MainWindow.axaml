@@ -88,9 +88,9 @@
         
         <Grid Grid.Row="0" Grid.Column="0" ColumnDefinitions="7*,7*,2*">
             
-            <CheckBox Grid.Column="0" x:Name="EnableAutoApplyCheckbox" Content="Auto apply profile: "/>
+            <CheckBox Grid.Column="0" x:Name="EnableAutoApplyCheckbox" IsChecked="{Binding IsAutoApplyProfileChecked}" Content="Auto apply profile: "/>
             <ComboBox x:Name="AutoApplyProfileComboBox" 
-                      SelectedItem="{Binding SelectedOcProfile}"
+                      SelectedItem="{Binding SelectedAutoApplyOcProfile}"
                       ItemsSource="{Binding OcProfilesList}"
                       IsEnabled="{Binding #EnableAutoApplyCheckbox.IsChecked}"
                       Grid.Column="1" 
