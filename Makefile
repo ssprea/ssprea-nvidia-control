@@ -1,10 +1,8 @@
 installcli:
-	make -C ssprea-nvidia-control-cli publish
 	make -C ssprea-nvidia-control-cli install
 
 
 installgui:
-	make -C ssprea-nvidia-control publish
 	make -C ssprea-nvidia-control install
 
 uninstallcli:
@@ -13,6 +11,14 @@ uninstallcli:
 uninstallgui:
 	make -C ssprea-nvidia-control uninstall
 
+
+publishcli:
+	make -C ssprea-nvidia-control-cli publish
+
+publishgui:
+	make -C ssprea-nvidia-control publish
+
+publish: publishcli publishgui
 
 installall: installcli installgui
 
