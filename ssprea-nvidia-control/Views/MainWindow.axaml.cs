@@ -59,13 +59,16 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
 
     private async Task DownloadDefaultGuiAsync()
     {
-        Console.WriteLine("Default GUI does not exist! Downloading from https://gist.githubusercontent.com/ssprea/d16e12733bca0db0107ccd51e4dfa4c3/raw/73295ca1ed0dda84e9c2877aa782d280b2dbc1ae/MainWindowMainGrid.axaml");
+        const string requestUrl =
+            "https://gist.githubusercontent.com/ssprea/d16e12733bca0db0107ccd51e4dfa4c3/raw/73295ca1ed0dda84e9c2877aa782d280b2dbc1ae/MainWindowMainGrid.axaml";
+        
+        Console.WriteLine("Default GUI does not exist! Downloading from "+requestUrl);
         using (var c = new HttpClient())
         {
             try
             {
                 var response = await c.GetAsync(
-                    "https://gist.githubusercontent.com/ssprea/d16e12733bca0db0107ccd51e4dfa4c3/raw/73295ca1ed0dda84e9c2877aa782d280b2dbc1ae/MainWindowMainGrid.axaml");
+                    requestUrl);
                     
                 var download = await response.Content.ReadAsStringAsync();
                 
@@ -85,6 +88,9 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
     
     private void LoadGuiGrid()
     {
+        if (!Directory.Exists($"{Program.DefaultDataPath}/Guis/"))
+            Directory.CreateDirectory($"{Program.DefaultDataPath}/Guis/");
+        
         
         if (!File.Exists($"{Program.DefaultDataPath}/Guis/Default/MainWindowMainGrid.axaml"))
         {
