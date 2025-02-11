@@ -32,6 +32,7 @@
     <ItemGroup>
         <PackageReference Include="Avalonia" Version="11.2.3" />
         <PackageReference Include="Avalonia.Desktop" Version="11.2.3" />
+        <PackageReference Include="Avalonia.Markup.Xaml.Loader" Version="11.2.3" />
         <PackageReference Include="Avalonia.ReactiveUI" Version="11.2.3" />
         <PackageReference Include="Avalonia.Themes.Fluent" Version="11.2.3" />
         <PackageReference Include="Avalonia.Fonts.Inter" Version="11.2.3" />
@@ -45,5 +46,14 @@
         <PackageReference Update="Packaging.Targets">
           <Version>0.1.232</Version>
         </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <AvaloniaXaml Remove="Assets\MainWindowGuis\MainWindowMainGrid.axaml" />
+      <None Include="Assets\MainWindowGuis\MainWindowMainGrid.axaml" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Assets\MainWindowGuis\" />
     </ItemGroup>
 </Project>
