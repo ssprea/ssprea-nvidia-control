@@ -92,14 +92,14 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
             Directory.CreateDirectory($"{Program.DefaultDataPath}/Guis/");
         
         
-        if (!File.Exists($"{Program.DefaultDataPath}/Guis/Default/MainWindowMainGrid.axaml"))
-        {
-            if (!Directory.Exists($"{Program.DefaultDataPath}/Guis/Default/"))
-            {
-                Directory.CreateDirectory($"{Program.DefaultDataPath}/Guis/Default/");
-            }
-            Task.Run(DownloadDefaultGuiAsync).Wait();
-        }
+        // if (!File.Exists($"{Program.DefaultDataPath}/Guis/Default/MainWindowMainGrid.axaml"))
+        // {
+        //     if (!Directory.Exists($"{Program.DefaultDataPath}/Guis/Default/"))
+        //     {
+        //         Directory.CreateDirectory($"{Program.DefaultDataPath}/Guis/Default/");
+        //     }
+        //     Task.Run(DownloadDefaultGuiAsync).Wait();
+        // }
         
         //read selected gui name
         if (!File.Exists(Program.DefaultDataPath+"/SelectedGui.txt") || File.ReadAllText(Program.DefaultDataPath+"/SelectedGui.txt") == string.Empty)
@@ -108,7 +108,11 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
         }
         
         var selectedGuiName = (File.ReadAllText(Program.DefaultDataPath+"/SelectedGui.txt")).Trim();
-        
+        if (selectedGuiName == "Default")
+        {
+            Console.WriteLine("Using default gui, skipping loading from file");
+            return;
+        }
         
         
         //check if folder exists
@@ -116,6 +120,7 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
         {
             Console.WriteLine("No GUI named \""+selectedGuiName+"\" found. Loading default.");
             selectedGuiName = "Default";
+            return;
         }
 
         var mainGridLoadPath = $"{Program.DefaultDataPath}/Guis/{selectedGuiName}/MainWindowMainGrid.axaml";
