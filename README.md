@@ -1,32 +1,30 @@
-
 # ssprea-nvidia-control
 
 
 ssprea-nvidia-control is a GUI overclocking tool for NVidia GPUs that supports both Wayland and X11
-
-
 ## Features
 
 - Overclock profiles
 - Fan control and curve
 - Power limit management
-- Works on Wayland, X11 and Windows
+- Works on Wayland and X11
 
+## Screenshots
 
+![Main window](https://i.ibb.co/LzmBSCMN/Screenshot-20250212-031431.png)
+
+![Profile creation](https://i.ibb.co/pr9bVc4J/Screenshot-20250212-031855.png)
+
+![Curve creation](https://i.ibb.co/Q3fqT7tk/Screenshot-20250212-031920.png)
 ## Requirements
 
 - NVidia proprietary driver 555+
 - .NET core 9
-
-
 ## Installation:
 
 ### Ubuntu/Debian:
 
 Deb packages available in releases.
-
-----------
-
 ## Building:
 
 ### Install dependencies:
@@ -92,11 +90,6 @@ Without make:
   cd ssprea-nvidia-control
   dotnet run --configuration Release
 ```
-
-
-
-If you get an "NVML_ERROR_NO_PERMISSION" error in the console when applying a profile, try running the tool with sudo.
-
 
 ## Planned features
 
