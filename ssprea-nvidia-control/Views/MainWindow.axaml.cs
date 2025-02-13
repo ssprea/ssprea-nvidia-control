@@ -59,34 +59,34 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
 
     }
 
-    private async Task DownloadDefaultGuiAsync()
-    {
-        const string requestUrl =
-            "https://gist.githubusercontent.com/ssprea/d16e12733bca0db0107ccd51e4dfa4c3/raw/73295ca1ed0dda84e9c2877aa782d280b2dbc1ae/MainWindowMainGrid.axaml";
-        
-        Console.WriteLine("Default GUI does not exist! Downloading from "+requestUrl);
-        using (var c = new HttpClient())
-        {
-            try
-            {
-                var response = await c.GetAsync(
-                    requestUrl);
-                    
-                var download = await response.Content.ReadAsStringAsync();
-                
-                await File.WriteAllTextAsync($"{Program.DefaultDataPath}/Guis/Default/MainWindowMainGrid.axaml", download);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                Console.WriteLine($"Automatic download failed! Try downloading the file manually and put it in: {Program.DefaultDataPath}/Guis/Default/MainWindowMainGrid.axaml");
-                Environment.Exit(1);
-            }
-
-
-                
-        }
-    }
+    // private async Task DownloadDefaultGuiAsync()
+    // {
+    //     const string requestUrl =
+    //         "https://gist.githubusercontent.com/ssprea/d16e12733bca0db0107ccd51e4dfa4c3/raw/73295ca1ed0dda84e9c2877aa782d280b2dbc1ae/MainWindowMainGrid.axaml";
+    //     
+    //     Console.WriteLine("Default GUI does not exist! Downloading from "+requestUrl);
+    //     using (var c = new HttpClient())
+    //     {
+    //         try
+    //         {
+    //             var response = await c.GetAsync(
+    //                 requestUrl);
+    //                 
+    //             var download = await response.Content.ReadAsStringAsync();
+    //             
+    //             await File.WriteAllTextAsync($"{Program.DefaultDataPath}/Guis/Default/MainWindowMainGrid.axaml", download);
+    //         }
+    //         catch (Exception ex)
+    //         {
+    //             Console.WriteLine(ex);
+    //             Console.WriteLine($"Automatic download failed! Try downloading the file manually and put it in: {Program.DefaultDataPath}/Guis/Default/MainWindowMainGrid.axaml");
+    //             Environment.Exit(1);
+    //         }
+    //
+    //
+    //             
+    //     }
+    // }
     
     private void LoadGuiGrid()
     {
@@ -121,10 +121,29 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
         if (!File.Exists(Program.DefaultDataPath + "/Guis/" + selectedGuiName+"/MainWindowMainGrid.axaml"))
         {
             Console.WriteLine("No GUI named \""+selectedGuiName+"\" found. Loading default.");
-            selectedGuiName = "Default";
+            //selectedGuiName = "Default";
             return;
         }
 
+        //check if resolution file exists
+        if (File.Exists(Program.DefaultDataPath + "/Guis/" + selectedGuiName + "/MainWindowResolution.txt"))
+        {
+            try
+            {
+                var res = File
+                    .ReadAllText(Program.DefaultDataPath + "/Guis/" + selectedGuiName + "/MainWindowResolution.txt")
+                    .Replace("*", "x").Trim().Split("x").Select(int.Parse).ToArray();
+
+                Console.WriteLine("GUI " + selectedGuiName + " setting resolution: " + res[0] + "x" + res[1]);
+                MainOcWindow.Width = res[0];
+                MainOcWindow.Height = res[0];
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception while loading gui resolution, continuing with default: {ex}");
+            }
+        }
+        
         var mainGridLoadPath = $"{Program.DefaultDataPath}/Guis/{selectedGuiName}/MainWindowMainGrid.axaml";
         
         var guiStream = File.OpenRead(mainGridLoadPath);
