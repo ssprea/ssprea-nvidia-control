@@ -115,6 +115,7 @@ public partial class MainWindowViewModel : ViewModelBase
     public Interaction<NewOcProfileWindowViewModel, OcProfile?> ShowOcProfileDialog { get; }
     public Interaction<FanCurveEditorWindowViewModel, FanCurveViewModel?> ShowFanCurveEditorDialog { get; }
     public Interaction<SudoPasswordRequestWindowViewModel, SudoPassword?> ShowSudoPasswordRequestDialog { get; }
+    public Interaction<SettingsMainWindowViewModel, object?> ShowSettingsDialog { get; }
 
     private uint _selectedFanRadioButton = 0;
     
@@ -124,6 +125,8 @@ public partial class MainWindowViewModel : ViewModelBase
     public ICommand OpenNewProfileWindowCommand { get; private set; }
     public ICommand OpenFanCurveEditorCommand { get; private set; }
     public ICommand OpenSudoPasswordPromptCommand { get; private set; }
+    public ICommand OpenSettingsWindowCommand { get; private set; }
+
 
 
     public MainWindowViewModel()
@@ -199,7 +202,15 @@ public partial class MainWindowViewModel : ViewModelBase
 
         });
         
-        
+        ShowSettingsDialog = new Interaction<SettingsMainWindowViewModel, object?>();
+        OpenSettingsWindowCommand = ReactiveCommand.CreateFromTask(async () =>
+        {
+            var settingsWindowViewModel = new SettingsMainWindowViewModel();
+
+            var result = await ShowSettingsDialog.Handle(settingsWindowViewModel);
+            
+            
+        });
           
     }
 

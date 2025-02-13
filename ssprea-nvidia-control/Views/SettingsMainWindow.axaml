@@ -1,0 +1,49 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:vm="using:ssprea_nvidia_control.ViewModels"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:system="clr-namespace:System;assembly=System.Runtime"
+        mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="450"
+        Width="400" Height="450"
+        x:Class="ssprea_nvidia_control.Views.SettingsMainWindow"
+        x:DataType="vm:SettingsMainWindowViewModel"
+        Background="#262626"
+        Title="SettingsMainWindow">
+    
+        
+        
+
+        <Grid Margin="10"
+              RowDefinitions="*,10*,*"
+              ColumnDefinitions="*,3*"
+              
+              >
+            
+                <Label Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Top">Settings</Label>
+            
+                <ListBox Grid.Row="1" Grid.Column="0"></ListBox>
+            
+            
+            <Panel Grid.Row="1" Grid.Column="1" x:Name="SettingsCategoryContentPanel">
+                
+                <Grid 
+                      ColumnDefinitions="*,3*,*"
+                      RowDefinitions="*,*,*,*,*"
+                      >
+                        
+                    <Label Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Bottom" FontSize="10" >Selected GUI:</Label>
+                    <ComboBox Grid.Row="1" Grid.Column="1" SelectedItem="{Binding SelectedGuiSetting}" HorizontalAlignment="Stretch" ItemsSource="{Binding AvailableGuiSettings}"></ComboBox>
+                    <Label Grid.Row="2" Grid.Column="1" HorizontalAlignment="Center" FontSize="12" >Restart to apply</Label>
+                    <Button Grid.Row="2" Grid.Column="2" Command="{Binding SaveGuiSettings}">Save</Button>
+                    
+                </Grid>
+                
+            </Panel>
+            
+            
+        </Grid>
+        
+        
+        
+</Window>

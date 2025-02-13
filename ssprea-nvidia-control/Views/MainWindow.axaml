@@ -115,7 +115,7 @@
         >
             <Button Grid.Column="1" Background="Brown" FontSize="11" Content="Stop fan curve" Command="{Binding KillFanCurveProcessCommand}" />
             
-            <Button Grid.Column ="0"  HorizontalAlignment="Center">
+            <Button Grid.Column ="0" Command="{Binding OpenSettingsWindowCommand}"  HorizontalAlignment="Center">
                 <Image Source="/Assets/gear-icon.png"/>
             </Button>
             

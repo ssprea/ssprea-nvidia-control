@@ -48,6 +48,8 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
             action(ViewModel!.ShowFanCurveEditorDialog.RegisterHandler(DoShowFanCurveEditorDialogAsync));
             
             action(ViewModel!.ShowSudoPasswordRequestDialog.RegisterHandler(DoShowSudoPasswordRequestDialogAsync));
+            
+            action(ViewModel!.ShowSettingsDialog.RegisterHandler(DoShowSettingsDialogAsync));
         });
 
         WindowsManager.AllWindows.Add(this);
@@ -164,6 +166,17 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
         };
 
         var result = await dialog.ShowDialog<SudoPassword?>(this);
+        interaction.SetOutput(result);
+    }
+    
+    private async Task DoShowSettingsDialogAsync(IInteractionContext<SettingsMainWindowViewModel, object?> interaction)
+    {
+        var dialog = new SettingsMainWindow()
+        {
+            DataContext = interaction.Input
+        };
+
+        var result = await dialog.ShowDialog<object?>(this);
         interaction.SetOutput(result);
     }
     
