@@ -51,6 +51,7 @@ public partial class App : Application
 
     private void NativeMenuItem_OnClick(object? sender, EventArgs e)
     {
+        Program.KillFanCurveProcess();
         Environment.Exit(0);
     }
 }

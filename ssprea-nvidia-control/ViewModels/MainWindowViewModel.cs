@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
@@ -89,13 +90,10 @@ public partial class MainWindowViewModel : ViewModelBase
 
     public void KillFanCurveProcessCommand( )
     {
-        if (Program.FanCurveProcess is null || Program.FanCurveProcess.HasExited)
-        {
-            Console.WriteLine("Fan curve process not running");
-            return;
-        }
-        Program.FanCurveProcess.Kill();
+        Program.KillFanCurveProcess();
     }
+    
+    
     // public ObservableCollection<FanCurveViewModel> FanCurvesVMList
     // {
     //     get
@@ -224,6 +222,7 @@ public partial class MainWindowViewModel : ViewModelBase
 
         try
         {
+            KillFanCurveProcessCommand();
             SelectedOcProfile?.Apply(SelectedGpu);
             _autoApplyProfileLoaded = true;
         }catch (SudoPasswordExpiredException)
