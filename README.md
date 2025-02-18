@@ -30,6 +30,8 @@ This project was created mainly to learn Avalonia UI, so it might not be perfect
 
 ### Ubuntu/Debian:
 
+APT Repo available, follow instructions here: https://github.com/ssprea/snvctl-apt-repo/blob/main/README.md
+
 Deb packages available in releases.
 ## Building:
 
