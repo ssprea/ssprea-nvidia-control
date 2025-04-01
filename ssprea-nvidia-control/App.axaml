@@ -26,6 +26,7 @@
                  <TrayIcon.Menu>
                      <NativeMenu>
                          <NativeMenuItem Header="Close" Click="NativeMenuItem_OnClick"/>
+                         <NativeMenuItem Header="Open" Click="TrayIcon_OnClicked"/>
                      </NativeMenu>
                  </TrayIcon.Menu>
              </TrayIcon>
