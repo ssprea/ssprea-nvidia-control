@@ -384,12 +384,32 @@ namespace ssprea_nvidia_control.NVML;
 
             return (process.ExitCode,output);
         }
-        
-        private Process RunSudoCliCommand(string args, string file="/usr/local/bin/snvctl",bool waitForExit = true)
+
+        private Process? TryRunSudoCliCommandUntilSuccess(string args, string file = "/usr/local/bin/snvctl",
+            bool waitForExit = true)
         {
-            if (SudoPasswordManager.CurrentPassword?.Password == null || SudoPasswordManager.CurrentPassword.IsExpired)
+            Process? process = null;
+            while (true)
             {
-                throw new SudoPasswordExpiredException("Sudo password is expired");
+                process = RunSudoCliCommand(args, file, waitForExit);
+                if (process is not null && process.ExitCode == 0)
+                    break;
+            }
+
+            return process;
+        }
+        
+        private Process? RunSudoCliCommand(string args, string file="/usr/local/bin/snvctl",bool waitForExit = true)
+        {
+            if (SudoPasswordManager.CurrentPassword is not null && SudoPasswordManager.CurrentPassword.OperationCanceled)
+            {
+                SudoPasswordManager.CurrentPassword = null;
+                return null;
+            }
+            
+            if (SudoPasswordManager.CurrentPassword?.Password == null || SudoPasswordManager.CurrentPassword.IsExpired || !SudoPasswordManager.CurrentPassword.IsValid )
+            {
+                throw new SudoPasswordExpiredException("Sudo password is expired or invalid");
             }
             
             
@@ -410,7 +430,10 @@ namespace ssprea_nvidia_control.NVML;
             
             process.StandardInput.Write(SudoPasswordManager.CurrentPassword.Password+"\n");
             if (waitForExit)
-                process.WaitForExit();
+            {
+                if (!process.WaitForExit(4000))
+                    return null;
+            }
 
             Console.WriteLine(process.Id);
             //var output = process.StandardOutput.ReadToEnd();

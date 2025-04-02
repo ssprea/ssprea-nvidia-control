@@ -219,7 +219,7 @@ public partial class MainWindowViewModel : ViewModelBase
             return;
         }
 
-
+        
         try
         {
             KillFanCurveProcessCommand();
@@ -229,27 +229,42 @@ public partial class MainWindowViewModel : ViewModelBase
         {
             //sudo password expired, reprompt
             OpenSudoPasswordPromptCommand.Execute(null);
+            
+        }
+    }
+
+    public void RetryApplyIfPasswordRequested()
+    {
+        tryApply:
+        try
+        {
+            OcProfileApplyCommand();
+            return;
+        }
+        catch (SudoPasswordExpiredException)
+        {
+            goto tryApply;
         }
     }
     
-    public void OcProfileApplyCommand(NvmlGpu? gpu, OcProfile? profile)
-    {
-        if (gpu is null)
-        {
-            Console.WriteLine("No gpu selected!");
-            return;
-        }
-
-
-        try
-        {
-            profile?.Apply(gpu);
-        }catch (SudoPasswordExpiredException)
-        {
-            //sudo password expired, reprompt
-            OpenSudoPasswordPromptCommand.Execute(null);
-        }
-    }
+    // public void OcProfileApplyCommand(NvmlGpu? gpu, OcProfile? profile)
+    // {
+    //     if (gpu is null)
+    //     {
+    //         Console.WriteLine("No gpu selected!");
+    //         return;
+    //     }
+    //
+    //
+    //     try
+    //     {
+    //         profile?.Apply(gpu);
+    //     }catch (SudoPasswordExpiredException)
+    //     {
+    //         //sudo password expired, reprompt
+    //         OpenSudoPasswordPromptCommand.Execute(null);
+    //     }
+    // }
     
 
     bool CanOcProfileApplyCommand()

@@ -47,7 +47,7 @@ public class NvmlService
             //_gpuListVm.Add(new NvmlGpuVM(g));
         }
 
-        StartFanCurveUpdaterThread();
+        //StartFanCurveUpdaterThread();
         
         Console.WriteLine("NvmlService initialized");
     }

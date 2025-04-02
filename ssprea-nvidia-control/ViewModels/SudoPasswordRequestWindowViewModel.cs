@@ -2,6 +2,7 @@ using System;
 using System.Reactive;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
+using DynamicData.Kernel;
 using ReactiveUI;
 using ssprea_nvidia_control.Models;
 
@@ -13,7 +14,10 @@ public partial class SudoPasswordRequestWindowViewModel : ViewModelBase
     public ReactiveCommand<Unit, SudoPassword> SavePasswordCommand { get; }
 
     [ObservableProperty] private string _passwordBoxText = "";
+    private bool IsPasswordCorrect = false;
 
+    [ObservableProperty] private string _errorMessage = "";
+    [ObservableProperty] private bool _isOperationCanceled = false;
 
     // partial void OnPasswordBoxTextChanging(string? oldValue, string newValue)
     // {
@@ -44,7 +48,27 @@ public partial class SudoPasswordRequestWindowViewModel : ViewModelBase
     
     public SudoPasswordRequestWindowViewModel()
     {
+        SavePasswordCommand = ReactiveCommand.Create(() => new SudoPassword(PasswordBoxText){OperationCanceled = IsOperationCanceled});
+    }
+
+    public void CloseDialogCommand()
+    {
+        IsOperationCanceled = true;
+        SavePasswordCommand.Execute().Subscribe();
+    }
+
+    public void ReturnIfPasswordCorrect()
+    {
+        ErrorMessage="Checking password";
+        var psw = new SudoPassword(PasswordBoxText);
+        IsPasswordCorrect = psw.IsValid;
         
-        SavePasswordCommand = ReactiveCommand.Create(() => new SudoPassword(PasswordBoxText));
+        if (IsPasswordCorrect)
+            SavePasswordCommand.Execute().Subscribe();
+        else
+        {
+            ErrorMessage="Incorrect password";
+        }
+        
     }
 }

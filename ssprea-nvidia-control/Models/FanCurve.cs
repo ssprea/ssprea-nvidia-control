@@ -26,6 +26,7 @@ public class FanCurve
         Name = name;
         CurvePoints = new(curvePoints);
         GenerateGpuTempToFanSpeedMap();
+        
     }
 
     public void GenerateGpuTempToFanSpeedMap()
