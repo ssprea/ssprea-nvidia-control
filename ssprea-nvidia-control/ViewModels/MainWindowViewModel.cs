@@ -24,6 +24,10 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty] private OcProfile? _selectedAutoApplyOcProfile;
     [ObservableProperty] private FanCurveViewModel? _selectedFanCurve;
     [ObservableProperty] private bool _isAutoApplyProfileChecked = false;
+    [ObservableProperty] private OcProfile? _selectedStartupProfile;
+    [ObservableProperty] private bool _isStartupProfileChecked = false;
+
+    private const string DEFAULT_SERVICE_DATA_PATH = "/etc/snvctl";
 
     //private ObservableCollection<ISeries> _fanCurveGraphSeries = new();
 
@@ -58,9 +62,92 @@ public partial class MainWindowViewModel : ViewModelBase
         // _fanCurveGraphSeries.Add(SelectedFanCurve.CurvePointsSeries);
     }
 
-    public void SaveAutoApplyProfile(OcProfile profile)
+    public void SaveAutoApplyProfile(OcProfile? profile)
     {
         //File.WriteAllText(Program.DefaultDataPath + "/AutoApplyProfile.json", JsonSerializer.Serialize(GpuProfilePairString));
+
+        if (!IsAutoApplyProfileChecked || profile is null)
+        {
+            File.Delete(Program.DefaultDataPath + "/AutoApplyProfile.json");
+            Console.WriteLine("No default profile selected, disabled auto apply.");
+            return;
+        }
+        
+        if (SelectedGpu == null)
+        {
+            Console.WriteLine("No gpu selected.");
+            return;
+        }
+        
+        File.WriteAllText(Program.DefaultDataPath + "/AutoApplyProfile.json", $"{{\"profile\":\"{profile.Name}\",\"gpu\":\"{SelectedGpu.DeviceIndex}\"}}");
+    }
+    
+    public void SaveStartupProfile(OcProfile? profile)
+    {
+        //File.WriteAllText(Program.DefaultDataPath + "/AutoApplyProfile.json", JsonSerializer.Serialize(GpuProfilePairString));
+        
+        //if the checkbox is disabled, stop the service
+        if (!IsStartupProfileChecked || profile is null)
+        {
+
+            Utils.Systemd.StopSystemdService("snvctl.service");
+            Console.WriteLine("No startup profile selected, stopped snvctl.service");
+            return;
+        }
+        
+        if (SelectedGpu == null)
+        {
+            Console.WriteLine("No gpu selected.");
+            return;
+        }
+        
+        
+        try
+        {
+            //check if directory exists
+            if (!Directory.Exists(DEFAULT_SERVICE_DATA_PATH ))
+                Utils.Files.MakeDirectorySudo(DEFAULT_SERVICE_DATA_PATH);
+
+            
+            //save profile and copy to service data path
+            File.WriteAllText(Program.DefaultDataPath + "/temp/profile.json", profile.ToJson());
+            Utils.Files.CopySudo(Program.DefaultDataPath + "/temp/profile.json", DEFAULT_SERVICE_DATA_PATH+"/profile.json");
+
+
+            if (profile.FanCurve is not null)
+            {
+                //save fan curve and copy to service data path
+                File.WriteAllText(Program.DefaultDataPath + "/temp/curve.json", profile.FanCurve.ToJson());
+                Utils.Files.CopySudo(Program.DefaultDataPath + "/temp/curve.json", DEFAULT_SERVICE_DATA_PATH+"/curve.json");
+
+            }
+            
+            
+            
+            //systemd service (thanks to @Joomsy)
+            string service = $@"
+[Unit]
+Description=Set the Nvidia GPU power profile
+After=power-profiles-daemon.service
+[Service]
+Type=simple
+ExecStart=/bin/bash -c 'snvctl -g {SelectedGpu.DeviceIndex} -op {DEFAULT_SERVICE_DATA_PATH}/profile.json -fp {DEFAULT_SERVICE_DATA_PATH}/fan-control.json' &
+[Install]
+WantedBy=default.target";
+
+            //write to temp file and copy to service data path
+            File.WriteAllText(Program.DefaultDataPath + "/temp/snvctl.service", service);
+            Utils.Files.CopySudo(Program.DefaultDataPath + "/temp/snvctl.service", "/etc/systemd/system/snvctl.service");
+            
+            //enable service
+            Utils.Systemd.RestartSystemdService("snvctl.service");
+
+        }
+        catch (SudoPasswordExpiredException)
+        {
+            OpenSudoPasswordPromptCommand.Execute(null);
+        }
+
 
         if (SelectedGpu == null)
         {

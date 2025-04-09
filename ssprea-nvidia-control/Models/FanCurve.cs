@@ -110,8 +110,8 @@ public class FanCurve
         return perc1 + (intemp-temp1)*(perc2-perc1)/(temp2-temp1);
     }
     
-    // public string ToJson()
-    // {
-    //     return JsonSerializer.Serialize(this);
-    // }
+    public string ToJson()
+    {
+        return JsonConvert.SerializeObject(this);
+    }
 }

@@ -86,9 +86,9 @@
           
           >
         
-        <Grid Grid.Row="0" Grid.Column="0" ColumnDefinitions="7*,7*,2*">
+        <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="0" >
             
-            <CheckBox Grid.Column="0" x:Name="EnableAutoApplyCheckbox" IsChecked="{Binding IsAutoApplyProfileChecked}" Content="Auto apply profile: "/>
+            <CheckBox Grid.Column="0" x:Name="EnableAutoApplyCheckbox" IsChecked="{Binding IsAutoApplyProfileChecked}" Content="Default profile: "/>
             <ComboBox x:Name="AutoApplyProfileComboBox" 
                       SelectedItem="{Binding SelectedAutoApplyOcProfile}"
                       ItemsSource="{Binding OcProfilesList}"
@@ -106,14 +106,33 @@
                 </ComboBox.ItemTemplate>
             </ComboBox>
             
-            <Button Grid.Column="2" Content="Save" FontSize="10" Command="{Binding SaveAutoApplyProfile}" CommandParameter="{Binding #AutoApplyProfileComboBox.SelectedItem}" IsEnabled="{Binding #EnableAutoApplyCheckbox.IsChecked}"/>
-            
-        </Grid>
-        
-        <Grid Grid.Row="0" Grid.Column="1" ColumnDefinitions="*,*"
-        >
+            <Button Grid.Column="2" Content="Save" FontSize="10" Command="{Binding SaveAutoApplyProfile}" CommandParameter="{Binding #AutoApplyProfileComboBox.SelectedItem}"/>
             <Button Grid.Column="1" Background="Brown" FontSize="11" Content="Stop fan curve" Command="{Binding KillFanCurveProcessCommand}" />
-        </Grid>
+
+        </StackPanel>
+        
+        <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="1" >
+            <CheckBox Grid.Column="0" x:Name="EnableStartupApplyCheckbox" IsChecked="{Binding IsStartupProfileChecked}" Content="Startup profile: "/>
+            <ComboBox x:Name="StartupApplyProfileComboBox" 
+                      SelectedItem="{Binding SelectedStartupProfile}"
+                      ItemsSource="{Binding OcProfilesList}"
+                      IsEnabled="{Binding #EnableStartupApplyCheckbox.IsChecked}"
+                      Grid.Column="1" 
+                      SelectedIndex="1"
+                      VerticalAlignment="Bottom" 
+                      HorizontalAlignment="Stretch"
+            >
+                    
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <Label Content="{Binding Name} " />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            
+            <Button Grid.Column="2" Content="Save" FontSize="10" Command="{Binding SaveStartupProfile}" CommandParameter="{Binding #StartupApplyProfileComboBox.SelectedItem}"/>
+
+        </StackPanel>
             <!-- <Menu Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" ZIndex="9" Background="White" Foreground="Black"> -->
         <!--     <MenuItem Header="File" ZIndex="10" Foreground="Black" Background="Green" BorderBrush="Aqua"> -->
         <!--         <MenuItem Header="New" /> -->
