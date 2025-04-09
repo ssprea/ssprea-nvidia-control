@@ -15,10 +15,10 @@ public class Program
     [Option(CommandOptionType.NoValue, Description = "list available gpus", LongName = "listGpu")]
     public static bool DoListGpus { get; set; }
     
-    [Option(CommandOptionType.SingleValue, Description = "set core offset mHz", LongName = "coreOffset", ShortName = "c")]
+    [Option(CommandOptionType.SingleValue, Description = "set core offset MHz", LongName = "coreOffset", ShortName = "c")]
     public static int CoreOffset { get; set; } = -1;
         
-    [Option(CommandOptionType.SingleValue, Description = "set mem offset mHz", LongName = "memoryOffset",ShortName = "m")]
+    [Option(CommandOptionType.SingleValue, Description = "set mem offset MHz", LongName = "memoryOffset",ShortName = "m")]
     public static int MemoryOffset { get; set; }= -1;
     
     [Option(CommandOptionType.SingleValue, Description = "set power limit in mw", LongName = "powerLimit",ShortName = "p")]
@@ -32,6 +32,9 @@ public class Program
     
     [Option(CommandOptionType.SingleValue, Description = "load a fan speed curve json from the specified path.", LongName = "fanProfile",ShortName = "fp")]
     public static string FanSpeedCurveJson { get; set; }= "";
+    
+    [Option(CommandOptionType.SingleValue, Description = "load a oc profile json from the specified path. fan curve must be loaded separately", LongName = "ocProfile",ShortName = "op")]
+    public static string OcProfileJson { get; set; }= "";
     
     // [Option(CommandOptionType.MultipleValue, Description = "select fan id", LongName = "fanId",ShortName = "fi")]
     // public static int[] FanIds { get; set; }
@@ -70,6 +73,21 @@ public class Program
         }
         
         
+        if (OcProfileJson != string.Empty)
+        {
+            var ocProfile = OcProfile.FromJson(File.ReadAllText(OcProfileJson));
+
+            if (ocProfile is null)
+            {
+                Console.WriteLine("Invalid oc profile json");
+                Environment.Exit(1);
+            }
+            
+            CoreOffset = (int)ocProfile.GpuClockOffset;
+            MemoryOffset = (int)ocProfile.GpuClockOffset;
+            PowerLimit = ocProfile.PowerLimitMw;
+        }
+        
         
 
         
@@ -78,6 +96,7 @@ public class Program
             if (gpu.DeviceIndex == GpuId)
                 _selectedGpu = gpu;
         }
+        
 
         if (_selectedGpu == null)
         {
