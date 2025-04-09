@@ -131,7 +131,7 @@ Description=Set the Nvidia GPU power profile
 After=power-profiles-daemon.service
 [Service]
 Type=simple
-ExecStart=/bin/bash -c 'snvctl -g {SelectedGpu.DeviceIndex} -op {DEFAULT_SERVICE_DATA_PATH}/profile.json -fp {DEFAULT_SERVICE_DATA_PATH}/fan-control.json' &
+ExecStart=/bin/bash -c 'snvctl -g {SelectedGpu.DeviceIndex} -op {DEFAULT_SERVICE_DATA_PATH}/profile.json -fp {DEFAULT_SERVICE_DATA_PATH}/curve.json' &
 [Install]
 WantedBy=default.target";
 
@@ -140,7 +140,9 @@ WantedBy=default.target";
             Utils.Files.CopySudo(Program.DefaultDataPath + "/temp/snvctl.service", "/etc/systemd/system/snvctl.service");
             
             //enable service
-            Utils.Systemd.RestartSystemdService("snvctl.service");
+            Utils.Systemd.RunSystemdCommand("daemon-reload");
+            Utils.Systemd.EnableSystemdService("snvctl.service");
+            Utils.Systemd.StartSystemdService("snvctl.service");
 
         }
         catch (SudoPasswordExpiredException)
@@ -148,14 +150,6 @@ WantedBy=default.target";
             OpenSudoPasswordPromptCommand.Execute(null);
         }
 
-
-        if (SelectedGpu == null)
-        {
-            Console.WriteLine("No gpu selected.");
-            return;
-        }
-        
-        File.WriteAllText(Program.DefaultDataPath + "/AutoApplyProfile.json", $"{{\"profile\":\"{profile.Name}\",\"gpu\":\"{SelectedGpu.DeviceIndex}\"}}");
     }
     
     //private readonly FanCurvesFileManager _fanCurvesFileManager = new("fan_curves.json");

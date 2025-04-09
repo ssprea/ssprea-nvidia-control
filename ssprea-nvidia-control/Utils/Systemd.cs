@@ -16,4 +16,14 @@ public static class Systemd
     {
         return General.RunSudoCliCommand("systemctl","start "+serviceName)?.ExitCode == 0;
     }
+    
+    public static bool EnableSystemdService(string serviceName)
+    {
+        return General.RunSudoCliCommand("systemctl","enable "+serviceName)?.ExitCode == 0;
+    }
+
+    public static bool RunSystemdCommand(string args)
+    {
+        return General.RunSudoCliCommand("systemctl", args)?.ExitCode == 0;
+    }
 }
