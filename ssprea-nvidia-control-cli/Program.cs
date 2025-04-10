@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.Design;
-using McMaster.Extensions.CommandLineUtils;
+﻿using McMaster.Extensions.CommandLineUtils;
 using Newtonsoft.Json;
 using ssprea_nvidia_control_cli.NVML;
 using ssprea_nvidia_control_cli.NVML.NvmlTypes;
@@ -175,16 +174,21 @@ public class Program
 
     private bool IsAnotherInstanceRunning(params string[] names)
     {
+        //check if service is running (this requires service to use -f switch)
+        if (Utils.Systemd.IsSystemdServiceRunning("snvctl.service"))
+            return true;
+        
+        
         var instanceCount = 0;
         
         
         
         foreach(var n in names)
-            if (n == System.IO.Path.GetFileNameWithoutExtension(System.Reflection.Assembly.GetEntryAssembly().Location))
+            if (n == Path.GetFileNameWithoutExtension(System.Reflection.Assembly.GetEntryAssembly()?.Location))
                 instanceCount--;
         
         
-        instanceCount += System.Diagnostics.Process.GetProcessesByName(System.IO.Path.GetFileNameWithoutExtension(System.Reflection.Assembly.GetEntryAssembly().Location)).Count();
+        instanceCount += System.Diagnostics.Process.GetProcessesByName(System.IO.Path.GetFileNameWithoutExtension(System.Reflection.Assembly.GetEntryAssembly()?.Location)).Count();
         foreach (var n in names)
         {
             instanceCount += System.Diagnostics.Process.GetProcessesByName(n).Count();
