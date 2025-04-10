@@ -36,6 +36,9 @@ public class Program
     [Option(CommandOptionType.SingleValue, Description = "load a oc profile json from the specified path. fan curve must be loaded separately", LongName = "ocProfile",ShortName = "op")]
     public static string OcProfileJson { get; set; }= "";
     
+    [Option(CommandOptionType.NoValue, Description = "WARNING: this can cause problems. Skip checking if another snvctl process is already running (when applying fan profile).", LongName = "forceOpen",ShortName = "f")]
+    public static bool SkipMultipleInstancesCheck { get; set; }= false;
+    
     // [Option(CommandOptionType.MultipleValue, Description = "select fan id", LongName = "fanId",ShortName = "fi")]
     // public static int[] FanIds { get; set; }
     
@@ -58,6 +61,8 @@ public class Program
 
     private void OnExecute()
     {
+        
+        
         var cancelTokenSource = new CancellationTokenSource();
         
         _nvmlService = new NvmlService();
@@ -71,6 +76,8 @@ public class Program
 
             return;
         }
+        
+        
         
         
         if (OcProfileJson != string.Empty)
@@ -120,8 +127,20 @@ public class Program
         if (AutoFanSpeed)
             _selectedGpu.ApplyPolicyToAllFans(NvmlFanControlPolicy.NVML_FAN_POLICY_TEMPERATURE_CONTINOUS_SW);
 
+        
+        
+        
+        
         if (FanSpeedCurveJson != "")
         {
+            //check if another instance is running
+            if (!SkipMultipleInstancesCheck && IsAnotherInstanceRunning("snvctl","ssprea-nvidia-control-cli"))
+            {
+                Console.WriteLine("Another instance of this program is already running. Exiting...");
+                Environment.Exit(1);
+            }
+            
+            
             var curve = JsonConvert.DeserializeObject<FanCurve>(File.ReadAllText(FanSpeedCurveJson));
             if (curve is null)
             {
@@ -152,6 +171,26 @@ public class Program
             Console.WriteLine($"Gpu temp: {_selectedGpu.GpuTemperature}, Fan Speed: {fanCurve.GpuTempToFanSpeedMap[_selectedGpu.GpuTemperature]}");
             _selectedGpu.ApplySpeedToAllFans(fanCurve.GpuTempToFanSpeedMap[_selectedGpu.GpuTemperature]);
         }
+    }
+
+    private bool IsAnotherInstanceRunning(params string[] names)
+    {
+        var instanceCount = 0;
+        
+        
+        
+        foreach(var n in names)
+            if (n == System.IO.Path.GetFileNameWithoutExtension(System.Reflection.Assembly.GetEntryAssembly().Location))
+                instanceCount--;
+        
+        
+        instanceCount += System.Diagnostics.Process.GetProcessesByName(System.IO.Path.GetFileNameWithoutExtension(System.Reflection.Assembly.GetEntryAssembly().Location)).Count();
+        foreach (var n in names)
+        {
+            instanceCount += System.Diagnostics.Process.GetProcessesByName(n).Count();
+
+        }
+        return instanceCount > 1;
     }
 
    
