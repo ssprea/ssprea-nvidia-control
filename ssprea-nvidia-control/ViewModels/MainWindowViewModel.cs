@@ -152,7 +152,7 @@ Description=Set the Nvidia GPU power profile
 After=power-profiles-daemon.service
 [Service]
 Type=simple
-ExecStart=/bin/bash -c 'snvctl -g {SelectedGpu.DeviceIndex} -op {DEFAULT_SERVICE_DATA_PATH}/profile.json -fp {DEFAULT_SERVICE_DATA_PATH}/curve.json' &
+ExecStart=/bin/bash -c 'snvctl -g {SelectedGpu.DeviceIndex} -op {DEFAULT_SERVICE_DATA_PATH}/profile.json -fp {DEFAULT_SERVICE_DATA_PATH}/curve.json' -f &
 [Install]
 WantedBy=default.target";
 
@@ -333,14 +333,14 @@ WantedBy=default.target";
                     {
                         ButtonDefinitions = new List<ButtonDefinition>
                         {
-                            new ButtonDefinition { Name = "Cancel",IsDefault = true, },
+                            new ButtonDefinition { Name = "Cancel", IsDefault = true },
+                            new ButtonDefinition { Name = "Apply and keep old fan profile" },
                             new ButtonDefinition { Name = "Stop service",  },
-                            new ButtonDefinition { Name = "Ignore and continue", },
                         },
                         
                         ContentTitle = "snvctl.service detected!",
-                        ContentMessage = "snvctl.service is currently active, applying a fan profile with another instance already running can cause problems. \n" +
-                                         "NOTE: if you decide to stop the service, you will have to re-enable the startup profile.",
+                        ContentMessage = "snvctl.service (startup profile) is currently active, applying a fan profile with another instance already running can cause problems. \n" +
+                                         "NOTE: if you decide to stop the service, you will have to re-enable the startup profile or run 'sudo systemctl start snvctl.service'",
                         Topmost = true,
                         CanResize = false,
                         Icon = Icon.Warning,
@@ -350,18 +350,21 @@ WantedBy=default.target";
                 );
 
                 var result = await box.ShowAsync();
+                Console.WriteLine("msgbox result: "+result);
 
                 switch (result)
                 {
-                    case "Cancel":
-                        return;
                     case "Stop service":
                         Utils.Systemd.StopSystemdService("snvctl.service");
                         break;
-                    case "Ignore and continue":
+                    
+                    case "Apply and keep old fan profile":
                         break;
+                    
+                    default:
+                        return;
+
                 }
-                Console.WriteLine("msgbox result: "+result);
             }
             
             SelectedOcProfile?.Apply(SelectedGpu);
