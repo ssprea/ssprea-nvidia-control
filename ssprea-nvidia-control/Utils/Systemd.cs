@@ -26,4 +26,12 @@ public static class Systemd
     {
         return General.RunSudoCliCommand("systemctl", args)?.ExitCode == 0;
     }
+
+    public static bool IsSystemdServiceRunning(string serviceName)
+    {
+        var p = General.RunCliCommand("systemctl", "is-active --quiet " + serviceName);
+        if (p is null) return false;
+        
+        return p.ExitCode == 0;
+    }
 }

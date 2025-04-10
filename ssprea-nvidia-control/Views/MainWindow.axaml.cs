@@ -35,9 +35,9 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
             e.Cancel = true;
         };
 
-        Activated += (s, e) =>
+        Activated += async (s, e) =>
         {
-            ViewModel!.WindowLoadedHandler();
+            await ViewModel!.CheckAndApplyAutoApplyProfile();
         };
         
         this.WhenActivated(action =>

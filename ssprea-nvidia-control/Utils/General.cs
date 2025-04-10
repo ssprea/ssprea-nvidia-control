@@ -7,7 +7,7 @@ namespace ssprea_nvidia_control.Utils;
 
 public static class General
 {
-    public static Process? RunSudoCliCommand(string file, string args, bool waitForExit = true)
+    public static Process? RunSudoCliCommand(string file, string args, bool waitForExit = true,bool redirectStdin = true,bool redirectStdout = false)
     {
         if (SudoPasswordManager.CurrentPassword is not null && SudoPasswordManager.CurrentPassword.OperationCanceled)
         {
@@ -26,7 +26,8 @@ public static class General
         var psi = new ProcessStartInfo();
         psi.FileName = "/usr/bin/bash";
         psi.Arguments = $"-c \"/usr/bin/sudo -S "+file+" "+args+"\"";
-        psi.RedirectStandardInput = true;
+        psi.RedirectStandardInput = redirectStdin;
+        psi.RedirectStandardOutput = redirectStdout;
         psi.UseShellExecute = false;
         psi.CreateNoWindow = true;
 
@@ -37,6 +38,35 @@ public static class General
             
             
         process.StandardInput.Write(SudoPasswordManager.CurrentPassword.Password+"\n");
+        if (waitForExit)
+        {
+            if (!process.WaitForExit(4000))
+                return null;
+        }
+
+        Console.WriteLine(process.Id);
+        //var output = process.StandardOutput.ReadToEnd();
+            
+        return process;
+    }
+    
+    public static Process? RunCliCommand(string file, string args, bool waitForExit = true,bool redirectStdin = true,bool redirectStdout = false)
+    {
+            
+        var psi = new ProcessStartInfo();
+        psi.FileName = "/usr/bin/bash";
+        psi.Arguments = $"-c \""+file+" "+args+"\"";
+        psi.RedirectStandardInput = redirectStdin;
+        psi.RedirectStandardOutput = redirectStdout;
+        psi.UseShellExecute = false;
+        psi.CreateNoWindow = true;
+
+        Console.WriteLine("Executing: "+psi.FileName+" "+psi.Arguments);
+            
+            
+        var process = Process.Start(psi);
+            
+        
         if (waitForExit)
         {
             if (!process.WaitForExit(4000))

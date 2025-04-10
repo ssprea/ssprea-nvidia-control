@@ -1,11 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Threading.Tasks;
 using System.Windows.Input;
+using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
+using MsBox.Avalonia;
+using MsBox.Avalonia.Dto;
+using MsBox.Avalonia.Enums;
+using MsBox.Avalonia.Models;
 using ssprea_nvidia_control.Models;
 using ssprea_nvidia_control.NVML;
 using Newtonsoft.Json.Linq;
@@ -33,22 +40,37 @@ public partial class MainWindowViewModel : ViewModelBase
 
     private bool _autoApplyProfileLoaded = false;
 
-    public void WindowLoadedHandler()
+    public async Task WindowLoadedHandler()
     {
+        //check startup profile
+        //TODO: questa non viene eseguita
+        IsStartupProfileChecked = Utils.Systemd.IsSystemdServiceRunning("snvctl.service");
+        if (IsStartupProfileChecked && File.Exists(DEFAULT_SERVICE_DATA_PATH+"/profile.json"))
+        {
+            var startupProfileName = OcProfile.FromJson(await File.ReadAllTextAsync(DEFAULT_SERVICE_DATA_PATH+"/profile.json"))?.Name;
+            
+            SelectedStartupProfile = OcProfilesList.FirstOrDefault(x => x.Name == startupProfileName);
+        }
+        
+        
+    }
+
+    public async Task CheckAndApplyAutoApplyProfile()
+    {
+        //check default profile
         if (!_autoApplyProfileLoaded && File.Exists(Program.DefaultDataPath + "/AutoApplyProfile.json"))
         {
-            var jobj = JObject.Parse(File.ReadAllText(Program.DefaultDataPath + "/AutoApplyProfile.json"));
+            var jobj = JObject.Parse(await File.ReadAllTextAsync(Program.DefaultDataPath + "/AutoApplyProfile.json"));
             var gpuid = (uint)jobj["gpu"];
             var profile = (string)jobj["profile"];
                 
             //apply profile
             SelectedGpu = NvmlService.GpuList.FirstOrDefault(x => x.DeviceIndex == gpuid);
             SelectedOcProfile = OcProfilesList.FirstOrDefault(x => x.Name == profile);
-            
             SelectedAutoApplyOcProfile = SelectedOcProfile;
             IsAutoApplyProfileChecked = true;
             
-            OcProfileApplyCommand();
+            await OcProfileApplyCommand();
             
             
         }  
@@ -84,7 +106,6 @@ public partial class MainWindowViewModel : ViewModelBase
     
     public void SaveStartupProfile(OcProfile? profile)
     {
-        //File.WriteAllText(Program.DefaultDataPath + "/AutoApplyProfile.json", JsonSerializer.Serialize(GpuProfilePairString));
         
         //if the checkbox is disabled, stop the service
         if (!IsStartupProfileChecked || profile is null)
@@ -292,7 +313,7 @@ WantedBy=default.target";
         FanCurvesFileManager.SaveFanCurves(Program.DefaultDataPath+"/fan_curves.json", FanCurvesList.Select(x => x.BaseFanCurve));
     }
     
-    public void OcProfileApplyCommand()
+    public async Task OcProfileApplyCommand()
     {
         if (SelectedGpu is null)
         {
@@ -304,6 +325,45 @@ WantedBy=default.target";
         try
         {
             KillFanCurveProcessCommand();
+
+            if (Utils.Systemd.IsSystemdServiceRunning("snvctl.service"))
+            {
+                var box = MessageBoxManager.GetMessageBoxCustom(
+                    new MessageBoxCustomParams()
+                    {
+                        ButtonDefinitions = new List<ButtonDefinition>
+                        {
+                            new ButtonDefinition { Name = "Cancel",IsDefault = true, },
+                            new ButtonDefinition { Name = "Stop service",  },
+                            new ButtonDefinition { Name = "Ignore and continue", },
+                        },
+                        
+                        ContentTitle = "snvctl.service detected!",
+                        ContentMessage = "snvctl.service is currently active, applying a fan profile with another instance already running can cause problems. \n" +
+                                         "NOTE: if you decide to stop the service, you will have to re-enable the startup profile.",
+                        Topmost = true,
+                        CanResize = false,
+                        Icon = Icon.Warning,
+                        ShowInCenter = true,
+                        SystemDecorations = SystemDecorations.BorderOnly
+                    }
+                );
+
+                var result = await box.ShowAsync();
+
+                switch (result)
+                {
+                    case "Cancel":
+                        return;
+                    case "Stop service":
+                        Utils.Systemd.StopSystemdService("snvctl.service");
+                        break;
+                    case "Ignore and continue":
+                        break;
+                }
+                Console.WriteLine("msgbox result: "+result);
+            }
+            
             SelectedOcProfile?.Apply(SelectedGpu);
             _autoApplyProfileLoaded = true;
         }catch (SudoPasswordExpiredException)
@@ -314,19 +374,19 @@ WantedBy=default.target";
         }
     }
 
-    public void RetryApplyIfPasswordRequested()
-    {
-        tryApply:
-        try
-        {
-            OcProfileApplyCommand();
-            return;
-        }
-        catch (SudoPasswordExpiredException)
-        {
-            goto tryApply;
-        }
-    }
+    // public void RetryApplyIfPasswordRequested()
+    // {
+    //     tryApply:
+    //     try
+    //     {
+    //         OcProfileApplyCommand();
+    //         return;
+    //     }
+    //     catch (SudoPasswordExpiredException)
+    //     {
+    //         goto tryApply;
+    //     }
+    // }
     
     // public void OcProfileApplyCommand(NvmlGpu? gpu, OcProfile? profile)
     // {

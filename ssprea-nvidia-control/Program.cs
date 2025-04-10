@@ -42,39 +42,7 @@ sealed class Program
             Console.WriteLine("Fan curve process not running");
             return;
         }
-        RunSudoCliCommand(Program.FanCurveProcess.Id.ToString(),"kill");
-    }
-    
-    private static Process RunSudoCliCommand(string args, string file,bool waitForExit = true)
-    {
-        if (SudoPasswordManager.CurrentPassword?.Password == null || SudoPasswordManager.CurrentPassword.IsExpired)
-        {
-            throw new SudoPasswordExpiredException("Sudo password is expired");
-        }
-            
-            
-            
-            
-        var psi = new ProcessStartInfo();
-        psi.FileName = "/usr/bin/bash";
-        psi.Arguments = $"-c \"/usr/bin/sudo -S "+file+" "+args+"\"";
-        psi.RedirectStandardInput = true;
-        psi.UseShellExecute = false;
-        psi.CreateNoWindow = true;
 
-        Console.WriteLine("Executing: "+psi.FileName+" "+psi.Arguments);
-            
-            
-        var process = Process.Start(psi);
-            
-            
-        process.StandardInput.Write(SudoPasswordManager.CurrentPassword.Password+"\n");
-        if (waitForExit)
-            process.WaitForExit();
-
-        Console.WriteLine(process.Id);
-        //var output = process.StandardOutput.ReadToEnd();
-            
-        return process;
+        Utils.General.RunSudoCliCommand("kill", Program.FanCurveProcess.Id.ToString());
     }
 }
