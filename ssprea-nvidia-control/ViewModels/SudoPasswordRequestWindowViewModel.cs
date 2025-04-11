@@ -11,14 +11,15 @@ namespace ssprea_nvidia_control.ViewModels;
 public partial class SudoPasswordRequestWindowViewModel : ViewModelBase
 {
     //[ObservableProperty] private SudoPassword? _currentSudoPassword;
-    public ReactiveCommand<Unit, SudoPassword> SavePasswordCommand { get; }
+    public ReactiveCommand<Unit, SudoPassword?> SavePasswordCommand { get; }
 
     [ObservableProperty] private string _passwordBoxText = "";
     private bool IsPasswordCorrect = false;
 
     [ObservableProperty] private string _errorMessage = "";
-    [ObservableProperty] private bool _isOperationCanceled = false;
 
+    
+    private SudoPassword? _sudoPassword;
     // partial void OnPasswordBoxTextChanging(string? oldValue, string newValue)
     // {
     //     //scrivi in textbox
@@ -46,14 +47,14 @@ public partial class SudoPasswordRequestWindowViewModel : ViewModelBase
     // }
     
     
-    public SudoPasswordRequestWindowViewModel()
+    public SudoPasswordRequestWindowViewModel() 
     {
-        SavePasswordCommand = ReactiveCommand.Create(() => new SudoPassword(PasswordBoxText){OperationCanceled = IsOperationCanceled});
+        SavePasswordCommand = ReactiveCommand.Create(() => _sudoPassword);
+        // SavePasswordCommand = ReactiveCommand.Create(() => new SudoPassword(PasswordBoxText){OperationCanceled = IsOperationCanceled});
     }
 
     public void CloseDialogCommand()
     {
-        IsOperationCanceled = true;
         SavePasswordCommand.Execute().Subscribe();
     }
 
@@ -62,9 +63,13 @@ public partial class SudoPasswordRequestWindowViewModel : ViewModelBase
         ErrorMessage="Checking password";
         var psw = new SudoPassword(PasswordBoxText);
         IsPasswordCorrect = psw.IsValid;
-        
+
         if (IsPasswordCorrect)
+        {
+            _sudoPassword = psw;
             SavePasswordCommand.Execute().Subscribe();
+            
+        }
         else
         {
             ErrorMessage="Incorrect password";

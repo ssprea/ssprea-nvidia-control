@@ -49,6 +49,11 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
             action(ViewModel!.ShowSudoPasswordRequestDialog.RegisterHandler(DoShowSudoPasswordRequestDialogAsync));
         });
 
+        Opened += async (s, e) =>
+        {
+            await ViewModel!.CheckAndLoadStartupProfile();
+        };
+        
         WindowsManager.AllWindows.Add(this);
         
     }

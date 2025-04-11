@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Avalonia.Controls;
@@ -38,12 +39,16 @@ public partial class MainWindowViewModel : ViewModelBase
 
     //private ObservableCollection<ISeries> _fanCurveGraphSeries = new();
 
+    private AutoResetEvent _sudoPasswordDialogClosed = new(false);
+
+    
     private bool _autoApplyProfileLoaded = false;
 
-    public async Task WindowLoadedHandler()
+    public async Task CheckAndLoadStartupProfile()
     {
+        
+        
         //check startup profile
-        //TODO: questa non viene eseguita
         IsStartupProfileChecked = Utils.Systemd.IsSystemdServiceRunning("snvctl.service");
         if (IsStartupProfileChecked && File.Exists(DEFAULT_SERVICE_DATA_PATH+"/profile.json"))
         {
@@ -55,6 +60,22 @@ public partial class MainWindowViewModel : ViewModelBase
         
     }
 
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns>true if password success, false if cancel</returns>
+    private async Task<bool> RequestSudoPasswordDialogIfNeededAsync()
+    {
+        if (SudoPasswordManager.CurrentPassword is null)
+        {
+            OpenSudoPasswordPromptCommand.Execute(null);
+            await Task.Run(() => _sudoPasswordDialogClosed.WaitOne());
+        }
+        return SudoPasswordManager.CurrentPassword is not null;
+    }
+    
+    
     public async Task CheckAndApplyAutoApplyProfile()
     {
         //check default profile
@@ -104,14 +125,20 @@ public partial class MainWindowViewModel : ViewModelBase
         File.WriteAllText(Program.DefaultDataPath + "/AutoApplyProfile.json", $"{{\"profile\":\"{profile.Name}\",\"gpu\":\"{SelectedGpu.DeviceIndex}\"}}");
     }
     
-    public void SaveStartupProfile(OcProfile? profile)
+    
+    
+    
+    public async Task SaveStartupProfile(OcProfile? profile)
     {
+        //check sudo password
+        if (!await RequestSudoPasswordDialogIfNeededAsync())
+            return;
         
         //if the checkbox is disabled, stop the service
         if (!IsStartupProfileChecked || profile is null)
         {
-
             Utils.Systemd.StopSystemdService("snvctl.service");
+            
             Console.WriteLine("No startup profile selected, stopped snvctl.service");
             return;
         }
@@ -123,53 +150,47 @@ public partial class MainWindowViewModel : ViewModelBase
         }
         
         
-        try
+        //check if directory exists
+        if (!Directory.Exists(DEFAULT_SERVICE_DATA_PATH ))
+            Utils.Files.MakeDirectorySudo(DEFAULT_SERVICE_DATA_PATH);
+
+        
+        //save profile and copy to service data path
+        await File.WriteAllTextAsync(Program.DefaultDataPath + "/temp/profile.json", profile.ToJson());
+        Utils.Files.CopySudo(Program.DefaultDataPath + "/temp/profile.json", DEFAULT_SERVICE_DATA_PATH+"/profile.json");
+
+
+        if (profile.FanCurve is not null)
         {
-            //check if directory exists
-            if (!Directory.Exists(DEFAULT_SERVICE_DATA_PATH ))
-                Utils.Files.MakeDirectorySudo(DEFAULT_SERVICE_DATA_PATH);
+            //save fan curve and copy to service data path
+            await File.WriteAllTextAsync(Program.DefaultDataPath + "/temp/curve.json", profile.FanCurve.ToJson());
+            Utils.Files.CopySudo(Program.DefaultDataPath + "/temp/curve.json", DEFAULT_SERVICE_DATA_PATH+"/curve.json");
 
-            
-            //save profile and copy to service data path
-            File.WriteAllText(Program.DefaultDataPath + "/temp/profile.json", profile.ToJson());
-            Utils.Files.CopySudo(Program.DefaultDataPath + "/temp/profile.json", DEFAULT_SERVICE_DATA_PATH+"/profile.json");
-
-
-            if (profile.FanCurve is not null)
-            {
-                //save fan curve and copy to service data path
-                File.WriteAllText(Program.DefaultDataPath + "/temp/curve.json", profile.FanCurve.ToJson());
-                Utils.Files.CopySudo(Program.DefaultDataPath + "/temp/curve.json", DEFAULT_SERVICE_DATA_PATH+"/curve.json");
-
-            }
-            
-            
-            
-            //systemd service (thanks to @Joomsy)
-            string service = $@"
+        }
+        
+        
+        
+        //systemd service (thanks to @Joomsy)
+        string service = $@"
 [Unit]
 Description=Set the Nvidia GPU power profile
 After=power-profiles-daemon.service
 [Service]
 Type=simple
-ExecStart=/bin/bash -c 'snvctl -g {SelectedGpu.DeviceIndex} -op {DEFAULT_SERVICE_DATA_PATH}/profile.json -fp {DEFAULT_SERVICE_DATA_PATH}/curve.json' -f &
+ExecStart=/bin/bash -c 'snvctl --forceOpen -g {SelectedGpu.DeviceIndex} -op {DEFAULT_SERVICE_DATA_PATH}/profile.json -fp {DEFAULT_SERVICE_DATA_PATH}/curve.json'  &
 [Install]
 WantedBy=default.target";
 
-            //write to temp file and copy to service data path
-            File.WriteAllText(Program.DefaultDataPath + "/temp/snvctl.service", service);
-            Utils.Files.CopySudo(Program.DefaultDataPath + "/temp/snvctl.service", "/etc/systemd/system/snvctl.service");
-            
-            //enable service
-            Utils.Systemd.RunSystemdCommand("daemon-reload");
-            Utils.Systemd.EnableSystemdService("snvctl.service");
-            Utils.Systemd.StartSystemdService("snvctl.service");
+        //write to temp file and copy to service data path
+        File.WriteAllText(Program.DefaultDataPath + "/temp/snvctl.service", service);
+        Utils.Files.CopySudo(Program.DefaultDataPath + "/temp/snvctl.service", "/etc/systemd/system/snvctl.service");
+        
+        //enable service
+        Utils.Systemd.RunSystemdCommand("daemon-reload");
+        Utils.Systemd.EnableSystemdService("snvctl.service");
+        Utils.Systemd.StartSystemdService("snvctl.service");
 
-        }
-        catch (SudoPasswordExpiredException)
-        {
-            OpenSudoPasswordPromptCommand.Execute(null);
-        }
+        
 
     }
     
@@ -293,16 +314,20 @@ WantedBy=default.target";
             var sudoPasswordRequestWindowViewModel = new SudoPasswordRequestWindowViewModel();
 
             var result = await ShowSudoPasswordRequestDialog.Handle(sudoPasswordRequestWindowViewModel);
-            
-            if (result !=null)
+
+
+
+            if (result != null)
+            {
                 SudoPasswordManager.CurrentPassword = result;
+            }
+            _sudoPasswordDialogClosed.Set();
 
         });
         
         
           
     }
-
 
     
 
@@ -321,60 +346,66 @@ WantedBy=default.target";
             return;
         }
 
+        //check sudo password
+        if (!await RequestSudoPasswordDialogIfNeededAsync())
+            return;
         
-        try
+        // trycommand:
+        // try
+        // {
+        KillFanCurveProcessCommand();
+
+        if (Utils.Systemd.IsSystemdServiceRunning("snvctl.service"))
         {
-            KillFanCurveProcessCommand();
-
-            if (Utils.Systemd.IsSystemdServiceRunning("snvctl.service"))
-            {
-                var box = MessageBoxManager.GetMessageBoxCustom(
-                    new MessageBoxCustomParams()
-                    {
-                        ButtonDefinitions = new List<ButtonDefinition>
-                        {
-                            new ButtonDefinition { Name = "Cancel", IsDefault = true },
-                            new ButtonDefinition { Name = "Apply and keep old fan profile" },
-                            new ButtonDefinition { Name = "Stop service",  },
-                        },
-                        
-                        ContentTitle = "snvctl.service detected!",
-                        ContentMessage = "snvctl.service (startup profile) is currently active, applying a fan profile with another instance already running can cause problems. \n" +
-                                         "NOTE: if you decide to stop the service, you will have to re-enable the startup profile or run 'sudo systemctl start snvctl.service'",
-                        Topmost = true,
-                        CanResize = false,
-                        Icon = Icon.Warning,
-                        ShowInCenter = true,
-                        SystemDecorations = SystemDecorations.BorderOnly
-                    }
-                );
-
-                var result = await box.ShowAsync();
-                Console.WriteLine("msgbox result: "+result);
-
-                switch (result)
+            var box = MessageBoxManager.GetMessageBoxCustom(
+                new MessageBoxCustomParams()
                 {
-                    case "Stop service":
-                        Utils.Systemd.StopSystemdService("snvctl.service");
-                        break;
+                    ButtonDefinitions = new List<ButtonDefinition>
+                    {
+                        new ButtonDefinition { Name = "Cancel", IsDefault = true },
+                        new ButtonDefinition { Name = "Apply and keep old fan profile" },
+                        new ButtonDefinition { Name = "Stop service",  },
+                    },
                     
-                    case "Apply and keep old fan profile":
-                        break;
-                    
-                    default:
-                        return;
-
+                    ContentTitle = "snvctl.service detected!",
+                    ContentMessage = "snvctl.service (startup profile) is currently active, applying a fan profile with another instance already running can cause problems. \n" +
+                                     "NOTE: if you decide to stop the service, you will have to re-enable the startup profile or run 'sudo systemctl start snvctl.service'",
+                    Topmost = true,
+                    CanResize = false,
+                    Icon = Icon.Warning,
+                    ShowInCenter = true,
+                    SystemDecorations = SystemDecorations.BorderOnly
                 }
+            );
+
+            var result = await box.ShowAsync();
+            Console.WriteLine("msgbox result: "+result);
+
+            switch (result)
+            {
+                case "Stop service":
+                    Utils.Systemd.StopSystemdService("snvctl.service");
+                    IsStartupProfileChecked = false;
+                    break;
+                
+                case "Apply and keep old fan profile":
+                    break;
+                
+                default:
+                    return;
+
             }
-            
-            SelectedOcProfile?.Apply(SelectedGpu);
-            _autoApplyProfileLoaded = true;
-        }catch (SudoPasswordExpiredException)
-        {
-            //sudo password expired, reprompt
-            OpenSudoPasswordPromptCommand.Execute(null);
-            
         }
+        
+        SelectedOcProfile?.Apply(SelectedGpu);
+        _autoApplyProfileLoaded = true;
+        // }catch (SudoPasswordExpiredException)
+        // {
+        //     //sudo password expired, reprompt
+        //     if (await RequestSudoPasswordDialogIfNeededAsync());
+        //     goto trycommand;
+        //
+        // }
     }
 
     // public void RetryApplyIfPasswordRequested()
@@ -416,27 +447,25 @@ WantedBy=default.target";
         return SelectedGpu != null;
     }
     
-    public bool FanApplyButtonClick(uint speed)
+    public async Task<bool> FanApplyButtonClick(uint speed)
     {
         if (SelectedGpuFan is null || SelectedGpu is null) return false;
 
-        try
-        {
-            switch (_selectedFanRadioButton)
-            {
-                case 0:
-                    return SelectedGpu.ApplyAutoSpeedToAllFans();
-                case 1:
-                    return SelectedGpu.ApplySpeedToAllFans(speed);
-                default:
-                    return false;
-            }
-        }catch (SudoPasswordExpiredException)
-        {
-            //sudo password expired, reprompt
-            OpenSudoPasswordPromptCommand.Execute(null);
+        //check sudo password
+        if (!await RequestSudoPasswordDialogIfNeededAsync())
             return false;
+        
+        
+        switch (_selectedFanRadioButton)
+        {
+            case 0:
+                return SelectedGpu.ApplyAutoSpeedToAllFans();
+            case 1:
+                return SelectedGpu.ApplySpeedToAllFans(speed);
+            default:
+                return false;
         }
+       
     }
 
     public void FanRadioButtonClicked(uint id)
