@@ -35,8 +35,9 @@ public class Program
     [Option(CommandOptionType.SingleValue, Description = "load a oc profile json from the specified path. fan curve must be loaded separately", LongName = "ocProfile",ShortName = "op")]
     public static string OcProfileJson { get; set; }= "";
     
-    [Option(CommandOptionType.NoValue, Description = "WARNING: this can cause problems. Skip checking if another snvctl process is already running (when applying fan profile).", LongName = "forceOpen",ShortName = "f")]
+    [Option(CommandOptionType.NoValue, Description = "WARNING: this can cause problems. Skip checking if another snvctl process is already running (when applying fan profile).", LongName = "forceOpen")]
     public static bool SkipMultipleInstancesCheck { get; set; }= false;
+    
     
     // [Option(CommandOptionType.MultipleValue, Description = "select fan id", LongName = "fanId",ShortName = "fi")]
     // public static int[] FanIds { get; set; }
@@ -60,7 +61,7 @@ public class Program
 
     private void OnExecute()
     {
-        
+
         
         var cancelTokenSource = new CancellationTokenSource();
         
@@ -129,7 +130,6 @@ public class Program
         
         
         
-        
         if (FanSpeedCurveJson != "")
         {
             //check if another instance is running
@@ -174,7 +174,7 @@ public class Program
 
     private bool IsAnotherInstanceRunning(params string[] names)
     {
-        //check if service is running (this requires service to use -f switch)
+        //check if service is running (this requires service to use --forceOpen switch)
         if (Utils.Systemd.IsSystemdServiceRunning("snvctl.service"))
             return true;
         
@@ -192,9 +192,11 @@ public class Program
         foreach (var n in names)
         {
             instanceCount += System.Diagnostics.Process.GetProcessesByName(n).Count();
-
         }
+        // Console.WriteLine("instancecount: "+instanceCount);
         return instanceCount > 1;
+
+        
     }
 
    
