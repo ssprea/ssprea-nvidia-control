@@ -17,7 +17,7 @@ This project was created mainly to learn Avalonia UI, so it might not be perfect
 
 ## Screenshots
 
-![Main window](https://i.ibb.co/LzmBSCMN/Screenshot-20250212-031431.png)
+![Main window](https://i.ibb.co/LWDZ1dg/Screenshot-20250411-155643.png)
 
 ![Profile creation](https://i.ibb.co/pr9bVc4J/Screenshot-20250212-031855.png)
 
