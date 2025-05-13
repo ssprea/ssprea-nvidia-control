@@ -1,9 +1,9 @@
 installcli:
-	make -C ssprea-nvidia-control-cli install
+	make -C ssprea-nvidia-control-cli install DESTDIR=$(DESTDIR)
 
 
 installgui:
-	make -C ssprea-nvidia-control install
+	make -C ssprea-nvidia-control install DESTDIR=$(DESTDIR)
 
 uninstallcli:
 	make -C ssprea-nvidia-control-cli uninstall

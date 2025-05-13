@@ -28,12 +28,12 @@ deb: publish
 	dpkg-deb --build --root-owner-group bin/Release/deb/ssprea-nvidia-control_1.0.3-1_amd64
 
 install:
-	mkdir -p /usr/share/ssprea-nvidia-control
-	mkdir -p /usr/share/applications/
-	cp -r bin/Release/net9.0/linux-x64/publish/* /usr/share/ssprea-nvidia-control
-	cp Assets/ssprea-nvidia-control.desktop /usr/share/applications/ssprea-nvidia-control.desktop
+	mkdir -p $(DESTDIR)/usr/share/ssprea-nvidia-control
+	mkdir -p $(DESTDIR)/usr/share/applications/
+	cp -r bin/Release/net9.0/linux-x64/publish/* $(DESTDIR)/usr/share/ssprea-nvidia-control
+	cp Assets/ssprea-nvidia-control.desktop $(DESTDIR)/usr/share/applications/ssprea-nvidia-control.desktop
 
-	ln -sf /usr/share/ssprea-nvidia-control/ssprea-nvidia-control /usr/local/bin/snvctl-gui
+	ln -sf /usr/share/ssprea-nvidia-control/ssprea-nvidia-control $(DESTDIR)/usr/local/bin/snvctl-gui
 		
 uninstall:
 	rm -r /usr/share/ssprea-nvidia-control
