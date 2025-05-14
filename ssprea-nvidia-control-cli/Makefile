@@ -29,6 +29,7 @@ install:
 	mkdir -p $(DESTDIR)/usr/share/ssprea-nvidia-control-cli
 	cp -r bin/Release/net9.0/publish/* $(DESTDIR)/usr/share/ssprea-nvidia-control-cli
 
+	mkdir -p $(DESTDIR)/usr/local/bin/
 	ln -s /usr/share/ssprea-nvidia-control-cli/ssprea-nvidia-control-cli $(DESTDIR)/usr/local/bin/snvctl
 		
 uninstall:
