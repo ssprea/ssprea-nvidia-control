@@ -379,7 +379,7 @@ WantedBy=default.target";
             );
 
             var result = await box.ShowAsync();
-            Console.WriteLine("msgbox result: "+result);
+            // Console.WriteLine("msgbox result: "+result);
 
             switch (result)
             {
@@ -484,6 +484,73 @@ WantedBy=default.target";
     {
         
     }
-    
 
+    public async Task LoadedEvent()
+    {
+        await ShowDependenciesMsgbox(await CheckDependencies());
+        
+        NvmlService.Initialize();
+        
+        await CheckAndLoadStartupProfile();
+    }
+
+    /// <summary>
+    /// Check nvidia drivers and cli tool
+    /// </summary>
+    /// <returns>0: success, 1: no nvidia driver, 2: nvidia driver version less than 555, 3: cli tool not installed </returns>
+    public async Task<ushort> CheckDependencies()
+    {
+        //check nvidia drivers installed
+
+        var vercmd = Utils.General.RunCliCommand("nvidia-smi", "--version", true,false,true);
+        if (vercmd is null || vercmd.ExitCode != 0)
+            return 1;
+
+        //check nvidia drivers version
+
+        var output = await vercmd.StandardOutput.ReadToEndAsync();
+        var lines = output.Split('\n');
+        var driverVersion = lines[2].Split(':')[1].Trim();
+
+        Console.WriteLine($"Detected NVidia driver version: {driverVersion}");
+
+        //check cli tool
+
+        var clicmd = Utils.General.RunCliCommand("snvctl", "-d", true,false,true);
+        if (clicmd is null || clicmd.ExitCode != 0)
+            return 3;
+
+        return 0;
+    }
+
+    public async Task ShowDependenciesMsgbox(ushort errCode)
+    {
+       
+        
+        switch (errCode)
+        {
+            case 0:
+                return;
+            case 1:
+
+                var box = MessageBoxManager.GetMessageBoxStandard("Nvidia driver not detected!",
+                    "Please make sure you installed Nvidia proprietary driver version 555+", ButtonEnum.Ok, Icon.Error);
+
+                var result = await box.ShowAsync();
+                Environment.Exit(1);
+                break;
+            case 2:
+                box = MessageBoxManager.GetMessageBoxStandard("Nvidia driver version outdated!",
+                    "The nvidia driver was detected but to apply settings version 555+ is required", ButtonEnum.Ok, Icon.Warning);
+
+                await box.ShowAsync();
+                break;
+            case 3:
+                box = MessageBoxManager.GetMessageBoxStandard("snvctl cli tool not detected!",
+                    "Please make sure you installed the CLI tool otherwise you won't be able to apply settings.", ButtonEnum.Ok, Icon.Warning);
+
+                await box.ShowAsync();
+                break;
+        }
+    }
 }

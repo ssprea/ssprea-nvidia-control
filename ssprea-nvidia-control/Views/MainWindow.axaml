@@ -4,8 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:models="clr-namespace:ssprea_nvidia_control.Models"
-        mc:Ignorable="d" d:DesignWidth="768" d:DesignHeight="950"
-        Width="768" Height="950"
+        mc:Ignorable="d" d:DesignWidth="795" d:DesignHeight="950"
+        Width="795" Height="950"
         xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
         xmlns:liveChartsCore="clr-namespace:LiveChartsCore;assembly=LiveChartsCore"
         x:Class="ssprea_nvidia_control.Views.MainWindow"
@@ -295,7 +295,17 @@
                     </ComboBox.ItemTemplate>
                 </ComboBox>
 
-                <Button  Grid.Column="1" Command="{Binding OcProfileApplyCommand}" VerticalAlignment="Center" HorizontalAlignment="Center" >V</Button>
+                <Button  Grid.Column="1" Command="{Binding OcProfileApplyCommand}" VerticalAlignment="Center" HorizontalAlignment="Stretch" FontWeight="Bold">✓
+                    <!--     <Border  -->
+                    <!--         Width="18"  -->
+                    <!--         Height="18"  -->
+                    <!--         Margin="0" -->
+                    <!--         Background="White"  -->
+                    <!--         CornerRadius="4" -->
+                    <!--         HorizontalAlignment="Center"  -->
+                    <!--         VerticalAlignment="Center"/> -->
+                    <!-- </Button.Content> -->
+                </Button>
                 <Button  Grid.Column="3" Command="{Binding OpenNewProfileWindowCommand}" VerticalAlignment="Center" HorizontalAlignment="Center" >+</Button>
                 <Button  Grid.Column="2" Command="{Binding DeleteOcProfile}" VerticalAlignment="Center" HorizontalAlignment="Center" >-</Button>
 

@@ -51,7 +51,15 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
 
         Opened += async (s, e) =>
         {
-            await ViewModel!.CheckAndLoadStartupProfile();
+            
+            //await ViewModel!.CheckDependencies();
+        };
+
+        Loaded += async (s, e) =>
+        {
+            await ViewModel!.LoadedEvent();
+
+
         };
         
         WindowsManager.AllWindows.Add(this);
