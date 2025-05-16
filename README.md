@@ -28,11 +28,23 @@ This project was created mainly to learn Avalonia UI, so it might not be perfect
 - .NET core 9
 ## Installation:
 
-### Ubuntu/Debian:
+### Ubuntu/Debian/Mint:
 
 APT Repo available, follow instructions here: https://github.com/ssprea/snvctl-apt-repo/blob/main/README.md
 
 Deb packages available in releases.
+
+### Arch:
+
+Package is available in the AUR: https://aur.archlinux.org/packages/ssprea-nvidia-control
+
+```
+git clone https://aur.archlinux.org/ssprea-nvidia-control.git
+cd ssprea-nvidia-control
+makepkg -si
+```
+
+
 ## Building:
 
 ### Install dependencies:
