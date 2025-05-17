@@ -12,6 +12,7 @@ This project was created mainly to learn Avalonia UI, so it might not be perfect
 
 - Overclock profiles
 - Fan control and curve
+- Auto apply profile at startup
 - Power limit management
 - Works on Wayland and X11
 
@@ -114,7 +115,3 @@ Without make:
 ## Planned features
 
 - Better gui
-
-- Autorun and auto apply of profile at startup
-
-- APT repo and flatpak 
