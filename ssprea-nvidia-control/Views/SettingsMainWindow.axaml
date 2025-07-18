@@ -1,0 +1,52 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:vm="using:ssprea_nvidia_control.ViewModels"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:system="clr-namespace:System;assembly=System.Runtime"
+        mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="450"
+        Width="400" Height="450"
+        x:Class="ssprea_nvidia_control.Views.SettingsMainWindow"
+        x:DataType="vm:SettingsMainWindowViewModel"
+        Background="#262626"
+        Title="SNVCTL Settings">
+    
+        
+        
+
+        <Grid Margin="10"
+              RowDefinitions="*,10*,*"
+              ColumnDefinitions="*,3*"
+              
+              >
+            
+                <Label Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Top">Settings</Label>
+            
+                <ListBox Grid.Row="1" Grid.Column="0" SelectedIndex="0">
+                    <ListBoxItem Content="GUIs"/>
+                    
+                </ListBox>
+            
+            <Border Grid.Row="1" Grid.Column="1" BorderBrush="Gray" BorderThickness="2" Margin="6" Padding="8" CornerRadius="10">
+                <Panel  x:Name="SettingsCategoryContentPanel">
+                    
+                    <StackPanel 
+                          
+                          >
+                            
+                        <Label  HorizontalAlignment="Left" VerticalAlignment="Bottom" FontSize="10" >Selected GUI:</Label>
+                        <ComboBox  SelectedItem="{Binding SelectedGuiSetting}" HorizontalAlignment="Stretch" ItemsSource="{Binding AvailableGuiSettings}"></ComboBox>
+                        
+                        <Label  HorizontalAlignment="Center" FontSize="11" >If nothing happens after saving, try restarting.</Label>
+                        <Button Command="{Binding SaveGuiSettingsAsync}">Save</Button>
+                        
+                    </StackPanel>
+                    
+                </Panel>
+            </Border>
+            
+        </Grid>
+        
+        
+        
+</Window>

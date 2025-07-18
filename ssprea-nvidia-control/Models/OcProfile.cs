@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using CommunityToolkit.Mvvm.ComponentModel;
 using ssprea_nvidia_control.NVML;
 using ssprea_nvidia_control.NVML.NvmlTypes;
 using ssprea_nvidia_control.ViewModels;
@@ -8,7 +9,8 @@ using ssprea_nvidia_control.Models.Exceptions;
 
 namespace ssprea_nvidia_control.Models;
 
-public class OcProfile
+[ObservableObject]
+public partial class OcProfile
 {
     public OcProfile(string name,uint gpuClockOffset, uint memClockOffset, uint powerLimitMw, FanCurve? fanCurve)
     {
@@ -28,16 +30,29 @@ public class OcProfile
         PowerLimitMw = powerLimitMw;
         _fanCurveName = fanCurveName;
     }
-    public string Name { get; set; }
-    public uint GpuClockOffset { get; set; }
-    public uint MemClockOffset { get; set; }
+
+    [ObservableProperty] private string _name;
+    [ObservableProperty] private uint _gpuClockOffset;
+
+    [ObservableProperty] private uint _memClockOffset;
     //public uint SmClockOffset { get; set; }  = 0;
-    public uint PowerLimitMw { get; set; }
+    [ObservableProperty] private uint _powerLimitMw;
+    // [ObservableProperty] private double _powerLimitW = 0;
+    //
+    // partial void OnPowerLimitMwChanged(uint oldValue, uint newValue)
+    // {
+    //     PowerLimitW = PowerLimitMw / 1000f;
+    // }
     
     [JsonIgnore]
-    public FanCurve? FanCurve => String.IsNullOrEmpty(_fanCurveName) ? null : MainWindowViewModel.FanCurvesList.First(x => x.Name == _fanCurveName).BaseFanCurve;
+    public FanCurve? FanCurve => String.IsNullOrEmpty(FanCurveName) ? null : MainWindowViewModel.FanCurvesList.First(x => x.Name == FanCurveName).BaseFanCurve;
 
-
+    // partial void OnFanCurveNameChanged(string? oldValue, string? newValue)
+    // {
+    //     OnPropertyChanged(nameof(FanCurve));
+    // }
+    //
+    [ObservableProperty]
     [JsonProperty("fanCurveName")]
     private string _fanCurveName;
 

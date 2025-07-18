@@ -8,6 +8,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Avalonia.Media;
 using Newtonsoft.Json;
 using ssprea_nvidia_control.Models;
 using ssprea_nvidia_control.Models.Exceptions;
@@ -93,6 +94,8 @@ namespace ssprea_nvidia_control.NVML;
     
         public uint GpuTemperature => GetTemperature().Item2;
         public uint GpuPowerUsage => GetPowerUsage().Item2;
+        public double GpuPowerUsageW => GpuPowerUsage/1000f;
+        public string GpuPowerUsageWFormatted => GpuPowerUsageW.ToString("0.00");
     
         public NvmlPStates GpuPState => GetPState().Item2;
 
@@ -101,6 +104,10 @@ namespace ssprea_nvidia_control.NVML;
         public uint SmClockCurrent => GetCurrentClock(NvmlClockType.NVML_CLOCK_SM).Item2;
         public uint VideoClockCurrent => GetCurrentClock(NvmlClockType.NVML_CLOCK_VIDEO).Item2;
     
+        public IImmutableSolidColorBrush TemperatureIndicatorColorBrush =>
+            GpuTemperature < TemperatureThresholdThrottle ? Brushes.White : (GpuTemperature < TemperatureThresholdSlowdown ? Brushes.Orange : Brushes.Red  );
+        
+        
         public uint PowerLimitCurrentMw => GetPowerLimitCurrent().Item2;
         public uint PowerLimitMinMw => GetPowerLimitConstraints().Item2;
         public uint PowerLimitMaxMw => GetPowerLimitConstraints().Item3;
@@ -114,6 +121,14 @@ namespace ssprea_nvidia_control.NVML;
         public ulong MemoryTotal => GetMemoryUsage().Item2.Total;
         public ulong MemoryFree => GetMemoryUsage().Item2.Free;
         public ulong MemoryUsed => GetMemoryUsage().Item2.Used;
+
+        public double MemoryTotalMB => MemoryTotal / 1000000f;
+        public double MemoryFreeMB => MemoryFree / 1000000f;
+        public double MemoryUsedMB => MemoryUsed / 1000000f;
+
+        public string MemoryTotalMBFormatted => MemoryTotalMB.ToString("0.00");
+        public string MemoryFreeMBFormatted => MemoryFreeMB.ToString("0.00");
+        public string MemoryUsedMBFormatted => MemoryUsedMB.ToString("0");
         
         public NvmlUtilization GpuUtilization => GetUtilization().Item2;
         

@@ -1,0 +1,477 @@
+<Grid ColumnDefinitions="*,*"
+          RowDefinitions="*,8*,8*,12*,2*"
+          x:Name="MainGrid"
+          
+          xmlns="https://github.com/avaloniaui"
+          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+          xmlns:vm="using:ssprea_nvidia_control.ViewModels"
+          xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+          xmlns:models="clr-namespace:ssprea_nvidia_control.Models"
+          mc:Ignorable="d" d:DesignWidth="795" d:DesignHeight="950"
+          xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
+          xmlns:liveChartsCore="clr-namespace:LiveChartsCore;assembly=LiveChartsCore"
+          x:DataType="vm:MainWindowViewModel"
+          
+          >
+        
+            <Grid.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key='Light'>
+                    <SolidColorBrush x:Key='BackgroundBrush'>GhostWhite</SolidColorBrush>
+                    <SolidColorBrush x:Key='BorderBrush'>DimGray</SolidColorBrush>
+                    <SolidColorBrush x:Key='ForegroundBrush'>Black</SolidColorBrush>
+                    <SolidColorBrush x:Key='SectionBackgroundBrush'>LightGray</SolidColorBrush>
+                    <SolidColorBrush x:Key='SelectionColor'>#C191FF</SolidColorBrush>
+                    <SolidColorBrush x:Key='TextColor'>Black</SolidColorBrush>
+                </ResourceDictionary>
+                <ResourceDictionary x:Key='Dark'>
+                    <SolidColorBrush x:Key='BackgroundBrush'>#262626</SolidColorBrush>
+                    <SolidColorBrush x:Key='BorderBrush'>#1e1f22</SolidColorBrush>
+                    <SolidColorBrush x:Key='ForegroundBrush'>#8b8d92</SolidColorBrush>
+                    <SolidColorBrush x:Key='SectionBackgroundBrush'>#2b2d30</SolidColorBrush>
+                    <SolidColorBrush x:Key='SelectionColor'>#C191FF</SolidColorBrush>
+                    <SolidColorBrush x:Key='TextColor'>#BDBDBD</SolidColorBrush>
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
+    </Grid.Resources>
+    
+    <Grid.Styles>
+        <Style Selector="Border">
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+            <Setter Property="Margin" Value="8" />
+            <Setter Property="CornerRadius" Value="3" />
+            <Setter Property="BorderThickness" Value="3" />
+        </Style>
+        <Style Selector="Grid">
+            <Setter Property="Background" Value="{DynamicResource SectionBackgroundBrush}" />
+            <Setter Property="TextElement.Foreground" Value="{DynamicResource ForegroundBrush}" />
+        </Style>
+        <Style Selector="Grid#MainGrid">
+            <Setter Property="Background" Value="{DynamicResource BackgroundBrush}" />
+            <Setter Property="TextElement.Foreground" Value="{DynamicResource ForegroundBrush}" />
+        </Style>
+        <Style Selector="Grid#PlOCDivider">
+            <Setter Property="Background" Value="{DynamicResource BackgroundBrush}" />
+            <Setter Property="TextElement.Foreground" Value="{DynamicResource ForegroundBrush}" />
+        </Style>
+        <Style Selector="RadioButton">
+            
+            <Setter Property="TextElement.Foreground" Value="{DynamicResource ForegroundBrush}" />
+        </Style>
+        
+        <Style Selector="Button">
+            <Setter Property="Background" Value="{DynamicResource BackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+            <Setter Property="Margin" Value="3" />
+            <Setter Property="TextElement.Foreground" Value="{DynamicResource ForegroundBrush}" />
+        </Style>
+        
+        
+    </Grid.Styles>
+    
+    
+   
+        
+        
+        
+        <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="0" >
+            
+            <CheckBox Grid.Column="0" x:Name="EnableAutoApplyCheckbox" IsChecked="{Binding IsAutoApplyProfileChecked}" Content="Default profile: "/>
+            <ComboBox x:Name="AutoApplyProfileComboBox" 
+                      SelectedItem="{Binding SelectedAutoApplyOcProfile}"
+                      ItemsSource="{Binding OcProfilesList}"
+                      IsEnabled="{Binding #EnableAutoApplyCheckbox.IsChecked}"
+                      Grid.Column="1" 
+                      SelectedIndex="1"
+                      VerticalAlignment="Bottom" 
+                      HorizontalAlignment="Stretch"
+            >
+                    
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <Label Content="{Binding Name} " />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            
+            <Button Grid.Column="2" Content="Save" FontSize="10" Command="{Binding SaveAutoApplyProfile}" CommandParameter="{Binding #AutoApplyProfileComboBox.SelectedItem}"/>
+            <Button Grid.Column="1" Background="Brown" FontSize="11" Content="Stop fan curve" Command="{Binding KillFanCurveProcessCommand}" />
+
+        </StackPanel>
+        
+        <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="1" >
+            <CheckBox Grid.Column="0" x:Name="EnableStartupApplyCheckbox" IsChecked="{Binding IsStartupProfileChecked}" Content="Startup profile: "/>
+            <ComboBox x:Name="StartupApplyProfileComboBox" 
+                      SelectedItem="{Binding SelectedStartupProfile}"
+                      ItemsSource="{Binding OcProfilesList}"
+                      IsEnabled="{Binding #EnableStartupApplyCheckbox.IsChecked}"
+                      Grid.Column="1" 
+                      SelectedIndex="1"
+                      VerticalAlignment="Bottom" 
+                      HorizontalAlignment="Stretch"
+            >
+                    
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <Label Content="{Binding Name} " />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            
+            <Button Grid.Column="2" Content="Save" FontSize="10" Command="{Binding SaveStartupProfile}" CommandParameter="{Binding #StartupApplyProfileComboBox.SelectedItem}"/>
+
+        </StackPanel>
+            <!-- <Menu Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" ZIndex="9" Background="White" Foreground="Black"> -->
+        <!--     <MenuItem Header="File" ZIndex="10" Foreground="Black" Background="Green" BorderBrush="Aqua"> -->
+        <!--         <MenuItem Header="New" /> -->
+        <!--         <MenuItem Header="Open" /> -->
+        <!--     </MenuItem> -->
+        <!-- </Menu> -->
+            <Button Grid.Row="0" Grid.Column ="1" Command="{Binding OpenSettingsWindowCommand}"  HorizontalAlignment="Right" Background="Gray">
+                <Image Source="avares://ssprea-nvidia-control/Assets/icons/gear-icon.png"/>
+            </Button>
+        
+        <Border Grid.Row="1" Grid.Column="0">
+            <Grid
+                
+                RowDefinitions="*,*,*,*,*,*"
+                ColumnDefinitions="*,*,*">
+
+                <!-- clock info  -->
+                <Label Grid.Row="0" Grid.Column="1"  VerticalAlignment="Top" HorizontalAlignment="Center">Clock info</Label>
+                <Label Grid.Row="1" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Center">Pstate</Label>
+                <Label Grid.Row="2" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Center">Gpu</Label>
+                <Label Grid.Row="3" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Center">Mem</Label>
+                <Label Grid.Row="4" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Center">Sm</Label>
+                <Label Grid.Row="5" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Center">Video</Label>
+                
+                <SelectableTextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SelectedGpu.GpuPState, Mode=OneWay, FallbackValue=Select gpu first}" VerticalAlignment="Top" HorizontalAlignment="Center"></SelectableTextBlock>
+                <SelectableTextBlock Grid.Row="2" Grid.Column="1" Text="{Binding SelectedGpu.GpuClockCurrent, Mode=OneWay, FallbackValue=Select gpu first}" VerticalAlignment="Top" HorizontalAlignment="Center"></SelectableTextBlock>
+                <SelectableTextBlock Grid.Row="3" Grid.Column="1" Text="{Binding SelectedGpu.MemClockCurrent, Mode=OneWay, FallbackValue=Select gpu first}" VerticalAlignment="Top" HorizontalAlignment="Center"></SelectableTextBlock>
+                <SelectableTextBlock Grid.Row="4" Grid.Column="1" Text="{Binding SelectedGpu.SmClockCurrent, Mode=OneWay, FallbackValue=Select gpu first}" VerticalAlignment="Top" HorizontalAlignment="Center"></SelectableTextBlock>
+                <SelectableTextBlock Grid.Row="5" Grid.Column="1" Text="{Binding SelectedGpu.VideoClockCurrent, Mode=OneWay, FallbackValue=Select gpu first}" VerticalAlignment="Top" HorizontalAlignment="Center"></SelectableTextBlock>
+
+                <Label Grid.Row="2" Grid.Column="2" VerticalAlignment="Top" HorizontalAlignment="Left">MHz</Label>
+                <Label Grid.Row="3" Grid.Column="2" VerticalAlignment="Top" HorizontalAlignment="Left">MHz</Label>
+                <Label Grid.Row="4" Grid.Column="2" VerticalAlignment="Top" HorizontalAlignment="Left">MHz</Label>
+                <Label Grid.Row="5" Grid.Column="2" VerticalAlignment="Top" HorizontalAlignment="Left">MHz</Label>
+                
+            </Grid>
+        </Border>
+            
+        
+        <Border Grid.Row="2"
+                Grid.Column="0"
+            
+        >
+            <Grid 
+                    
+                    RowDefinitions="*,*,*,*,*,*"
+                    ColumnDefinitions="2*,4*,*">
+                <!-- usage -->
+                <Label Grid.Row="0" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Right">Usage</Label>
+                <Label Grid.Row="1" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Left">Gpu%</Label>
+                <Label Grid.Row="2" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Left">Mem ctrl%</Label>
+                <Label Grid.Row="3" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Left">Memory</Label>
+                <!-- <Label Grid.Row="4" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Left">Decoder</Label> -->
+                <Label Grid.Row="5" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Left">Power</Label>
+
+
+                
+                <ProgressBar Grid.Row="1" Grid.Column="1" Minimum="0" Maximum="100" Value="{Binding SelectedGpu.UtilizationCore}" VerticalAlignment="Stretch"/>
+                <SelectableTextBlock Grid.Row="1" Grid.Column="2" Text="{Binding SelectedGpu.UtilizationCore, FallbackValue=Select gpu first}" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+                
+                <SelectableTextBlock Grid.Row="2" Grid.Column="2" Text="{Binding SelectedGpu.UtilizationMemCtl, FallbackValue=Select gpu first}" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+                <ProgressBar Grid.Row="2" Grid.Column="1" Minimum="0" Maximum="100" Value="{Binding SelectedGpu.UtilizationMemCtl}" VerticalAlignment="Stretch"/>
+                
+                
+                <SelectableTextBlock Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding SelectedGpu.MemoryUsageString, FallbackValue=Select gpu first}" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+                
+                <Label Grid.Row="5" Grid.Column="1" Content="{Binding SelectedGpu.GpuPowerUsage, FallbackValue=Select gpu first}" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+                <Label Grid.Row="5" Grid.Column="2" Content="mw" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+            </Grid>
+        </Border>
+            
+        
+        <Grid x:Name="PlOCDivider" RowDefinitions="*,*"
+              Grid.Row="3"
+              Grid.Column="0"
+              >
+            <Border 
+                    
+                
+            >
+                <Grid RowDefinitions="*,*,*,*,*">
+                      <!-- power limit  -->
+                    <Label Grid.Row="0" Grid.Column="0"  VerticalAlignment="Top" HorizontalAlignment="Center">Power Limit</Label>
+                    <Label Grid.Row="1" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Left">Current:</Label>
+                    <Label Grid.Row="2" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Left">Default:</Label>
+                    <Label Grid.Row="3" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Left">Max:</Label>
+                    <Label Grid.Row="4" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Left">Min:</Label>
+
+                    <Label Grid.Row="1" Grid.Column="0" Content="{Binding SelectedGpu.PowerLimitCurrentMw, Mode=OneWay, FallbackValue=Select gpu first}" VerticalAlignment="Top" HorizontalAlignment="Center"></Label>
+                    <Label Grid.Row="2" Grid.Column="0" Content="{Binding SelectedGpu.PowerLimitDefaultMw, Mode=OneWay, FallbackValue=Select gpu first}" VerticalAlignment="Top" HorizontalAlignment="Center"></Label>
+                    <Label Grid.Row="3" Grid.Column="0" Content="{Binding SelectedGpu.PowerLimitMaxMw, Mode=OneWay, FallbackValue=Select gpu first}" VerticalAlignment="Top" HorizontalAlignment="Center"></Label>
+                    <Label Grid.Row="4" Grid.Column="0" Content="{Binding SelectedGpu.PowerLimitMinMw, Mode=OneWay, FallbackValue=Select gpu first}" VerticalAlignment="Top" HorizontalAlignment="Center"></Label>
+
+                    <Label Grid.Row="1" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Right">mW</Label>
+                    <Label Grid.Row="2" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Right">mW</Label>
+                    <Label Grid.Row="3" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Right">mW</Label>
+                    <Label Grid.Row="4" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Right">mW</Label>
+                </Grid>
+            </Border>
+            
+             <Border Grid.Row="1"
+                    
+                
+            >
+                <Grid RowDefinitions="*,*,*,*,*,*"
+                      ColumnDefinitions="*,*,*"
+                      >
+                      <!-- profile preview  -->
+                    <Label Grid.Row="0" Grid.Column="1"  VerticalAlignment="Top" HorizontalAlignment="Center">Profile preview</Label>
+                    <Label Grid.Row="1" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Left">Clock Offset:</Label>
+                    <Label Grid.Row="2" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Left">Memory offset:</Label>
+                    <Label Grid.Row="3" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Left">Video offset:</Label>
+                    <Label Grid.Row="4" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Left">Power Limit:</Label>
+                    <Label Grid.Row="5" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Left">Fan Curve:</Label>
+
+                    <Label Grid.Row="1" Grid.Column="1" Content="{Binding SelectedOcProfile.GpuClockOffset, Mode=OneWay, FallbackValue=Select profile first}" VerticalAlignment="Top" HorizontalAlignment="Center"></Label>
+                    <Label Grid.Row="2" Grid.Column="1" Content="{Binding SelectedOcProfile.MemClockOffset, Mode=OneWay, FallbackValue=Select profile first}" VerticalAlignment="Top" HorizontalAlignment="Center"></Label>
+                    <Label Grid.Row="4" Grid.Column="1" Content="{Binding SelectedOcProfile.PowerLimitMw, Mode=OneWay, FallbackValue=Select profile first}" VerticalAlignment="Top" HorizontalAlignment="Center"></Label>
+                    <Label Grid.Row="5" Grid.Column="1" Content="{Binding SelectedOcProfile.FanCurve.Name, Mode=OneWay, FallbackValue=Select profile first}" VerticalAlignment="Top" HorizontalAlignment="Center"></Label>
+
+                    <Label Grid.Row="1" Grid.Column="2" VerticalAlignment="Top" HorizontalAlignment="Left">MHz</Label>
+                    <Label Grid.Row="2" Grid.Column="2" VerticalAlignment="Top" HorizontalAlignment="Left">MHz</Label>
+                    <Label Grid.Row="3" Grid.Column="2" VerticalAlignment="Top" HorizontalAlignment="Left">MHz</Label>
+                    <Label Grid.Row="4" Grid.Column="2" VerticalAlignment="Top" HorizontalAlignment="Left">mW</Label>
+                </Grid>
+            </Border>
+            
+        </Grid>
+        
+            
+        <Border Grid.Row="4"
+                Grid.Column="0"
+                
+            
+        >
+            <Grid ColumnDefinitions="8*,*,*,*"
+                  
+                  
+                  >
+                <!-- oc profiles  -->
+                <Label Grid.Row="0"
+                       Grid.Column="0"
+                       ZIndex="2"
+                       VerticalAlignment="Top"
+                       HorizontalAlignment="Center"
+                       FontSize="12"
+                       
+                       >OC Profiles</Label>
+                
+                <ComboBox SelectedItem="{Binding SelectedOcProfile}"
+                          ItemsSource="{Binding OcProfilesList}" 
+                          Grid.Column="0" 
+                          SelectedIndex="1"
+                          VerticalAlignment="Bottom" 
+                          HorizontalAlignment="Stretch"
+                          >
+                    
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <Label Content="{Binding Name} " />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+
+                <Button  Grid.Column="1" Command="{Binding OcProfileApplyCommand}" VerticalAlignment="Center" HorizontalAlignment="Stretch" FontWeight="Bold">✓
+                    <!--     <Border  -->
+                    <!--         Width="18"  -->
+                    <!--         Height="18"  -->
+                    <!--         Margin="0" -->
+                    <!--         Background="White"  -->
+                    <!--         CornerRadius="4" -->
+                    <!--         HorizontalAlignment="Center"  -->
+                    <!--         VerticalAlignment="Center"/> -->
+                    <!-- </Button.Content> -->
+                </Button>
+                <Button  Grid.Column="3" Command="{Binding OpenNewProfileWindowCommand}" VerticalAlignment="Center" HorizontalAlignment="Center" >+</Button>
+                <Button  Grid.Column="2" Command="{Binding DeleteOcProfile}" VerticalAlignment="Center" HorizontalAlignment="Center" >-</Button>
+
+            </Grid>
+        </Border>
+        <!-- SECONDA COLONNA -->
+        
+        
+        <Border Grid.Row="1"
+                Grid.Column="1"
+            
+        >
+            <Grid RowDefinitions="*,*,*,*,*"
+                  ColumnDefinitions="*,*,*"
+                  >
+                <!-- temp -->
+                <Label Grid.Row="0" Grid.Column="1"  VerticalAlignment="Top" HorizontalAlignment="Center">Temp</Label>
+                
+                <Label Grid.Row="1" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Left">Current</Label>
+                <Label Grid.Row="2" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Left">Throttle</Label>
+                <Label Grid.Row="3" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Left">Slowdown</Label>
+                <Label Grid.Row="4" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Left">Shutdown</Label>
+
+                <Label Grid.Row="1" Grid.Column="1" Content="{Binding SelectedGpu.GpuTemperature, Mode=OneWay, FallbackValue=Select gpu first}" VerticalAlignment="Top" HorizontalAlignment="Center"></Label>
+                <Label Grid.Row="2" Grid.Column="1" Content="{Binding SelectedGpu.TemperatureThresholdThrottle, Mode=OneWay, FallbackValue=Select gpu first}" VerticalAlignment="Top" HorizontalAlignment="Center"></Label>
+                <Label Grid.Row="3" Grid.Column="1" Content="{Binding SelectedGpu.TemperatureThresholdSlowdown, Mode=OneWay, FallbackValue=Select gpu first}" VerticalAlignment="Top" HorizontalAlignment="Center"></Label>
+                <Label Grid.Row="4" Grid.Column="1" Content="{Binding SelectedGpu.TemperatureThresholdShutdown, Mode=OneWay, FallbackValue=Select gpu first}" VerticalAlignment="Top" HorizontalAlignment="Center"></Label>
+                
+                <Label Grid.Row="1" Grid.Column="2" VerticalAlignment="Top" HorizontalAlignment="Left">°C</Label>
+                <Label Grid.Row="2" Grid.Column="2" VerticalAlignment="Top" HorizontalAlignment="Left">°C</Label>
+                <Label Grid.Row="3" Grid.Column="2" VerticalAlignment="Top" HorizontalAlignment="Left">°C</Label>
+                <Label Grid.Row="4" Grid.Column="2" VerticalAlignment="Top" HorizontalAlignment="Left">°C</Label>
+            </Grid>
+            
+            
+        </Border>
+        
+        <Border Grid.Row="2"
+                Grid.Column="1"
+            
+        >
+            
+            
+            <Grid 
+                    
+                    RowDefinitions="*,*,*,*,*">
+                        <!-- fan -->
+                        <ComboBox IsEnabled="False" ItemsSource="{Binding SelectedGpu.FansList}" Grid.Row="0" Grid.Column="0" SelectedIndex="1" VerticalAlignment="Center" HorizontalAlignment="Right">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Label Content="{Binding Name} " />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+
+                        <Label Grid.Row="0" Grid.Column="0"  VerticalAlignment="Top" HorizontalAlignment="Center">Fan</Label>
+                        <Label Grid.Row="1" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Left">Current</Label>
+                        <Label Grid.Row="2" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Left">Target</Label>
+
+                        <Label Content="{Binding SelectedGpuFan.CurrentSpeed, FallbackValue=Select fan first }" Grid.Row="1" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Center"></Label>
+                        <Label Content="{Binding SelectedGpuFan.TargetSpeed, FallbackValue=Select fan first }" Grid.Row="2" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Center"></Label>
+
+                        <RadioButton Command="{Binding FanRadioButtonClicked}" CommandParameter="0" GroupName="FanControlMode" IsChecked="True" Grid.Row="3" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Left">Auto</RadioButton>
+                        <RadioButton Command="{Binding FanRadioButtonClicked}" CommandParameter="1" GroupName="FanControlMode" Grid.Row="3" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Center">Manual</RadioButton>
+
+
+
+                        <Slider x:Name="FanSpeedSlider" IsVisible="{Binding FanSpeedSliderVisible}" Minimum="0" Maximum="100" Grid.Row="4" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="150"></Slider>
+                        <Label Grid.Row="4" Grid.Column="0" IsVisible="{Binding FanSpeedSliderVisible}"  VerticalAlignment="Center" HorizontalAlignment="Center" Content="{Binding #FanSpeedSlider.Value , StringFormat=\{0:0\}}"></Label>
+
+                        <Button Grid.Row="4" Grid.Column="0" Command="{Binding FanApplyButtonClick}" CommandParameter="{Binding #FanSpeedSlider.Value}" VerticalAlignment="Center" HorizontalAlignment="Right">Apply</Button>
+            </Grid>
+            
+            
+        </Border>
+        
+        
+        
+        <Border Grid.Row="3"
+                Grid.Column="1"
+            
+        >
+            
+            <Grid
+                    RowDefinitions="*,10*,*"
+                    ColumnDefinitions="*,*,*">
+                        <!-- fan curve  -->
+                        <Label Grid.Row="0" Grid.Column="1"  VerticalAlignment="Top" HorizontalAlignment="Center">Fan Curve</Label>
+                        <!-- <Label Grid.Row="1" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Left">Current:</Label> -->
+                        <!-- <Label Grid.Row="2" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Left">Default:</Label> -->
+                        <!-- <Label Grid.Row="3" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Left">Max:</Label> -->
+                        <!-- <Label Grid.Row="4" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Left">Min:</Label> -->
+
+
+
+
+                        <!-- <Canvas Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3"   -->
+                        <!--         Margin="10"  -->
+                        <!--         DataContext="{Binding FanCurvesList}" -->
+                        <!--         Background="LightGray" -->
+                        <!--          -->
+                        <!--         > -->
+                        <!--      -->
+                        <!--     <Line Stroke="Chartreuse" StartPoint="10,10" EndPoint="40,40" StrokeThickness="2"/> -->
+                        <!-- -->
+                        <!-- -->
+                        <!--     <Canvas.DataTemplates> -->
+                        <!--         <DataTemplate DataType="{x:Type models:FanCurve}"> -->
+                        <!--         </DataTemplate> -->
+                        <!--     </Canvas.DataTemplates> -->
+                        <!--      -->
+                        <!-- </Canvas> -->
+
+                        <!-- <DataGrid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Margin="20" ItemsSource="{Binding FanCurvesList}"  -->
+                        <!--           AutoGenerateColumns="True" IsReadOnly="True"  -->
+                        <!--           GridLinesVisibility="All" -->
+                        <!--           BorderThickness="1" BorderBrush="Gray"> -->
+                        <!-- </DataGrid> -->
+
+                        <lvc:CartesianChart Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3"
+                            Series="{Binding SelectedFanCurve.CurvePointsSeries}">
+                        </lvc:CartesianChart>
+
+
+
+                        <ComboBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
+                                  HorizontalAlignment="Stretch"
+                                  ItemsSource="{Binding FanCurvesList}"
+                                  SelectedItem="{Binding SelectedFanCurve}">
+
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Label Content="{Binding Name}"/>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+
+
+                        <Button Grid.Row="2" Grid.Column="2" HorizontalAlignment="Left" >Edit</Button>
+                        <Button Grid.Row="2" Grid.Column="2" HorizontalAlignment="Right" Command="{Binding OpenFanCurveEditorCommand}">New</Button>
+            </Grid>
+            
+        </Border>
+        
+        
+        
+        
+        <Border Grid.Column="1"
+                Grid.Row="4"
+            
+        >
+            
+            <Grid
+                    
+                ColumnDefinitions="*,*,*">
+                <!-- gpu select -->
+                <Label ZIndex="2" Grid.Column="1" FontSize="12" VerticalAlignment="Top" HorizontalAlignment="Center">Select GPU</Label>
+                <ComboBox SelectedItem="{Binding SelectedGpu}"
+                          ItemsSource="{Binding NvmlService.GpuList}" 
+                          Grid.Column="0" 
+                          Grid.ColumnSpan="2"
+                          
+                          SelectedIndex="1" VerticalAlignment="Bottom" HorizontalAlignment="Stretch">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <Label Content="{Binding Name} " />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+                <Button  Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right">GPU Info</Button>
+            </Grid>
+            
+        </Border>
+        
+        
+    </Grid>

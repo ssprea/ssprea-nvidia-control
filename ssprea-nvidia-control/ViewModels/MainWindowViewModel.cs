@@ -4,12 +4,17 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Avalonia.Controls;
+using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
+using LiveChartsCore.SkiaSharpView;
+using LiveChartsCore.SkiaSharpView.Painting;
+using LiveChartsCore.SkiaSharpView.Painting.Effects;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Dto;
 using MsBox.Avalonia.Enums;
@@ -18,6 +23,7 @@ using ssprea_nvidia_control.Models;
 using ssprea_nvidia_control.NVML;
 using Newtonsoft.Json.Linq;
 using ReactiveUI;
+using SkiaSharp;
 using ssprea_nvidia_control.Models.Exceptions;
 
 
@@ -26,6 +32,22 @@ namespace ssprea_nvidia_control.ViewModels;
 public partial class MainWindowViewModel : ViewModelBase  
 
 {
+    #region Interaction Definitions
+    public Interaction<NewOcProfileWindowViewModel, OcProfile?> ShowOcProfileDialog { get; }
+    public Interaction<FanCurveEditorWindowViewModel, FanCurveViewModel?> ShowFanCurveEditorDialog { get; }
+    public Interaction<SudoPasswordRequestWindowViewModel, SudoPassword?> ShowSudoPasswordRequestDialog { get; }
+    public Interaction<SettingsMainWindowViewModel, object?> ShowSettingsDialog { get; }
+    #endregion
+    
+    
+    #region ICommand definitions
+    public ICommand OpenNewProfileWindowCommand { get; private set; }
+    public ReactiveCommand<FanCurveViewModel?,Unit> OpenFanCurveEditorCommand { get; private set; }
+    public ICommand OpenSudoPasswordPromptCommand { get; private set; }
+    public ICommand OpenSettingsWindowCommand { get; private set; }
+
+    #endregion
+    
     [ObservableProperty] private NvmlGpu? _selectedGpu;
     [ObservableProperty] private NvmlGpuFan? _selectedGpuFan;
     [ObservableProperty] private OcProfile? _selectedOcProfile;
@@ -34,6 +56,62 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty] private bool _isAutoApplyProfileChecked = false;
     [ObservableProperty] private OcProfile? _selectedStartupProfile;
     [ObservableProperty] private bool _isStartupProfileChecked = false;
+    [ObservableProperty] private string _currentNvidiaDriverVersion = "Unknown";
+    [ObservableProperty] private bool _isFanCurveIncludedInProfileChecked = true;
+    [ObservableProperty] private uint _tunerCurrentCoreOffset = 0;
+    [ObservableProperty] private uint _tunerCurrentMemoryOffset = 0;
+    [ObservableProperty] private uint _tunerCurrentPowerLimitMw = 0;
+    [ObservableProperty] private string _tunerCurrentProfileName = "";
+    [ObservableProperty] private string _currentlyLoadedGuiName = "Default";
+    
+    private uint _selectedFanRadioButton = 0;
+    private bool FanSpeedSliderVisible => _selectedFanRadioButton == 1;
+    
+    
+    //Axes styles for fan curve graph graph
+    public Axis[] FanCurveGraphXAxes { get; set; } =
+        [
+            new Axis
+            {
+                Name = "Temperature",
+                NamePaint = new SolidColorPaint(SKColors.AntiqueWhite), 
+                NameTextSize = 10,
+
+                LabelsPaint = new SolidColorPaint(SKColors.AntiqueWhite), 
+                TextSize = 10,
+
+                SeparatorsPaint = new SolidColorPaint(SKColors.LightSlateGray) { StrokeThickness = 2 }  
+            }
+        ];
+
+    public Axis[] FanCurveGraphYAxes { get; set; } =
+        [
+            new Axis
+                {
+                    Name = "Fan Speed",
+                    NamePaint = new SolidColorPaint(SKColors.AntiqueWhite), 
+                    NameTextSize = 10,
+
+                    LabelsPaint = new SolidColorPaint(SKColors.AntiqueWhite), 
+                    TextSize = 10,
+
+                    SeparatorsPaint = new SolidColorPaint(SKColors.LightSlateGray) 
+                    { 
+                        StrokeThickness = 2, 
+                        PathEffect = new DashEffect([ 3, 3 ]) 
+                    } 
+                }
+        ];
+    
+    
+    public uint TunerCurrentPowerLimitW => TunerCurrentPowerLimitMw / 1000;
+
+    
+
+    partial void OnTunerCurrentPowerLimitMwChanged(uint oldValue, uint newValue)
+    {
+        OnPropertyChanged(nameof(TunerCurrentPowerLimitW));
+    }
 
     private const string DEFAULT_SERVICE_DATA_PATH = "/etc/snvctl";
 
@@ -44,7 +122,184 @@ public partial class MainWindowViewModel : ViewModelBase
     
     private bool _autoApplyProfileLoaded = false;
 
-    public async Task CheckAndLoadStartupProfile()
+    public MainWindowViewModel()
+    {
+        
+        if (!Directory.Exists(Program.DefaultDataPath))
+            Directory.CreateDirectory(Program.DefaultDataPath);
+        
+        if (!Directory.Exists(Program.DefaultDataPath+"/temp"))
+            Directory.CreateDirectory(Program.DefaultDataPath+"/temp");
+        
+        foreach(var f in Directory.GetFiles(Program.DefaultDataPath+"/temp"))
+            File.Delete(f);
+        
+        LoadFanCurvesFromFile();
+        
+        
+            
+        
+        ShowOcProfileDialog = new Interaction<NewOcProfileWindowViewModel, OcProfile?>();
+        OpenNewProfileWindowCommand = ReactiveCommand.CreateFromTask(async () =>
+        {
+            var ocProfileWindowViewModel = new NewOcProfileWindowViewModel(this);
+
+            var result = await ShowOcProfileDialog.Handle(ocProfileWindowViewModel);
+            
+            if (result !=null)
+                OcProfilesList.Add(result);
+
+            await _profilesFileManager.UpdateProfilesFileAsync();
+        });
+        
+        
+        ShowFanCurveEditorDialog = new Interaction<FanCurveEditorWindowViewModel, FanCurveViewModel?>();
+        OpenFanCurveEditorCommand = ReactiveCommand.CreateFromTask<FanCurveViewModel?>(async (toEdit) =>
+        {
+            var fanCurveEditorWindowViewModel = new FanCurveEditorWindowViewModel(toEdit);
+
+            var result = await ShowFanCurveEditorDialog.Handle(fanCurveEditorWindowViewModel);
+
+            if (result == null)
+                return;
+            
+            if (FanCurvesList.Any(x => x.Name == result.Name))
+            {
+                //c'è già una curve con lo stesso nome, aggiorna quella
+                FanCurveViewModel existingCurve = FanCurvesList.First(x => x.Name == result.Name);
+                existingCurve.BaseFanCurve.CurvePoints = result.BaseFanCurve.CurvePoints;
+            }
+            else
+            {
+                //sennò aggiungila
+                FanCurvesList.Add(result);
+            } 
+            
+            
+            await FanCurvesFileManager.SaveFanCurvesAsync(Program.DefaultDataPath+"/fan_curves.json", FanCurvesList.Select(x => x.BaseFanCurve));
+
+            
+            
+            //UpdateProfilesFile("profiles.json");
+        });
+        
+        ShowSudoPasswordRequestDialog = new Interaction<SudoPasswordRequestWindowViewModel, SudoPassword?>();
+        OpenSudoPasswordPromptCommand = ReactiveCommand.CreateFromTask(async () =>
+        {
+            var sudoPasswordRequestWindowViewModel = new SudoPasswordRequestWindowViewModel();
+
+            var result = await ShowSudoPasswordRequestDialog.Handle(sudoPasswordRequestWindowViewModel);
+
+
+
+            if (result != null)
+            {
+                SudoPasswordManager.CurrentPassword = result;
+            }
+            _sudoPasswordDialogClosed.Set();
+
+        });
+        
+        
+        
+        ShowSettingsDialog = new Interaction<SettingsMainWindowViewModel, object?>();
+        OpenSettingsWindowCommand = ReactiveCommand.CreateFromTask(async () =>
+        {
+            var settingsWindowViewModel = new SettingsMainWindowViewModel();
+
+            var result = await ShowSettingsDialog.Handle(settingsWindowViewModel);
+            
+            
+        });
+        
+        LoadOcProfileToTuner(new OcProfile("",0,0,SelectedGpu?.PowerLimitMinMw ?? 100000, (FanCurve?)null));
+    }
+
+    public void ResetTunerOptions()
+    {
+        LoadOcProfileToTuner(new OcProfile("",0,0,SelectedGpu?.PowerLimitMinMw ?? 100000, (FanCurve?)null));
+    }
+
+    public async Task DeleteSelectedFanProfile()
+    {
+        if (SelectedFanCurve is null)
+        {
+            await MessageBoxManager.GetMessageBoxStandard("Error","No fan profile selected!",ButtonEnum.Ok,Icon.Warning).ShowAsync();
+            return;
+        }
+
+        var boxResult = await MessageBoxManager.GetMessageBoxStandard("Are you sure?",
+            $"Are you sure you want to delete fan profile \"{SelectedFanCurve.Name}\"?", ButtonEnum.YesNo,
+            Icon.Question).ShowAsync();
+
+        if (boxResult == ButtonResult.Yes)
+        {
+            FanCurvesList.Remove(SelectedFanCurve);
+            if (FanCurvesList.Any())
+                SelectedFanCurve = FanCurvesList.First();
+            await FanCurvesFileManager.SaveFanCurvesAsync(Program.DefaultDataPath+"/fan_curves.json", FanCurvesList.Select(x => x.BaseFanCurve));
+            
+        }
+        
+        
+    }
+
+    public async Task SaveProfileAndUpdateFileAsync(OcProfile? profile)
+    {
+        if (profile != null)
+        {
+            if (!IsFanCurveIncludedInProfileChecked)
+                profile.FanCurveName = "";
+            if (OcProfilesList.Any(x => x.Name == profile.Name))
+            {
+                OcProfilesList.Remove(OcProfilesList.First(x => x.Name == profile.Name));
+            }
+            
+            OcProfilesList.Add(profile);
+        }
+            
+
+        await _profilesFileManager.UpdateProfilesFileAsync();
+    }
+
+    public async Task SaveTempTunerSettingsToProfileAndUpdateFileAsync()
+    {
+        await SaveProfileAndUpdateFileAsync(new OcProfile(TunerCurrentProfileName, TunerCurrentCoreOffset,
+            TunerCurrentMemoryOffset, TunerCurrentPowerLimitMw, SelectedFanCurve?.BaseFanCurve));
+    }
+    
+    private void LoadOcProfileToTuner(OcProfile? ocProfile)
+    {
+        
+        if (ocProfile == null)
+            return;
+
+        
+
+        TunerCurrentCoreOffset = ocProfile.GpuClockOffset;
+        TunerCurrentMemoryOffset = ocProfile.MemClockOffset;
+        TunerCurrentPowerLimitMw = ocProfile.PowerLimitMw;
+        TunerCurrentProfileName = ocProfile.Name;
+        
+        if (FanCurvesList.Any(x => x.Name == ocProfile.FanCurveName))
+            SelectedFanCurve = FanCurvesList.First(x => x.Name == ocProfile.FanCurveName);
+        
+    }
+    
+    public async Task LoadSelectedOcProfileToTuner()
+    {
+        if (SelectedOcProfile is null)
+        {
+            await MessageBoxManager.GetMessageBoxStandard("Error","No profile selected!",ButtonEnum.Ok,Icon.Warning).ShowAsync();
+            return;
+        }
+        
+        LoadOcProfileToTuner(SelectedOcProfile);
+    }
+
+    
+    
+    private async Task CheckAndLoadStartupProfile()
     {
         
         
@@ -55,6 +310,8 @@ public partial class MainWindowViewModel : ViewModelBase
             var startupProfileName = OcProfile.FromJson(await File.ReadAllTextAsync(DEFAULT_SERVICE_DATA_PATH+"/profile.json"))?.Name;
             
             SelectedStartupProfile = OcProfilesList.FirstOrDefault(x => x.Name == startupProfileName);
+            SelectedOcProfile = SelectedStartupProfile;
+            await LoadSelectedOcProfileToTuner();
         }
         
         
@@ -109,16 +366,22 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         //File.WriteAllText(Program.DefaultDataPath + "/AutoApplyProfile.json", JsonSerializer.Serialize(GpuProfilePairString));
 
-        if (!IsAutoApplyProfileChecked || profile is null)
+        if (!IsAutoApplyProfileChecked)
         {
             File.Delete(Program.DefaultDataPath + "/AutoApplyProfile.json");
             Console.WriteLine("No default profile selected, disabled auto apply.");
             return;
         }
         
+        if (profile is null)
+        {
+            MessageBoxManager.GetMessageBoxStandard("Warning", "No profile selected!", ButtonEnum.Ok, Icon.Warning);
+            return;
+        }
+        
         if (SelectedGpu == null)
         {
-            Console.WriteLine("No gpu selected.");
+            MessageBoxManager.GetMessageBoxStandard("Warning", "No gpu selected!", ButtonEnum.Ok, Icon.Warning);
             return;
         }
         
@@ -135,19 +398,26 @@ public partial class MainWindowViewModel : ViewModelBase
             return;
         
         //if the checkbox is disabled, stop the service
-        if (!IsStartupProfileChecked || profile is null)
+        if (!IsStartupProfileChecked)
         {
             Utils.Systemd.StopSystemdService("snvctl.service");
             
             Console.WriteLine("No startup profile selected, stopped snvctl.service");
             return;
         }
+
+        if (profile is null)
+        {
+            MessageBoxManager.GetMessageBoxStandard("Warning", "No profile selected!", ButtonEnum.Ok, Icon.Warning);
+            return;
+        }
         
         if (SelectedGpu == null)
         {
-            Console.WriteLine("No gpu selected.");
+            MessageBoxManager.GetMessageBoxStandard("Warning", "No gpu selected!", ButtonEnum.Ok, Icon.Warning);
             return;
         }
+        
         
         
         //check if directory exists
@@ -182,7 +452,7 @@ ExecStart=/bin/bash -c 'snvctl --forceOpen -g {SelectedGpu.DeviceIndex} -op {DEF
 WantedBy=default.target";
 
         //write to temp file and copy to service data path
-        File.WriteAllText(Program.DefaultDataPath + "/temp/snvctl.service", service);
+        await File.WriteAllTextAsync(Program.DefaultDataPath + "/temp/snvctl.service", service);
         Utils.Files.CopySudo(Program.DefaultDataPath + "/temp/snvctl.service", "/etc/systemd/system/snvctl.service");
         
         //enable service
@@ -215,130 +485,49 @@ WantedBy=default.target";
     {
         Program.KillFanCurveProcess();
     }
-    
-    
-    // public ObservableCollection<FanCurveViewModel> FanCurvesVMList
-    // {
-    //     get
-    //     {
-    //         var fanCurves = new ObservableCollection<FanCurveViewModel>();
-    //         foreach (var fanCurve in FanCurvesList)
-    //         {
-    //             fanCurves.Add(new FanCurveViewModel(fanCurve));
-    //         }
-    //         return fanCurves;
-    //     }
-    // }
-
 
     
-    
-    public Interaction<NewOcProfileWindowViewModel, OcProfile?> ShowOcProfileDialog { get; }
-    public Interaction<FanCurveEditorWindowViewModel, FanCurveViewModel?> ShowFanCurveEditorDialog { get; }
-    public Interaction<SudoPasswordRequestWindowViewModel, SudoPassword?> ShowSudoPasswordRequestDialog { get; }
 
-    private uint _selectedFanRadioButton = 0;
-    
-
-    private bool FanSpeedSliderVisible => _selectedFanRadioButton == 1;
-    
-    public ICommand OpenNewProfileWindowCommand { get; private set; }
-    public ICommand OpenFanCurveEditorCommand { get; private set; }
-    public ICommand OpenSudoPasswordPromptCommand { get; private set; }
-
-
-    public MainWindowViewModel()
+    public void OpenDefaultBrowserToUrl(string destUrl)
     {
-        if (!Directory.Exists(Program.DefaultDataPath))
-            Directory.CreateDirectory(Program.DefaultDataPath);
-        
-        if (!Directory.Exists(Program.DefaultDataPath+"/temp"))
-            Directory.CreateDirectory(Program.DefaultDataPath+"/temp");
-        
-        foreach(var f in Directory.GetFiles(Program.DefaultDataPath+"/temp"))
-            File.Delete(f);
-        
-        LoadFanCurvesFromFile();
-        
-        
-            
-        
-        ShowOcProfileDialog = new Interaction<NewOcProfileWindowViewModel, OcProfile?>();
-        OpenNewProfileWindowCommand = ReactiveCommand.CreateFromTask(async () =>
-        {
-            var ocProfileWindowViewModel = new NewOcProfileWindowViewModel(this);
-
-            var result = await ShowOcProfileDialog.Handle(ocProfileWindowViewModel);
-            
-            if (result !=null)
-                OcProfilesList.Add(result);
-
-            await _profilesFileManager.UpdateProfilesFileAsync();
-        });
-        
-        
-        ShowFanCurveEditorDialog = new Interaction<FanCurveEditorWindowViewModel, FanCurveViewModel?>();
-        OpenFanCurveEditorCommand = ReactiveCommand.CreateFromTask(async () =>
-        {
-            var fanCurveEditorWindowViewModel = new FanCurveEditorWindowViewModel();
-
-            var result = await ShowFanCurveEditorDialog.Handle(fanCurveEditorWindowViewModel);
-
-            if (result == null)
-                return;
-            
-            if (FanCurvesList.Any(x => x.Name == result.Name))
-            {
-                //c'è già una curve con lo stesso nome, aggiorna quella
-                FanCurveViewModel existingCurve = FanCurvesList.First(x => x.Name == result.Name);
-                existingCurve.BaseFanCurve.CurvePoints = result.BaseFanCurve.CurvePoints;
-            }
-            else
-            {
-                //sennò aggiungila
-                FanCurvesList.Add(result);
-            } 
-            
-            
-            await FanCurvesFileManager.SaveFanCurvesAsync(Program.DefaultDataPath+"/fan_curves.json", FanCurvesList.Select(x => x.BaseFanCurve));
-
-            
-            
-
-            //UpdateProfilesFile("profiles.json");
-        });
-        
-        ShowSudoPasswordRequestDialog = new Interaction<SudoPasswordRequestWindowViewModel, SudoPassword?>();
-        OpenSudoPasswordPromptCommand = ReactiveCommand.CreateFromTask(async () =>
-        {
-            var sudoPasswordRequestWindowViewModel = new SudoPasswordRequestWindowViewModel();
-
-            var result = await ShowSudoPasswordRequestDialog.Handle(sudoPasswordRequestWindowViewModel);
-
-
-
-            if (result != null)
-            {
-                SudoPasswordManager.CurrentPassword = result;
-            }
-            _sudoPasswordDialogClosed.Set();
-
-        });
-        
-        
-          
+#if LINUX
+        Process.Start(new ProcessStartInfo("xdg-open", destUrl));
+#else
+        Process.Start(destUrl);
+#endif
     }
-
     
 
-    public void DeleteOcProfile()
+    public async Task DeleteOcProfile()
     {
-        if (SelectedOcProfile is not null)
+        if (SelectedOcProfile is null)
+        {
+            await MessageBoxManager.GetMessageBoxStandard("Error", "No profile selected!", ButtonEnum.Ok, Icon.Warning).ShowAsync();
+            return;
+        }
+        
+        var boxResult = await MessageBoxManager.GetMessageBoxStandard("Are you sure?", $"Are you sure you want to delete profile \"{SelectedOcProfile.Name}\"?", ButtonEnum.YesNo, Icon.Question).ShowAsync();
+
+        if (boxResult == ButtonResult.Yes)
+        {
             OcProfilesList.Remove(SelectedOcProfile);
-        FanCurvesFileManager.SaveFanCurves(Program.DefaultDataPath+"/fan_curves.json", FanCurvesList.Select(x => x.BaseFanCurve));
+            await _profilesFileManager.UpdateProfilesFileAsync();
+        }
+        
+    }
+
+    public async Task OcProfileApplyCommand()
+    {
+        await OcProfileParameterApplyCommand(SelectedOcProfile);
+    }
+
+    public async Task ApplyTempTunerSettings()
+    {
+        await OcProfileParameterApplyCommand(new OcProfile(TunerCurrentProfileName, TunerCurrentCoreOffset,
+            TunerCurrentMemoryOffset, TunerCurrentPowerLimitMw, SelectedFanCurve?.BaseFanCurve));
     }
     
-    public async Task OcProfileApplyCommand()
+    private async Task OcProfileParameterApplyCommand(OcProfile? ocProfile)
     {
         if (SelectedGpu is null)
         {
@@ -350,9 +539,6 @@ WantedBy=default.target";
         if (!await RequestSudoPasswordDialogIfNeededAsync())
             return;
         
-        // trycommand:
-        // try
-        // {
         KillFanCurveProcessCommand();
 
         if (Utils.Systemd.IsSystemdServiceRunning("snvctl.service"))
@@ -369,7 +555,7 @@ WantedBy=default.target";
                     
                     ContentTitle = "snvctl.service detected!",
                     ContentMessage = "snvctl.service (startup profile) is currently active, applying a fan profile with another instance already running can cause problems. \n" +
-                                     "NOTE: if you decide to stop the service, you will have to re-enable the startup profile or run 'sudo systemctl start snvctl.service'",
+                                     "WARNING: if you decide to stop the service, you will have to re-enable the startup profile or run 'sudo systemctl start snvctl.service'",
                     Topmost = true,
                     CanResize = false,
                     Icon = Icon.Warning,
@@ -379,7 +565,6 @@ WantedBy=default.target";
             );
 
             var result = await box.ShowAsync();
-            // Console.WriteLine("msgbox result: "+result);
 
             switch (result)
             {
@@ -397,49 +582,11 @@ WantedBy=default.target";
             }
         }
         
-        SelectedOcProfile?.Apply(SelectedGpu);
+        ocProfile?.Apply(SelectedGpu);
         _autoApplyProfileLoaded = true;
-        // }catch (SudoPasswordExpiredException)
-        // {
-        //     //sudo password expired, reprompt
-        //     if (await RequestSudoPasswordDialogIfNeededAsync());
-        //     goto trycommand;
-        //
-        // }
+        
     }
 
-    // public void RetryApplyIfPasswordRequested()
-    // {
-    //     tryApply:
-    //     try
-    //     {
-    //         OcProfileApplyCommand();
-    //         return;
-    //     }
-    //     catch (SudoPasswordExpiredException)
-    //     {
-    //         goto tryApply;
-    //     }
-    // }
-    
-    // public void OcProfileApplyCommand(NvmlGpu? gpu, OcProfile? profile)
-    // {
-    //     if (gpu is null)
-    //     {
-    //         Console.WriteLine("No gpu selected!");
-    //         return;
-    //     }
-    //
-    //
-    //     try
-    //     {
-    //         profile?.Apply(gpu);
-    //     }catch (SudoPasswordExpiredException)
-    //     {
-    //         //sudo password expired, reprompt
-    //         OpenSudoPasswordPromptCommand.Execute(null);
-    //     }
-    // }
     
 
     bool CanOcProfileApplyCommand()
@@ -492,13 +639,21 @@ WantedBy=default.target";
         NvmlService.Initialize();
         
         await CheckAndLoadStartupProfile();
+        
+        if (SelectedGpu is null && NvmlService.GpuList.Any())
+            SelectedGpu = NvmlService.GpuList.First(); 
+    }
+
+    public void LoadProfileToTuner()
+    {
+        
     }
 
     /// <summary>
     /// Check nvidia drivers and cli tool
     /// </summary>
     /// <returns>0: success, 1: no nvidia driver, 2: nvidia driver version less than 555, 3: cli tool not installed </returns>
-    public async Task<ushort> CheckDependencies()
+    private async Task<ushort> CheckDependencies()
     {
         //check nvidia drivers installed
 
@@ -510,9 +665,9 @@ WantedBy=default.target";
 
         var output = await vercmd.StandardOutput.ReadToEndAsync();
         var lines = output.Split('\n');
-        var driverVersion = lines[2].Split(':')[1].Trim();
+        CurrentNvidiaDriverVersion = lines[2].Split(':')[1].Trim();
 
-        Console.WriteLine($"Detected NVidia driver version: {driverVersion}");
+        Console.WriteLine($"Detected NVidia driver version: {CurrentNvidiaDriverVersion}");
 
         //check cli tool
 
@@ -536,7 +691,7 @@ WantedBy=default.target";
                 var box = MessageBoxManager.GetMessageBoxStandard("Nvidia driver not detected!",
                     "Please make sure you installed Nvidia proprietary driver version 555+", ButtonEnum.Ok, Icon.Error);
 
-                var result = await box.ShowAsync();
+                await box.ShowAsync();
                 Environment.Exit(1);
                 break;
             case 2:
