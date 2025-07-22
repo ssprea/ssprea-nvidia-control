@@ -15,6 +15,7 @@ This project was created mainly to learn Avalonia UI, so it might not be perfect
 - Auto apply profile at startup
 - Power limit management
 - Works on Wayland and X11
+- Highly customizable (See ![Customization wiki page](https://github.com/ssprea/ssprea-nvidia-control/wiki/Customization))
 
 ## Screenshots
 
