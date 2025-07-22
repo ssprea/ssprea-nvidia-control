@@ -59,7 +59,10 @@ If you encounter any problems please open an [issue](https://github.com/ssprea/s
 Currently these features are known to not work on Windows:
   - Startup profile
 
-To run it, download the source code and build manually and run it as an administrator. 
+To run it, download the source code and build manually, then add the snvctl CLI tool exe to the PATH environment variable.
+After that you can just run it as an administrator.
+
+NOTE: Windows is not the main target platform for this tool so features might be delayed and there might be many bugs.
 
 -------------------------
 
