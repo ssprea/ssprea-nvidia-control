@@ -18,7 +18,7 @@ deb: publish
 	mkdir -p bin/Release/deb/ssprea-nvidia-control-cli_1.1.0-1_amd64/usr/local/bin
 	mkdir -p bin/Release/deb/ssprea-nvidia-control-cli_1.1.0-1_amd64/usr/share/ssprea-nvidia-control-cli
 	mkdir -p bin/Release/deb/ssprea-nvidia-control-cli_1.1.0-1_amd64/DEBIAN
-	echo -e 'Package: ssprea-nvidia-control-cli\nVersion: 1.1.0\nDepends: dotnet-runtime-9.0\nArchitecture: amd64\nMaintainer: ssprea <ssprea@noreply.users.github.com>\nDescription: A CLI tool to manage NVidia GPUs overclock, fans and power limit. Supports both Wayland and X11' > bin/Release/deb/ssprea-nvidia-control-cli_1.1.0-1_amd64/DEBIAN/control
+	echo -e 'Package: ssprea-nvidia-control-cli\nVersion: 1.1.0\nDepends: dotnet-runtime-9.0\nArchitecture: amd64\nMaintainer: ssprea <ssprea@proton.me>\nDescription: A CLI tool to manage NVidia GPUs overclock, fans and power limit. Supports both Wayland and X11' > bin/Release/deb/ssprea-nvidia-control-cli_1.1.0-1_amd64/DEBIAN/control
 	
 	cp -r bin/Release/net9.0/publish/* bin/Release/deb/ssprea-nvidia-control-cli_1.1.0-1_amd64/usr/share/ssprea-nvidia-control-cli
 	ln -sf /usr/share/ssprea-nvidia-control-cli/ssprea-nvidia-control-cli bin/Release/deb/ssprea-nvidia-control-cli_1.1.0-1_amd64/usr/local/bin/snvctl

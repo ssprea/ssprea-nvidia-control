@@ -73,7 +73,7 @@ public partial class MainWindowViewModel : ViewModelBase
         [
             new Axis
             {
-                Name = "Temperature",
+                Name = "Temperature (°C)",
                 NamePaint = new SolidColorPaint(SKColors.AntiqueWhite), 
                 NameTextSize = 10,
 
@@ -88,7 +88,7 @@ public partial class MainWindowViewModel : ViewModelBase
         [
             new Axis
                 {
-                    Name = "Fan Speed",
+                    Name = "Fan Speed (%)",
                     NamePaint = new SolidColorPaint(SKColors.AntiqueWhite), 
                     NameTextSize = 10,
 
@@ -176,6 +176,8 @@ public partial class MainWindowViewModel : ViewModelBase
             }
 
             SelectedFanCurve = result;
+            SelectedFanCurve?.UpdateSeries();
+            
             OnPropertyChanged(nameof(SelectedFanCurve));
             await FanCurvesFileManager.SaveFanCurvesAsync(Program.DefaultDataPath+"/fan_curves.json", FanCurvesList.Select(x => x.BaseFanCurve));
 
@@ -372,10 +374,8 @@ public partial class MainWindowViewModel : ViewModelBase
     
     partial void OnSelectedFanCurveChanged(FanCurveViewModel? value)
     {
-        //Console.WriteLine(SelectedFanCurve.Name);
-        SelectedFanCurve!.UpdateSeries();
-        // _fanCurveGraphSeries.Clear();
-        // _fanCurveGraphSeries.Add(SelectedFanCurve.CurvePointsSeries);
+        
+        SelectedFanCurve?.UpdateSeries();
     }
 
     public void SaveAutoApplyProfile(OcProfile? profile)
