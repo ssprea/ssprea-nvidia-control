@@ -173,9 +173,10 @@ public partial class MainWindowViewModel : ViewModelBase
             {
                 //sennò aggiungila
                 FanCurvesList.Add(result);
-            } 
-            
-            
+            }
+
+            SelectedFanCurve = result;
+            OnPropertyChanged(nameof(SelectedFanCurve));
             await FanCurvesFileManager.SaveFanCurvesAsync(Program.DefaultDataPath+"/fan_curves.json", FanCurvesList.Select(x => x.BaseFanCurve));
 
             
@@ -215,6 +216,11 @@ public partial class MainWindowViewModel : ViewModelBase
         LoadOcProfileToTuner(new OcProfile("",0,0,SelectedGpu?.PowerLimitMinMw ?? 100000, (FanCurve?)null));
     }
 
+    public async Task ShowComingSoonPopupAsync(string featureName)
+    {
+        await MessageBoxManager.GetMessageBoxStandard("Coming soon!", $"{featureName}: Coming Soon!",ButtonEnum.Ok,Icon.Forbidden).ShowAsync();
+    }
+    
     public void ResetTunerOptions()
     {
         LoadOcProfileToTuner(new OcProfile("",0,0,SelectedGpu?.PowerLimitMinMw ?? 100000, (FanCurve?)null));
@@ -258,12 +264,18 @@ public partial class MainWindowViewModel : ViewModelBase
             OcProfilesList.Add(profile);
         }
             
-
+        
         await _profilesFileManager.UpdateProfilesFileAsync();
     }
 
     public async Task SaveTempTunerSettingsToProfileAndUpdateFileAsync()
     {
+        if (string.IsNullOrEmpty(TunerCurrentProfileName) || string.IsNullOrWhiteSpace(TunerCurrentProfileName))
+        {
+            await MessageBoxManager.GetMessageBoxStandard("Warning","Plase input a name for the new profile",ButtonEnum.Ok,Icon.Warning).ShowAsync();
+            return;
+        }
+        
         await SaveProfileAndUpdateFileAsync(new OcProfile(TunerCurrentProfileName, TunerCurrentCoreOffset,
             TunerCurrentMemoryOffset, TunerCurrentPowerLimitMw, SelectedFanCurve?.BaseFanCurve));
     }
@@ -324,12 +336,16 @@ public partial class MainWindowViewModel : ViewModelBase
     /// <returns>true if password success, false if cancel</returns>
     private async Task<bool> RequestSudoPasswordDialogIfNeededAsync()
     {
+#if WINDOWS
+        return true;
+#else
         if (SudoPasswordManager.CurrentPassword is null)
         {
             OpenSudoPasswordPromptCommand.Execute(null);
             await Task.Run(() => _sudoPasswordDialogClosed.WaitOne());
         }
         return SudoPasswordManager.CurrentPassword is not null;
+#endif
     }
     
     
@@ -401,8 +417,10 @@ public partial class MainWindowViewModel : ViewModelBase
         if (!IsStartupProfileChecked)
         {
             Utils.Systemd.StopSystemdService("snvctl.service");
+            Utils.Systemd.DisableSystemdService("snvctl.service");
             
             Console.WriteLine("No startup profile selected, stopped snvctl.service");
+            SelectedStartupProfile = null;
             return;
         }
 
@@ -444,12 +462,14 @@ public partial class MainWindowViewModel : ViewModelBase
         string service = $@"
 [Unit]
 Description=Set the Nvidia GPU power profile
-After=power-profiles-daemon.service
+
 [Service]
-Type=simple
-ExecStart=/bin/bash -c 'snvctl --forceOpen -g {SelectedGpu.DeviceIndex} -op {DEFAULT_SERVICE_DATA_PATH}/profile.json -fp {DEFAULT_SERVICE_DATA_PATH}/curve.json'  &
+Type=exec
+ExecStart=/usr/local/bin/snvctl --forceOpen -g {SelectedGpu.DeviceIndex} -op {DEFAULT_SERVICE_DATA_PATH}/profile.json -fp {DEFAULT_SERVICE_DATA_PATH}/curve.json
+
 [Install]
-WantedBy=default.target";
+WantedBy=multi-user.target
+";
 
         //write to temp file and copy to service data path
         await File.WriteAllTextAsync(Program.DefaultDataPath + "/temp/snvctl.service", service);
@@ -458,10 +478,8 @@ WantedBy=default.target";
         //enable service
         Utils.Systemd.RunSystemdCommand("daemon-reload");
         Utils.Systemd.EnableSystemdService("snvctl.service");
-        Utils.Systemd.StartSystemdService("snvctl.service");
-
-        
-
+        if (Utils.Systemd.StartSystemdService("snvctl.service"))
+            SelectedStartupProfile = SelectedOcProfile;
     }
     
     //private readonly FanCurvesFileManager _fanCurvesFileManager = new("fan_curves.json");
@@ -524,7 +542,7 @@ WantedBy=default.target";
     public async Task ApplyTempTunerSettings()
     {
         await OcProfileParameterApplyCommand(new OcProfile(TunerCurrentProfileName, TunerCurrentCoreOffset,
-            TunerCurrentMemoryOffset, TunerCurrentPowerLimitMw, SelectedFanCurve?.BaseFanCurve));
+            TunerCurrentMemoryOffset, TunerCurrentPowerLimitMw, IsFanCurveIncludedInProfileChecked ? SelectedFanCurve?.BaseFanCurve : null));
     }
     
     private async Task OcProfileParameterApplyCommand(OcProfile? ocProfile)
@@ -656,7 +674,7 @@ WantedBy=default.target";
     private async Task<ushort> CheckDependencies()
     {
         //check nvidia drivers installed
-
+# if LINUX
         var vercmd = Utils.General.RunCliCommand("nvidia-smi", "--version", true,false,true);
         if (vercmd is null || vercmd.ExitCode != 0)
             return 1;
@@ -668,7 +686,9 @@ WantedBy=default.target";
         CurrentNvidiaDriverVersion = lines[2].Split(':')[1].Trim();
 
         Console.WriteLine($"Detected NVidia driver version: {CurrentNvidiaDriverVersion}");
-
+#endif
+        //TODO: add windows driver check
+        
         //check cli tool
 
         var clicmd = Utils.General.RunCliCommand("snvctl", "-d", true,false,true);

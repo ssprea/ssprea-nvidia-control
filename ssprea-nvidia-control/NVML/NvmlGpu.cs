@@ -463,7 +463,7 @@ namespace ssprea_nvidia_control.NVML;
             
             try
             {
-                var tempPath = Program.DefaultDataPath + "/temp/fanCurve-" + fanCurve.Name +
+                var tempPath = Program.DefaultDataPath + "/temp/fanCurve-" + fanCurve.Name.Replace(" ","_").Replace("/","_").Replace("\\","_").Replace(":","_") +
                                DateTime.Now.ToString("yyyyMMddHHmmss")+".json";
                 File.WriteAllText(tempPath,JsonConvert.SerializeObject(fanCurve, Formatting.None));
                 

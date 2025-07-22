@@ -12,6 +12,11 @@ public static class Systemd
         return General.RunSudoCliCommand("systemctl","stop "+serviceName)?.ExitCode == 0;
     }
     
+    public static bool DisableSystemdService(string serviceName)
+    {
+        return General.RunSudoCliCommand("systemctl","disable "+serviceName)?.ExitCode == 0;
+    }
+    
     public static bool StartSystemdService(string serviceName)
     {
         return General.RunSudoCliCommand("systemctl","start "+serviceName)?.ExitCode == 0;

@@ -54,6 +54,7 @@ public partial class OcProfile
     //
     [ObservableProperty]
     [JsonProperty("fanCurveName")]
+    [JsonIgnore]
     private string _fanCurveName;
 
     public bool Apply(NvmlGpu targetGpu)

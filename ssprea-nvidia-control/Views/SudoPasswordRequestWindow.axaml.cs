@@ -18,25 +18,30 @@ public partial class SudoPasswordRequestWindow  : ReactiveWindow<SudoPasswordReq
     {
         InitializeComponent();
         DataContext = ViewModel;
+
+        PasswordBox.GotFocus += PasswordBoxGotFocusOrKeyDownHandler;
+        PasswordBox.KeyDown += PasswordBoxGotFocusOrKeyDownHandler;
+        
+        
         // This line is needed to make the previewer happy (the previewer plugin cannot handle the following line).
         if (Design.IsDesignMode) return;
             
         this.WhenActivated(action => action(ViewModel!.SavePasswordCommand.Subscribe(Close)));
         
-        // PasswordBox.WhenValueChanged(textBox => textBox.Text).Subscribe(text =>
-        // {
-        //     if (PasswordBox.Text != "")
-        //         PasswordBox.Text = "";
-        //     if (string.IsNullOrEmpty(text) || string.IsNullOrWhiteSpace(text))
-        //         return;
-        //     
-        //     Console.WriteLine("textchanged: "+text);
-        //     ViewModel!.CurrentSudoPassword.Password.AppendChar(char.Parse(text));
-        // });
+    }
+    
+
+    private void PasswordBoxGotFocusOrKeyDownHandler(object? sender, EventArgs e)
+    {
+        CapsLockWarningLabel.IsVisible = Utils.General.IsCapsLockEnabled();
+        
+        if (ViewModel is not null && e is KeyEventArgs keyArgs && keyArgs.Key == Key.Enter)
+            ViewModel.ReturnIfPasswordCorrect();
+        
     }
 
-
-    
-
-    
+    private void WindowOpenedHandler(object? sender, EventArgs e)
+    {
+        PasswordBox.Focus();
+    }
 }

@@ -82,17 +82,26 @@ public class Program
         
         if (OcProfileJson != string.Empty)
         {
-            var ocProfile = OcProfile.FromJson(File.ReadAllText(OcProfileJson));
-
-            if (ocProfile is null)
+            if (File.Exists(OcProfileJson))
             {
-                Console.WriteLine("Invalid oc profile json");
-                Environment.Exit(1);
+                var ocProfile = OcProfile.FromJson(File.ReadAllText(OcProfileJson));
+
+                if (ocProfile is null)
+                {
+                    Console.WriteLine("Invalid oc profile json");
+                    Environment.Exit(1);
+                }
+            
+                CoreOffset = (int)ocProfile.GpuClockOffset;
+                MemoryOffset = (int)ocProfile.GpuClockOffset;
+                PowerLimit = ocProfile.PowerLimitMw;
+                
+            }
+            else
+            {
+                Console.WriteLine("OC profile file does not exist at path: "+OcProfileJson+" Skipping...");
             }
             
-            CoreOffset = (int)ocProfile.GpuClockOffset;
-            MemoryOffset = (int)ocProfile.GpuClockOffset;
-            PowerLimit = ocProfile.PowerLimitMw;
         }
         
         
@@ -138,16 +147,22 @@ public class Program
                 Console.WriteLine("Another instance of this program is already running. Exiting...");
                 Environment.Exit(1);
             }
-            
-            
-            var curve = JsonConvert.DeserializeObject<FanCurve>(File.ReadAllText(FanSpeedCurveJson));
-            if (curve is null)
+
+            if (File.Exists(FanSpeedCurveJson))
             {
-                Console.WriteLine("Fan curve not valid.");
-                return;
+                var curve = JsonConvert.DeserializeObject<FanCurve>(File.ReadAllText(FanSpeedCurveJson));
+                if (curve is null)
+                {
+                    Console.WriteLine("Fan curve not valid.");
+                    return;
+                }
+                Thread t = new Thread(() => FanSpeedProfileThread(500,curve,cancelTokenSource.Token));
+                t.Start();
             }
-            Thread t = new Thread(() => FanSpeedProfileThread(500,curve,cancelTokenSource.Token));
-            t.Start();
+            else
+            {
+                Console.WriteLine("Fan curve file does not exist at path: "+FanSpeedCurveJson+" Skipping...");
+            }
         }
 
     }

@@ -52,7 +52,7 @@ public static class General
     
     public static Process? RunCliCommand(string file, string args, bool waitForExit = true,bool redirectStdin = true,bool redirectStdout = false)
     {
-            
+#if LINUX
         var psi = new ProcessStartInfo();
         psi.FileName = "/usr/bin/bash";
         psi.Arguments = $"-c \""+file+" "+args+"\"";
@@ -60,22 +60,44 @@ public static class General
         psi.RedirectStandardOutput = redirectStdout;
         psi.UseShellExecute = false;
         psi.CreateNoWindow = true;
+#elif WINDOWS
 
+        var psi = new ProcessStartInfo();
+        psi.FileName = file;
+        psi.Arguments = args;
+        psi.RedirectStandardInput = redirectStdin;
+        psi.RedirectStandardOutput = redirectStdout;
+        psi.UseShellExecute = false;
+        psi.CreateNoWindow = true;
+#endif
         Console.WriteLine("Executing: "+psi.FileName+" "+psi.Arguments);
-            
-            
-        var process = Process.Start(psi);
-            
-        
-        if (waitForExit)
-        {
-            if (!process.WaitForExit(4000))
-                return null;
-        }
 
-        Console.WriteLine(process.Id);
-        //var output = process.StandardOutput.ReadToEnd();
+        try
+        {
+            var process = Process.Start(psi);
+            if (waitForExit && process is not null)
+            {
+                if (!process.WaitForExit(4000))
+                    return null;
+            }
+
+            Console.WriteLine(process.Id);
+            //var output = process.StandardOutput.ReadToEnd();
             
-        return process;
+            return process;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    public static bool IsCapsLockEnabled()
+    {
+#if WINDOWS
+        return false; //TODO: windows support
+#elif LINUX
+        return bool.Parse((RunCliCommand("xset -q | sed -n 's/^.*Caps Lock:\\s*\\(\\S*\\).*$/\\1/p'", "",redirectStdin:false, redirectStdout: true)?.StandardOutput.ReadToEnd() ?? "off").Replace("off","false").Replace("on","true") );
+#endif
     }
 }

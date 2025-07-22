@@ -22,4 +22,5 @@ public partial class FanCurveEditorWindow : ReactiveWindow<FanCurveEditorWindowV
     }
 
 
+    
 }

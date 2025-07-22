@@ -3,68 +3,84 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="using:ssprea_nvidia_control.ViewModels"
-        mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="450"
-        Width="400" Height="450"
+        mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="480"
+        Width="400" Height="470"
         x:Class="ssprea_nvidia_control.Views.FanCurveEditorWindow"
         x:DataType="vm:FanCurveEditorWindowViewModel"
-        Title="FanCurveEditorWindow" Background="Gray">
-    <Grid Margin="10"
-              RowDefinitions="*,10*,*"
-              >
-            
-                <Label HorizontalAlignment="Center" VerticalAlignment="Top">Create new fan curve</Label>
-            
-                <Grid Grid.Row="1"
-                      RowDefinitions="*,12*,*"
-                      ColumnDefinitions="2*,8*,*">
-            
+        Title="FanCurveEditorWindow" 
+        Background="Transparent"
+        WindowStartupLocation="CenterScreen"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="NoChrome"
+        SystemDecorations="None"
+        CanResize="False"
+        
+        
+        >
+    
+    <Design.DataContext>
+        <!-- This only sets the DataContext for the previewer in an IDE,    
+             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+        <vm:FanCurveEditorWindowViewModel/>
+    </Design.DataContext>
+    
+    <Border CornerRadius="30" Background="DarkSlateGray" BorderBrush="DarkSlateBlue" BorderThickness="3">
+        <DockPanel Margin="10"
+        >
                 
+            <Label DockPanel.Dock="Top" HorizontalAlignment="Center"  VerticalAlignment="Top" FontWeight="Bold">FAN CURVE EDITOR</Label>
                 
-                    <Label Grid.Column="0"  Grid.Row="0" VerticalAlignment="Center">Name:</Label>
-                    <TextBox Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" Text="{Binding CurrentFanCurve.BaseFanCurve.Name}"></TextBox>
-                    
-                    <Label Grid.Column="0"  Grid.Row="1" VerticalAlignment="Center">Points:</Label>
+            
+            <DockPanel DockPanel.Dock="Top"  >
+                
+                <Label DockPanel.Dock="Left" VerticalAlignment="Center">Name: </Label>
+                <TextBox Margin="2" CornerRadius="10" HorizontalAlignment="Stretch" Text="{Binding CurrentFanCurve.BaseFanCurve.Name}"></TextBox>
+                
+            </DockPanel>
+            
+            
+            <Label DockPanel.Dock="Top" VerticalAlignment="Stretch" Content=" "/>
+            <Border DockPanel.Dock="Top" BorderBrush="DimGray" BorderThickness="2" Padding="4" CornerRadius="10" >
+                
+                <DockPanel >
+                          
                     
                     <!-- <GridSplitter Grid.Column="1" Grid.Row="1" Background="Chartreuse" ResizeDirection="Rows"/> -->
                     
-                    <DataGrid x:Name="PointsDataGrid" Grid.Row="1" Grid.Column="1"  Margin="20" ItemsSource="{Binding CurrentFanCurve.BaseFanCurve.CurvePoints}" 
-                              AutoGenerateColumns="True" IsReadOnly="False" 
+                    <DataGrid DockPanel.Dock="Top" x:Name="PointsDataGrid"   ItemsSource="{Binding CurrentFanCurve.BaseFanCurve.CurvePoints}" 
+                              IsReadOnly="False" 
                               GridLinesVisibility="All"
                               CanUserReorderColumns="True"
                               CanUserResizeColumns="True"
                               CanUserSortColumns="False"
+                              HorizontalAlignment="Stretch"
+                              VerticalAlignment="Stretch"
+                              BorderThickness="3" 
+                              MaxHeight="280"
+                              BorderBrush="Black"
                               
-                              BorderThickness="1" BorderBrush="DimGray">
+                              >
                               
-                        <!-- <DataGrid.Columns> -->
-                        <!--     <DataGridTextColumn Header="Temperature" Binding="{Binding Temperature}"/> -->
-                        <!--     <DataGridTextColumn Header="Fan %" Binding="{Binding FanSpeed}" /> -->
-                        <!-- </DataGrid.Columns> -->
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Temperature (°C)"  Binding="{Binding Temperature}"/>
+                            <DataGridTextColumn Header="Fan Speed (%)" Binding="{Binding FanSpeed}" />
+                        </DataGrid.Columns>
                         
                     </DataGrid>
                     
-                    <Button Grid.Row="1" Grid.Column="2" Command="{Binding AddPointCommand}" HorizontalAlignment="Right" VerticalAlignment="Top">+</Button>
-                    <Button Grid.Row="1" Grid.Column="2" Command="{Binding RemovePointCommand}" CommandParameter="{Binding #PointsDataGrid.SelectedItem}" HorizontalAlignment="Right" >-</Button>
+                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Left" Spacing="30" Margin="3"> 
+                        <Button CornerRadius="20" VerticalAlignment="Top" Command="{Binding AddPointCommand}" >Add point</Button>
+                        <Button CornerRadius="20" VerticalAlignment="Top" Command="{Binding RemovePointCommand}" CommandParameter="{Binding #PointsDataGrid.SelectedItem}" >Delete point</Button>
+                    </StackPanel>
                     
-                    
-                    <Button Grid.Row="2" Grid.Column="0" Command="{Binding SaveCurveCommand}"  HorizontalAlignment="Right">Save</Button>
-                    <Button Grid.Row="2" Grid.Column="2" Command="{Binding CancelCommand}" CommandParameter="" VerticalAlignment="Bottom" HorizontalAlignment="Left">Cancel</Button>
-                    
-                    <!-- <Slider Value="{Binding GpuClockOffsetSliderValue}" Minimum="0" Maximum="500" Grid.Column="1" Grid.Row="1"></Slider> -->
-                    <!-- <Slider Value="{Binding MemClockOffsetSliderValue}" Minimum="0" Maximum="500" Grid.Column="1" Grid.Row="2"></Slider> -->
-                    <!-- <Slider Value="{Binding PowerLimitSliderValue}" Minimum="0" Maximum="{Binding SelectedGpu.PowerLimitMaxMw, FallbackValue=0}" Grid.Column="1"  Grid.Row="3"></Slider> -->
-                    <!-- <ComboBox Grid.Column="1"  Grid.Row="4"></ComboBox> -->
-                    
-                    <!-- <Label Grid.Column="2"  Grid.Row="0" HorizontalAlignment="Center" Content="{Binding Name}"></Label> -->
-                    <!-- <Label Grid.Column="2"  Grid.Row="1" HorizontalAlignment="Center" Content="{Binding GpuClockOffsetSliderValue, StringFormat=\{0:0\}}"></Label> -->
-                    <!-- <Label Grid.Column="2"  Grid.Row="2" HorizontalAlignment="Center" Content="{Binding MemClockOffsetSliderValue, StringFormat=\{0:0\}}"></Label> -->
-                    <!-- <Label Grid.Column="2"  Grid.Row="3" HorizontalAlignment="Center" Content="{Binding PowerLimitSliderValue, StringFormat=\{0:0\}}"></Label> -->
+                </DockPanel>
+            </Border>  
 
-                    
-                
-                
-                </Grid>
+            <DockPanel DockPanel.Dock="Bottom">
+                <Button CornerRadius="20" VerticalAlignment="Bottom" DockPanel.Dock="Right" Command="{Binding SaveCurveCommand}"  >Save</Button>
+                <Button CornerRadius="20"  VerticalAlignment="Bottom" DockPanel.Dock="Left" Command="{Binding CancelCommand}" >Cancel</Button>
+            </DockPanel>
             
-
-        </Grid>
+            </DockPanel>
+        </Border>
 </Window>

@@ -12,45 +12,18 @@ public partial class SudoPasswordRequestWindowViewModel : ViewModelBase
 {
     //[ObservableProperty] private SudoPassword? _currentSudoPassword;
     public ReactiveCommand<Unit, SudoPassword?> SavePasswordCommand { get; }
+    private SudoPassword? _sudoPassword;
+    private bool _isPasswordCorrect = false;
 
     [ObservableProperty] private string _passwordBoxText = "";
-    private bool IsPasswordCorrect = false;
-
     [ObservableProperty] private string _errorMessage = "";
-
-    
-    private SudoPassword? _sudoPassword;
-    // partial void OnPasswordBoxTextChanging(string? oldValue, string newValue)
-    // {
-    //     //scrivi in textbox
-    //     //per ogni lettera scritta prendi il valore di textbox.text
-    //     //aggiungi alla securestring
-    //     //azzera textbox.text
-    //
-    //     Console.WriteLine($"oldvalue: {oldValue} \t newValue: {newValue}");
-    //     if (string.IsNullOrEmpty(newValue) || string.IsNullOrWhiteSpace(newValue))
-    //         return;
-    //     
-    //     Console.WriteLine("LETTERA PSW: "+newValue);
-    //     
-    // }
-    //
-    // partial void OnPasswordBoxTextChanged(string? oldValue, string newValue)
-    // {
-    //     //Task.Delay(100).GetAwaiter().GetResult();
-    //     
-    //     if (string.IsNullOrEmpty(newValue) || string.IsNullOrWhiteSpace(newValue))
-    //         return;
-    //     if (PasswordBoxText.Length >= 2)
-    //         PasswordBoxText = "";
-    //     
-    // }
+    [ObservableProperty] private bool _isErrorVisible = false;
+    [ObservableProperty] private bool _isCapsLockWarningVisible = false;
     
     
     public SudoPasswordRequestWindowViewModel() 
     {
         SavePasswordCommand = ReactiveCommand.Create(() => _sudoPassword);
-        // SavePasswordCommand = ReactiveCommand.Create(() => new SudoPassword(PasswordBoxText){OperationCanceled = IsOperationCanceled});
     }
 
     public void CloseDialogCommand()
@@ -60,11 +33,11 @@ public partial class SudoPasswordRequestWindowViewModel : ViewModelBase
 
     public void ReturnIfPasswordCorrect()
     {
-        ErrorMessage="Checking password";
+        IsErrorVisible = false;
         var psw = new SudoPassword(PasswordBoxText);
-        IsPasswordCorrect = psw.IsValid;
+        _isPasswordCorrect = psw.IsValid;
 
-        if (IsPasswordCorrect)
+        if (_isPasswordCorrect)
         {
             _sudoPassword = psw;
             SavePasswordCommand.Execute().Subscribe();
@@ -72,7 +45,7 @@ public partial class SudoPasswordRequestWindowViewModel : ViewModelBase
         }
         else
         {
-            ErrorMessage="Incorrect password";
+            IsErrorVisible = true;
         }
         
     }

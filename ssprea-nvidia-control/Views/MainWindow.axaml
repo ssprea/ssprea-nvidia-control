@@ -214,67 +214,90 @@
                         >
                     
                         <!--PROFILES MAIN STACKPANEL-->
-                        <StackPanel Spacing="2">
+                        <StackPanel Spacing="5">
                         
                             <Label VerticalAlignment="Stretch" HorizontalAlignment="Center" Content="PROFILES"/>
                             
-                            <StackPanel  Orientation="Horizontal">
-                                <Button VerticalAlignment="Center" FontSize="12" HorizontalAlignment="Right" Command="{Binding SaveStartupProfile}" CommandParameter="{Binding #CurrentSelectedProfileCombobox.SelectedItem}">
+                            <Border BorderBrush="DimGray" BorderThickness="2" CornerRadius="20" Background="{DynamicResource SectionBackgroundBrushLight}">
+                                <StackPanel  Orientation="Horizontal" Spacing="3">
+                                    <Label/>
                                     
-                                    <Image Height="12" Width="12"
-                                           Source="avares://ssprea-nvidia-control/Assets/icons/save-icon.png"/>
+                                    <Button VerticalAlignment="Center" FontSize="12" HorizontalAlignment="Right" Command="{Binding SaveStartupProfile}" CommandParameter="{Binding #CurrentSelectedProfileCombobox.SelectedItem}">
+                                        
+                                        <Image Height="12" Width="12"
+                                               Source="avares://ssprea-nvidia-control/Assets/icons/save-icon.png"/>
+                                        
+                                        <ToolTip.Tip>
+                                            <StackPanel>
+                                                <TextBlock>Save selected profile as startup profile. This profile will be loaded on every startup with a systemd service.</TextBlock>
+                                            </StackPanel>
+                                        </ToolTip.Tip>
+                                        
+                                    </Button>
+                                    <Label/>
+                                    <CheckBox IsChecked="{Binding IsStartupProfileChecked}" VerticalAlignment="Top" FontSize="12" HorizontalAlignment="Stretch"> Startup: </CheckBox>
+                                    <Label VerticalAlignment="Center" FontSize="12" HorizontalAlignment="Stretch" Content="{Binding SelectedStartupProfile.Name, FallbackValue=Disabled}"/>
                                     
-                                    <ToolTip.Tip>
-                                        <StackPanel>
-                                            <TextBlock>Save selected profile as startup profile. This profile will be loaded on every startup with a systemd service.</TextBlock>
-                                        </StackPanel>
-                                    </ToolTip.Tip>
-                                    
-                                </Button>
-                                <CheckBox IsChecked="{Binding IsStartupProfileChecked}" VerticalAlignment="Top" FontSize="12" HorizontalAlignment="Stretch"> Startup: </CheckBox>
-                                <Label VerticalAlignment="Center" FontSize="12" HorizontalAlignment="Stretch" Content="{Binding SelectedStartupProfile.Name, FallbackValue=Disabled}"/>
-                                
-                            </StackPanel>
-                                
-                            <StackPanel   Orientation="Horizontal">
-                                <Button VerticalAlignment="Center" FontSize="12" HorizontalAlignment="Center" Command="{Binding SaveAutoApplyProfile}" CommandParameter="{Binding #CurrentSelectedProfileCombobox.SelectedItem}">
-                                    <Image Height="12" Width="12"
-                                           Source="avares://ssprea-nvidia-control/Assets/icons/save-icon.png"/>
-                                    <ToolTip.Tip>
-                                        <StackPanel>
-                                            <TextBlock>Save selected profile as default. This profile will be loaded and applied when the GUI is opened. If the systemd service doesn't work for you, this option can also be used as an alternative startup profile by also setting the GUI to open at startup.</TextBlock>
-                                        </StackPanel>
-                                    </ToolTip.Tip>
-                                    
-                                </Button>
-                                <CheckBox VerticalAlignment="Top" FontSize="12" HorizontalAlignment="Stretch" IsChecked="{Binding IsAutoApplyProfileChecked}"> Default: </CheckBox>
-                                <Label VerticalAlignment="Center" FontSize="12" HorizontalAlignment="Stretch" Content="{Binding SelectedAutoApplyOcProfile.Name, FallbackValue=Disabled}"/>
+                                </StackPanel>
+                            </Border> 
+                            
+                            <Border BorderBrush="DimGray" BorderThickness="2" CornerRadius="20" Background="{DynamicResource SectionBackgroundBrushLight}">
+                                <StackPanel  Spacing="3" Orientation="Horizontal">
+                                    <Label/>
+                                    <Button VerticalAlignment="Center" FontSize="12" HorizontalAlignment="Center" Command="{Binding SaveAutoApplyProfile}" CommandParameter="{Binding #CurrentSelectedProfileCombobox.SelectedItem}">
+                                        <Image Height="12" Width="12"
+                                               Source="avares://ssprea-nvidia-control/Assets/icons/save-icon.png"/>
+                                        <ToolTip.Tip>
+                                            <StackPanel>
+                                                <TextBlock>Save selected profile as default. This profile will be loaded and applied when the GUI is opened. If the systemd service doesn't work for you, this option can also be used as an alternative startup profile by also setting the GUI to open at startup.</TextBlock>
+                                            </StackPanel>
+                                        </ToolTip.Tip>
+                                        
+                                    </Button>
+                                    <Label/>
+                                    <CheckBox VerticalAlignment="Top" FontSize="12" HorizontalAlignment="Stretch" IsChecked="{Binding IsAutoApplyProfileChecked}"> Default: </CheckBox>
+                                    <Label VerticalAlignment="Center" FontSize="12" HorizontalAlignment="Stretch" Content="{Binding SelectedAutoApplyOcProfile.Name, FallbackValue=Disabled}"/>
 
-                                
-                            </StackPanel>
-                            
-                                <Label Content=" "/>
-                            
-                            
-                            
-                                <ComboBox SelectedItem="{Binding SelectedOcProfile}"
-                                          ItemsSource="{Binding OcProfilesList}" 
-                                          x:Name="CurrentSelectedProfileCombobox"
-                                          
-                                          SelectedIndex="1"
-                                          VerticalAlignment="Bottom" 
-                                          HorizontalAlignment="Stretch"
-                                >
-                            
-                                    <ComboBox.ItemTemplate>
-                                        <DataTemplate>
-                                            <Label Content="{Binding Name} " />
-                                        </DataTemplate>
-                                    </ComboBox.ItemTemplate>
                                     
-                                </ComboBox>
-                                <Button Content="Load this profile" Command="{Binding LoadSelectedOcProfileToTuner}" HorizontalAlignment="Center"/>
-                                <Button Content="Delete this profile" Command="{Binding DeleteOcProfile}" Background="#40E85F68" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </Border> 
+                            
+                                
+                            
+                            
+                            
+                            <ComboBox SelectedItem="{Binding SelectedOcProfile}"
+                                      ItemsSource="{Binding OcProfilesList}" 
+                                      x:Name="CurrentSelectedProfileCombobox"
+                                      
+                                      SelectedIndex="1"
+                                      VerticalAlignment="Bottom" 
+                                      HorizontalAlignment="Stretch"
+                            >
+                        
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Label Content="{Binding Name} " />
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                                
+                            </ComboBox>
+                            
+                            
+                            <DockPanel>
+                                
+                                <Button DockPanel.Dock="Left" Content="Load to tuner" Command="{Binding LoadSelectedOcProfileToTuner}" HorizontalAlignment="Center"/>
+                                <Button DockPanel.Dock="Right" Content="Delete this profile" Command="{Binding DeleteOcProfile}" Background="#40E85F68" HorizontalAlignment="Center"/>
+                                
+                            </DockPanel>
+                            
+                            <DockPanel >
+                                
+                                <Button DockPanel.Dock="Right" CornerRadius="10" Content="Save" Command="{Binding SaveTempTunerSettingsToProfileAndUpdateFileAsync}" />
+                                <TextBox MinHeight="0"   HorizontalAlignment="Stretch" Watermark="Type new profile name here" UseFloatingWatermark="False" BorderThickness="0" Text="{Binding TunerCurrentProfileName,FallbackValue=''}"></TextBox>
+
+                            </DockPanel>
+                            
                         </StackPanel>
                     
                     </Border>
@@ -289,18 +312,17 @@
                         <Border  DockPanel.Dock="Top" Padding="2" Background="{DynamicResource SmallSectionBackgroundBrushDark}" BorderBrush="OrangeRed" BorderThickness="4" CornerRadius="10" HorizontalAlignment="Center" VerticalAlignment="Top"
                         >
                         
-                        <StackPanel 
-                            Orientation="Horizontal" 
+                        <DockPanel 
                                 
                                 
                         >
                         
-                            <Label VerticalAlignment="Center">Select GPU: </Label>
+                            <Label DockPanel.Dock="Left" VerticalAlignment="Center">Select GPU: </Label>
                             <ComboBox SelectedItem="{Binding SelectedGpu}"
                                       ItemsSource="{Binding NvmlService.GpuList}" 
-                                                  
-                          
-                                      SelectedIndex="1" VerticalAlignment="Center" HorizontalAlignment="Stretch">
+                                      SelectedIndex="1" VerticalAlignment="Center" HorizontalAlignment="Stretch"
+                                      DockPanel.Dock="Right"
+                                      >
                                 <ComboBox.ItemTemplate>
                                     <DataTemplate>
                                         <Label Content="{Binding Name} " />
@@ -309,7 +331,7 @@
                             </ComboBox>
                                         
                         
-                        </StackPanel>
+                        </DockPanel>
                     </Border>
                     </Border>
                 </Grid> 
@@ -319,17 +341,17 @@
             
             
             <!--BOTTOM PANEL-->
-            <Panel Grid.Column="1" Grid.Row="2">
+            <Panel Grid.Column="1" Grid.Row="2" >
                  
-                <Border BorderThickness="3" CornerRadius="20" BorderBrush="Gray">
+                <Border Background="{DynamicResource SectionBackgroundBrushDark}" BorderThickness="3" CornerRadius="20" BorderBrush="Gray" >
                     
                     <!--BOTTOM MENU-->
                     <Grid ColumnDefinitions="*,*,*">
                         
                         <!--INFO GRID-->
-                        <Grid 
+                            <Grid 
                             RowDefinitions="*,5*"
-                            Background="{DynamicResource SectionBackgroundBrushDark}">
+                            >
                         
                             <Label Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" > INFO </Label>
                             
@@ -435,7 +457,7 @@
                                 <Label Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" > TUNER </Label>
                                 
                                 <!--TUNER ITEMS STACK PANEL-->
-                                <StackPanel Spacing="7" Grid.Row="1" Grid.Column="0"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                <StackPanel Spacing="20" Grid.Row="1" Grid.Column="0"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                     
                                     <Border DockPanel.Dock="Top" Padding="2" Background="{DynamicResource SmallSectionBackgroundBrushLight}" BorderBrush="Gray" BorderThickness="4" CornerRadius="10" HorizontalAlignment="Center" VerticalAlignment="Top">
                                         <StackPanel 
@@ -514,7 +536,6 @@
                                         >
                             
                                             <Button CornerRadius="10" Content="Apply" Command="{Binding ApplyTempTunerSettings}"/>
-                                            <Button CornerRadius="10" Content="Save as profile" Command="{Binding SaveTempTunerSettingsToProfileAndUpdateFileAsync}" />
                                             <Button CornerRadius="10" Content="Reset" Command="{Binding ResetTunerOptions}"/>
                                             
 
@@ -522,18 +543,7 @@
                                         </StackPanel>
                                     </Border>
                                     
-                                    <Border DockPanel.Dock="Top" Padding="2" Background="#40969696" BorderBrush="Gray" BorderThickness="4" CornerRadius="10"  HorizontalAlignment="Center" VerticalAlignment="Top">
-                                        <StackPanel 
-                                            Orientation="Horizontal" 
                                     
-                                    
-                                        >
-                            
-                                            <TextBox MinHeight="0" MinWidth="300" HorizontalAlignment="Stretch" Watermark="Type new profile name here" UseFloatingWatermark="False" BorderThickness="0" Text="{Binding TunerCurrentProfileName,FallbackValue=''}"></TextBox>
-
-                            
-                                        </StackPanel>
-                                    </Border>
                                     
                                     
                                     
@@ -550,7 +560,6 @@
                         <!--FAN CURVE GRID-->
                         <Grid Grid.Column="2"
                             RowDefinitions="*,5*"
-                            Background="{DynamicResource SectionBackgroundBrushDark}"
                             >
                             
                             <!-- <Grid.Background> -->
@@ -599,7 +608,7 @@
                                         <Button Command="{Binding  OpenFanCurveEditorCommand}" Content="New"/>
                                         <Button Content="Edit"  Command="{Binding  OpenFanCurveEditorCommand}" CommandParameter="{Binding SelectedFanCurve}"/>
                                         <Button Content="Delete" Command="{Binding DeleteSelectedFanProfile}"/>
-                                        <CheckBox Content="Include in profile" IsChecked="{Binding IsFanCurveIncludedInProfileChecked}" />
+                                        <CheckBox Content="Enable" IsChecked="{Binding IsFanCurveIncludedInProfileChecked}" />
                                         
 
                         
@@ -633,7 +642,7 @@
                                 </StackPanel>
                             </ToolTip.Tip>
                         </Button>
-                        <Button CornerRadius="20">
+                        <Button Command="{Binding ShowComingSoonPopupAsync}" CommandParameter="Extra GPU Info" CornerRadius="20">
                             <Image Source="avares://ssprea-nvidia-control/Assets/icons/info-icon.png"/>
                             <ToolTip.Tip>
                                 <StackPanel>
@@ -642,7 +651,7 @@
                                 </StackPanel>
                             </ToolTip.Tip>
                         </Button>
-                        <Button CornerRadius="20">
+                        <Button Command="{Binding ShowComingSoonPopupAsync}" CommandParameter="Usage graphs" CornerRadius="20">
                             <Image Source="avares://ssprea-nvidia-control/Assets/icons/graph-icon.png"/>
                             <ToolTip.Tip>
                                 <StackPanel>
