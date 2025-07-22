@@ -52,8 +52,11 @@ yay -S ssprea-nvidia-control
 
 ### Windows:
 
-The tool should work on windows without problems, however I haven't tested it since I currently don't have a Windows machine. 
+The tool should mostly work on windows without major problems, however I haven't tested it since I currently don't have a Windows machine. 
 If you encounter any problems please open an [issue](https://github.com/ssprea/ssprea-nvidia-control/issues/new)
+
+Currently these features are known to not work on Windows:
+  - Startup profile
 
 To run it, download the source code and build manually and run it as an administrator. 
 
