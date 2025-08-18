@@ -27,5 +27,5 @@ uninstallall: uninstallgui uninstallcli
 reinstallall: uninstallcli installgui
 
 deb:
-	make -C ssprea-nvidia-control-cli deb
-	make -C ssprea-nvidia-control deb
+	make -C ssprea-nvidia-control-cli deb VERSION=1.1.1
+	make -C ssprea-nvidia-control deb VERSION=1.1.1

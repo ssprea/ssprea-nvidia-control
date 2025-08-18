@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Platform;
@@ -30,13 +31,31 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
             this.AttachDevTools();
 #endif
             
+        if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            desktop.ShutdownRequested += (sender, e) =>
+            {
+                Program.KillFanCurveProcess();
+                desktop.Shutdown();
+            };
+        }
+        
         Closing += (s, e) =>
         {
-            if (s is null)
-                return;
+           
             
-            ((Window)s).Hide();
-            e.Cancel = true;
+            if (s is not Window window)
+                return;
+
+            
+            
+            if (window.IsVisible)
+            {
+                window.Hide();
+                e.Cancel = true;
+            }
+            
+            
         };
 
         Activated += async (s, e) =>

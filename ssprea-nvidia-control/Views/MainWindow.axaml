@@ -293,7 +293,13 @@
                             
                             <DockPanel >
                                 
-                                <Button DockPanel.Dock="Right" CornerRadius="10" Content="Save" Command="{Binding SaveTempTunerSettingsToProfileAndUpdateFileAsync}" />
+                                <Button DockPanel.Dock="Right" CornerRadius="10" Content="Save" Command="{Binding SaveTempTunerSettingsToProfileAndUpdateFileAsync}">
+                                    <ToolTip.Tip>
+                                        <StackPanel>
+                                            <TextBlock>Save the current tuner settings and selected fan curve as a profile.</TextBlock>
+                                        </StackPanel>
+                                    </ToolTip.Tip>
+                                </Button>
                                 <TextBox MinHeight="0"   HorizontalAlignment="Stretch" Watermark="Type new profile name here" UseFloatingWatermark="False" BorderThickness="0" Text="{Binding TunerCurrentProfileName,FallbackValue=''}"></TextBox>
 
                             </DockPanel>
