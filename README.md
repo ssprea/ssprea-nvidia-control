@@ -1,7 +1,7 @@
 # ssprea-nvidia-control
 
 
-ssprea-nvidia-control is a GUI overclocking tool for NVidia GPUs that supports both Wayland and X11
+ssprea-nvidia-control is a highly customizable GUI overclocking tool for NVidia GPUs that supports Wayland, X11 and Windows.
 
 ## Disclaimer
 
@@ -15,14 +15,14 @@ This project was created mainly to learn Avalonia UI, so it might not be perfect
 - Auto apply profile at startup
 - Power limit management
 - Works on Wayland and X11
+- Highly customizable (See ![Customization wiki page](https://github.com/ssprea/ssprea-nvidia-control/wiki/Customization))
 
 ## Screenshots
 
-![Main window](https://i.ibb.co/LWDZ1dg/Screenshot-20250411-155643.png)
+![Main window](https://i.ibb.co/DH0M6QLm/Schermata-20250722-153534.png)
 
-![Profile creation](https://i.ibb.co/pr9bVc4J/Screenshot-20250212-031855.png)
+![Curve creation](https://i.ibb.co/mnhFbwc/Schermata-20250722-153726.png)
 
-![Curve creation](https://i.ibb.co/Q3fqT7tk/Screenshot-20250212-031920.png)
 ## Requirements
 
 - NVidia proprietary driver 555+
@@ -45,15 +45,25 @@ cd ssprea-nvidia-control
 makepkg -si
 ```
 
+With yay:
 
-## Building:
-
-### Install dependencies:
-
-Ubuntu:
 ```
-sudo apt install make dotnet-sdk-9.0
+yay -S ssprea-nvidia-control
 ```
+
+### Windows:
+
+The tool should mostly work on windows without major problems, however I haven't tested it since I currently don't have a Windows machine. 
+If you encounter any problems please open an [issue](https://github.com/ssprea/ssprea-nvidia-control/issues/new)
+
+Currently these features are known to not work on Windows:
+  - Startup profile
+
+To run it, download the source code and build manually, then add the snvctl CLI tool exe to the PATH environment variable.
+After that you can just run it as an administrator.
+
+NOTE: Windows is not the main target platform for this tool so features might be delayed and there might be many bugs.
+
 -------------------------
 
 ### Building:
@@ -111,7 +121,3 @@ Without make:
   cd ssprea-nvidia-control
   dotnet run --configuration Release
 ```
-
-## Planned features
-
-- Better gui
