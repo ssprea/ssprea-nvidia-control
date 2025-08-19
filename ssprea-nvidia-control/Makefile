@@ -9,7 +9,9 @@ build: clean restore
 	dotnet build --configuration Release
 
 publish: build
-	dotnet publish
+	dotnet publish -c Release -r linux-x64 -p:PublishSingleFile=true -p:SelfContained=true -p:IncludeAllContentForSelfExtract=true
+      
+      
 	
 run: build
 	dotnet run --configuration Release
@@ -27,14 +29,16 @@ deb: publish
 
 	dpkg-deb --build --root-owner-group bin/Release/deb/ssprea-nvidia-control_$(VERSION)-1_amd64
 
+
+	
+
 install:
+	mkdir -p $(DESTDIR)/usr/local/bin/
 	mkdir -p $(DESTDIR)/usr/share/ssprea-nvidia-control
-	mkdir -p $(DESTDIR)/usr/share/applications/
-	cp -r bin/Release/net9.0/linux-x64/publish/* $(DESTDIR)/usr/share/ssprea-nvidia-control
+	mkdir -p $(DESTDIR)/usr/share/applications
+	cp -r bin/Release/net9.0/linux-x64/publish/ssprea-nvidia-control $(DESTDIR)/usr/local/bin/snvctl-gui
 	cp Assets/ssprea-nvidia-control.desktop $(DESTDIR)/usr/share/applications/ssprea-nvidia-control.desktop
 
-	mkdir -p $(DESTDIR)/usr/local/bin/
-	ln -sf /usr/share/ssprea-nvidia-control/ssprea-nvidia-control $(DESTDIR)/usr/local/bin/snvctl-gui
 		
 uninstall:
 	rm -r /usr/share/ssprea-nvidia-control
