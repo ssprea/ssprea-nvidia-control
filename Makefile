@@ -34,7 +34,7 @@ deb:
 
 appimage: OUTDIR ?= packages/AppImage/AppDir
 appimage: DESTDIR ?= ../$(OUTDIR)
-appimage: installall
+appimage: publish installall
 	mkdir -p $(OUTDIR)
 	cp ssprea-nvidia-control/Assets/app-icon.png $(OUTDIR)/ssprea-nvidia-control.png
 	cp ssprea-nvidia-control/Assets/ssprea-nvidia-control.desktop $(OUTDIR)/ssprea-nvidia-control.desktop
