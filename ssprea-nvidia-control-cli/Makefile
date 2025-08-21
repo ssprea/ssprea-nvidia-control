@@ -9,7 +9,7 @@ build: clean restore
 	dotnet build --configuration Release
 
 publish: build
-	dotnet publish -c Release -r linux-x64 -p:PublishSingleFile=true -p:SelfContained=true -p:IncludeAllContentForSelfExtract=true
+	dotnet publish --configuration Release -r linux-x64 -p:PublishSingleFile=true -p:SelfContained=true -p:IncludeAllContentForSelfExtract=true
 
 	
 run: build

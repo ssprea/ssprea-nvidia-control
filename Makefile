@@ -39,7 +39,7 @@ appimage: installall
 	cp ssprea-nvidia-control/Assets/app-icon.png $(OUTDIR)/ssprea-nvidia-control.png
 	cp ssprea-nvidia-control/Assets/ssprea-nvidia-control.desktop $(OUTDIR)/ssprea-nvidia-control.desktop
 	touch $(OUTDIR)/AppRun
-	echo -e '#!/bin/bash\nexec "$$APPDIR/usr/local/bin/snvctl-gui" "$$@"' > $(OUTDIR)/AppRun
+	echo -e '#!/bin/bash\nexport PATH="$$APPDIR/usr/local/bin:$$PATH"\nexec "$$APPDIR/usr/local/bin/snvctl-gui" "$$@"' > $(OUTDIR)/AppRun
 	chmod +x $(OUTDIR)/AppRun
 	[ -f appimagetool-x86_64.AppImage ] || wget https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage
 	chmod +x ./appimagetool-x86_64.AppImage
