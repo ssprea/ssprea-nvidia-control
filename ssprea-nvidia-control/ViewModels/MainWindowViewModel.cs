@@ -37,6 +37,7 @@ public partial class MainWindowViewModel : ViewModelBase
     public Interaction<FanCurveEditorWindowViewModel, FanCurveViewModel?> ShowFanCurveEditorDialog { get; }
     public Interaction<SudoPasswordRequestWindowViewModel, SudoPassword?> ShowSudoPasswordRequestDialog { get; }
     public Interaction<SettingsMainWindowViewModel, object?> ShowSettingsDialog { get; }
+    public Interaction<UsageGraphsWindowViewModel, object?> ShowUsageGraphsDialog { get; }
     #endregion
     
     
@@ -45,6 +46,7 @@ public partial class MainWindowViewModel : ViewModelBase
     public ReactiveCommand<FanCurveViewModel?,Unit> OpenFanCurveEditorCommand { get; private set; }
     public ICommand OpenSudoPasswordPromptCommand { get; private set; }
     public ICommand OpenSettingsWindowCommand { get; private set; }
+    public ICommand OpenUsageGraphsWindowCommand { get; private set; }
 
     #endregion
     
@@ -211,6 +213,16 @@ public partial class MainWindowViewModel : ViewModelBase
             var settingsWindowViewModel = new SettingsMainWindowViewModel();
 
             var result = await ShowSettingsDialog.Handle(settingsWindowViewModel);
+            
+            
+        });
+        
+        ShowUsageGraphsDialog = new Interaction<UsageGraphsWindowViewModel, object?>();
+        OpenUsageGraphsWindowCommand = ReactiveCommand.CreateFromTask<NvmlGpu>(async (targetGpu) =>
+        {
+            var usageGraphsViewModel = new UsageGraphsWindowViewModel(targetGpu);
+
+            var result = await ShowUsageGraphsDialog.Handle(usageGraphsViewModel);
             
             
         });
@@ -642,7 +654,7 @@ WantedBy=multi-user.target
     }
 
     public static NvmlService NvmlService { get; set; } = new();
-
+    
 
     
     public void SelectGpu(uint id)

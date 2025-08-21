@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reactive;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
@@ -73,6 +74,7 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
             action(ViewModel!.ShowSudoPasswordRequestDialog.RegisterHandler(DoShowSudoPasswordRequestDialogAsync));
             
             action(ViewModel!.ShowSettingsDialog.RegisterHandler(DoShowSettingsDialogAsync));
+            action(ViewModel!.ShowUsageGraphsDialog.RegisterHandler(DoShowUsageGraphsDialogAsync));
 
         });
 
@@ -141,6 +143,17 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
 
         var result = await dialog.ShowDialog<SudoPassword?>(this);
         interaction.SetOutput(result);
+    }
+    
+    private async Task DoShowUsageGraphsDialogAsync(IInteractionContext<UsageGraphsWindowViewModel, object?> interaction)
+    {
+        var dialog = new UsageGraphsWindow
+        {
+            DataContext = interaction.Input
+        };
+
+        var result = await dialog.ShowDialog<object?>(this);
+        interaction.SetOutput(null);
     }
     
     public void LoadGuiGrid(bool firstRun = false)

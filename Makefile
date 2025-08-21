@@ -1,4 +1,4 @@
-VERSION=1.1.1
+VERSION=1.1.2
 
 installcli:
 	make -C ssprea-nvidia-control-cli install DESTDIR=$(DESTDIR)
@@ -44,3 +44,4 @@ appimage: installall
 	[ -f appimagetool-x86_64.AppImage ] || wget https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage
 	chmod +x ./appimagetool-x86_64.AppImage
 	ARCH=x86_64 ./appimagetool-x86_64.AppImage $(OUTDIR) ssprea-nvidia-control-$(VERSION).AppImage
+

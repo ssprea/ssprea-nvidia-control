@@ -315,31 +315,43 @@
                             BorderThickness="6"
                             >
                         
-                        <Border  DockPanel.Dock="Top" Padding="2" Background="{DynamicResource SmallSectionBackgroundBrushDark}" BorderBrush="OrangeRed" BorderThickness="4" CornerRadius="10" HorizontalAlignment="Center" VerticalAlignment="Top"
+                        <Border   DockPanel.Dock="Top" Padding="2" Background="{DynamicResource SmallSectionBackgroundBrushDark}" BorderBrush="{DynamicResource HighlightColor}" BorderThickness="4" CornerRadius="10" HorizontalAlignment="Center" VerticalAlignment="Top"
                         >
-                        
-                        <DockPanel 
-                                
-                                
-                        >
-                        
-                            <Label DockPanel.Dock="Left" VerticalAlignment="Center">Select GPU: </Label>
-                            <ComboBox SelectedItem="{Binding SelectedGpu}"
-                                      ItemsSource="{Binding NvmlService.GpuList}" 
-                                      SelectedIndex="1" VerticalAlignment="Center" HorizontalAlignment="Stretch"
-                                      DockPanel.Dock="Right"
-                                      >
-                                <ComboBox.ItemTemplate>
-                                    <DataTemplate>
-                                        <Label Content="{Binding Name} " />
-                                    </DataTemplate>
-                                </ComboBox.ItemTemplate>
-                            </ComboBox>
-                                        
-                        
-                        </DockPanel>
+                            <DockPanel >
+                            
+                                <Label DockPanel.Dock="Left" VerticalAlignment="Center">Select GPU: </Label>
+                                <ComboBox SelectedItem="{Binding SelectedGpu}"
+                                          ItemsSource="{Binding NvmlService.GpuList}" 
+                                          SelectedIndex="1" VerticalAlignment="Center" HorizontalAlignment="Stretch"
+                                          DockPanel.Dock="Right"
+                                          >
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <Label Content="{Binding Name} " />
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                                            
+                            
+                            </DockPanel>
+                        </Border>
                     </Border>
+                    
+                    <Border Grid.Row="6" Grid.Column="2" Grid.ColumnSpan="3"  HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal">
+                    
+                            <Button   BorderBrush="White" BorderThickness="3" Background="{DynamicResource SmallSectionBackgroundBrushDark}" Margin="5" Command="{Binding OpenDefaultBrowserToUrl}" CommandParameter="https://ko-fi.com/ssprea" >
+                                <DockPanel>
+                                    <Image Height="30" Width="30"   Source="avares://ssprea-nvidia-control/Assets/icons/coffee-icon5.png"/>
+                                    <Label/>
+                                    <Label VerticalAlignment="Center" Foreground="White" FontWeight="Bold"  >Buy me a coffee</Label>
+                                </DockPanel>
+                    
+                            </Button>
+                        </StackPanel>
+                
                     </Border>
+                    
                 </Grid> 
                 
                 
@@ -634,6 +646,7 @@
             
             </Panel>
             
+           
             <!--RIGHT PANEL-->
             
             <Border BorderThickness="20" Grid.Column="2" Grid.Row="1" Grid.RowSpan="2">
@@ -657,12 +670,11 @@
                                 </StackPanel>
                             </ToolTip.Tip>
                         </Button>
-                        <Button Command="{Binding ShowComingSoonPopupAsync}" CommandParameter="Usage graphs" CornerRadius="20">
+                        <Button Command="{Binding OpenUsageGraphsWindowCommand}" CommandParameter="{Binding SelectedGpu}" CornerRadius="20">
                             <Image Source="avares://ssprea-nvidia-control/Assets/icons/graph-icon.png"/>
                             <ToolTip.Tip>
                                 <StackPanel>
                                     <TextBlock>Usage graphs</TextBlock>
-                                    <TextBlock>COMING SOON!</TextBlock>
                                 </StackPanel>
                             </ToolTip.Tip>
                         </Button>

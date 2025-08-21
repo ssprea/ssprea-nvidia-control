@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Threading;
 using DynamicData;
 using ssprea_nvidia_control.NVML;
@@ -61,6 +62,8 @@ public class NvmlService
         IsInitialized = true;
         Console.WriteLine("NvmlService initialized");
     }
+
+    
     
     ~NvmlService()
     {

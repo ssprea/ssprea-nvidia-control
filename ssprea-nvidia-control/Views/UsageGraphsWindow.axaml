@@ -1,0 +1,127 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="1000" Width="800" Height="1000"
+        x:Class="ssprea_nvidia_control.Views.UsageGraphsWindow"
+        xmlns:vm="using:ssprea_nvidia_control.ViewModels"
+        x:DataType="vm:UsageGraphsWindowViewModel"
+        xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
+        xmlns:liveChartsCore="clr-namespace:LiveChartsCore;assembly=LiveChartsCore"
+        xmlns:skiaSharpView="clr-namespace:LiveChartsCore.SkiaSharpView;assembly=LiveChartsCore.SkiaSharpView"
+        Title="GPU Graphs"
+        Closing="Window_OnClosing"
+        >
+    <Design.DataContext>
+        <!-- This only sets the DataContext for the previewer in an IDE,    
+             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+        <vm:UsageGraphsWindowViewModel/>
+    </Design.DataContext>
+    
+        <Grid Background="#AA404848" RowDefinitions="*,4,*,4,*,4,*,4,*,4,*,4,*">
+            
+            
+            <Border DockPanel.Dock="Top" BorderBrush="Gray" BorderThickness="1" CornerRadius="10" Margin="5" Padding="2">
+                <lvc:CartesianChart MinWidth="150"
+                                    BorderThickness="0" Padding="0" Margin="0"
+                                    HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                    Series="{Binding GpuClockSeries}"
+                                    YAxes="{Binding GpuClockGraphYAxes}"
+                                    XAxes="{Binding GraphXAxes}"
+                                    
+                />
+            </Border>
+            
+            <GridSplitter Grid.Row="1" ResizeDirection="Rows" Background="Black"/>
+            
+            <Border Grid.Row="2" DockPanel.Dock="Top" BorderBrush="Gray" BorderThickness="1" CornerRadius="10" Margin="5" Padding="2">
+                
+                <lvc:CartesianChart MinWidth="150"
+                                    BorderThickness="0" Padding="0" Margin="0"
+                                    HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+                                    Series="{Binding MemClockSeries}"
+                                    YAxes="{Binding MemClockGraphYAxes}"
+                                    XAxes="{Binding GraphXAxes}"
+                                    
+                                    
+                />
+            </Border>
+            
+            <GridSplitter Grid.Row="3" ResizeDirection="Rows" Background="Black"/>
+            
+            <Border Grid.Row="4" DockPanel.Dock="Top" BorderBrush="Gray" BorderThickness="1" CornerRadius="10" Margin="5" Padding="2">
+                
+                <lvc:CartesianChart MinWidth="150"
+                                    BorderThickness="0" Padding="0" Margin="0"
+                                    HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+                                    Series="{Binding GpuUsageSeries}"
+                                    YAxes="{Binding GpuUsageGraphYAxes}"
+                                    XAxes="{Binding GraphXAxes}"
+                                    
+                                    
+                />
+            </Border>
+            
+            <GridSplitter Grid.Row="5" ResizeDirection="Rows" Background="Black"/>
+            
+            <Border Grid.Row="6"  DockPanel.Dock="Top" BorderBrush="Gray" BorderThickness="1" CornerRadius="10" Margin="5" Padding="2">
+                
+                <lvc:CartesianChart MinWidth="150"
+                                    BorderThickness="0" Padding="0" Margin="0"
+                                    HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+                                    Series="{Binding MemUsageSeries}"
+                                    YAxes="{Binding MemUsageGraphYAxes}"
+                                    XAxes="{Binding GraphXAxes}"
+                                    
+                                    
+                />
+            </Border>
+            
+            <GridSplitter Grid.Row="7" ResizeDirection="Rows" Background="Black"/>
+            
+            <Border Grid.Row="8"  DockPanel.Dock="Top" BorderBrush="Gray" BorderThickness="1" CornerRadius="10" Margin="5" Padding="2">
+                
+                <lvc:CartesianChart MinWidth="150"
+                                    BorderThickness="0" Padding="0" Margin="0"
+                                    HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+                                    Series="{Binding GpuTempSeries}"
+                                    YAxes="{Binding GpuTempGraphYAxes}"
+                                    XAxes="{Binding GraphXAxes}"
+                                    
+                                    
+                />
+            </Border>
+            
+            <GridSplitter Grid.Row="9" ResizeDirection="Rows" Background="Black"/>
+            
+            <Border Grid.Row="10"  DockPanel.Dock="Top" BorderBrush="Gray" BorderThickness="1" CornerRadius="10" Margin="5" Padding="2">
+                
+                <lvc:CartesianChart MinWidth="150"
+                                    BorderThickness="0" Padding="0" Margin="0"
+                                    HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+                                    Series="{Binding FanSpeedSeries}"
+                                    YAxes="{Binding FanSpeedGraphYAxes}"
+                                    XAxes="{Binding GraphXAxes}"
+                                    
+                                    
+                />
+            </Border>
+            
+            <GridSplitter Grid.Row="11" ResizeDirection="Rows" Background="Black"/>
+            
+            <Border Grid.Row="12"  DockPanel.Dock="Top" BorderBrush="Gray" BorderThickness="1" CornerRadius="10" Margin="5" Padding="2">
+                
+                <lvc:CartesianChart MinWidth="150"
+                                    BorderThickness="0" Padding="0" Margin="0"
+                                    HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+                                    Series="{Binding PowerUsageSeries}"
+                                    YAxes="{Binding PowerUsageGraphYAxes}"
+                                    XAxes="{Binding GraphXAxes}"
+                                    
+                                    
+                />
+            </Border>
+            
+        </Grid>
+    
+</Window>
