@@ -21,7 +21,7 @@ deb: publish
 	mkdir -p bin/Release/deb/ssprea-nvidia-control_$(VERSION)-$(PKGN)_amd64/usr/share/applications
 	mkdir -p bin/Release/deb/ssprea-nvidia-control_$(VERSION)-$(PKGN)_amd64/usr/share/ssprea-nvidia-control
 	mkdir -p bin/Release/deb/ssprea-nvidia-control_$(VERSION)-$(PKGN)_amd64/DEBIAN
-	echo -e 'Package: ssprea-nvidia-control\nVersion: $(VERSION)\nDepends: \nArchitecture: amd64\nMaintainer: ssprea <ssprea@proton.me>\nDescription: A GUI tool to manage NVidia GPUs overclock, fans and power limit. Supports both Wayland and X11' > bin/Release/deb/ssprea-nvidia-control_$(VERSION)-$(PKGN)_amd64/DEBIAN/control
+	echo -e 'Package: ssprea-nvidia-control\nVersion: $(VERSION)-$(PKGN)\nDepends: \nArchitecture: amd64\nMaintainer: ssprea <ssprea@proton.me>\nDescription: A GUI tool to manage NVidia GPUs overclock, fans and power limit. Supports both Wayland and X11' > bin/Release/deb/ssprea-nvidia-control_$(VERSION)-$(PKGN)_amd64/DEBIAN/control
 	
 	cp bin/Release/net9.0/linux-x64/publish/ssprea-nvidia-control bin/Release/deb/ssprea-nvidia-control_$(VERSION)-$(PKGN)_amd64/usr/local/bin/snvctl-gui
 	cp Assets/ssprea-nvidia-control.desktop bin/Release/deb/ssprea-nvidia-control_$(VERSION)-$(PKGN)_amd64/usr/share/applications/ssprea-nvidia-control.desktop
