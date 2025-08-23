@@ -1,4 +1,5 @@
 VERSION=1.1.2
+PKGN=2
 
 installcli:
 	make -C ssprea-nvidia-control-cli install DESTDIR=$(DESTDIR)
@@ -29,8 +30,8 @@ uninstallall: uninstallgui uninstallcli
 reinstallall: uninstallcli installgui
 
 deb:
-	make -C ssprea-nvidia-control-cli deb VERSION=$(VERSION)
-	make -C ssprea-nvidia-control deb VERSION=$(VERSION)
+	make -C ssprea-nvidia-control-cli deb VERSION=$(VERSION) PKGN=$(PKGN)
+	make -C ssprea-nvidia-control deb VERSION=$(VERSION) PKGN=$(PKGN)
 
 appimage: OUTDIR ?= packages/AppImage/AppDir
 appimage: DESTDIR ?= ../$(OUTDIR)
