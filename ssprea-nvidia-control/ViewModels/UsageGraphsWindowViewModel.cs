@@ -58,7 +58,7 @@ public partial class UsageGraphsWindowViewModel : ViewModelBase
     [
         new Axis
         {
-            Name = "Gpu Core Temperature (°C)",
+            Name = Lang.Resources.GraphsCoreTemp,
             NamePaint = new SolidColorPaint(SKColors.AntiqueWhite), 
             NameTextSize = 10,
 
@@ -79,7 +79,7 @@ public partial class UsageGraphsWindowViewModel : ViewModelBase
     [
         new Axis
         {
-            Name = "Gpu Power Consumption (W)",
+            Name = Lang.Resources.GraphsGpuPower,
             NamePaint = new SolidColorPaint(SKColors.AntiqueWhite), 
             NameTextSize = 10,
 
@@ -98,7 +98,7 @@ public partial class UsageGraphsWindowViewModel : ViewModelBase
     [
         new Axis
         {
-            Name = "Gpu Core Clock (MHz)",
+            Name = Lang.Resources.GraphsCoreClock,
             NamePaint = new SolidColorPaint(SKColors.AntiqueWhite), 
             NameTextSize = 10,
 
@@ -117,7 +117,7 @@ public partial class UsageGraphsWindowViewModel : ViewModelBase
     [
         new Axis
         {
-            Name = "Gpu Memory Clock (MHz)",
+            Name = Lang.Resources.GraphsMemClock,
             NamePaint = new SolidColorPaint(SKColors.AntiqueWhite), 
             NameTextSize = 10,
 
@@ -136,7 +136,7 @@ public partial class UsageGraphsWindowViewModel : ViewModelBase
     [
         new Axis
         {
-            Name = "Gpu Usage (%)",
+            Name = Lang.Resources.GraphsCoreUsage,
             NamePaint = new SolidColorPaint(SKColors.AntiqueWhite), 
             NameTextSize = 10,
 
@@ -155,7 +155,7 @@ public partial class UsageGraphsWindowViewModel : ViewModelBase
     [
         new Axis
         {
-            Name = "Gpu Memory Usage (%)",
+            Name = Lang.Resources.GraphsMemUsage,
             NamePaint = new SolidColorPaint(SKColors.AntiqueWhite), 
             NameTextSize = 10,
 
@@ -174,7 +174,7 @@ public partial class UsageGraphsWindowViewModel : ViewModelBase
     [
         new Axis
         {
-            Name = "Fan Speed (%)",
+            Name = Lang.Resources.GraphsFanSpeed,
             NamePaint = new SolidColorPaint(SKColors.AntiqueWhite), 
             NameTextSize = 10,
 
@@ -198,7 +198,7 @@ public partial class UsageGraphsWindowViewModel : ViewModelBase
         GpuTempSeries[0] = new LineSeries<int>()
         {
             Values = _gpuTempValues,
-            Name = "Gpu Core Temperature (°C)",
+            Name = Lang.Resources.GraphsCoreTemp,
             Fill = new SolidColorPaint(SKColors.Green.WithAlpha(50)),
             Stroke = new SolidColorPaint(SKColors.Green) {StrokeThickness = 1},
             GeometryStroke = null,//new SolidColorPaint(SKColors.Green) {StrokeThickness = 4},
@@ -210,7 +210,7 @@ public partial class UsageGraphsWindowViewModel : ViewModelBase
         PowerUsageSeries[0] = new LineSeries<int>()
         {
             Values = _powerUsageValues,
-            Name = "Gpu Power Consumption (W)",
+            Name = Lang.Resources.GraphsGpuPower,
             Fill = new SolidColorPaint(SKColors.MediumPurple.WithAlpha(50)),
             Stroke = new SolidColorPaint(SKColors.MediumPurple) {StrokeThickness = 1},
             //GeometryStroke = new SolidColorPaint(SKColors.MediumPurple) {StrokeThickness = 4},
@@ -225,7 +225,7 @@ public partial class UsageGraphsWindowViewModel : ViewModelBase
         GpuUsageSeries[0] = new LineSeries<int>()
         {
             Values = _gpuUsageValues,
-            Name = "Gpu Usage (%)",
+            Name = Lang.Resources.GraphsCoreUsage,
             GeometrySize = 8,
             GeometryStroke = null,
             GeometryFill = null,
@@ -239,7 +239,7 @@ public partial class UsageGraphsWindowViewModel : ViewModelBase
         MemUsageSeries[0] = new LineSeries<int>()
         {
             Values = _memUsageValues,
-            Name = "Gpu Memory Usage (%)",
+            Name = Lang.Resources.GraphsMemUsage,
             Fill = new SolidColorPaint(SKColors.Goldenrod.WithAlpha(50)),
             Stroke = new SolidColorPaint(SKColors.Goldenrod) {StrokeThickness = 1},
             // GeometryStroke = new SolidColorPaint(SKColors.Goldenrod) {StrokeThickness = 4},
@@ -254,7 +254,7 @@ public partial class UsageGraphsWindowViewModel : ViewModelBase
         GpuClockSeries[0] = new LineSeries<int>()
         {
             Values = _gpuClockValues,
-            Name = "Gpu Core Clock (MHz)",
+            Name = Lang.Resources.GraphsCoreClock,
             Fill = new SolidColorPaint(SKColors.DeepPink.WithAlpha(50)),
             Stroke = new SolidColorPaint(SKColors.DeepPink) {StrokeThickness = 1},
             // GeometryStroke = new SolidColorPaint(SKColors.DeepPink) {StrokeThickness = 4},
@@ -269,7 +269,7 @@ public partial class UsageGraphsWindowViewModel : ViewModelBase
         MemClockSeries[0] = new LineSeries<int>()
         {
             Values = _memClockValues,
-            Name = "Gpu Memory Clock (MHz)",
+            Name = Lang.Resources.GraphsMemClock,
             Fill = new SolidColorPaint(SKColors.Chocolate.WithAlpha(50)),
             Stroke = new SolidColorPaint(SKColors.Chocolate) {StrokeThickness = 1},
             GeometryStroke = null,
@@ -283,7 +283,7 @@ public partial class UsageGraphsWindowViewModel : ViewModelBase
         FanSpeedSeries[0] = new LineSeries<int>()
         {
             Values = _fanSpeedValues,
-            Name = "Fan Speed (%)",
+            Name = Lang.Resources.GraphsFanSpeed,
             Fill = new SolidColorPaint(SKColors.IndianRed.WithAlpha(50)),
             Stroke = new SolidColorPaint(SKColors.IndianRed) {StrokeThickness = 1},
             GeometryStroke = null,

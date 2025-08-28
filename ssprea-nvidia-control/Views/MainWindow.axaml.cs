@@ -36,6 +36,7 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
         {
             desktop.ShutdownRequested += (sender, e) =>
             {
+                File.Delete(Program.DefaultDataPath+"/.guiLock");
                 Program.KillFanCurveProcess();
                 desktop.Shutdown();
             };

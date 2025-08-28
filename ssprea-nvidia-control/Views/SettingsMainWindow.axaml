@@ -4,12 +4,13 @@
         xmlns:vm="using:ssprea_nvidia_control.ViewModels"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:system="clr-namespace:System;assembly=System.Runtime"
+        xmlns:lang="clr-namespace:ssprea_nvidia_control.Lang"
         mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="450"
         Width="400" Height="450"
         x:Class="ssprea_nvidia_control.Views.SettingsMainWindow"
         x:DataType="vm:SettingsMainWindowViewModel"
         Background="#262626"
-        Title="SNVCTL Settings">
+        Title="{x:Static lang:Resources.SettingsTitle}">
     
         
         
@@ -20,7 +21,7 @@
               
               >
             
-                <Label Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Top">Settings</Label>
+                <Label Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Top" Content="{x:Static lang:Resources.SettingsSubtitle}"/>
             
                 <ListBox Grid.Row="1" Grid.Column="0" SelectedIndex="0">
                     <ListBoxItem Content="GUIs"/>
@@ -30,15 +31,25 @@
             <Border Grid.Row="1" Grid.Column="1" BorderBrush="Gray" BorderThickness="2" Margin="6" Padding="8" CornerRadius="10">
                 <Panel  x:Name="SettingsCategoryContentPanel">
                     
-                    <StackPanel 
-                          
-                          >
+                    <StackPanel>
                             
-                        <Label  HorizontalAlignment="Left" VerticalAlignment="Bottom" FontSize="10" >Selected GUI:</Label>
-                        <ComboBox  SelectedItem="{Binding SelectedGuiSetting}" HorizontalAlignment="Stretch" ItemsSource="{Binding AvailableGuiSettings}"></ComboBox>
+                        <StackPanel>
+                            <Label  HorizontalAlignment="Left" VerticalAlignment="Bottom" FontSize="10" Content="{x:Static lang:Resources.SettingsSelectedGui}"/>
+                            <ComboBox  SelectedItem="{Binding SelectedGuiSetting}" HorizontalAlignment="Stretch" ItemsSource="{Binding AvailableGuiSettings}"></ComboBox>
                         
-                        <Label  HorizontalAlignment="Center" FontSize="11" >If nothing happens after saving, try restarting.</Label>
-                        <Button Command="{Binding SaveGuiSettingsAsync}">Save</Button>
+                            <Label  HorizontalAlignment="Center" FontSize="11" Content="{x:Static lang:Resources.SettingsSelectedGuiWarning}"/>
+                            <Button Command="{Binding SaveGuiSettingsAsync}" Content="{x:Static lang:Resources.ButtonSave}"/>
+                        </StackPanel>
+                        <Label/>
+                        <StackPanel>
+                            <Label  HorizontalAlignment="Left" VerticalAlignment="Bottom" FontSize="10" Content="{x:Static lang:Resources.SettingsSelectedLang}"/>
+                            <ComboBox  SelectedItem="{Binding SelectedLocale}" HorizontalAlignment="Stretch" ItemsSource="{Binding AvailableLocales}"></ComboBox>
+                        
+                            <Label  HorizontalAlignment="Center" FontSize="11" Content="{x:Static lang:Resources.SettingsSelectedLangWarning}"/>
+                            <Button Command="{Binding SaveLocaleSettingsAsync}" Content="{x:Static lang:Resources.ButtonSave}"/>
+                        </StackPanel>
+                        
+                        
                         
                     </StackPanel>
                     

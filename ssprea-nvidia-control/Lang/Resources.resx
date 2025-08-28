@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<root>
+    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <xsd:element name="root" msdata:IsDataSet="true">
+            
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    
+    <data name="TextPowerLimit" xml:space="preserve">
+        <value>Power Limit (W):</value>
+    </data>
+    
+    <data name="TextTemps" xml:space="preserve">
+        <value>Temps (°C):</value>
+    </data>
+    
+    <data name="TextMemoryStats" xml:space="preserve">
+        <value>Memory (MB):</value>
+    </data>
+    
+    <data name="TextNvidiaDriverVersion" xml:space="preserve">
+        <value>NVidia Driver Version:</value>
+    </data>
+    
+    <data name="ProfilesSection" xml:space="preserve">
+        <value>PROFILES</value>
+    </data>
+
+     <data name="CheckboxStartupProfile" xml:space="preserve">
+            <value>Startup</value>
+        </data>
+
+     <data name="CheckboxDefaultProfile" xml:space="preserve">
+            <value>Default</value>
+        </data>
+
+     <data name="ButtonLoadToTuner" xml:space="preserve">
+            <value>Load to tuner</value>
+        </data>
+
+     <data name="ButtonDeleteProfile" xml:space="preserve">
+            <value>Delete this profile</value>
+        </data>
+
+     <data name="ButtonSave" xml:space="preserve">
+            <value>Save</value>
+        </data>
+
+     <data name="ButtonApply" xml:space="preserve">
+            <value>Apply</value>
+        </data>
+
+     <data name="ButtonNew" xml:space="preserve">
+            <value>New</value>
+        </data>
+
+     <data name="ButtonEdit" xml:space="preserve">
+            <value>Edit</value>
+        </data>
+
+     <data name="ButtonDelete" xml:space="preserve">
+            <value>Delete</value>
+        </data>
+
+     <data name="ButtonReset" xml:space="preserve">
+            <value>Reset</value>
+        </data>
+
+     <data name="SelectGpu" xml:space="preserve">
+            <value>Select GPU:</value>
+        </data>
+
+     <data name="InfoSection" xml:space="preserve">
+            <value>INFO</value>
+        </data>
+
+     <data name="TunerSection" xml:space="preserve">
+            <value>TUNER</value>
+        </data>
+
+     <data name="FanCurveSection" xml:space="preserve">
+            <value>FAN CURVE</value>
+        </data>
+
+     <data name="CurrentPstate" xml:space="preserve">
+            <value>Current PSTATE:</value>
+        </data>
+
+     <data name="CurrentPowerLimit" xml:space="preserve">
+            <value>Power Limit (W):</value>
+        </data>
+
+     <data name="CurrentTemp" xml:space="preserve">
+            <value>Temps (°C):</value>
+        </data>
+
+     <data name="CurrentMemoryStats" xml:space="preserve">
+            <value>Memory (MB):</value>
+        </data>
+
+     <data name="CurrentNvidiaDriverVersion" xml:space="preserve">
+            <value>nVidia Driver Version:</value>
+        </data>
+
+     <data name="TunerCoreOffset" xml:space="preserve">
+            <value>Core Offset:</value>
+        </data>
+
+     <data name="TunerMemoryOffset" xml:space="preserve">
+            <value>Mem. Offset:</value>
+        </data>
+
+     <data name="TunerPowerLimit" xml:space="preserve">
+            <value>Power Limit:</value>
+        </data>
+
+     <data name="CheckboxEnableFanCurve" xml:space="preserve">
+            <value>Enable</value>
+        </data>
+
+     <data name="TooltipApplicationSettings" xml:space="preserve">
+            <value>Application settings</value>
+        </data>
+
+     <data name="TooltipExtraGpuInfo" xml:space="preserve">
+            <value>Extra GPU Info</value>
+        </data>
+
+     <data name="TooltipUsageGraphs" xml:space="preserve">
+            <value>GPU Usage Graphs</value>
+        </data>
+
+     <data name="TooltipGuide" xml:space="preserve">
+            <value>Guide</value>
+        </data>
+
+     <data name="TooltipSaveAutoApplyProfile" xml:space="preserve">
+            <value>Save selected profile as default. This profile will be loaded and applied when the GUI is opened. If the systemd service doesn't work for you, this option can also be used as an alternative startup profile by also setting the GUI to open at startup.</value>
+        </data>
+
+     <data name="TooltipSaveStartupProfile" xml:space="preserve">
+            <value>Save selected profile as startup profile. This profile will be loaded on every startup with a systemd service.</value>
+        </data>
+
+     <data name="TooltipSaveAsProfile" xml:space="preserve">
+            <value>Save the current tuner settings and selected fan curve as a profile.</value>
+        </data>
+
+     <data name="WatermarkNewProfileName" xml:space="preserve">
+            <value>Type new profile name here</value>
+        </data>
+
+     <data name="TextCurrent" xml:space="preserve">
+            <value>Current:</value>
+        </data>
+
+     <data name="TextMin" xml:space="preserve">
+            <value>Min:</value>
+        </data>
+
+     <data name="TextMax" xml:space="preserve">
+            <value>Max:</value>
+        </data>
+
+     <data name="TextThrottle" xml:space="preserve">
+            <value>Throttle:</value>
+        </data>
+
+     <data name="TextSlowdown" xml:space="preserve">
+            <value>Slowdown:</value>
+        </data>
+
+     <data name="TextShutdown" xml:space="preserve">
+            <value>Shutdown:</value>
+        </data>
+
+     <data name="TextFree" xml:space="preserve">
+            <value>Free:</value>
+        </data>
+
+     <data name="TextOutOf" xml:space="preserve">
+            <value>out of:</value>
+        </data>
+
+     <data name="SettingsTitle" xml:space="preserve">
+            <value>SNVCTL Settings</value>
+        </data>
+
+     <data name="SettingsSubtitle" xml:space="preserve">
+            <value>Settings</value>
+        </data>
+
+     <data name="SettingsSelectedGui" xml:space="preserve">
+            <value>Selected GUI:</value>
+        </data>
+
+     <data name="SettingsSelectedGuiWarning" xml:space="preserve">
+            <value>If nothing happens after saving, try restarting.</value>
+        </data>
+
+     <data name="GraphsCoreClock" xml:space="preserve">
+            <value>Gpu Core Clock (MHz)</value>
+        </data>
+
+     <data name="GraphsMemClock" xml:space="preserve">
+            <value>Gpu Memory Clock (MHz)</value>
+        </data>
+
+     <data name="GraphsCoreUsage" xml:space="preserve">
+            <value>Gpu Usage (%)</value>
+        </data>
+
+     <data name="GraphsMemUsage" xml:space="preserve">
+            <value>Gpu Memory Usage (%)</value>
+        </data>
+
+     <data name="GraphsCoreTemp" xml:space="preserve">
+            <value>Gpu Core Temperature (°C)</value>
+        </data>
+
+     <data name="GraphsFanSpeed" xml:space="preserve">
+            <value>Fan speed (%)</value>
+        </data>
+
+     <data name="GraphsGpuPower" xml:space="preserve">
+            <value>Gpu Power Consumption (W)</value>
+        </data>
+    <data name="SettingsSelectedLang" xml:space="preserve">
+        <value>Selected Language:</value>
+    </data>
+    <data name="SettingsSelectedLangWarning" xml:space="preserve">
+        <value>Restart after saving to load new locale.</value>
+    </data>
+    <data name="TextCurrentFanSpeed" xml:space="preserve">
+        <value>Current Fan Speed</value>
+    </data>
+    <data name="TextCurrentTemp" xml:space="preserve">
+        <value>Current Temp:</value>
+    </data>
+</root>

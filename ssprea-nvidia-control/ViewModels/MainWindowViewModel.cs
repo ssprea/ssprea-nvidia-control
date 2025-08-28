@@ -12,6 +12,7 @@ using System.Windows.Input;
 using Avalonia.Controls;
 using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
+using LiveChartsCore.Defaults;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using LiveChartsCore.SkiaSharpView.Painting.Effects;
@@ -25,6 +26,7 @@ using Newtonsoft.Json.Linq;
 using ReactiveUI;
 using SkiaSharp;
 using ssprea_nvidia_control.Models.Exceptions;
+using ssprea_nvidia_control.Utils;
 
 
 namespace ssprea_nvidia_control.ViewModels;
@@ -65,6 +67,9 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty] private uint _tunerCurrentPowerLimitMw = 0;
     [ObservableProperty] private string _tunerCurrentProfileName = "";
     [ObservableProperty] private string _currentlyLoadedGuiName = "Default";
+    [ObservableProperty] private string _selectedLocalizerLang = "it";
+    [ObservableProperty] private ObservableCollection<string> _localizerLangs = new ObservableCollection<string>(["it","en"]);
+    
     
     private uint _selectedFanRadioButton = 0;
     private bool FanSpeedSliderVisible => _selectedFanRadioButton == 1;
@@ -126,6 +131,10 @@ public partial class MainWindowViewModel : ViewModelBase
 
     public MainWindowViewModel()
     {
+        Lockfile.CheckAndUpdateLockfile();
+        
+        
+        
         
         if (!Directory.Exists(Program.DefaultDataPath))
             Directory.CreateDirectory(Program.DefaultDataPath);
@@ -230,6 +239,48 @@ public partial class MainWindowViewModel : ViewModelBase
         LoadOcProfileToTuner(new OcProfile("",0,0,SelectedGpu?.PowerLimitMinMw ?? 100000, (FanCurve?)null));
     }
 
+    partial void OnSelectedGpuChanged(NvmlGpu? value)
+    {
+        if (value is null)
+            return;
+        value.FansList.First().PropertyChanged += (s, args) =>
+        {
+            if (args.PropertyName == "CurrentSpeed")
+            {
+                if (SelectedFanCurve?.CurrentFanSpeedPoints.Count > 0 &&
+                    ((int?)SelectedFanCurve?.CurrentFanSpeedPoints.First().X ?? 0) == value.GpuTemperature &&
+                    ((int?)SelectedFanCurve?.CurrentFanSpeedPoints.First().Y ?? 0) == value.FansList[0].CurrentSpeed)
+                    return;
+                    
+                SelectedFanCurve?.CurrentFanSpeedPoints.Add(new ObservablePoint(value.GpuTemperature,value.FansList[0].CurrentSpeed));
+                
+                // if (SelectedFanCurve?.CurvePointsSeries.Any(x => x.Name == "Current Fan Speed") ?? false)
+                // {
+                //     var currentFanSpeedSeries =
+                //         SelectedFanCurve.CurvePointsSeries.First(x => x.Name == "Current Fan Speed");
+                //
+                //     currentFanSpeedSeries.Values = new MaxSizeObservableCollection<ObservablePoint>(1);
+                // }
+                //
+                // if (SelectedFanCurve?.CurvePointsSeries.Count > 1)
+                //     SelectedFanCurve?.CurvePointsSeries.RemoveAt(1);
+                //
+                // SelectedFanCurve?.CurvePointsSeries.Add(
+                //     new LineSeries<ObservablePoint>(new ObservablePoint(value.GpuTemperature,value.FansList[0].CurrentSpeed))
+                //     {
+                //         Name="Current Fan Speed",
+                //         GeometryStroke=new SolidColorPaint(SKColors.DarkRed) {StrokeThickness = 3},
+                //         LineSmoothness = 0,
+                //             
+                //     }
+                //     
+                //     );
+            }
+        };
+    }
+    
+    
+    
     public async Task ShowComingSoonPopupAsync(string featureName)
     {
         await MessageBoxManager.GetMessageBoxStandard("Coming soon!", $"{featureName}: Coming Soon!",ButtonEnum.Ok,Icon.Forbidden).ShowAsync();
@@ -282,6 +333,8 @@ public partial class MainWindowViewModel : ViewModelBase
         await _profilesFileManager.UpdateProfilesFileAsync();
     }
 
+    
+    
     public async Task SaveTempTunerSettingsToProfileAndUpdateFileAsync()
     {
         if (string.IsNullOrEmpty(TunerCurrentProfileName) || string.IsNullOrWhiteSpace(TunerCurrentProfileName))

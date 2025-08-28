@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reactive;
@@ -19,9 +20,11 @@ public partial class SettingsMainWindowViewModel : ViewModelBase
 
     public ObservableCollection<string> SettingCategories { get; private set; }
     public ObservableCollection<string> AvailableGuiSettings { get; private set; }
+    public static ObservableCollection<string> AvailableLocales => new(["it-IT", "en-US", "System"]);
     
     // [ObservableProperty] public string selectedSettingCategory;
     [ObservableProperty] private string _selectedGuiSetting;
+    [ObservableProperty] private string _selectedLocale = Program.SelectedLocale;
     
     public SettingsMainWindowViewModel()
     {
@@ -49,6 +52,12 @@ public partial class SettingsMainWindowViewModel : ViewModelBase
     {
         await File.WriteAllTextAsync($"{Program.DefaultDataPath}/SelectedGui.txt", SelectedGuiSetting);
         WindowsManager.ApplyMainWindowCustomGui();
+    }
+    
+    public async Task SaveLocaleSettingsAsync()
+    {
+        await File.WriteAllTextAsync($"{Program.DefaultDataPath}/SelectedLocale.txt", SelectedLocale);
+        Lang.Resources.Culture = new CultureInfo(SelectedLocale);
     }
 
     // public async Task ApplyMainWindowGui()

@@ -1,5 +1,5 @@
-VERSION=1.1.2
-PKGN=2
+VERSION=1.1.3
+PKGN=1
 
 installcli:
 	make -C ssprea-nvidia-control-cli install DESTDIR=$(DESTDIR)

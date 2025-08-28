@@ -9,6 +9,7 @@
         xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
         xmlns:liveChartsCore="clr-namespace:LiveChartsCore;assembly=LiveChartsCore"
         xmlns:skiaSharpView="clr-namespace:LiveChartsCore.SkiaSharpView;assembly=LiveChartsCore.SkiaSharpView"
+        xmlns:lang="clr-namespace:ssprea_nvidia_control.Lang"
         x:Class="ssprea_nvidia_control.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
@@ -103,6 +104,11 @@
             <!--      -->
             <!--          -->
             <!-- </Border> -->
+            
+            <!-- <ComboBox Grid.Row="0" Grid.Column="0" SelectedItem="{Binding SelectedLocalizerLang}" ItemsSource="{Binding LocalizerLangs}"> -->
+            <!-- </ComboBox> -->
+            
+        
             
             <!--MAIN-->
             <Border Grid.Column="1" Grid.Row="1" BorderThickness="2">
@@ -216,7 +222,7 @@
                         <!--PROFILES MAIN STACKPANEL-->
                         <StackPanel Spacing="5">
                         
-                            <Label VerticalAlignment="Stretch" HorizontalAlignment="Center" Content="PROFILES"/>
+                            <Label VerticalAlignment="Stretch" HorizontalAlignment="Center" Content="{x:Static lang:Resources.ProfilesSection}"/>
                             
                             <Border BorderBrush="DimGray" BorderThickness="2" CornerRadius="20" Background="{DynamicResource SectionBackgroundBrushLight}">
                                 <StackPanel  Orientation="Horizontal" Spacing="3">
@@ -229,13 +235,13 @@
                                         
                                         <ToolTip.Tip>
                                             <StackPanel>
-                                                <TextBlock>Save selected profile as startup profile. This profile will be loaded on every startup with a systemd service.</TextBlock>
+                                                <TextBlock Text="{x:Static lang:Resources.TooltipSaveStartupProfile}"/>
                                             </StackPanel>
                                         </ToolTip.Tip>
                                         
                                     </Button>
                                     <Label/>
-                                    <CheckBox IsChecked="{Binding IsStartupProfileChecked}" VerticalAlignment="Top" FontSize="12" HorizontalAlignment="Stretch"> Startup: </CheckBox>
+                                    <CheckBox IsChecked="{Binding IsStartupProfileChecked}" VerticalAlignment="Top" FontSize="12" HorizontalAlignment="Stretch" Content="{x:Static lang:Resources.CheckboxStartupProfile}"/>
                                     <Label VerticalAlignment="Center" FontSize="12" HorizontalAlignment="Stretch" Content="{Binding SelectedStartupProfile.Name, FallbackValue=Disabled}"/>
                                     
                                 </StackPanel>
@@ -249,13 +255,13 @@
                                                Source="avares://ssprea-nvidia-control/Assets/icons/save-icon.png"/>
                                         <ToolTip.Tip>
                                             <StackPanel>
-                                                <TextBlock>Save selected profile as default. This profile will be loaded and applied when the GUI is opened. If the systemd service doesn't work for you, this option can also be used as an alternative startup profile by also setting the GUI to open at startup.</TextBlock>
+                                                <TextBlock Text="{x:Static lang:Resources.TooltipSaveAutoApplyProfile}"/>
                                             </StackPanel>
                                         </ToolTip.Tip>
                                         
                                     </Button>
                                     <Label/>
-                                    <CheckBox VerticalAlignment="Top" FontSize="12" HorizontalAlignment="Stretch" IsChecked="{Binding IsAutoApplyProfileChecked}"> Default: </CheckBox>
+                                    <CheckBox VerticalAlignment="Top" FontSize="12" HorizontalAlignment="Stretch" IsChecked="{Binding IsAutoApplyProfileChecked}" Content="{x:Static lang:Resources.CheckboxDefaultProfile}"/>
                                     <Label VerticalAlignment="Center" FontSize="12" HorizontalAlignment="Stretch" Content="{Binding SelectedAutoApplyOcProfile.Name, FallbackValue=Disabled}"/>
 
                                     
@@ -286,21 +292,21 @@
                             
                             <DockPanel>
                                 
-                                <Button DockPanel.Dock="Left" Content="Load to tuner" Command="{Binding LoadSelectedOcProfileToTuner}" HorizontalAlignment="Center"/>
-                                <Button DockPanel.Dock="Right" Content="Delete this profile" Command="{Binding DeleteOcProfile}" Background="#40E85F68" HorizontalAlignment="Center"/>
+                                <Button DockPanel.Dock="Left" Content="{x:Static lang:Resources.ButtonLoadToTuner}" Command="{Binding LoadSelectedOcProfileToTuner}" HorizontalAlignment="Center"/>
+                                <Button DockPanel.Dock="Right" Content="{x:Static lang:Resources.ButtonDeleteProfile}" Command="{Binding DeleteOcProfile}" Background="#40E85F68" HorizontalAlignment="Center"/>
                                 
                             </DockPanel>
                             
                             <DockPanel >
                                 
-                                <Button DockPanel.Dock="Right" CornerRadius="10" Content="Save" Command="{Binding SaveTempTunerSettingsToProfileAndUpdateFileAsync}">
+                                <Button DockPanel.Dock="Right" CornerRadius="10" Content="{x:Static lang:Resources.ButtonSave}" Command="{Binding SaveTempTunerSettingsToProfileAndUpdateFileAsync}">
                                     <ToolTip.Tip>
                                         <StackPanel>
-                                            <TextBlock>Save the current tuner settings and selected fan curve as a profile.</TextBlock>
+                                            <TextBlock Text="{x:Static lang:Resources.TooltipSaveAsProfile}"/>
                                         </StackPanel>
                                     </ToolTip.Tip>
                                 </Button>
-                                <TextBox MinHeight="0"   HorizontalAlignment="Stretch" Watermark="Type new profile name here" UseFloatingWatermark="False" BorderThickness="0" Text="{Binding TunerCurrentProfileName,FallbackValue=''}"></TextBox>
+                                <TextBox MinHeight="0"   HorizontalAlignment="Stretch" Watermark="{x:Static lang:Resources.WatermarkNewProfileName}" UseFloatingWatermark="False" BorderThickness="0" Text="{Binding TunerCurrentProfileName,FallbackValue=''}"></TextBox>
 
                             </DockPanel>
                             
@@ -319,7 +325,7 @@
                         >
                             <DockPanel >
                             
-                                <Label DockPanel.Dock="Left" VerticalAlignment="Center">Select GPU: </Label>
+                                <Label DockPanel.Dock="Left" VerticalAlignment="Center" Content="{x:Static lang:Resources.SelectGpu}"/>
                                 <ComboBox SelectedItem="{Binding SelectedGpu}"
                                           ItemsSource="{Binding NvmlService.GpuList}" 
                                           SelectedIndex="1" VerticalAlignment="Center" HorizontalAlignment="Stretch"
@@ -371,7 +377,7 @@
                             RowDefinitions="*,5*"
                             >
                         
-                            <Label Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" > INFO </Label>
+                            <Label Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Content="{x:Static lang:Resources.InfoSection}"/>
                             
                             <!--INFO ITEMS STACK PANEL-->
                             <StackPanel Spacing="18" Grid.Row="1" Grid.Column="0"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
@@ -383,7 +389,7 @@
                                 
                                     >
                         
-                                        <Label VerticalAlignment="Center">Current PSTATE: </Label>
+                                        <Label VerticalAlignment="Center" Content="{x:Static lang:Resources.CurrentPstate}"/>
                                         <Label VerticalAlignment="Center" FontWeight="Bold" Content="{Binding SelectedGpu.GpuPState, FallbackValue=0000}"/>
 
                         
@@ -397,11 +403,12 @@
                                 
                                     >
                         
-                                        <Label VerticalAlignment="Center">Power Limit (W): Current: </Label>
+                                        <Label VerticalAlignment="Center" Content="{x:Static lang:Resources.TextPowerLimit}"/>
+                                        <Label VerticalAlignment="Center" Content="{x:Static lang:Resources.TextCurrent}"/>
                                         <Label VerticalAlignment="Center" FontWeight="Bold" Content="{Binding SelectedGpu.PowerLimitCurrentW, FallbackValue=0000}"/> 
-                                        <Label VerticalAlignment="Center"> Min: </Label>
+                                        <Label VerticalAlignment="Center" Content="{x:Static lang:Resources.TextMin}"/>
                                         <Label VerticalAlignment="Center" FontWeight="Bold" Content="{Binding SelectedGpu.PowerLimitMinW, FallbackValue=0000}"/> 
-                                        <Label VerticalAlignment="Center" > Max: </Label>
+                                        <Label VerticalAlignment="Center" Content="{x:Static lang:Resources.TextMax}"/>
                                         <Label VerticalAlignment="Center" FontWeight="Bold" Content="{Binding SelectedGpu.PowerLimitMaxW, FallbackValue=0000}"/> 
 
                         
@@ -415,11 +422,12 @@
                                 
                                     >
                         
-                                        <Label VerticalAlignment="Center">Temps (°C): Throttle: </Label>
+                                        <Label VerticalAlignment="Center" Content="{x:Static lang:Resources.TextTemps}"/>
+                                        <Label VerticalAlignment="Center" Content="{x:Static lang:Resources.TextThrottle}"/>
                                         <Label VerticalAlignment="Center" FontWeight="Bold" Content="{Binding SelectedGpu.TemperatureThresholdThrottle, FallbackValue=00}"/> 
-                                        <Label VerticalAlignment="Center"> Slowdown: </Label>
+                                        <Label VerticalAlignment="Center" Content="{x:Static lang:Resources.TextSlowdown}"/>
                                         <Label VerticalAlignment="Center" FontWeight="Bold" Content="{Binding SelectedGpu.TemperatureThresholdSlowdown,FallbackValue=00}"/> 
-                                        <Label VerticalAlignment="Center" > Shutdown: </Label>
+                                        <Label VerticalAlignment="Center" Content="{x:Static lang:Resources.TextShutdown}"/>
                                         <Label VerticalAlignment="Center" FontWeight="Bold" Content="{Binding SelectedGpu.TemperatureThresholdShutdown,FallbackValue=00}"/> 
 
                         
@@ -433,9 +441,10 @@
                                 
                                     >
                         
-                                        <Label VerticalAlignment="Center">Memory (MB): Free: </Label>
+                                        <Label VerticalAlignment="Center" Content="{x:Static lang:Resources.TextMemoryStats}"/>
+                                        <Label VerticalAlignment="Center" Content="{x:Static lang:Resources.TextFree}"/>
                                         <Label VerticalAlignment="Center" FontWeight="Bold" Content="{Binding SelectedGpu.MemoryFreeMBFormatted, FallbackValue=00000}"/> 
-                                        <Label VerticalAlignment="Center"> out of: </Label>
+                                        <Label VerticalAlignment="Center" Content="{x:Static lang:Resources.TextOutOf}"/>
                                         <Label VerticalAlignment="Center" FontWeight="Bold" Content="{Binding SelectedGpu.MemoryTotalMBFormatted,FallbackValue=00000}"/> 
 
                         
@@ -449,7 +458,7 @@
                                 
                                     >
                         
-                                        <Label VerticalAlignment="Center">nVidia Driver Version:  </Label>
+                                        <Label VerticalAlignment="Center" Content="{x:Static lang:Resources.TextNvidiaDriverVersion}"/>
                                         <Label VerticalAlignment="Center" FontWeight="Bold" Content="{Binding CurrentNvidiaDriverVersion}"/> 
 
                         
@@ -472,7 +481,7 @@
                             <Grid RowDefinitions="*,5*"
                                   Background="{DynamicResource SectionBackgroundBrushLight}">
                             
-                                <Label Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" > TUNER </Label>
+                                <Label Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Content="{x:Static lang:Resources.TunerSection}"/>
                                 
                                 <!--TUNER ITEMS STACK PANEL-->
                                 <StackPanel Spacing="20" Grid.Row="1" Grid.Column="0"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
@@ -482,7 +491,7 @@
                                             Orientation="Horizontal" 
                                         >
                             
-                                            <Label VerticalAlignment="Center">Core Offset: </Label>
+                                            <Label VerticalAlignment="Center" Content="{x:Static lang:Resources.TunerCoreOffset}"/>
                                             <Slider Height="35" VerticalAlignment="Top" HorizontalAlignment="Stretch" 
                                                     Minimum="0"
                                                     Maximum="1000"
@@ -510,7 +519,7 @@
                                     
                                             >
                             
-                                                <Label VerticalAlignment="Center">Mem. Offset: </Label>
+                                                <Label VerticalAlignment="Center" Content="{x:Static lang:Resources.TunerMemoryOffset}"/>
                                                 <Slider Height="35" VerticalAlignment="Top" HorizontalAlignment="Stretch"
                                                         Minimum="0"
                                                         Maximum="3000"
@@ -531,13 +540,13 @@
                                             Orientation="Horizontal" 
                                         >
                             
-                                            <Label VerticalAlignment="Center">Power Limit: </Label>
+                                            <Label VerticalAlignment="Center" Content="{x:Static lang:Resources.TunerPowerLimit}"/>
                                             <Slider Height="35" VerticalAlignment="Top" HorizontalAlignment="Stretch"
                                                     Minimum="{Binding SelectedGpu.PowerLimitMinMw, FallbackValue=0}"
                                                     Maximum="{Binding SelectedGpu.PowerLimitMaxMw, FallbackValue=400}"
                                                     Value="{Binding TunerCurrentPowerLimitMw}"
                                                     Width="200"
-                                                    />
+                                            />
                                             <Label VerticalAlignment="Center" FontWeight="Bold" Content="{Binding TunerCurrentPowerLimitW,FallbackValue=000}"/> 
                                             <Label VerticalAlignment="Center" FontWeight="Bold" Content="W"/> 
 
@@ -553,8 +562,8 @@
                                     
                                         >
                             
-                                            <Button CornerRadius="10" Content="Apply" Command="{Binding ApplyTempTunerSettings}"/>
-                                            <Button CornerRadius="10" Content="Reset" Command="{Binding ResetTunerOptions}"/>
+                                            <Button CornerRadius="10" Content="{x:Static lang:Resources.ButtonApply}" Command="{Binding ApplyTempTunerSettings}"/>
+                                            <Button CornerRadius="10" Content="{x:Static lang:Resources.ButtonReset}" Command="{Binding ResetTunerOptions}"/>
                                             
 
                             
@@ -590,7 +599,7 @@
                             <!-- </Grid.Background> -->
                             
                             <Border Grid.Row="0" >
-                                <Label  HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" > FAN CURVE </Label>
+                                <Label  HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Content="{x:Static lang:Resources.FanCurveSection}"/>
                             </Border>
                             <!--FAN CURVE ITEMS STACK PANEL-->
                             <StackPanel Spacing="3" Grid.Row="1" Grid.Column="0"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
@@ -623,10 +632,10 @@
                                 
                                     >
                                         
-                                        <Button Command="{Binding  OpenFanCurveEditorCommand}" Content="New"/>
-                                        <Button Content="Edit"  Command="{Binding  OpenFanCurveEditorCommand}" CommandParameter="{Binding SelectedFanCurve}"/>
-                                        <Button Content="Delete" Command="{Binding DeleteSelectedFanProfile}"/>
-                                        <CheckBox Content="Enable" IsChecked="{Binding IsFanCurveIncludedInProfileChecked}" />
+                                        <Button Command="{Binding  OpenFanCurveEditorCommand}" Content="{x:Static lang:Resources.ButtonNew}"/>
+                                        <Button Content="{x:Static lang:Resources.ButtonEdit}"  Command="{Binding  OpenFanCurveEditorCommand}" CommandParameter="{Binding SelectedFanCurve}"/>
+                                        <Button Content="{x:Static lang:Resources.ButtonDelete}"  Command="{Binding DeleteSelectedFanProfile}"/>
+                                        <CheckBox Content="{x:Static lang:Resources.CheckboxEnableFanCurve}"  IsChecked="{Binding IsFanCurveIncludedInProfileChecked}" />
                                         
 
                         
@@ -657,7 +666,7 @@
                             <Image Source="avares://ssprea-nvidia-control/Assets/icons/gear-icon.png"/>
                             <ToolTip.Tip>
                                 <StackPanel>
-                                    <TextBlock>Application settings</TextBlock>
+                                    <TextBlock Text="{x:Static lang:Resources.TooltipApplicationSettings}"/>
                                 </StackPanel>
                             </ToolTip.Tip>
                         </Button>
@@ -665,7 +674,7 @@
                             <Image Source="avares://ssprea-nvidia-control/Assets/icons/info-icon.png"/>
                             <ToolTip.Tip>
                                 <StackPanel>
-                                    <TextBlock>Extra GPU Info</TextBlock>
+                                    <TextBlock Text="{x:Static lang:Resources.TooltipExtraGpuInfo}"/>
                                     <TextBlock>COMING SOON!</TextBlock>
                                 </StackPanel>
                             </ToolTip.Tip>
@@ -674,7 +683,7 @@
                             <Image Source="avares://ssprea-nvidia-control/Assets/icons/graph-icon.png"/>
                             <ToolTip.Tip>
                                 <StackPanel>
-                                    <TextBlock>Usage graphs</TextBlock>
+                                    <TextBlock Text="{x:Static lang:Resources.TooltipUsageGraphs}"/>
                                 </StackPanel>
                             </ToolTip.Tip>
                         </Button>
@@ -682,7 +691,7 @@
                             <Image Source="avares://ssprea-nvidia-control/Assets/icons/help-icon.png"/>
                             <ToolTip.Tip>
                                 <StackPanel>
-                                    <TextBlock>Guide</TextBlock>
+                                    <TextBlock Text="{x:Static lang:Resources.TooltipGuide}"/>
                                 </StackPanel>
                             </ToolTip.Tip>
                         </Button>
