@@ -68,6 +68,7 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
         
         this.WhenActivated(action =>
         {
+            
             action(ViewModel!.ShowOcProfileDialog.RegisterHandler(DoShowNewProfileDialogAsync));
 
             action(ViewModel!.ShowFanCurveEditorDialog.RegisterHandler(DoShowFanCurveEditorDialogAsync));

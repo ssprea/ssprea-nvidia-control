@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reactive;
@@ -11,6 +12,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Avalonia.Controls;
 using Avalonia.Media;
+using Avalonia.Platform;
 using CommunityToolkit.Mvvm.ComponentModel;
 using LiveChartsCore.Defaults;
 using LiveChartsCore.SkiaSharpView;
@@ -76,16 +78,20 @@ public partial class MainWindowViewModel : ViewModelBase
     
     
     //Axes styles for fan curve graph graph
+    [ObservableProperty] private SolidColorPaint _graphTooltipTextPaint = new SolidColorPaint(SKColors.Black) {SKTypeface = _fanCurveGraphTypeface};
+    private static readonly SKTypeface _fanCurveGraphTypeface = SKTypeface.FromFamilyName("Noto Sans",SKFontStyleWeight.Normal,SKFontStyleWidth.Normal,SKFontStyleSlant.Upright);
+    
     public Axis[] FanCurveGraphXAxes { get; set; } =
         [
             new Axis
             {
                 Name = "Temperature (°C)",
-                NamePaint = new SolidColorPaint(SKColors.AntiqueWhite), 
+                NamePaint = new SolidColorPaint(SKColors.AntiqueWhite) {SKTypeface = _fanCurveGraphTypeface}, 
                 NameTextSize = 10,
 
-                LabelsPaint = new SolidColorPaint(SKColors.AntiqueWhite), 
+                LabelsPaint = new SolidColorPaint(SKColors.AntiqueWhite){SKTypeface = _fanCurveGraphTypeface}, 
                 TextSize = 10,
+                
 
                 SeparatorsPaint = new SolidColorPaint(SKColors.LightSlateGray) { StrokeThickness = 2 }  
             }
@@ -96,10 +102,10 @@ public partial class MainWindowViewModel : ViewModelBase
             new Axis
                 {
                     Name = "Fan Speed (%)",
-                    NamePaint = new SolidColorPaint(SKColors.AntiqueWhite), 
+                    NamePaint = new SolidColorPaint(SKColors.AntiqueWhite) {SKTypeface = _fanCurveGraphTypeface}, 
                     NameTextSize = 10,
 
-                    LabelsPaint = new SolidColorPaint(SKColors.AntiqueWhite), 
+                    LabelsPaint = new SolidColorPaint(SKColors.AntiqueWhite)  {SKTypeface = _fanCurveGraphTypeface}, 
                     TextSize = 10,
 
                     SeparatorsPaint = new SolidColorPaint(SKColors.LightSlateGray) 

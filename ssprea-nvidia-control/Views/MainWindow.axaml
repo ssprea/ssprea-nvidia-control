@@ -302,7 +302,7 @@
                                 <Button DockPanel.Dock="Right" CornerRadius="10" Content="{x:Static lang:Resources.ButtonSave}" Command="{Binding SaveTempTunerSettingsToProfileAndUpdateFileAsync}">
                                     <ToolTip.Tip>
                                         <StackPanel>
-                                            <TextBlock Text="{x:Static lang:Resources.TooltipSaveAsProfile}"/>
+                                            <TextBlock Text="{x:Static lang:Resources.TooltipSaveAsProfile}" />
                                         </StackPanel>
                                     </ToolTip.Tip>
                                 </Button>
@@ -610,6 +610,8 @@
                                                     Series="{Binding SelectedFanCurve.CurvePointsSeries}"
                                                     XAxes="{Binding FanCurveGraphXAxes}"
                                                     YAxes="{Binding FanCurveGraphYAxes}"
+                                                    TooltipTextPaint="{Binding GraphTooltipTextPaint}"
+                                                    
                                                     ZoomMode="X"
                                                     />
                                 

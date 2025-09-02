@@ -38,6 +38,10 @@ public partial class UsageGraphsWindowViewModel : ViewModelBase
     private readonly MaxSizeObservableCollection<int> _gpuUsageValues = new(_graphLength);
     private readonly MaxSizeObservableCollection<int> _memUsageValues = new(_graphLength);
     
+    private static SKTypeface _defaultGraphTypeface =  SKTypeface.FromFamilyName("Noto Sans",SKFontStyleWeight.Normal,SKFontStyleWidth.Normal,SKFontStyleSlant.Upright);
+    
+    [ObservableProperty] private SolidColorPaint _graphTooltipTextPaint = new SolidColorPaint(SKColors.Black) {SKTypeface = _defaultGraphTypeface};
+    
     #region GraphStyles
 
     
@@ -59,10 +63,10 @@ public partial class UsageGraphsWindowViewModel : ViewModelBase
         new Axis
         {
             Name = Lang.Resources.GraphsCoreTemp,
-            NamePaint = new SolidColorPaint(SKColors.AntiqueWhite), 
+            NamePaint = new SolidColorPaint(SKColors.AntiqueWhite) {SKTypeface = _defaultGraphTypeface}, 
             NameTextSize = 10,
 
-            LabelsPaint = new SolidColorPaint(SKColors.AntiqueWhite), 
+            LabelsPaint = new SolidColorPaint(SKColors.AntiqueWhite) {SKTypeface = _defaultGraphTypeface}, 
             TextSize = 10,
 
             SeparatorsPaint = new SolidColorPaint(SKColors.LightSlateGray) 
@@ -80,10 +84,10 @@ public partial class UsageGraphsWindowViewModel : ViewModelBase
         new Axis
         {
             Name = Lang.Resources.GraphsGpuPower,
-            NamePaint = new SolidColorPaint(SKColors.AntiqueWhite), 
+            NamePaint = new SolidColorPaint(SKColors.AntiqueWhite) {SKTypeface = _defaultGraphTypeface}, 
             NameTextSize = 10,
 
-            LabelsPaint = new SolidColorPaint(SKColors.AntiqueWhite), 
+            LabelsPaint = new SolidColorPaint(SKColors.AntiqueWhite) {SKTypeface = _defaultGraphTypeface}, 
             TextSize = 10,
 
             SeparatorsPaint = new SolidColorPaint(SKColors.LightSlateGray) 
@@ -99,10 +103,10 @@ public partial class UsageGraphsWindowViewModel : ViewModelBase
         new Axis
         {
             Name = Lang.Resources.GraphsCoreClock,
-            NamePaint = new SolidColorPaint(SKColors.AntiqueWhite), 
+            NamePaint = new SolidColorPaint(SKColors.AntiqueWhite) {SKTypeface = _defaultGraphTypeface}, 
             NameTextSize = 10,
 
-            LabelsPaint = new SolidColorPaint(SKColors.AntiqueWhite), 
+            LabelsPaint = new SolidColorPaint(SKColors.AntiqueWhite) {SKTypeface = _defaultGraphTypeface}, 
             TextSize = 10,
 
             SeparatorsPaint = new SolidColorPaint(SKColors.LightSlateGray) 
@@ -118,10 +122,10 @@ public partial class UsageGraphsWindowViewModel : ViewModelBase
         new Axis
         {
             Name = Lang.Resources.GraphsMemClock,
-            NamePaint = new SolidColorPaint(SKColors.AntiqueWhite), 
+            NamePaint = new SolidColorPaint(SKColors.AntiqueWhite) {SKTypeface = _defaultGraphTypeface}, 
             NameTextSize = 10,
 
-            LabelsPaint = new SolidColorPaint(SKColors.AntiqueWhite), 
+            LabelsPaint = new SolidColorPaint(SKColors.AntiqueWhite) {SKTypeface = _defaultGraphTypeface}, 
             TextSize = 10,
 
             SeparatorsPaint = new SolidColorPaint(SKColors.LightSlateGray) 
@@ -137,10 +141,10 @@ public partial class UsageGraphsWindowViewModel : ViewModelBase
         new Axis
         {
             Name = Lang.Resources.GraphsCoreUsage,
-            NamePaint = new SolidColorPaint(SKColors.AntiqueWhite), 
+            NamePaint = new SolidColorPaint(SKColors.AntiqueWhite) {SKTypeface = _defaultGraphTypeface}, 
             NameTextSize = 10,
 
-            LabelsPaint = new SolidColorPaint(SKColors.AntiqueWhite), 
+            LabelsPaint = new SolidColorPaint(SKColors.AntiqueWhite) {SKTypeface = _defaultGraphTypeface}, 
             TextSize = 10,
 
             SeparatorsPaint = new SolidColorPaint(SKColors.LightSlateGray) 
@@ -156,10 +160,10 @@ public partial class UsageGraphsWindowViewModel : ViewModelBase
         new Axis
         {
             Name = Lang.Resources.GraphsMemUsage,
-            NamePaint = new SolidColorPaint(SKColors.AntiqueWhite), 
+            NamePaint = new SolidColorPaint(SKColors.AntiqueWhite) {SKTypeface = _defaultGraphTypeface}, 
             NameTextSize = 10,
 
-            LabelsPaint = new SolidColorPaint(SKColors.AntiqueWhite), 
+            LabelsPaint = new SolidColorPaint(SKColors.AntiqueWhite) {SKTypeface = _defaultGraphTypeface}, 
             TextSize = 10,
 
             SeparatorsPaint = new SolidColorPaint(SKColors.LightSlateGray) 
@@ -175,10 +179,10 @@ public partial class UsageGraphsWindowViewModel : ViewModelBase
         new Axis
         {
             Name = Lang.Resources.GraphsFanSpeed,
-            NamePaint = new SolidColorPaint(SKColors.AntiqueWhite), 
+            NamePaint = new SolidColorPaint(SKColors.AntiqueWhite) {SKTypeface = _defaultGraphTypeface}, 
             NameTextSize = 10,
 
-            LabelsPaint = new SolidColorPaint(SKColors.AntiqueWhite), 
+            LabelsPaint = new SolidColorPaint(SKColors.AntiqueWhite) {SKTypeface = _defaultGraphTypeface}, 
             TextSize = 10,
 
             SeparatorsPaint = new SolidColorPaint(SKColors.LightSlateGray) 
@@ -203,6 +207,7 @@ public partial class UsageGraphsWindowViewModel : ViewModelBase
             Stroke = new SolidColorPaint(SKColors.Green) {StrokeThickness = 1},
             GeometryStroke = null,//new SolidColorPaint(SKColors.Green) {StrokeThickness = 4},
             GeometryFill = null,
+            
             LineSmoothness = 0
             // GeometrySize = 8
         };
