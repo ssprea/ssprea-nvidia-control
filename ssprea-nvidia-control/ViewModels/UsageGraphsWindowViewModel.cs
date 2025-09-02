@@ -38,7 +38,7 @@ public partial class UsageGraphsWindowViewModel : ViewModelBase
     private readonly MaxSizeObservableCollection<int> _gpuUsageValues = new(_graphLength);
     private readonly MaxSizeObservableCollection<int> _memUsageValues = new(_graphLength);
     
-    private static SKTypeface _defaultGraphTypeface =  SKTypeface.FromFamilyName("Noto Sans",SKFontStyleWeight.Normal,SKFontStyleWidth.Normal,SKFontStyleSlant.Upright);
+    private static SKTypeface _defaultGraphTypeface =  SKTypeface.FromFamilyName("Noto Sans Mono",SKFontStyleWeight.Normal,SKFontStyleWidth.Normal,SKFontStyleSlant.Upright);
     
     [ObservableProperty] private SolidColorPaint _graphTooltipTextPaint = new SolidColorPaint(SKColors.Black) {SKTypeface = _defaultGraphTypeface};
     
