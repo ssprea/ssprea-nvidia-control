@@ -31,7 +31,7 @@ namespace ssprea_nvidia_control.NVML;
     /// GetDeviceCount is not guaranteed to enumerate devices in the same 
     /// order across reboots
     /// </remarks>
-    public class NvmlGpu : INotifyPropertyChanged
+    public class NvmlGpu : IGpu, INotifyPropertyChanged
     {
         private const uint MAX_NAME_LENGTH = 100;
 
