@@ -4,8 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:models="clr-namespace:ssprea_nvidia_control.Models"
-        mc:Ignorable="d" d:DesignWidth="1514" d:DesignHeight="787"
-        Width="1514" Height="787"
+        mc:Ignorable="d" d:DesignWidth="1514" d:DesignHeight="825"
+        Width="1514" Height="825"
         xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
         xmlns:liveChartsCore="clr-namespace:LiveChartsCore;assembly=LiveChartsCore"
         xmlns:skiaSharpView="clr-namespace:LiveChartsCore.SkiaSharpView;assembly=LiveChartsCore.SkiaSharpView"
@@ -88,8 +88,17 @@
                 <Setter Property="Foreground" Value="{DynamicResource HighlightColor}" />
             </Style>
             
+            <Style Selector="Label">
+                <Setter Property="FontFamily" Value="{StaticResource NotoSansFont}"/>
+            </Style>
+            
+            <Style Selector="ToolTip">
+                <Setter Property="FontFamily" Value="{StaticResource NotoSansFont}"/>
+            </Style>
+            
             <Style Selector="Button">
                 <Setter Property="CornerRadius" Value="12" />
+                <Setter Property="FontFamily" Value="{StaticResource NotoSansFont}"/>
             </Style>
         
         
@@ -306,7 +315,7 @@
                                         </StackPanel>
                                     </ToolTip.Tip>
                                 </Button>
-                                <TextBox MinHeight="0"   HorizontalAlignment="Stretch" Watermark="{x:Static lang:Resources.WatermarkNewProfileName}" UseFloatingWatermark="False" BorderThickness="0" Text="{Binding TunerCurrentProfileName,FallbackValue=''}"></TextBox>
+                                <TextBox MinHeight="0" CornerRadius="10"  HorizontalAlignment="Stretch" Watermark="{x:Static lang:Resources.WatermarkNewProfileName}" UseFloatingWatermark="False" BorderThickness="0" Text="{Binding TunerCurrentProfileName,FallbackValue=''}"></TextBox>
 
                             </DockPanel>
                             
@@ -599,7 +608,8 @@
                             <!-- </Grid.Background> -->
                             
                             <Border Grid.Row="0" >
-                                <Label  HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Content="{x:Static lang:Resources.FanCurveSection}"/>
+                                                    
+                                <Label  HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Content="{x:Static lang:Resources.FanCurveSection}"/>
                             </Border>
                             <!--FAN CURVE ITEMS STACK PANEL-->
                             <StackPanel Spacing="3" Grid.Row="1" Grid.Column="0"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
