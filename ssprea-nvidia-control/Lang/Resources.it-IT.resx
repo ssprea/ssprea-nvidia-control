@@ -195,33 +195,33 @@
         <value>Se dopo aver salvato non cambia niente, riavvia.</value>
     </data>
 
-     <data name="GraphsCoreClock" xml:space="preserve">
-            <value>Clock GPU (MHz)</value>
-        </data>
+    <data name="GraphsCoreClock" xml:space="preserve">
+        <value>Clock GPU</value>
+    </data>
 
-     <data name="GraphsMemClock" xml:space="preserve">
-            <value>Clock memoria GPU (MHz)</value>
-        </data>
+    <data name="GraphsMemClock" xml:space="preserve">
+        <value>Clock memoria GPU</value>
+    </data>
 
-     <data name="GraphsCoreUsage" xml:space="preserve">
-            <value>Utlizzo GPU (%)</value>
-        </data>
+    <data name="GraphsCoreUsage" xml:space="preserve">
+        <value>Utlizzo GPU</value>
+    </data>
 
-     <data name="GraphsMemUsage" xml:space="preserve">
-            <value>Utilizzo memoria GPU (%)</value>
-        </data>
+    <data name="GraphsMemUsage" xml:space="preserve">
+        <value>Utilizzo memoria GPU</value>
+    </data>
 
-     <data name="GraphsCoreTemp" xml:space="preserve">
-            <value>Temp. Core GPU (°C)</value>
-        </data>
+    <data name="GraphsCoreTemp" xml:space="preserve">
+        <value>Temp. GPU</value>
+    </data>
 
-     <data name="GraphsFanSpeed" xml:space="preserve">
-            <value>Velocità ventole (%)</value>
-        </data>
+    <data name="GraphsFanSpeed" xml:space="preserve">
+        <value>Velocità ventole</value>
+    </data>
 
-     <data name="GraphsGpuPower" xml:space="preserve">
-            <value>Consumo GPU (W)</value>
-        </data>
+    <data name="GraphsGpuPower" xml:space="preserve">
+        <value>Consumo GPU</value>
+    </data>
     <data name="SettingsSelectedLang" xml:space="preserve">
         <value>Lingua selezionata:</value>
     </data>

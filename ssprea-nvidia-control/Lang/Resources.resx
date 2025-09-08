@@ -211,33 +211,33 @@
             <value>If nothing happens after saving, try restarting.</value>
         </data>
 
-     <data name="GraphsCoreClock" xml:space="preserve">
-            <value>Gpu Core Clock (MHz)</value>
-        </data>
+    <data name="GraphsCoreClock" xml:space="preserve">
+        <value>Core Clock</value>
+    </data>
 
-     <data name="GraphsMemClock" xml:space="preserve">
-            <value>Gpu Memory Clock (MHz)</value>
-        </data>
+    <data name="GraphsMemClock" xml:space="preserve">
+        <value>Gpu Memory Clock</value>
+    </data>
 
-     <data name="GraphsCoreUsage" xml:space="preserve">
-            <value>Gpu Usage (%)</value>
-        </data>
+    <data name="GraphsCoreUsage" xml:space="preserve">
+        <value>Gpu Usage</value>
+    </data>
 
-     <data name="GraphsMemUsage" xml:space="preserve">
-            <value>Gpu Memory Usage (%)</value>
-        </data>
+    <data name="GraphsMemUsage" xml:space="preserve">
+        <value>Gpu Memory Usage</value>
+    </data>
 
-     <data name="GraphsCoreTemp" xml:space="preserve">
-            <value>Gpu Core Temperature (°C)</value>
-        </data>
+    <data name="GraphsCoreTemp" xml:space="preserve">
+        <value>Gpu Core Temperature</value>
+    </data>
 
-     <data name="GraphsFanSpeed" xml:space="preserve">
-            <value>Fan speed (%)</value>
-        </data>
+    <data name="GraphsFanSpeed" xml:space="preserve">
+        <value>Fan speed</value>
+    </data>
 
-     <data name="GraphsGpuPower" xml:space="preserve">
-            <value>Gpu Power Consumption (W)</value>
-        </data>
+    <data name="GraphsGpuPower" xml:space="preserve">
+        <value>Gpu Power Consumption</value>
+    </data>
     <data name="SettingsSelectedLang" xml:space="preserve">
         <value>Selected Language:</value>
     </data>
