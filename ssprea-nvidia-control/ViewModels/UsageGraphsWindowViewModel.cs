@@ -45,20 +45,53 @@ public partial class UsageGraphsWindowViewModel : ViewModelBase
     
     #region GraphStyles
 
-    
+    // private static string XAxisFormatter(DateTime date)
+    // {
+    //     var secsAgo = (DateTime.Now - date).TotalSeconds;
+    //
+    //     return secsAgo < 1
+    //         ? "now"
+    //         : $"{secsAgo:N0}s ago";
+    // }
 
     //Axes styles for graphs 
     public Axis[] GraphXAxes { get; set; } =
     [
-        new Axis
+        // new DateTimeAxis(TimeSpan.FromSeconds(1),XAxisFormatter)
+        // {
+        //     // CustomSeparators = GetSeparators(),
+        //     // AnimationsSpeed = TimeSpan.FromMilliseconds(0),
+        //     // SeparatorsPaint = new SolidColorPaint(SKColors.Black.WithAlpha(100)),
+        //     // LabelsPaint = new SolidColorPaint(SKColors.White) {SKTypeface = _defaultGraphTypeface},
+        //     LabelsPaint = null,
+        //     
+        // }
+        new Axis()
         {
-            LabelsPaint = null, 
-
-            // SeparatorsPaint = new SolidColorPaint(SKColors.LightSlateGray) { StrokeThickness = 1 }  
-            SeparatorsPaint = null
+            LabelsPaint = null
         }
     ];
 
+    
+    // private static double[] GetSeparators()
+    // {
+    //     var now = DateTime.Now;
+    //
+    //     return
+    //     [
+    //         now.AddSeconds(-300).Ticks, //5m
+    //         now.AddSeconds(-270).Ticks,
+    //         now.AddSeconds(-240).Ticks, //4m
+    //         now.AddSeconds(-210).Ticks,
+    //         now.AddSeconds(-180).Ticks, //3m
+    //         now.AddSeconds(-150).Ticks,
+    //         now.AddSeconds(-120).Ticks, //2m
+    //         now.AddSeconds(-90).Ticks,
+    //         now.AddSeconds(-60).Ticks, //1m
+    //         now.AddSeconds(-30).Ticks,
+    //         now.Ticks
+    //     ];
+    // }
     public Axis[] GpuTempGraphYAxes { get; set; } =
     [
         new Axis
@@ -326,8 +359,11 @@ public partial class UsageGraphsWindowViewModel : ViewModelBase
         _gpuUsageValues.Add((int)_targetGpu.GpuUtilization.gpu);
         _memUsageValues.Add((int)_targetGpu.GpuUtilization.memory);
         _powerUsageValues.Add((int)_targetGpu.GpuPowerUsageW);
+        // _fanSpeedValues.Add(new DateTimePoint(DateTime.Now,(int)_targetGpu.FansList[0].CurrentSpeed));
         _fanSpeedValues.Add((int)_targetGpu.FansList[0].CurrentSpeed);
         _gpuTempValues.Add((int)_targetGpu.GpuTemperature);
+        
+        // GraphXAxes[0].CustomSeparators = GetSeparators();
 
     }
     
