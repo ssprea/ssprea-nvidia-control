@@ -1,4 +1,4 @@
-namespace NvmlSharp.NvmlTypes;
+namespace GpuSSharp.Libs.Nvml.NvmlTypes;
 
 public struct NvmlPowerValue_v2
 {

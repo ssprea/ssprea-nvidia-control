@@ -3,13 +3,16 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using NvmlSharp;
-using NvmlSharp.NvmlTypes;
+using GpuSSharp;
+using GpuSSharp.Libs.Nvml;
+using GpuSSharp.Libs.Nvml.NvmlTypes;
 using ssprea_nvidia_control.Models.Exceptions;
+using ssprea_nvidia_control.Models.Types;
 
 namespace ssprea_nvidia_control.Models;
 
@@ -34,26 +37,26 @@ public class GpuNvidia : INotifyPropertyChanged, IGpu
     private readonly NvmlGpu _nvmlGpu;
     private readonly TimeSpan _updateDelay;
     
-    public IReadOnlyList<NvmlGpuFan> FansList => _nvmlGpu.FansList;
+    private IReadOnlyList<NvmlGpuFan> FansList => _nvmlGpu.FansList;
 
     public FanCurve? AppliedFanCurve { get; private set; }
     
     
+    
+    public List<uint> GetFansIds() => FansList.Select(x => x.FanId).ToList();
+    public string Name => _nvmlGpu.Name;
     public uint DeviceIndex => _nvmlGpu.DeviceIndex;
     public uint GpuTemperature => _nvmlGpu.GetTemperature().Item2;
     public uint GpuPowerUsage => _nvmlGpu.GetPowerUsage().Item2;
     public double GpuPowerUsageW => GpuPowerUsage/1000f;
     public string GpuPowerUsageWFormatted => GpuPowerUsageW.ToString("0.00");
 
-    public NvmlPStates GpuPState => _nvmlGpu.GetPState().Item2;
+    public GpuPState GpuPState => (GpuPState)_nvmlGpu.GetPState().Item2;
 
     public uint GpuClockCurrent => _nvmlGpu.GetCurrentClock(NvmlClockType.NVML_CLOCK_GRAPHICS).Item2;
     public uint MemClockCurrent => _nvmlGpu.GetCurrentClock(NvmlClockType.NVML_CLOCK_MEM).Item2;
     public uint SmClockCurrent => _nvmlGpu.GetCurrentClock(NvmlClockType.NVML_CLOCK_SM).Item2;
     public uint VideoClockCurrent => _nvmlGpu.GetCurrentClock(NvmlClockType.NVML_CLOCK_VIDEO).Item2;
-
-    // public IImmutableSolidColorBrush TemperatureIndicatorColorBrush =>
-    //     GpuTemperature < TemperatureThresholdThrottle ? Brushes.White : (GpuTemperature < TemperatureThresholdSlowdown ? Brushes.Orange : Brushes.Red  );
     
     
     public uint PowerLimitCurrentMw => _nvmlGpu.GetPowerLimitCurrent().Item2;
@@ -90,7 +93,9 @@ public class GpuNvidia : INotifyPropertyChanged, IGpu
     public uint TemperatureThresholdShutdown => _nvmlGpu.GetTemperatureThreshold(NvlmTemperatureThreshold.NVML_TEMPERATURE_THRESHOLD_SHUTDOWN).Item2;
     public uint TemperatureThresholdSlowdown => _nvmlGpu.GetTemperatureThreshold(NvlmTemperatureThreshold.NVML_TEMPERATURE_THRESHOLD_SLOWDOWN).Item2;
     public uint TemperatureThresholdThrottle => _nvmlGpu.GetTemperatureThreshold(NvlmTemperatureThreshold.NVML_TEMPERATURE_THRESHOLD_GPU_MAX).Item2;
-    
+
+    public uint Fan0SpeedPercent => FansList.First().CurrentSpeed;
+
     public bool ApplyAutoSpeedToAllFans()
     {
         try
@@ -134,7 +139,7 @@ public class GpuNvidia : INotifyPropertyChanged, IGpu
             
     }
     
-    public NvmlReturnCode SetClockOffset(NvmlClockType clockType, NvmlPStates pState, int clockOffsetMhz)
+    public bool SetClockOffset(NvmlClockType clockType, NvmlPStates pState, int clockOffsetMhz)
     {
         // var clockOffset = new NvmlClockOffset_v1()
         // {
@@ -161,8 +166,7 @@ public class GpuNvidia : INotifyPropertyChanged, IGpu
                 
                 
             Console.WriteLine(" set clock offset: ");
-
-            return NvmlReturnCode.NVML_SUCCESS;
+            return true;
         }
         catch (SudoPasswordExpiredException)
         {
@@ -170,14 +174,14 @@ public class GpuNvidia : INotifyPropertyChanged, IGpu
         }
     }
     
-    public NvmlReturnCode SetPowerLimit(uint limitMw)
+    public bool SetPowerLimit(uint limitMw)
     {
         try
         {
             var result = RunSudoCliCommand($"-p {limitMw}");
             Console.WriteLine(" set power limit: ");
 
-            return NvmlReturnCode.NVML_SUCCESS;
+            return true;
         }
         catch (SudoPasswordExpiredException)
         {

@@ -1,4 +1,4 @@
-namespace ssprea_nvidia_control.NVML.NvmlTypes;
+namespace GpuSSharp.Libs.Nvml.NvmlTypes;
 
 public enum NvmlReturnCode
 {

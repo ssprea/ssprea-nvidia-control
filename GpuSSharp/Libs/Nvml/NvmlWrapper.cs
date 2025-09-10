@@ -1,8 +1,8 @@
 using System.Runtime.InteropServices;
 using System.Text;
-using NvmlSharp.NvmlTypes;
+using GpuSSharp.Libs.Nvml.NvmlTypes;
 
-namespace NvmlSharp;
+namespace GpuSSharp.Libs.Nvml;
 
 
 

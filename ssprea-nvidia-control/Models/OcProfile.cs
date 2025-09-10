@@ -1,8 +1,7 @@
 using System;
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
-using ssprea_nvidia_control.NVML;
-using ssprea_nvidia_control.NVML.NvmlTypes;
+using GpuSSharp.Libs.Nvml.NvmlTypes;
 using ssprea_nvidia_control.ViewModels;
 using Newtonsoft.Json;
 using ssprea_nvidia_control.Models.Exceptions;
@@ -57,7 +56,7 @@ public partial class OcProfile
     [JsonIgnore]
     private string _fanCurveName;
 
-    public bool Apply(NvmlGpu targetGpu)
+    public bool Apply(IGpu targetGpu)
     {
         try
         {
@@ -71,8 +70,7 @@ public partial class OcProfile
                 targetGpu.ApplyFanCurve(FanCurve);
 
             Console.WriteLine(r1.ToString() + r2 + r3);
-            return r1 == NvmlReturnCode.NVML_SUCCESS && r2 == NvmlReturnCode.NVML_SUCCESS &&
-                   r3 == NvmlReturnCode.NVML_SUCCESS;
+            return r1 && r2 && r3;
         }
         catch (SudoPasswordExpiredException)
         {

@@ -1,4 +1,4 @@
-namespace NvmlSharp;
+namespace GpuSSharp.Libs.Nvml;
 
 public class FanCurvePoint(uint temperature, uint fanSpeed)
 {

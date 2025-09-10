@@ -1,26 +1,24 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Threading;
-using DynamicData;
-using ssprea_nvidia_control.NVML;
+using GpuSSharp;
+using GpuSSharp.Libs.Nvml;
 
 namespace ssprea_nvidia_control.Models;
 
-public class NvmlService
+public class GpuService
 {
-    ObservableCollection<NvmlGpu> _gpuList = new();
+    ObservableCollection<IGpu> _gpuList = new();
     //List<NvmlGpuVM> _gpuListVm = new();
 
     CancellationTokenSource _cts = new();
     
-    public ObservableCollection<NvmlGpu> GpuList => _gpuList;
+    public ObservableCollection<IGpu> GpuList => _gpuList;
     //public IReadOnlyList<NvmlGpuVM> GpuListVm => _gpuListVm;
     
     public bool IsInitialized { get; private set; }
 
-    public NvmlService()
+    public GpuService()
     {
         //Initialize();
     }
@@ -52,20 +50,20 @@ public class NvmlService
         
         for (uint i = 0; i < deviceCount; i++)
         {
-            var g = new NvmlGpu(i);
+            var g = new GpuNvidia(new NvmlGpu(i),TimeSpan.FromMilliseconds(500));
             _gpuList.Add(g);
-            //_gpuListVm.Add(new NvmlGpuVM(g));
         }
 
-        //StartFanCurveUpdaterThread();
         
         IsInitialized = true;
         Console.WriteLine("NvmlService initialized");
+        
+        //TODO: initialize amd gpus
     }
 
     
     
-    ~NvmlService()
+    ~GpuService()
     {
         Shutdown();
     }

@@ -1,9 +1,10 @@
 ﻿using McMaster.Extensions.CommandLineUtils;
 using Newtonsoft.Json;
-using NvmlSharp;
-using NvmlSharp.NvmlTypes;
+using GpuSSharp;
+using GpuSSharp.Libs.Nvml;
+using GpuSSharp.Libs.Nvml.NvmlTypes;
 using ssprea_nvidia_control_cli.Types;
-using FanCurve = NvmlSharp.FanCurve;
+using FanCurve = GpuSSharp.Libs.Nvml.FanCurve;
 
 namespace ssprea_nvidia_control_cli;
 

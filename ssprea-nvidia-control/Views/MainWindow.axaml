@@ -188,9 +188,9 @@
                                 <ProgressBar  VerticalAlignment="Stretch" Minimum="0" Maximum="{Binding SelectedGpu.TemperatureThresholdShutdown,FallbackValue=98}" Value="{Binding SelectedGpu.GpuTemperature,FallbackValue=0}"/>
                             </Border>
                             <Border Grid.Column="2" Grid.Row="4" BorderBrush="{DynamicResource InfoBarsBorderBrush}" BorderThickness="2">
-                                <Label  VerticalAlignment="Center" HorizontalAlignment="Right" Content="{Binding SelectedGpu.GpuTemperature, FallbackValue=0000}" Foreground="{Binding SelectedGpu.TemperatureIndicatorColorBrush}" />
+                                <Label  VerticalAlignment="Center" HorizontalAlignment="Right" Content="{Binding SelectedGpu.GpuTemperature, FallbackValue=0000}" Foreground="{Binding GpuTemperatureIndicatorColorBrush}" />
                             </Border>
-                            <Label Grid.Column="3" Grid.Row="4" VerticalAlignment="Center" Foreground="{Binding SelectedGpu.TemperatureIndicatorColorBrush}"> °C </Label>
+                            <Label Grid.Column="3" Grid.Row="4" VerticalAlignment="Center" Foreground="{Binding GpuTemperatureIndicatorColorBrush}"> °C </Label>
                             
                             <!--GPU USAGE-->
                             <Label Grid.Column="0" Grid.Row="5" VerticalAlignment="Center" FontSize="12" HorizontalAlignment="Right"> GPU USAGE </Label>
@@ -327,7 +327,7 @@
                             
                                 <Label DockPanel.Dock="Left" VerticalAlignment="Center" Content="{x:Static lang:Resources.SelectGpu}"/>
                                 <ComboBox SelectedItem="{Binding SelectedGpu}"
-                                          ItemsSource="{Binding NvmlService.GpuList}" 
+                                          ItemsSource="{Binding GpuService.GpuList}" 
                                           SelectedIndex="1" VerticalAlignment="Center" HorizontalAlignment="Stretch"
                                           DockPanel.Dock="Right"
                                           >

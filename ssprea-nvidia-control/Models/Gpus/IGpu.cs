@@ -1,17 +1,22 @@
 
 
-using NvmlSharp.NvmlTypes;
+using System.Collections.Generic;
+using System.ComponentModel;
+using GpuSSharp.Libs.Nvml.NvmlTypes;
+using ssprea_nvidia_control.Models.Types;
 
 namespace ssprea_nvidia_control.Models;
 
-public interface IGpu
+public interface IGpu : INotifyPropertyChanged
 {
+    public uint DeviceIndex { get; }
+    public string Name { get; }
     public uint GpuTemperature {get;}
     public uint GpuPowerUsage {get;}
     public double GpuPowerUsageW {get;}
     public string GpuPowerUsageWFormatted {get;}
 
-    public NvmlPStates GpuPState {get;}
+    public GpuPState GpuPState {get;}
 
     public uint GpuClockCurrent {get;}
     public uint MemClockCurrent {get;}
@@ -44,7 +49,6 @@ public interface IGpu
     public string MemoryFreeMBFormatted {get;}
     public string MemoryUsedMBFormatted {get;}
     
-    public NvmlUtilization GpuUtilization {get;}
     
     public uint UtilizationCore {get;}
     public uint UtilizationMemCtl {get;}
@@ -56,4 +60,17 @@ public interface IGpu
     public uint TemperatureThresholdShutdown {get;}
     public uint TemperatureThresholdSlowdown {get;}
     public uint TemperatureThresholdThrottle {get;}
+    
+    public uint Fan0SpeedPercent { get; }
+
+    public bool SetClockOffset(NvmlClockType clockType, NvmlPStates pState, int clockOffsetMhz);
+    public bool SetPowerLimit(uint limitMw);
+    public void ApplyFanCurve(FanCurve fanCurve);
+
+    public bool ApplySpeedToAllFans(uint speed);
+    public bool ApplyAutoSpeedToAllFans();
+    
+    public List<uint> GetFansIds();
+    
+
 }

@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 using Newtonsoft.Json;
-using NvmlSharp;
+using GpuSSharp;
 
 namespace ssprea_nvidia_control_cli.Types;
 

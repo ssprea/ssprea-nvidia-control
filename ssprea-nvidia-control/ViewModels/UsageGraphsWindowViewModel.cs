@@ -1,17 +1,12 @@
-using System;
-using System.Collections.ObjectModel;
-using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using LiveChartsCore;
-using LiveChartsCore.Defaults;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using LiveChartsCore.SkiaSharpView.Painting.Effects;
 using SkiaSharp;
 using ssprea_nvidia_control.Models;
-using ssprea_nvidia_control.NVML;
 using ssprea_nvidia_control.Utils;
 
 namespace ssprea_nvidia_control.ViewModels;
@@ -19,7 +14,7 @@ namespace ssprea_nvidia_control.ViewModels;
 public partial class UsageGraphsWindowViewModel : ViewModelBase
 {
     public CancellationTokenSource CancelTokenSrc = new();
-    private readonly NvmlGpu _targetGpu;
+    private readonly IGpu _targetGpu;
     private static int _graphLength = 300; //seconds of data in graph
     
     [ObservableProperty] private ISeries[] _gpuTempSeries = [new LineSeries<int>()]  ;
@@ -196,8 +191,8 @@ public partial class UsageGraphsWindowViewModel : ViewModelBase
     #endregion GraphStyles
     
     
-    public UsageGraphsWindowViewModel() : this(MainWindowViewModel.NvmlService.GpuList[0]) {}
-    public UsageGraphsWindowViewModel(NvmlGpu targetGpu)
+    public UsageGraphsWindowViewModel() : this(MainWindowViewModel.GpuService.GpuList[0]) {}
+    public UsageGraphsWindowViewModel(IGpu targetGpu)
     {
         GpuTempSeries[0] = new LineSeries<int>()
         {
@@ -316,10 +311,10 @@ public partial class UsageGraphsWindowViewModel : ViewModelBase
     {
         _gpuClockValues.Add((int)_targetGpu.GpuClockCurrent);
         _memClockValues.Add((int)_targetGpu.MemClockCurrent);
-        _gpuUsageValues.Add((int)_targetGpu.GpuUtilization.gpu);
-        _memUsageValues.Add((int)_targetGpu.GpuUtilization.memory);
+        _gpuUsageValues.Add((int)_targetGpu.UtilizationCore);
+        _memUsageValues.Add((int)_targetGpu.UtilizationMemCtl);
         _powerUsageValues.Add((int)_targetGpu.GpuPowerUsageW);
-        _fanSpeedValues.Add((int)_targetGpu.FansList[0].CurrentSpeed);
+        _fanSpeedValues.Add((int)_targetGpu.Fan0SpeedPercent);
         _gpuTempValues.Add((int)_targetGpu.GpuTemperature);
 
     }

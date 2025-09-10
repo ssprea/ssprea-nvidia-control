@@ -1,8 +1,8 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using NvmlSharp.NvmlTypes;
+using GpuSSharp.Libs.Nvml.NvmlTypes;
 
-namespace NvmlSharp;
+namespace GpuSSharp.Libs.Nvml;
 
 public class NvmlGpuFan : INotifyPropertyChanged
 {

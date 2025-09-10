@@ -1,4 +1,5 @@
-using NvmlSharp;
+using GpuSSharp;
+using GpuSSharp.Libs.Nvml;
 
 namespace ssprea_nvidia_control_cli;
 

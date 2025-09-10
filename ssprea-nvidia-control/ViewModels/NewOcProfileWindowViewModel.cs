@@ -2,7 +2,6 @@ using System.Collections.ObjectModel;
 using System.Reactive;
 using CommunityToolkit.Mvvm.ComponentModel;
 using ssprea_nvidia_control.Models;
-using ssprea_nvidia_control.NVML;
 using ReactiveUI;
 
 namespace ssprea_nvidia_control.ViewModels;
@@ -18,7 +17,7 @@ public partial class NewOcProfileWindowViewModel : ViewModelBase
     [ObservableProperty] private FanCurveViewModel? _selectedFanCurve;
     
     
-    public NvmlGpu? SelectedGpu => _mainWindowViewModel.SelectedGpu;
+    public IGpu? SelectedGpu => _mainWindowViewModel.SelectedGpu;
     public ObservableCollection<FanCurveViewModel>? FanCurvesList => MainWindowViewModel.FanCurvesList;
 
 

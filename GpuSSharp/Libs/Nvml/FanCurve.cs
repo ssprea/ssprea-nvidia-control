@@ -1,7 +1,7 @@
 using System.Collections.ObjectModel;
 using Newtonsoft.Json;
 
-namespace NvmlSharp;
+namespace GpuSSharp.Libs.Nvml;
 
 public class FanCurve
 {

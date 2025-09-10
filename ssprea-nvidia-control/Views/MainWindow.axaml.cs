@@ -13,7 +13,6 @@ using Avalonia.Platform;
 using Avalonia.ReactiveUI;
 using Newtonsoft.Json.Linq;
 using ssprea_nvidia_control.Models;
-using ssprea_nvidia_control.NVML;
 using ssprea_nvidia_control.ViewModels;
 using ReactiveUI;
 
@@ -321,7 +320,7 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
 
     private void Window_OnClosed(object? sender, EventArgs e)
     {
-        MainWindowViewModel.NvmlService.Shutdown();
+        MainWindowViewModel.GpuService.Shutdown();
     }
 
     

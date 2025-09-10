@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 using Avalonia.ReactiveUI;
 using ssprea_nvidia_control.Models;
 using ssprea_nvidia_control.Models.Exceptions;
-using ssprea_nvidia_control.NVML;
 
 namespace ssprea_nvidia_control;
 

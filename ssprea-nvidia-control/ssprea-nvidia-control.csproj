@@ -80,6 +80,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\NvmlSharp\NvmlSharp.csproj" />
+      <ProjectReference Include="..\GpuSSharp\GpuSSharp.csproj" />
     </ItemGroup>
 </Project>
