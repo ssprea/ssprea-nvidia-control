@@ -1,4 +1,4 @@
-using ssprea_nvidia_control_cli.NVML;
+using NvmlSharp;
 
 namespace ssprea_nvidia_control_cli;
 

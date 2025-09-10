@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ssprea-nvidia-control", "ss
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ssprea-nvidia-control-cli", "ssprea-nvidia-control-cli\ssprea-nvidia-control-cli.csproj", "{ADD93DEA-6763-48DC-A18F-D422DE7B427D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NvmlSharp", "NvmlSharp\NvmlSharp.csproj", "{55FCC675-7ED5-44DB-8EC2-4E0A858A1535}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{ADD93DEA-6763-48DC-A18F-D422DE7B427D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ADD93DEA-6763-48DC-A18F-D422DE7B427D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ADD93DEA-6763-48DC-A18F-D422DE7B427D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{55FCC675-7ED5-44DB-8EC2-4E0A858A1535}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{55FCC675-7ED5-44DB-8EC2-4E0A858A1535}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{55FCC675-7ED5-44DB-8EC2-4E0A858A1535}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{55FCC675-7ED5-44DB-8EC2-4E0A858A1535}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

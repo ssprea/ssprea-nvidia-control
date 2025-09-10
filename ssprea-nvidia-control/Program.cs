@@ -35,15 +35,16 @@ sealed class Program
     {
         SelectedLocale = File.Exists(DefaultDataPath+"/SelectedLocale.txt") ? File.ReadAllText(DefaultDataPath+"/SelectedLocale.txt").Trim() : "System";
 
+        
+        
         if (SelectedLocale != "System")
         {
             Lang.Resources.Culture = new CultureInfo(SelectedLocale);
         }
+        
 
-        var maximizeThread = new Thread(async () =>
-        {
-            
-        });
+        
+        
         
         Task.Run(async Task?() =>
         {

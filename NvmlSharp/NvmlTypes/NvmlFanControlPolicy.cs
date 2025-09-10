@@ -1,4 +1,4 @@
-namespace ssprea_nvidia_control_cli.NVML.NvmlTypes;
+namespace NvmlSharp.NvmlTypes;
 
 public enum NvmlFanControlPolicy
 {

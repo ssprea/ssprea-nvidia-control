@@ -1,8 +1,8 @@
 using System.Runtime.InteropServices;
 using System.Text;
-using ssprea_nvidia_control_cli.NVML.NvmlTypes;
+using NvmlSharp.NvmlTypes;
 
-namespace ssprea_nvidia_control_cli.NVML;
+namespace NvmlSharp;
 
 
 
@@ -150,16 +150,33 @@ public static class NvmlWrapper
     /// <param name="device">device handle</param>
     /// <param name="info">Structure specifying the clock type (input), the pstate (input) and clock offset value (input)</param>
     /// <returns>
-    /// NVML_SUCCESS                         if everything worked
-    /// NVML_ERROR_UNINITIALIZED             if the library has not been successfully initialized
-    /// NVML_ERROR_NO_PERMISSION             if the user doesn't have permission to perform this operation
+    /// NVML_SUCCESS                         if everything worked.
+    /// NVML_ERROR_UNINITIALIZED             if the library has not been successfully initialized.
+    /// NVML_ERROR_NO_PERMISSION             if the user doesn't have permission to perform this operation.
     /// NVML_ERROR_INVALID_ARGUMENT          if device, type or pstate are invalid or both clockOffsetMHz is out of allowed range.
     /// NVML_ERROR_ARGUMENT_VERSION_MISMATCH if the provided version is invalid/unsupported
     /// NVML_ERROR_NOT_SUPPORTED             if the device does not support this feature
     /// </returns>
     [DllImport(NVML_DLL)]
     public static extern NvmlReturnCode nvmlDeviceSetClockOffsets(IntPtr device, ref NvmlClockOffset_v1 info);
+
     
+/// <summary>
+/// Retrieves the amount of used, free, reserved and total memory available on the device, in bytes.
+/// </summary>
+/// <param name="device">device handle</param>
+/// <param name="memory">Out parameter containing the device's memory usage information</param>
+/// <returns>
+/// NVML_SUCCESS                 if \a memory has been populated
+/// NVML_ERROR_UNINITIALIZED     if the library has not been successfully initialized
+/// NVML_ERROR_NO_PERMISSION     if the user doesn't have permission to perform this operation
+/// NVML_ERROR_INVALID_ARGUMENT  if \a device is invalid or \a memory is NULL
+/// NVML_ERROR_GPU_IS_LOST       if the target GPU has fallen off the bus or is otherwise inaccessible
+/// NVML_ERROR_UNKNOWN           on any unexpected error
+
+/// </returns>
+    [DllImport(NVML_DLL)]
+    public static extern NvmlReturnCode nvmlDeviceGetMemoryInfo(IntPtr device, out NvmlMemory memory);
     
     /// <summary>
     /// Queries PState of the device

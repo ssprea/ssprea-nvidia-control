@@ -30,7 +30,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="NVML\" />
+      <ProjectReference Include="..\NvmlSharp\NvmlSharp.csproj" />
     </ItemGroup>
 
 </Project>

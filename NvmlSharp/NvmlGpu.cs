@@ -1,9 +1,7 @@
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Text;
-using ssprea_nvidia_control_cli.NVML.NvmlTypes;
+using NvmlSharp.NvmlTypes;
 
-namespace ssprea_nvidia_control_cli.NVML;
+namespace NvmlSharp;
 
 
     /// <summary>
@@ -19,22 +17,20 @@ namespace ssprea_nvidia_control_cli.NVML;
     /// GetDeviceCount is not guaranteed to enumerate devices in the same 
     /// order across reboots
     /// </remarks>
-    public class NvmlGpu : INotifyPropertyChanged
+    public class NvmlGpu
     {
         private const uint MAX_NAME_LENGTH = 100;
 
         private IntPtr _handle;
-        
-        private CancellationTokenSource _fanCurveTaskCancellationTokenSource = new();
 
+        public uint DeviceIndex { get; private set; }
+        
+        
         /// <summary>
         /// GPU Name
         /// </summary>
         public string Name { get; }
 
-        public uint DeviceIndex { private set; get; }
-        
-        
         /// <summary>
         /// Initializes a new instance of NvGpu, using device index
         /// to initialize handle and name for the device
@@ -63,24 +59,19 @@ namespace ssprea_nvidia_control_cli.NVML;
                 _nvmlGpuFans.Add(new NvmlGpuFan(this,i));
             }
             
-            Task.Run(() =>
-            {
-                while (true)
-                {
-                    Thread.Sleep(500);
-                    UpdateProperties();
-                }
-            });
         }
 
         private List<NvmlGpuFan> _nvmlGpuFans = new();
         public IReadOnlyList<NvmlGpuFan> FansList => _nvmlGpuFans;
     
+        public FanCurve? AppliedFanCurve { get; private set; }
         
         
     
         public uint GpuTemperature => GetTemperature().Item2;
         public uint GpuPowerUsage => GetPowerUsage().Item2;
+        public double GpuPowerUsageW => GpuPowerUsage/1000f;
+        public string GpuPowerUsageWFormatted => GpuPowerUsageW.ToString("0.00");
     
         public NvmlPStates GpuPState => GetPState().Item2;
 
@@ -89,6 +80,9 @@ namespace ssprea_nvidia_control_cli.NVML;
         public uint SmClockCurrent => GetCurrentClock(NvmlClockType.NVML_CLOCK_SM).Item2;
         public uint VideoClockCurrent => GetCurrentClock(NvmlClockType.NVML_CLOCK_VIDEO).Item2;
     
+        
+        
+        
         public uint PowerLimitCurrentMw => GetPowerLimitCurrent().Item2;
         public uint PowerLimitMinMw => GetPowerLimitConstraints().Item2;
         public uint PowerLimitMaxMw => GetPowerLimitConstraints().Item3;
@@ -98,7 +92,27 @@ namespace ssprea_nvidia_control_cli.NVML;
         public double PowerLimitMinW => GetPowerLimitConstraints().Item2/1000d;
         public double PowerLimitMaxW => GetPowerLimitConstraints().Item3/1000d;
         public double PowerLimitDefaultW => GetPowerLimitDefault().Item2/1000d;
-    
+        
+        public ulong MemoryTotal => GetMemoryUsage().Item2.Total;
+        public ulong MemoryFree => GetMemoryUsage().Item2.Free;
+        public ulong MemoryUsed => GetMemoryUsage().Item2.Used;
+
+        public double MemoryTotalMB => MemoryTotal / 1000000f;
+        public double MemoryFreeMB => MemoryFree / 1000000f;
+        public double MemoryUsedMB => MemoryUsed / 1000000f;
+
+        public string MemoryTotalMBFormatted => MemoryTotalMB.ToString("0.00");
+        public string MemoryFreeMBFormatted => MemoryFreeMB.ToString("0.00");
+        public string MemoryUsedMBFormatted => MemoryUsedMB.ToString("0");
+        
+        public NvmlUtilization GpuUtilization => GetUtilization().Item2;
+        
+        public uint UtilizationCore => GetUtilization().Item2.gpu;
+        public uint UtilizationMemCtl => GetUtilization().Item2.memory;
+        
+
+        public string MemoryUsageString => $"{MemoryUsed/1000000}MB/{MemoryTotal/1000000}MB (Free: {MemoryFree/1000000}MB)";
+        
     
         public uint TemperatureThresholdShutdown => GetTemperatureThreshold(NvlmTemperatureThreshold.NVML_TEMPERATURE_THRESHOLD_SHUTDOWN).Item2;
         public uint TemperatureThresholdSlowdown => GetTemperatureThreshold(NvlmTemperatureThreshold.NVML_TEMPERATURE_THRESHOLD_SLOWDOWN).Item2;
@@ -109,13 +123,12 @@ namespace ssprea_nvidia_control_cli.NVML;
         /// Gets device utilization info
         /// </summary>
         /// <returns>utilization info and nvml return code</returns>
-        public (NvmlUtilization, NvmlReturnCode) GetUtilization()
+        public (NvmlReturnCode, NvmlUtilization) GetUtilization()
         {
             var r = NvmlWrapper.nvmlDeviceGetUtilizationRates(_handle, out NvmlUtilization u);
-            return (u, r);
+            return (r,u);
         }
-
-
+        
 
         public bool ApplySpeedToAllFans(uint speed)
         {
@@ -133,6 +146,7 @@ namespace ssprea_nvidia_control_cli.NVML;
             return result;
         }
         
+        
         /// <summary>
         /// Gets device temperature in degrees celsius
         /// </summary>
@@ -141,6 +155,13 @@ namespace ssprea_nvidia_control_cli.NVML;
         {
             var r = NvmlWrapper.nvmlDeviceGetTemperature(_handle, NvmlTemperatureSensors.NVML_TEMPERATURE_GPU, out uint t);
             return (r,t);
+        }
+        
+        
+        public (NvmlReturnCode,NvmlMemory) GetMemoryUsage()
+        {
+            var r = NvmlWrapper.nvmlDeviceGetMemoryInfo(_handle, out NvmlMemory m);
+            return (r,m);
         }
 
         public (NvmlReturnCode,NvmlPStates) GetPState()
@@ -235,33 +256,5 @@ namespace ssprea_nvidia_control_cli.NVML;
         {
             return(NvmlWrapper.nvmlDeviceGetTemperatureThreshold(_handle,temperatureThresholdType,out uint temperatureThreshold),temperatureThreshold);
         }
-
-
-        private void UpdateProperties()
-        {
-            //Console.WriteLine("update");
-            //OnPropertyChanged(nameof(GpuClockCurrent));
-            foreach (var p in GetType().GetProperties())
-            { 
-                OnPropertyChanged(p.Name);
-            }
-
-            // GpuClockCurrent = _nvmlGpu.GetCurrentClock(NvmlClockType.NVML_CLOCK_GRAPHICS).Item2;
-        }
         
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        protected bool SetField<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
-        {
-            if (EqualityComparer<T>.Default.Equals(field, value)) return false;
-            field = value;
-            OnPropertyChanged(propertyName);
-            return true;
-        }
     }

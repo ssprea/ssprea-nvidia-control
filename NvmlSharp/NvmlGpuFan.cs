@@ -1,8 +1,8 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using ssprea_nvidia_control_cli.NVML.NvmlTypes;
+using NvmlSharp.NvmlTypes;
 
-namespace ssprea_nvidia_control_cli.NVML;
+namespace NvmlSharp;
 
 public class NvmlGpuFan : INotifyPropertyChanged
 {
