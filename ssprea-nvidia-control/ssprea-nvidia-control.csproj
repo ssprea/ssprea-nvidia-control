@@ -73,4 +73,13 @@
           <DependentUpon>Resources.resx</DependentUpon>
         </Compile>
     </ItemGroup>
+
+    <ItemGroup>
+      <UpToDateCheckInput Remove="Assets\Locales\en.json" />
+      <UpToDateCheckInput Remove="Assets\Locales\it.json" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\NvmlSharp\NvmlSharp.csproj" />
+    </ItemGroup>
 </Project>
