@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reactive;
@@ -11,7 +10,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Avalonia.Controls;
-using Avalonia.Media;
 using Avalonia.Platform;
 using CommunityToolkit.Mvvm.ComponentModel;
 using LiveChartsCore.Defaults;
@@ -27,7 +25,6 @@ using ssprea_nvidia_control.NVML;
 using Newtonsoft.Json.Linq;
 using ReactiveUI;
 using SkiaSharp;
-using ssprea_nvidia_control.Models.Exceptions;
 using ssprea_nvidia_control.Utils;
 
 
@@ -249,8 +246,9 @@ public partial class MainWindowViewModel : ViewModelBase
 
     partial void OnSelectedGpuChanged(NvmlGpu? value)
     {
-        if (value is null)
+        if (value is null || value.FansList.Count <= 0)
             return;
+        
         value.FansList.First().PropertyChanged += (s, args) =>
         {
             if (args.PropertyName == "CurrentSpeed")
@@ -262,27 +260,6 @@ public partial class MainWindowViewModel : ViewModelBase
                     
                 SelectedFanCurve?.CurrentFanSpeedPoints.Add(new ObservablePoint(value.GpuTemperature,value.FansList[0].CurrentSpeed));
                 
-                // if (SelectedFanCurve?.CurvePointsSeries.Any(x => x.Name == "Current Fan Speed") ?? false)
-                // {
-                //     var currentFanSpeedSeries =
-                //         SelectedFanCurve.CurvePointsSeries.First(x => x.Name == "Current Fan Speed");
-                //
-                //     currentFanSpeedSeries.Values = new MaxSizeObservableCollection<ObservablePoint>(1);
-                // }
-                //
-                // if (SelectedFanCurve?.CurvePointsSeries.Count > 1)
-                //     SelectedFanCurve?.CurvePointsSeries.RemoveAt(1);
-                //
-                // SelectedFanCurve?.CurvePointsSeries.Add(
-                //     new LineSeries<ObservablePoint>(new ObservablePoint(value.GpuTemperature,value.FansList[0].CurrentSpeed))
-                //     {
-                //         Name="Current Fan Speed",
-                //         GeometryStroke=new SolidColorPaint(SKColors.DarkRed) {StrokeThickness = 3},
-                //         LineSmoothness = 0,
-                //             
-                //     }
-                //     
-                //     );
             }
         };
     }
@@ -489,8 +466,8 @@ public partial class MainWindowViewModel : ViewModelBase
         //if the checkbox is disabled, stop the service
         if (!IsStartupProfileChecked)
         {
-            Utils.Systemd.StopSystemdService("snvctl.service");
-            Utils.Systemd.DisableSystemdService("snvctl.service");
+            Systemd.StopSystemdService("snvctl.service");
+            Systemd.DisableSystemdService("snvctl.service");
             
             Console.WriteLine("No startup profile selected, stopped snvctl.service");
             SelectedStartupProfile = null;
@@ -513,19 +490,19 @@ public partial class MainWindowViewModel : ViewModelBase
         
         //check if directory exists
         if (!Directory.Exists(DEFAULT_SERVICE_DATA_PATH ))
-            Utils.Files.MakeDirectorySudo(DEFAULT_SERVICE_DATA_PATH);
+            Files.MakeDirectorySudo(DEFAULT_SERVICE_DATA_PATH);
 
         
         //save profile and copy to service data path
         await File.WriteAllTextAsync(Program.DefaultDataPath + "/temp/profile.json", profile.ToJson());
-        Utils.Files.CopySudo(Program.DefaultDataPath + "/temp/profile.json", DEFAULT_SERVICE_DATA_PATH+"/profile.json");
+        Files.CopySudo(Program.DefaultDataPath + "/temp/profile.json", DEFAULT_SERVICE_DATA_PATH+"/profile.json");
 
 
         if (profile.FanCurve is not null)
         {
             //save fan curve and copy to service data path
             await File.WriteAllTextAsync(Program.DefaultDataPath + "/temp/curve.json", profile.FanCurve.ToJson());
-            Utils.Files.CopySudo(Program.DefaultDataPath + "/temp/curve.json", DEFAULT_SERVICE_DATA_PATH+"/curve.json");
+            Files.CopySudo(Program.DefaultDataPath + "/temp/curve.json", DEFAULT_SERVICE_DATA_PATH+"/curve.json");
 
         }
         
@@ -546,12 +523,12 @@ WantedBy=multi-user.target
 
         //write to temp file and copy to service data path
         await File.WriteAllTextAsync(Program.DefaultDataPath + "/temp/snvctl.service", service);
-        Utils.Files.CopySudo(Program.DefaultDataPath + "/temp/snvctl.service", "/etc/systemd/system/snvctl.service");
+        Files.CopySudo(Program.DefaultDataPath + "/temp/snvctl.service", "/etc/systemd/system/snvctl.service");
         
         //enable service
-        Utils.Systemd.RunSystemdCommand("daemon-reload");
-        Utils.Systemd.EnableSystemdService("snvctl.service");
-        if (Utils.Systemd.StartSystemdService("snvctl.service"))
+        Systemd.RunSystemdCommand("daemon-reload");
+        Systemd.EnableSystemdService("snvctl.service");
+        if (Systemd.StartSystemdService("snvctl.service"))
             SelectedStartupProfile = SelectedOcProfile;
     }
     

@@ -1,19 +1,14 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reactive;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Platform;
 using Avalonia.ReactiveUI;
-using Newtonsoft.Json.Linq;
 using ssprea_nvidia_control.Models;
-using ssprea_nvidia_control.NVML;
 using ssprea_nvidia_control.ViewModels;
 using ReactiveUI;
 
