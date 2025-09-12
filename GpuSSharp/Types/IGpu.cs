@@ -1,20 +1,17 @@
-
-
-using System.Collections.Generic;
-using System.ComponentModel;
+using GpuSSharp.Libs.Nvml;
 using GpuSSharp.Libs.Nvml.NvmlTypes;
-using ssprea_nvidia_control.Models.Types;
 
-namespace ssprea_nvidia_control.Models;
+namespace GpuSSharp.Types;
 
-public interface IGpu : INotifyPropertyChanged
+public interface IGpu
 {
     public uint DeviceIndex { get; }
+    public string DevicePciAddress { get; }
     public string Name { get; }
+    public GpuVendor Vendor { get; }
+    
     public uint GpuTemperature {get;}
     public uint GpuPowerUsage {get;}
-    public double GpuPowerUsageW {get;}
-    public string GpuPowerUsageWFormatted {get;}
 
     public GpuPState GpuPState {get;}
 
@@ -22,20 +19,17 @@ public interface IGpu : INotifyPropertyChanged
     public uint MemClockCurrent {get;}
     public uint SmClockCurrent {get;}
     public uint VideoClockCurrent {get;}
-
-    // public IImmutableSolidColorBrush TemperatureIndicatorColorBrush {get;}
-    //     GpuTemperature < TemperatureThresholdThrottle ? Brushes.White : (GpuTemperature < TemperatureThresholdSlowdown ? Brushes.Orange : Brushes.Red  );
     
     
     public uint PowerLimitCurrentMw {get;}
     public uint PowerLimitMinMw {get;}
     public uint PowerLimitMaxMw {get;}
     public uint PowerLimitDefaultMw {get;}
-    
-    public double PowerLimitCurrentW {get;}
-    public double PowerLimitMinW {get;}
-    public double PowerLimitMaxW {get;}
-    public double PowerLimitDefaultW {get;}
+
+    public double PowerLimitCurrentW => PowerLimitCurrentMw / 1000f;
+    public double PowerLimitMinW => PowerLimitCurrentMw / 1000f;
+    public double PowerLimitMaxW => PowerLimitCurrentMw / 1000f;
+    public double PowerLimitDefaultW => PowerLimitCurrentMw / 1000f;
     
     public ulong MemoryTotal {get;}
     public ulong MemoryFree {get;}
@@ -45,16 +39,12 @@ public interface IGpu : INotifyPropertyChanged
     public double MemoryFreeMB {get;}
     public double MemoryUsedMB {get;}
 
-    public string MemoryTotalMBFormatted {get;}
-    public string MemoryFreeMBFormatted {get;}
-    public string MemoryUsedMBFormatted {get;}
     
     
     public uint UtilizationCore {get;}
     public uint UtilizationMemCtl {get;}
     
 
-    public string MemoryUsageString {get;}
     
 
     public uint TemperatureThresholdShutdown {get;}
@@ -63,14 +53,12 @@ public interface IGpu : INotifyPropertyChanged
     
     public uint Fan0SpeedPercent { get; }
 
-    public bool SetClockOffset(NvmlClockType clockType, NvmlPStates pState, int clockOffsetMhz);
-    public bool SetPowerLimit(uint limitMw);
-    public void ApplyFanCurve(FanCurve fanCurve);
+    public bool SetCoreOffset(GpuPState pState, int clockOffsetMhz);
+    public bool SetMemOffset(GpuPState pState, int clockOffsetMhz);
+    public bool SetGpuPowerLimit(uint limitMw);
 
     public bool ApplySpeedToAllFans(uint speed);
     public bool ApplyAutoSpeedToAllFans();
     
     public List<uint> GetFansIds();
-    
-
 }

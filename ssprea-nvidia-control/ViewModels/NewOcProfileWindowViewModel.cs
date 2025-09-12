@@ -17,7 +17,7 @@ public partial class NewOcProfileWindowViewModel : ViewModelBase
     [ObservableProperty] private FanCurveViewModel? _selectedFanCurve;
     
     
-    public IGpu? SelectedGpu => _mainWindowViewModel.SelectedGpu;
+    public MonitoredGpu? SelectedGpu => _mainWindowViewModel.SelectedGpu;
     public ObservableCollection<FanCurveViewModel>? FanCurvesList => MainWindowViewModel.FanCurvesList;
 
 

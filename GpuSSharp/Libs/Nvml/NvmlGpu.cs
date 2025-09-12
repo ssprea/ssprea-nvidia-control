@@ -1,5 +1,6 @@
 using System.Text;
 using GpuSSharp.Libs.Nvml.NvmlTypes;
+using GpuSSharp.Types;
 
 namespace GpuSSharp.Libs.Nvml;
 
@@ -17,14 +18,16 @@ namespace GpuSSharp.Libs.Nvml;
     /// GetDeviceCount is not guaranteed to enumerate devices in the same 
     /// order across reboots
     /// </remarks>
-    public class NvmlGpu
+    public class NvmlGpu : IGpu
     {
         private const uint MAX_NAME_LENGTH = 100;
 
         private IntPtr _handle;
 
         public uint DeviceIndex { get; private set; }
-        
+        public string DevicePciAddress => PciInfo.busId.ToString();
+        private NvmlPciInfo PciInfo { get; }
+        public GpuVendor Vendor => GpuVendor.Nvidia;
         
         /// <summary>
         /// GPU Name
@@ -53,6 +56,11 @@ namespace GpuSSharp.Libs.Nvml;
             }
 
             Name = name.ToString();
+
+            NvmlWrapper.nvmlDeviceGetPciInfo_v3(_handle, out var pci);
+            PciInfo = pci;
+            
+            Console.WriteLine(DevicePciAddress);
             
             for (uint i = 0; i < GetFanCount().Item2; i++)
             {
@@ -62,6 +70,7 @@ namespace GpuSSharp.Libs.Nvml;
         }
 
         private List<NvmlGpuFan> _nvmlGpuFans = new();
+        private GpuPState _gpuPState;
         public IReadOnlyList<NvmlGpuFan> FansList => _nvmlGpuFans;
     
         public FanCurve? AppliedFanCurve { get; private set; }
@@ -71,8 +80,9 @@ namespace GpuSSharp.Libs.Nvml;
         public uint GpuTemperature => GetTemperature().Item2;
         public uint GpuPowerUsage => GetPowerUsage().Item2;
         public double GpuPowerUsageW => GpuPowerUsage/1000f;
-        public string GpuPowerUsageWFormatted => GpuPowerUsageW.ToString("0.00");
-    
+
+        GpuPState IGpu.GpuPState => _gpuPState;
+
         public NvmlPStates GpuPState => GetPState().Item2;
 
         public uint GpuClockCurrent => GetCurrentClock(NvmlClockType.NVML_CLOCK_GRAPHICS).Item2;
@@ -88,10 +98,6 @@ namespace GpuSSharp.Libs.Nvml;
         public uint PowerLimitMaxMw => GetPowerLimitConstraints().Item3;
         public uint PowerLimitDefaultMw => GetPowerLimitDefault().Item2;
         
-        public double PowerLimitCurrentW => GetPowerLimitCurrent().Item2/1000d;
-        public double PowerLimitMinW => GetPowerLimitConstraints().Item2/1000d;
-        public double PowerLimitMaxW => GetPowerLimitConstraints().Item3/1000d;
-        public double PowerLimitDefaultW => GetPowerLimitDefault().Item2/1000d;
         
         public ulong MemoryTotal => GetMemoryUsage().Item2.Total;
         public ulong MemoryFree => GetMemoryUsage().Item2.Free;
@@ -100,10 +106,6 @@ namespace GpuSSharp.Libs.Nvml;
         public double MemoryTotalMB => MemoryTotal / 1000000f;
         public double MemoryFreeMB => MemoryFree / 1000000f;
         public double MemoryUsedMB => MemoryUsed / 1000000f;
-
-        public string MemoryTotalMBFormatted => MemoryTotalMB.ToString("0.00");
-        public string MemoryFreeMBFormatted => MemoryFreeMB.ToString("0.00");
-        public string MemoryUsedMBFormatted => MemoryUsedMB.ToString("0");
         
         public NvmlUtilization GpuUtilization => GetUtilization().Item2;
         
@@ -111,14 +113,14 @@ namespace GpuSSharp.Libs.Nvml;
         public uint UtilizationMemCtl => GetUtilization().Item2.memory;
         
 
-        public string MemoryUsageString => $"{MemoryUsed/1000000}MB/{MemoryTotal/1000000}MB (Free: {MemoryFree/1000000}MB)";
         
     
         public uint TemperatureThresholdShutdown => GetTemperatureThreshold(NvlmTemperatureThreshold.NVML_TEMPERATURE_THRESHOLD_SHUTDOWN).Item2;
         public uint TemperatureThresholdSlowdown => GetTemperatureThreshold(NvlmTemperatureThreshold.NVML_TEMPERATURE_THRESHOLD_SLOWDOWN).Item2;
         public uint TemperatureThresholdThrottle => GetTemperatureThreshold(NvlmTemperatureThreshold.NVML_TEMPERATURE_THRESHOLD_GPU_MAX).Item2;
-        
-        
+        public uint Fan0SpeedPercent { get; }
+
+
         /// <summary>
         /// Gets device utilization info
         /// </summary>
@@ -129,7 +131,11 @@ namespace GpuSSharp.Libs.Nvml;
             return (r,u);
         }
 
-      
+
+        public bool SetGpuPowerLimit(uint limitMw)
+        {
+            return SetPowerLimit(limitMw) == NvmlReturnCode.NVML_SUCCESS;
+        }
 
         public bool ApplySpeedToAllFans(uint speed)
         {
@@ -137,6 +143,16 @@ namespace GpuSSharp.Libs.Nvml;
             foreach (var f in FansList)
                 result &= f.SetSpeed(speed);
             return result;
+        }
+
+        public bool ApplyAutoSpeedToAllFans()
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<uint> GetFansIds()
+        {
+            throw new NotImplementedException();
         }
 
         public bool ApplyPolicyToAllFans(NvmlFanControlPolicy policy)
@@ -191,16 +207,26 @@ namespace GpuSSharp.Libs.Nvml;
             return (r,c);
         }
         
-        public NvmlReturnCode SetClockOffset(NvmlClockType clockType, NvmlPStates pState, int clockOffsetMhz)
+        public NvmlReturnCode SetClockOffset(NvmlClockType clockType, GpuPState pState, int clockOffsetMhz)
         {
             var clockOffset = new NvmlClockOffset_v1()
             {
                 Type = clockType,
-                PState = pState,
+                PState = (NvmlPStates)pState,
                 ClockOffsetMHz = clockOffsetMhz
             };
 
             return NvmlWrapper.nvmlDeviceSetClockOffsets(_handle, ref clockOffset);
+        }
+
+        public bool SetCoreOffset(GpuPState pState, int clockOffsetMhz)
+        {
+            return SetClockOffset(NvmlClockType.NVML_CLOCK_GRAPHICS, pState, clockOffsetMhz) == NvmlReturnCode.NVML_SUCCESS;
+        }
+        
+        public bool SetMemOffset(GpuPState pState, int clockOffsetMhz)
+        {
+            return SetClockOffset(NvmlClockType.NVML_CLOCK_GRAPHICS, pState, clockOffsetMhz) == NvmlReturnCode.NVML_SUCCESS;
         }
 
         public (NvmlReturnCode,uint) GetPowerLimitCurrent()
@@ -222,7 +248,9 @@ namespace GpuSSharp.Libs.Nvml;
         {
             return (NvmlWrapper.nvmlDeviceGetPowerUsage(_handle, out uint power),power);
         }
+
         
+
         public NvmlReturnCode SetPowerLimit(uint limitMw)
         {
             return NvmlWrapper.nvmlDeviceSetPowerManagementLimit(_handle,limitMw);

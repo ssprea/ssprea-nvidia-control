@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using GpuSSharp.Libs.Nvml.NvmlTypes;
+using GpuSSharp.Types;
 using ssprea_nvidia_control.ViewModels;
 using Newtonsoft.Json;
 using ssprea_nvidia_control.Models.Exceptions;
@@ -56,14 +57,12 @@ public partial class OcProfile
     [JsonIgnore]
     private string _fanCurveName;
 
-    public bool Apply(IGpu targetGpu)
+    public bool Apply(MonitoredGpu targetGpu)
     {
         try
         {
-            var r1 = targetGpu.SetClockOffset(NvmlClockType.NVML_CLOCK_GRAPHICS, NvmlPStates.NVML_PSTATE_0,
-                (int)GpuClockOffset);
-            var r2 = targetGpu.SetClockOffset(NvmlClockType.NVML_CLOCK_MEM, NvmlPStates.NVML_PSTATE_0,
-                (int)MemClockOffset);
+            var r1 = targetGpu.SetCoreOffset(GpuPState.GPU_PSTATE_0, GpuClockOffset);
+            var r2 = targetGpu.SetMemOffset(GpuPState.GPU_PSTATE_0, MemClockOffset);
             var r3 = targetGpu.SetPowerLimit(PowerLimitMw);
 
             if (FanCurve != null)

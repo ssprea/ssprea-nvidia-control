@@ -14,7 +14,7 @@ namespace ssprea_nvidia_control.ViewModels;
 public partial class UsageGraphsWindowViewModel : ViewModelBase
 {
     public CancellationTokenSource CancelTokenSrc = new();
-    private readonly IGpu _targetGpu;
+    private readonly MonitoredGpu _targetGpu;
     private static int _graphLength = 300; //seconds of data in graph
     
     [ObservableProperty] private ISeries[] _gpuTempSeries = [new LineSeries<int>()]  ;
@@ -192,7 +192,7 @@ public partial class UsageGraphsWindowViewModel : ViewModelBase
     
     
     public UsageGraphsWindowViewModel() : this(MainWindowViewModel.GpuService.GpuList[0]) {}
-    public UsageGraphsWindowViewModel(IGpu targetGpu)
+    public UsageGraphsWindowViewModel(MonitoredGpu targetGpu)
     {
         GpuTempSeries[0] = new LineSeries<int>()
         {

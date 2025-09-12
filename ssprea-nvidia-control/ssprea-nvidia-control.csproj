@@ -82,4 +82,8 @@
     <ItemGroup>
       <ProjectReference Include="..\GpuSSharp\GpuSSharp.csproj" />
     </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Models\Gpus\Types\" />
+    </ItemGroup>
 </Project>

@@ -14,7 +14,11 @@ public static class NvmlWrapper
 #elif WINDOWS
     private const string NVML_DLL = "nvml.dll";
 #endif
-    
+
+    public static bool IsNvmlLibPresent()
+    {
+        return NativeLibrary.TryLoad(NVML_DLL, out var lib);
+    }
 
     /// <summary>
     /// Initializes Nvml
@@ -31,6 +35,8 @@ public static class NvmlWrapper
     /// </remarks>
     [DllImport(NVML_DLL)]
     public static extern NvmlReturnCode nvmlInit();
+    
+    
 
     /// <summary>
     /// Shuts down Nvml
@@ -76,6 +82,21 @@ public static class NvmlWrapper
     [DllImport(NVML_DLL)]
     public static extern NvmlReturnCode nvmlDeviceGetName(IntPtr device, [MarshalAs(UnmanagedType.LPStr)] StringBuilder name, uint length);
 
+
+    /// <summary>
+    /// Retrieves PCI attributes of this device.
+    /// </summary>
+    /// <returns>
+    ///NVML_SUCCESS if pci has been populated
+    ///NVML_ERROR_UNINITIALIZED if the library has not been successfully initialized
+    ///NVML_ERROR_INVALID_ARGUMENT if device is invalid or pci is NULL
+    ///NVML_ERROR_GPU_IS_LOST if the target GPU has fallen off the bus or is otherwise inaccessible
+    /// NVML_ERROR_UNKNOWN on any unexpected error
+    /// </returns>
+    [DllImport(NVML_DLL)]
+    public static extern NvmlReturnCode nvmlDeviceGetPciInfo_v3(IntPtr device, out NvmlPciInfo pci);
+    
+    
     /// <summary>
     /// Queries device handle by index
     /// </summary>

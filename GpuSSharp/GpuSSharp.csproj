@@ -24,7 +24,7 @@
       </Reference>
     </ItemGroup>
     <ItemGroup>
-      <Folder Include="Libs\AmdOpenSysfs\" />
+      <Folder Include="Commands\" />
     </ItemGroup>
 
 </Project>

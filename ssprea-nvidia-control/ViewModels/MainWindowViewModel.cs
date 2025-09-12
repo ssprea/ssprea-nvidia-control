@@ -14,6 +14,7 @@ using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Platform;
 using CommunityToolkit.Mvvm.ComponentModel;
+using GpuSSharp.Types;
 using LiveChartsCore.Defaults;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
@@ -53,7 +54,7 @@ public partial class MainWindowViewModel : ViewModelBase
 
     #endregion
     
-    [ObservableProperty] private IGpu? _selectedGpu;
+    [ObservableProperty] private MonitoredGpu? _selectedGpu;
     [ObservableProperty] private OcProfile? _selectedOcProfile;
     [ObservableProperty] private OcProfile? _selectedAutoApplyOcProfile;
     [ObservableProperty] private FanCurveViewModel? _selectedFanCurve;
@@ -139,6 +140,7 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         Lockfile.CheckAndUpdateLockfile();
         
+        GpuService = new(TimeSpan.FromMilliseconds(500));
         
         
         
@@ -233,7 +235,7 @@ public partial class MainWindowViewModel : ViewModelBase
         });
         
         ShowUsageGraphsDialog = new Interaction<UsageGraphsWindowViewModel, object?>();
-        OpenUsageGraphsWindowCommand = ReactiveCommand.CreateFromTask<IGpu>(async (targetGpu) =>
+        OpenUsageGraphsWindowCommand = ReactiveCommand.CreateFromTask<MonitoredGpu>(async (targetGpu) =>
         {
             var usageGraphsViewModel = new UsageGraphsWindowViewModel(targetGpu);
 
@@ -243,14 +245,27 @@ public partial class MainWindowViewModel : ViewModelBase
         });
         
         LoadOcProfileToTuner(new OcProfile("",0,0,SelectedGpu?.PowerLimitMinMw ?? 100000, (FanCurve?)null));
+        
+        
     }
 
+    private async Task ShowAmdWarning()
+    {
+        await MessageBoxManager.GetMessageBoxStandard("AMD GPUs detected!!", $"AMD gpus support is still very new and experimental, expect bugs and broken functionality! Please report any issues on github",
+            ButtonEnum.Ok, Icon.Forbidden).ShowAsync();
+    }
     
-    
-    partial void OnSelectedGpuChanged(IGpu? value)
+    partial void OnSelectedGpuChanged(MonitoredGpu? value)
     {
         if (value is null)
             return;
+        
+        //check if amd gpu detected and warn user about beta functionality for amd cards
+        if (value.Vendor == GpuVendor.Amd)
+        {
+            _ = ShowAmdWarning();
+        }
+        
         value.PropertyChanged += (s, args) =>
         {
 
@@ -523,7 +538,7 @@ public partial class MainWindowViewModel : ViewModelBase
 [Unit]
 Description=Set the Nvidia GPU power profile
 
-[Service]
+[Service]F
 Type=exec
 ExecStart=/usr/local/bin/snvctl --forceOpen -g {SelectedGpu.DeviceIndex} -op {DEFAULT_SERVICE_DATA_PATH}/profile.json -fp {DEFAULT_SERVICE_DATA_PATH}/curve.json
 
@@ -701,7 +716,7 @@ WantedBy=multi-user.target
         
     }
 
-    public static GpuService GpuService { get; set; } = new();
+    public static MonitoredGpuService GpuService { get; set; }
     
 
     
@@ -714,7 +729,7 @@ WantedBy=multi-user.target
     {
         await ShowDependenciesMsgbox(await CheckDependencies());
         
-        GpuService.Initialize();
+        
         
         await CheckAndLoadStartupProfile();
         

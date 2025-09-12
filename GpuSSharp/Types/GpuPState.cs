@@ -1,4 +1,4 @@
-namespace ssprea_nvidia_control.Models.Types;
+namespace GpuSSharp.Types;
 
 public enum GpuPState
 {
