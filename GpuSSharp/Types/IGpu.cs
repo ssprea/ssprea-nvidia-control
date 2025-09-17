@@ -5,13 +5,17 @@ namespace GpuSSharp.Types;
 
 public interface IGpu
 {
+    /// <summary>
+    /// nvml index on NVidia, drm card n on amd
+    /// </summary>
     public uint DeviceIndex { get; }
     public string DevicePciAddress { get; }
     public string Name { get; }
     public GpuVendor Vendor { get; }
     
-    public uint GpuTemperature {get;}
+    public double GpuTemperature {get;}
     public uint GpuPowerUsage {get;}
+    public double GpuPowerUsageW => GpuPowerUsage / 1000f;
 
     public GpuPState GpuPState {get;}
 
@@ -27,18 +31,17 @@ public interface IGpu
     public uint PowerLimitDefaultMw {get;}
 
     public double PowerLimitCurrentW => PowerLimitCurrentMw / 1000f;
-    public double PowerLimitMinW => PowerLimitCurrentMw / 1000f;
-    public double PowerLimitMaxW => PowerLimitCurrentMw / 1000f;
-    public double PowerLimitDefaultW => PowerLimitCurrentMw / 1000f;
+    public double PowerLimitMinW => PowerLimitMinMw / 1000f;
+    public double PowerLimitMaxW => PowerLimitMaxMw / 1000f;
+    public double PowerLimitDefaultW => PowerLimitDefaultMw / 1000f;
     
     public ulong MemoryTotal {get;}
     public ulong MemoryFree {get;}
     public ulong MemoryUsed {get;}
 
-    public double MemoryTotalMB {get;}
-    public double MemoryFreeMB {get;}
-    public double MemoryUsedMB {get;}
-
+    public double MemoryTotalMB => MemoryTotal / 1000000f;
+    public double MemoryFreeMB => MemoryFree / 1000000f;
+    public double MemoryUsedMB => MemoryUsed / 1000000f;
     
     
     public uint UtilizationCore {get;}

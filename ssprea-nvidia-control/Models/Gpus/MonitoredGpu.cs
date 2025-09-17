@@ -17,12 +17,14 @@ public class MonitoredGpu : INotifyPropertyChanged
     private IGpu _baseGpu;
 
     public GpuVendor Vendor => _baseGpu.Vendor;
+
+    public string PciAddress => _baseGpu.DevicePciAddress;
     
     public uint DeviceIndex => _baseGpu.DeviceIndex;
     public string Name => _baseGpu.Name;
-    public uint GpuTemperature => _baseGpu.GpuTemperature;
+    public uint GpuTemperature => (uint)_baseGpu.GpuTemperature;
     public uint GpuPowerUsage => _baseGpu.GpuPowerUsage;
-    public double GpuPowerUsageW => _baseGpu.GpuPowerUsage;
+    public double GpuPowerUsageW => _baseGpu.GpuPowerUsage / 1000f;
     public string GpuPowerUsageWFormatted=> GpuPowerUsageW.ToString("0.00");
 
     public GpuPState GpuPState => _baseGpu.GpuPState;
@@ -195,8 +197,11 @@ public class MonitoredGpu : INotifyPropertyChanged
         return true;
     }
     
-        private Process? RunSudoCliCommand(string args, string file="/usr/local/bin/snvctl",bool waitForExit = true)
+        private Process? RunSudoCliCommand(string args, string file="snvctl",bool waitForExit = true)
         {
+            if (file == "snvctl" && Environment.GetEnvironmentVariable("SNVCTLCLITOOLPATH") is not null)
+                file = Environment.GetEnvironmentVariable("SNVCTLCLITOOLPATH")!;
+                
             if (SudoPasswordManager.CurrentPassword is not null && SudoPasswordManager.CurrentPassword.OperationCanceled)
             {
                 SudoPasswordManager.CurrentPassword = null;
@@ -213,7 +218,7 @@ public class MonitoredGpu : INotifyPropertyChanged
             
             var psi = new ProcessStartInfo();
             psi.FileName = "/usr/bin/bash";
-            psi.Arguments = $"-c \"/usr/bin/sudo -S "+file+" -g "+DeviceIndex+" "+args+"\"";
+            psi.Arguments = $"-c \"/usr/bin/sudo -S "+file+" -g "+PciAddress+" "+args+"\"";
             psi.RedirectStandardInput = true;
             psi.UseShellExecute = false;
             psi.CreateNoWindow = true;

@@ -1,11 +1,29 @@
 # ssprea-nvidia-control
 
 
-ssprea-nvidia-control is a highly customizable GUI overclocking tool for NVidia GPUs that supports Wayland, X11 and Windows.
+ssprea-nvidia-control is a highly customizable GUI overclocking tool for NVidia and AMD GPUs that supports Wayland, X11 and Windows.
+
 
 ## Disclaimer
 
 This project was created mainly to learn Avalonia UI, so it might not be perfect. Feel free to report any bugs or to give me any suggestions you might have by opening an [Issue](https://github.com/ssprea/ssprea-nvidia-control/issues/new).
+
+
+## AMD Branch
+
+This branch is for experimental AMD support, only a couple of features are implemented right now but feel free to test it.
+
+Currently implemented AMD features:
+
+Monitoring:
+
+- Gpu core clock speed
+- Gpu memory clock speed
+- Gpu temperature
+- Gpu memory usage
+
+
+Profiles cannot be applied right now!
 
 
 ## Features
@@ -56,8 +74,11 @@ yay -S ssprea-nvidia-control
 The tool should mostly work on windows without major problems, however I haven't tested it since I currently don't have a Windows machine. 
 If you encounter any problems please open an [issue](https://github.com/ssprea/ssprea-nvidia-control/issues/new)
 
+
+
 Currently these features are known to not work on Windows:
   - Startup profile
+  - Every AMD GPU feature
 
 To run it, download the source code and build manually, then add the snvctl CLI tool exe to the PATH environment variable.
 After that you can just run it as an administrator.

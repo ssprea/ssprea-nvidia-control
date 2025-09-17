@@ -4,31 +4,28 @@ namespace GpuSSharp.Libs.AmdOpenSysfs;
 
 public class AmdSysfsGpu : IGpu
 {
-    public uint DeviceIndex { get; }
+    public uint DeviceIndex => DrmId;
     public string Name { private set; get; }
-    public uint GpuTemperature { get; }
-    public uint GpuPowerUsage { get; }
-    public GpuPState GpuPState { get; }
-    public uint GpuClockCurrent { get; }
-    public uint MemClockCurrent { get; }
-    public uint SmClockCurrent { get; }
-    public uint VideoClockCurrent { get; }
-    public uint PowerLimitCurrentMw { get; }
-    public uint PowerLimitMinMw { get; }
-    public uint PowerLimitMaxMw { get; }
-    public uint PowerLimitDefaultMw { get; }
-    public ulong MemoryTotal { get; }
-    public ulong MemoryFree { get; }
-    public ulong MemoryUsed { get; }
-    public double MemoryTotalMB { get; }
-    public double MemoryFreeMB { get; }
-    public double MemoryUsedMB { get; }
-    public uint UtilizationCore { get; }
-    public uint UtilizationMemCtl { get; }
-    public uint TemperatureThresholdShutdown { get; }
-    public uint TemperatureThresholdSlowdown { get; }
-    public uint TemperatureThresholdThrottle { get; }
-    public uint Fan0SpeedPercent { get; }
+    public double GpuTemperature => SysfsWrapper.GetGpuTemperature(HwmonPath);
+    public uint GpuPowerUsage => SysfsWrapper.GetGpuPowerUsage(HwmonPath);
+    public GpuPState GpuPState { get; } = GpuPState.GPU_PSTATE_UNKNOWN;
+    public uint GpuClockCurrent => SysfsWrapper.GetGpuCoreClock(DevPath);
+    public uint MemClockCurrent => SysfsWrapper.GetGpuMemClock(DevPath);
+    public uint SmClockCurrent { get; } = 0;
+    public uint VideoClockCurrent { get; } = 0;
+    public uint PowerLimitCurrentMw => SysfsWrapper.GetGpuPowerLimit(HwmonPath);
+    public uint PowerLimitMinMw => SysfsWrapper.GetGpuPowerLimitMin(HwmonPath);
+    public uint PowerLimitMaxMw => SysfsWrapper.GetGpuPowerLimitMax(HwmonPath);
+    public uint PowerLimitDefaultMw { get; } = 0;
+    public ulong MemoryTotal => SysfsWrapper.GetMemoryTotalBytes(DevPath);
+    public ulong MemoryFree => MemoryTotal - MemoryUsed;
+    public ulong MemoryUsed => SysfsWrapper.GetMemoryUsedBytes(DevPath);
+    public uint UtilizationCore => SysfsWrapper.GetGpuCoreUtilizationPercent(DevPath);
+    public uint UtilizationMemCtl => SysfsWrapper.GetMemCtrlUtilizationPercent(DevPath);
+    public uint TemperatureThresholdShutdown { get; } = 100;
+    public uint TemperatureThresholdSlowdown { get; } = 100;
+    public uint TemperatureThresholdThrottle { get; } = 100;
+    public uint Fan0SpeedPercent => SysfsWrapper.GetFanSpeedPercent(HwmonPath);
 
     public GpuVendor Vendor => GpuVendor.Amd;
 
@@ -36,6 +33,8 @@ public class AmdSysfsGpu : IGpu
     public string DevicePciAddress { private set; get; }
     public string DrmPath { private set; get; }
     public string DevPath => DrmPath + "/device";
+    
+    public string HwmonPath { private set; get; }
     
     public string VendorId { private set; get; }
     public string CardHwId { private set; get; }
@@ -46,7 +45,9 @@ public class AmdSysfsGpu : IGpu
 
         DrmId = uint.Parse(drmCardName.ToCharArray().Last().ToString());
         
-        DevicePciAddress = SysfsWrapper.DrmPathToPciAddress(DevPath);
+        DevicePciAddress = SysfsWrapper.DrmPathToPciAddress(DevPath).Trim();
+
+        HwmonPath = Directory.GetDirectories(DevPath + "/hwmon").First(x => Path.GetFileName(x).StartsWith("hwmon"));
 
         var ids = GetVendorAndCardId();
         
@@ -64,6 +65,8 @@ public class AmdSysfsGpu : IGpu
             return (File.ReadAllText(DevPath+"/vendor").Trim(),File.ReadAllText(DevPath+"/device").Trim());
         return ("", "");
     }
+
+
     
     
     public bool SetCoreOffset(GpuPState pState, int clockOffsetMhz)
@@ -78,17 +81,26 @@ public class AmdSysfsGpu : IGpu
 
     public bool SetGpuPowerLimit(uint limitMw)
     {
-        throw new NotImplementedException();
+        if (limitMw > PowerLimitMaxMw)
+            limitMw = PowerLimitMaxMw;
+        else if (limitMw < PowerLimitMinMw)
+            limitMw = PowerLimitMinMw;
+        
+        return SysfsWrapper.SetGpuPowerLimit(HwmonPath, limitMw);
     }
 
     public bool ApplySpeedToAllFans(uint speed)
     {
-        throw new NotImplementedException();
+        if (SysfsWrapper.GetGpuFanMode(HwmonPath) == "automatic")
+            SysfsWrapper.SetGpuFanMode(HwmonPath, "manual");
+        
+        return SysfsWrapper.SetGpuFanSpeed(HwmonPath, speed);
+            
     }
 
     public bool ApplyAutoSpeedToAllFans()
     {
-        throw new NotImplementedException();
+        return SysfsWrapper.SetGpuFanMode(HwmonPath, "automatic");
     }
 
     public List<uint> GetFansIds()

@@ -25,7 +25,7 @@ namespace GpuSSharp.Libs.Nvml;
         private IntPtr _handle;
 
         public uint DeviceIndex { get; private set; }
-        public string DevicePciAddress => PciInfo.busId.ToString();
+        public string DevicePciAddress => PciInfo.busId.Substring(4,12);
         private NvmlPciInfo PciInfo { get; }
         public GpuVendor Vendor => GpuVendor.Nvidia;
         
@@ -77,9 +77,8 @@ namespace GpuSSharp.Libs.Nvml;
         
         
     
-        public uint GpuTemperature => GetTemperature().Item2;
+        public double GpuTemperature => GetTemperature().Item2;
         public uint GpuPowerUsage => GetPowerUsage().Item2;
-        public double GpuPowerUsageW => GpuPowerUsage/1000f;
 
         GpuPState IGpu.GpuPState => _gpuPState;
 
@@ -103,9 +102,9 @@ namespace GpuSSharp.Libs.Nvml;
         public ulong MemoryFree => GetMemoryUsage().Item2.Free;
         public ulong MemoryUsed => GetMemoryUsage().Item2.Used;
 
-        public double MemoryTotalMB => MemoryTotal / 1000000f;
-        public double MemoryFreeMB => MemoryFree / 1000000f;
-        public double MemoryUsedMB => MemoryUsed / 1000000f;
+        // public double MemoryTotalMB => MemoryTotal / 1000000f;
+        // public double MemoryFreeMB => MemoryFree / 1000000f;
+        // public double MemoryUsedMB => MemoryUsed / 1000000f;
         
         public NvmlUtilization GpuUtilization => GetUtilization().Item2;
         
@@ -147,7 +146,7 @@ namespace GpuSSharp.Libs.Nvml;
 
         public bool ApplyAutoSpeedToAllFans()
         {
-            throw new NotImplementedException();
+            return ApplyPolicyToAllFans(NvmlFanControlPolicy.NVML_FAN_POLICY_TEMPERATURE_CONTINOUS_SW);
         }
 
         public List<uint> GetFansIds()

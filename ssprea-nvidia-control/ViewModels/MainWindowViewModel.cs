@@ -745,22 +745,36 @@ WantedBy=multi-user.target
     /// <summary>
     /// Check nvidia drivers and cli tool
     /// </summary>
-    /// <returns>0: success, 1: no nvidia driver, 2: nvidia driver version less than 555, 3: cli tool not installed </returns>
+    /// <returns>0: success, 1: no compatible gpus/drivers, 2: nvidia driver version less than 555, 3: cli tool not installed </returns>
     private async Task<ushort> CheckDependencies()
     {
+        //check if compatible no drivers or gpus
+
+        if (GpuService.GpuList.Count <= 0)
+            return 1;
+        
+        
         //check nvidia drivers installed
 # if LINUX
+        
+        CurrentNvidiaDriverVersion = "Not detected";
+        
         var vercmd = Utils.General.RunCliCommand("nvidia-smi", "--version", true,false,true);
-        if (vercmd is null || vercmd.ExitCode != 0)
-            return 1;
+        if (vercmd is not null && vercmd.ExitCode == 0)
+        { 
+            //check nvidia drivers version
 
-        //check nvidia drivers version
+            //this is not needed as a dependency check anymore since it's all handled in GpuSSharp, but the nvidia driver version is still needed.
+            
+            var output = await vercmd.StandardOutput.ReadToEndAsync();
+            var lines = output.Split('\n');
+            CurrentNvidiaDriverVersion = lines[2].Split(':')[1].Trim();
 
-        var output = await vercmd.StandardOutput.ReadToEndAsync();
-        var lines = output.Split('\n');
-        CurrentNvidiaDriverVersion = lines[2].Split(':')[1].Trim();
+            Console.WriteLine($"Detected NVidia driver version: {CurrentNvidiaDriverVersion}");
+        }
 
-        Console.WriteLine($"Detected NVidia driver version: {CurrentNvidiaDriverVersion}");
+        
+        
 #endif
         //TODO: add windows driver check
         
@@ -783,8 +797,8 @@ WantedBy=multi-user.target
                 return;
             case 1:
 
-                var box = MessageBoxManager.GetMessageBoxStandard("Nvidia driver not detected!",
-                    "Please make sure you installed Nvidia proprietary driver version 555+", ButtonEnum.Ok, Icon.Error);
+                var box = MessageBoxManager.GetMessageBoxStandard("No AMD/NVidia GPUs detected!",
+                    "If you are using an NVidia card, make sure you installed Nvidia proprietary driver version 555+. Intel cards are not supported currently.", ButtonEnum.Ok, Icon.Error);
 
                 await box.ShowAsync();
                 Environment.Exit(1);

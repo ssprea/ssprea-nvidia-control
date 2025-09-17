@@ -28,6 +28,201 @@ public static class SysfsWrapper
         return foundGpus;
     }
 
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="hwmonPath"></param>
+    /// <returns>Current gpu power usage in mW</returns>
+    public static uint GetGpuPowerUsage(string hwmonPath)
+    {
+        var valuePath = hwmonPath + "/power1_average";
+        if (File.Exists(valuePath)&& uint.TryParse(File.ReadAllText(valuePath), out uint power1))
+            return power1/1000;
+        return 0;
+    }
+
+    public static uint GetGpuPowerLimit(string hwmonPath)
+    {
+        var valuePath = hwmonPath + "/power1_cap";
+        if (File.Exists(valuePath)&& uint.TryParse(File.ReadAllText(valuePath), out uint power1))
+            return power1/1000;
+        return 0;
+    }
+    
+    public static bool SetGpuPowerLimit(string hwmonPath, uint newPlmW)
+    {
+        var valuePath = hwmonPath + "/power1_cap";
+        if (File.Exists(valuePath))
+            try
+            {
+                File.WriteAllText(valuePath, (newPlmW*1000).ToString());
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+
+        return false;
+    }
+    
+    public static string GetGpuFanMode(string hwmonPath)
+    {
+        var valuePath = hwmonPath + "/pwm1_enable";
+        if (File.Exists(valuePath))
+            return File.ReadAllText(valuePath);
+        return "unknown";
+    }
+    
+    public static bool SetGpuFanSpeed(string hwmonPath, uint fanSpeedPercent)
+    {
+        if (fanSpeedPercent > 100) fanSpeedPercent = 100;
+        
+        var valuePath = hwmonPath + "/pwm1";
+        if (File.Exists(valuePath))
+            try
+            {
+                File.WriteAllText(valuePath, fanSpeedPercent.ToString());
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+
+        return false;
+    }
+    
+    public static bool SetGpuFanMode(string hwmonPath, string mode)
+    {
+        if (mode != "automatic" || mode != "manual")
+            return false;
+        
+        var valuePath = hwmonPath + "/pwm1_enable";
+        if (File.Exists(valuePath))
+            try
+            {
+                File.WriteAllText(valuePath, mode);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+
+        return false;
+    }
+    
+    public static uint GetGpuPowerLimitMax(string hwmonPath)
+    {
+        var valuePath = hwmonPath + "/power1_cap_max";
+        if (File.Exists(valuePath)&& uint.TryParse(File.ReadAllText(valuePath), out uint power1))
+            return power1/1000;
+        return 0;
+    }
+    
+    public static uint GetGpuPowerLimitMin(string hwmonPath)
+    {
+        var valuePath = hwmonPath + "/power1_cap_min";
+        if (File.Exists(valuePath)&& uint.TryParse(File.ReadAllText(valuePath), out uint power1))
+            return power1/1000;
+        return 0;
+    }
+    
+    public static uint GetFanSpeedPercent(string hwmonPath)
+    {
+        var valuePath = hwmonPath + "/pwm1";
+        if (File.Exists(valuePath)&& uint.TryParse(File.ReadAllText(valuePath), out uint pwm1))
+            return pwm1/1000;
+        return 0;
+    }
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="hwmonPath"></param>
+    /// <returns>The current GPU temperature in degrees celsius</returns>
+    public static double GetGpuTemperature(string hwmonPath)
+    {
+        if (File.Exists(hwmonPath+"/temp1_input") && double.TryParse(File.ReadAllText(hwmonPath+"/temp1_input"), out double temp1))
+            return temp1/1000;
+        return 0;
+    }
+
+    public static uint GetGpuCoreUtilizationPercent(string devPath)
+    {
+        if (!File.Exists(devPath + "/gpu_busy_percent"))
+            return 0;
+        
+        if (uint.TryParse(File.ReadAllText(devPath+"/gpu_busy_percent"),out var usedBytes))  
+            return usedBytes;
+        return 0;
+    }
+
+    public static uint GetMemCtrlUtilizationPercent(string devPath)
+    {
+        var valuePath = devPath + "/mem_busy_percent";
+        if (File.Exists(valuePath)&& uint.TryParse(File.ReadAllText(valuePath), out uint membusy))
+            return membusy;
+        return 0;
+    }
+    
+    
+    // public static uint GetGpuCoreClock(string hwmonPath)
+    // {
+    //     if (File.Exists(hwmonPath+"/freq1_input")&& uint.TryParse(File.ReadAllText(hwmonPath+"/freq1_input"), out uint freq1))
+    //         return freq1;
+    //     return 0;
+    // }
+    //
+    // public static uint GetGpuMemClock(string hwmonPath)
+    // {
+    //     if (File.Exists(hwmonPath+"/freq2_input")&& uint.TryParse(File.ReadAllText(hwmonPath+"/freq2_input"), out uint freq2))
+    //         return freq2;
+    //     return 0;
+    // }
+    public static uint GetGpuCoreClock(string devPath)
+    {
+        var readClock = File.ReadAllLines(devPath+"/pp_dpm_sclk").ToList().First(x => x.Contains('*')).Split(':')[1].Replace("*","").Trim().Split('M')[0];
+        
+        if (uint.TryParse(readClock, out uint finalClock))
+            return finalClock;
+        return 0;
+    }
+    
+    public static uint GetGpuMemClock(string devPath)
+    {
+        var readClock = File.ReadAllLines(devPath+"/pp_dpm_mclk").ToList().First(x => x.Contains('*')).Split(':')[1].Replace("*","").Trim().Split('M')[0];
+        
+        if (uint.TryParse(readClock, out uint finalClock))
+            return finalClock;
+        return 0;
+    }
+
+    public static ulong GetMemoryUsedBytes(string devPath)
+    {
+        var valuePath = devPath+"/mem_info_vram_used";
+        
+        if (File.Exists(valuePath) && ulong.TryParse(File.ReadAllText(valuePath).Trim(),out var usedBytes))  
+            return usedBytes;
+        return 0;
+    }
+    
+    public static ulong GetMemoryTotalBytes(string devPath)
+    {
+        var valuePath = devPath+"/mem_info_vram_total";
+        
+        if (File.Exists(valuePath) && ulong.TryParse(File.ReadAllText(valuePath).Trim(),out var usedBytes))
+            return usedBytes;
+        return 0;
+    }
+    
+    public static string ReadSysfsValue(string devPath, string valuePath)
+    {
+        return File.ReadAllText(devPath + "/" + valuePath);
+    }
+    
     public static string DrmPathToPciAddress(string drmPath)
     {
         var p = new Process();
@@ -47,6 +242,6 @@ public static class SysfsWrapper
         p.Start();
         var result = p.StandardOutput.ReadToEnd();
         var gpuName = result.Split(":")[2].Replace("Advanced Micro Devices, Inc. [AMD/ATI]", "");
-        return gpuName;
+        return gpuName.Trim();
     }
 }

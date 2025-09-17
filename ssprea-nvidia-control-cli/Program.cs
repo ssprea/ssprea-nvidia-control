@@ -23,6 +23,9 @@ public class Program
 
     [Option(CommandOptionType.NoValue, Description = "list available gpus", LongName = "listGpu")]
     public static bool DoListGpus { get; set; }
+    
+    [Option(CommandOptionType.NoValue, Description = "list specified gpu info", LongName = "info", ShortName = "i")]
+    public static bool ShowGpuInfo { get; set; }
 
     [Option(CommandOptionType.SingleValue, Description = "set core offset MHz", LongName = "coreOffset",
         ShortName = "c")]
@@ -112,7 +115,7 @@ public class Program
         
         foreach (var gpu in gpuServ.GpuList)
         {
-            if (gpu.DevicePciAddress == GpuPciAddr)
+            if (gpu.DevicePciAddress.Trim() == GpuPciAddr.Trim())
                 _selectedGpu = gpu;
         }
         
@@ -120,6 +123,33 @@ public class Program
         {
             Console.WriteLine("specified GPU not found!");
             return;
+        }
+
+        if (ShowGpuInfo)
+        {
+            int textPadding = 35;
+            var infoRows = new List<string>([
+                $"|\n|  {(_selectedGpu.Vendor == GpuVendor.Nvidia ? "NVML" : "DRM")} ID: {_selectedGpu.DeviceIndex}".PadRight(textPadding) + $"PState: {_selectedGpu.GpuPState}".PadRight(textPadding)+ $"Mem Use: {_selectedGpu.MemoryUsedMB:F2} MB".PadRight(textPadding)+$"Power limit: {_selectedGpu.PowerLimitCurrentW}W".PadRight(textPadding)+$"Power Use: {_selectedGpu.GpuPowerUsageW:F2}"+"",
+                $"|\n|  Vendor: {_selectedGpu.Vendor}".PadRight(textPadding)+ $"Core clock: {_selectedGpu.GpuClockCurrent} MHz".PadRight(textPadding) + $"Gpu Use: {_selectedGpu.UtilizationCore} %".PadRight(textPadding)+$"PL MAX: {_selectedGpu.PowerLimitMaxW}W".PadRight(textPadding)+ $"Temp: {_selectedGpu.GpuTemperature} °C",
+                $"|\n|  Address: {_selectedGpu.DevicePciAddress}".PadRight(textPadding)+ $"Mem clock: {_selectedGpu.MemClockCurrent} MHz".PadRight(textPadding)+ $"Mem Ctrl Use: {_selectedGpu.UtilizationMemCtl} %".PadRight(textPadding)+$"PL MIN: {_selectedGpu.PowerLimitMinW}W".PadRight(textPadding)+$"Fan 0 speed: {_selectedGpu.Fan0SpeedPercent} %",
+            ]);
+            
+            var longestRow = infoRows.Max(row => row.Length);
+            Console.WriteLine(longestRow);
+            var title = $"[ GPU Info: {_selectedGpu.Name} ]";
+            Console.WriteLine("\no"+new string('=',(longestRow-title.Length)/2)+ title +new string('=',(longestRow-title.Length)/2)+"o");
+            
+            infoRows.ForEach(Console.WriteLine);
+            
+            Console.WriteLine("memusemb:"+_selectedGpu.MemoryUsedMB);
+            Console.WriteLine("memfreemb:"+_selectedGpu.MemoryFreeMB);
+            Console.WriteLine("memtotmb:"+_selectedGpu.MemoryTotalMB);
+            Console.WriteLine("memuse:"+_selectedGpu.MemoryUsed);
+            Console.WriteLine("memfree:"+_selectedGpu.MemoryFree);
+            Console.WriteLine("memtot:"+_selectedGpu.MemoryTotal);
+            Console.WriteLine($"\t\t  ");
+            Console.WriteLine("\t");
+                // \t DRMID: {((AmdSysfsGpu)_selectedGpu).DrmId} 
         }
         
         if (OcProfileJson != string.Empty)
@@ -215,9 +245,9 @@ public class Program
                 continue;
             }
                 
-            LastFanTemp = _selectedGpu.GpuTemperature;
-            Console.WriteLine($"Gpu temp: {_selectedGpu.GpuTemperature}, Fan Speed: {fanCurve.GpuTempToFanSpeedMap[_selectedGpu.GpuTemperature]}");
-            _selectedGpu.ApplySpeedToAllFans(fanCurve.GpuTempToFanSpeedMap[_selectedGpu.GpuTemperature]);
+            LastFanTemp = (uint)_selectedGpu.GpuTemperature;
+            Console.WriteLine($"Gpu temp: {_selectedGpu.GpuTemperature}, Fan Speed: {fanCurve.GpuTempToFanSpeedMap[(uint)_selectedGpu.GpuTemperature]}");
+            _selectedGpu.ApplySpeedToAllFans(fanCurve.GpuTempToFanSpeedMap[(uint)_selectedGpu.GpuTemperature]);
         }
     }
 
