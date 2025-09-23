@@ -71,8 +71,8 @@ public class MonitoredGpu : INotifyPropertyChanged
     public uint TemperatureThresholdShutdown=> _baseGpu.TemperatureThresholdShutdown;
     public uint TemperatureThresholdSlowdown=> _baseGpu.TemperatureThresholdSlowdown;
     public uint TemperatureThresholdThrottle=> _baseGpu.TemperatureThresholdThrottle;
-    
-    public uint Fan0SpeedPercent { get; }
+
+    public uint Fan0SpeedPercent => _baseGpu.Fan0SpeedPercent;
 
 
     public FanCurve? AppliedFanCurve { get; private set; }
