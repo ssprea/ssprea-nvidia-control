@@ -56,7 +56,7 @@ public static class SysfsWrapper
         if (File.Exists(valuePath))
         {
             Console.WriteLine($"writing: s {clockType} {pstate} {coreClockMhz}");
-            File.WriteAllText(valuePath,$"s {clockType} {pstate} {coreClockMhz}\n");
+            File.WriteAllText(valuePath,$"{clockType} {pstate} {coreClockMhz}");
         }
     }
     
@@ -130,7 +130,7 @@ public static class SysfsWrapper
         var valuePath = devPath + "/pp_od_clk_voltage";
         if (File.Exists(valuePath))
         {
-            File.WriteAllText(valuePath,"c\n");
+            File.WriteAllText(valuePath,"c");
         }
     }
 
@@ -138,7 +138,7 @@ public static class SysfsWrapper
     {
         var valuePath = devPath + "/pp_od_clk_voltage";
         if (File.Exists(valuePath))
-            File.WriteAllText(valuePath,"r\n");
+            File.WriteAllText(valuePath,"r");
     }
     
     public static bool SetGpuPowerLimit(string hwmonPath, uint newPlmW)
