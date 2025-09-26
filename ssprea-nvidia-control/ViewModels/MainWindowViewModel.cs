@@ -532,15 +532,15 @@ public partial class MainWindowViewModel : ViewModelBase
         }
         
         
-        
+        //TODO: when fancurve is implemented for AMD, add -fp {DEFAULT_SERVICE_DATA_PATH}/curve.json
         //systemd service (thanks to @Joomsy)
         string service = $@"
 [Unit]
 Description=Set the Nvidia GPU power profile
 
-[Service]F
+[Service]
 Type=exec
-ExecStart=/usr/local/bin/snvctl --forceOpen -g {SelectedGpu.DeviceIndex} -op {DEFAULT_SERVICE_DATA_PATH}/profile.json -fp {DEFAULT_SERVICE_DATA_PATH}/curve.json
+ExecStart=/usr/local/bin/snvctl --forceOpen -g {SelectedGpu.PciAddress} -op {DEFAULT_SERVICE_DATA_PATH}/profile.json 
 
 [Install]
 WantedBy=multi-user.target
