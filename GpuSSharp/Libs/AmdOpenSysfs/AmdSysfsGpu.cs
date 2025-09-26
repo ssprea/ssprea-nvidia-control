@@ -115,6 +115,8 @@ public class AmdSysfsGpu : IGpu
         
         //set and apply offset clock
 
+        Console.WriteLine("SETTING "+clockType+" TO "+clockOffsetMhz);
+        
         switch (clockType)
         {
             case GpuClockType.GPU_CLOCK_CORE:
