@@ -39,4 +39,12 @@ public static class Systemd
         
         return p.ExitCode == 0;
     }
+    
+    public static bool IsSystemdServiceEnabled(string serviceName)
+    {
+        var p = General.RunCliCommand("systemctl", "is-enabled --quiet " + serviceName);
+        if (p is null) return false;
+        
+        return p.ExitCode == 0;
+    }
 }

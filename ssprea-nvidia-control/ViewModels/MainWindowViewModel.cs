@@ -393,7 +393,7 @@ public partial class MainWindowViewModel : ViewModelBase
         
         
         //check startup profile
-        IsStartupProfileChecked = Utils.Systemd.IsSystemdServiceRunning("snvctl.service");
+        IsStartupProfileChecked = Utils.Systemd.IsSystemdServiceEnabled("snvctl.service");
         if (IsStartupProfileChecked && File.Exists(DEFAULT_SERVICE_DATA_PATH+"/profile.json"))
         {
             var startupProfileName = OcProfile.FromJson(await File.ReadAllTextAsync(DEFAULT_SERVICE_DATA_PATH+"/profile.json"))?.Name;
