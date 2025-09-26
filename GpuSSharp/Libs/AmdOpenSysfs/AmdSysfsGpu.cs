@@ -38,6 +38,12 @@ public class AmdSysfsGpu : IGpu
     
     public string VendorId { private set; get; }
     public string CardHwId { private set; get; }
+    
+    public uint MaxCoreClockValue {private set; get; }
+    public uint MinCoreClockValue {private set; get; }
+    public uint MaxMemClockValue {private set; get; }
+    public uint MinMemClockValue {private set; get; }
+    
 
     public AmdSysfsGpu(string drmCardName)
     {
@@ -55,7 +61,15 @@ public class AmdSysfsGpu : IGpu
         CardHwId = ids.Item2;
         
         Name = SysfsWrapper.GetGpuName(VendorId, CardHwId);
+
+        var maxClocks = SysfsWrapper.GetClockLimits(DevPath);
         
+        MinCoreClockValue = maxClocks.Item1.Item1;
+        MaxCoreClockValue = maxClocks.Item1.Item2;
+
+        MinMemClockValue = maxClocks.Item2.Item1;
+        MaxMemClockValue = maxClocks.Item2.Item2;
+
     }
 
 
@@ -69,14 +83,59 @@ public class AmdSysfsGpu : IGpu
 
     
     
+
+    private bool SetClockOffset(GpuPState pState, GpuClockType clockType, int clockOffsetMhz)
+    {
+        //reset clocks
+        SysfsWrapper.ResetOcSettings(DevPath);
+        
+        
+        //get current clock targets
+        var clockTargetsBase = SysfsWrapper.GetCurrentLevelClocks(DevPath,1);
+        if (clockTargetsBase is null)
+            return false;
+        
+        
+        //sum current clock target with offset
+        var coreOffsetClock = clockTargetsBase.Value.Item1 + clockOffsetMhz;
+        var memOffsetClock = clockTargetsBase.Value.Item2 + clockOffsetMhz;
+        
+        if (coreOffsetClock > MaxCoreClockValue)
+            coreOffsetClock = MaxCoreClockValue;
+        
+        if (memOffsetClock > MaxMemClockValue)
+            memOffsetClock = MaxMemClockValue;
+        
+        
+        if (coreOffsetClock < MinCoreClockValue)
+            coreOffsetClock = MinCoreClockValue;
+        
+        if (memOffsetClock < MinMemClockValue)
+            memOffsetClock = MinMemClockValue;
+        
+        //set and apply offset clock
+
+        switch (clockType)
+        {
+            case GpuClockType.GPU_CLOCK_CORE:
+                SysfsWrapper.SetGpuClock(DevPath,"s","1",coreOffsetClock.ToString());
+                break;
+            case GpuClockType.GPU_CLOCK_MEM:
+                SysfsWrapper.SetGpuClock(DevPath,"m","1",memOffsetClock.ToString());
+                break;
+        }
+        SysfsWrapper.ApplyGpuClockSettings(DevPath);
+        return true;
+    }
+    
     public bool SetCoreOffset(GpuPState pState, int clockOffsetMhz)
     {
-        throw new NotImplementedException();
+        return SetClockOffset(pState,GpuClockType.GPU_CLOCK_CORE,clockOffsetMhz);
     }
 
     public bool SetMemOffset(GpuPState pState, int clockOffsetMhz)
     {
-        throw new NotImplementedException();
+        return SetClockOffset(pState,GpuClockType.GPU_CLOCK_MEM,clockOffsetMhz);
     }
 
     public bool SetGpuPowerLimit(uint limitMw)

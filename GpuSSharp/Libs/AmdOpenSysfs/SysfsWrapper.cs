@@ -49,6 +49,97 @@ public static class SysfsWrapper
             return power1/1000;
         return 0;
     }
+
+    public static void SetGpuClock(string devPath,string clockType, string pstate, string coreClockMhz)
+    {
+        var valuePath = devPath + "/pp_od_clk_voltage";
+        if (File.Exists(valuePath))
+        {
+            File.WriteAllText(valuePath,$"s {clockType} {pstate} {coreClockMhz}");
+            Console.WriteLine($"wrote: s {clockType} {pstate} {coreClockMhz}");
+        }
+    }
+    
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="devPath"></param>
+    /// <returns>Two uint tuples, first one is minCoreClock,maxCoreClock and second one is minMemClock,maxMemClock</returns>
+    public static ((uint, uint), (uint, uint)) GetClockLimits(string devPath)
+    {
+        var valuePath = devPath + "/pp_od_clk_voltage";
+        if (File.Exists(valuePath))
+        {
+            var rawLines =  File.ReadAllLines(valuePath);
+
+            (uint,uint) coreRangeTuple = (0,0);
+            (uint,uint) memRangeTuple = (0,0);
+            
+            foreach (var rawLine in rawLines)
+            {
+                if (rawLine.StartsWith("SCLK:"))
+                {
+                    var rawSValues = rawLine.Split(':')[1].ToLower().Split("mhz");
+                    
+                    if (uint.TryParse(rawSValues[0], out var sclkMin) && uint.TryParse(rawSValues[1], out var sclkMax))
+                        coreRangeTuple = (sclkMin, sclkMax);
+                }
+                else if (rawLine.StartsWith("MCLK:"))
+                {
+                    var rawMValues = rawLine.Split(':')[1].ToLower().Split("mhz");
+                    
+                    if (uint.TryParse(rawMValues[0], out var mclkMin) && uint.TryParse(rawMValues[1], out var mclkMax))
+                        memRangeTuple = (mclkMin, mclkMax);
+                }
+            }
+            
+            return (coreRangeTuple, memRangeTuple);
+        }
+
+        return ((0, 0), (0, 0));
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="devPath"></param>
+    /// <param name="pState"></param>
+    /// <returns>core clock target, mem clock target</returns>
+    public static (uint, uint)? GetCurrentLevelClocks(string devPath, uint pState)
+    {
+        var valuePath = devPath + "/pp_od_clk_voltage";
+        
+        if (File.Exists(valuePath))
+        {
+            var rawSclkLines =  File.ReadAllLines(valuePath).TakeWhile(line => line.Trim() != "OD_MCLK:").ToList();
+            var rawMclkLines =  File.ReadAllLines(valuePath).TakeWhile(line => line.Trim() != "OD_VDDGFX_OFFSET:").ToList();
+
+            rawMclkLines.RemoveRange(0,rawSclkLines.Count());
+            
+            if (uint.TryParse(rawSclkLines.First(x => x.StartsWith($"{pState.ToString()}:")).Split(":")[1].Trim().ToLower().Replace("mhz",""), out var curCoreClockTarget ) && 
+                uint.TryParse(rawMclkLines.First(x => x.StartsWith($"{pState.ToString()}:")).Split(":")[1].Trim().ToLower().Replace("mhz",""), out var curMemClockTarget))
+                return (curCoreClockTarget, curMemClockTarget);
+
+        }
+        return null;
+    }
+    
+    public static void ApplyGpuClockSettings(string devPath)
+    {
+        var valuePath = devPath + "/pp_od_clk_voltage";
+        if (File.Exists(valuePath))
+        {
+            File.WriteAllText(valuePath,"c");
+        }
+    }
+
+    public static void ResetOcSettings(string devPath)
+    {
+        var valuePath = devPath + "/pp_od_clk_voltage";
+        if (File.Exists(valuePath))
+            File.WriteAllText(valuePath,"r");
+    }
     
     public static bool SetGpuPowerLimit(string hwmonPath, uint newPlmW)
     {
@@ -134,7 +225,7 @@ public static class SysfsWrapper
     {
         var valuePath = hwmonPath + "/pwm1";
         if (File.Exists(valuePath)&& uint.TryParse(File.ReadAllText(valuePath), out uint pwm1))
-            return pwm1/1000;
+            return pwm1;
         return 0;
     }
     
@@ -244,4 +335,6 @@ public static class SysfsWrapper
         var gpuName = result.Split(":")[2].Replace("Advanced Micro Devices, Inc. [AMD/ATI]", "");
         return gpuName.Trim();
     }
+
+   
 }
