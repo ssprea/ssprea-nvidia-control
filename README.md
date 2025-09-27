@@ -11,19 +11,10 @@ This project was created mainly to learn Avalonia UI, so it might not be perfect
 
 ## AMD Branch
 
-This branch is for experimental AMD support, only a couple of features are implemented right now but feel free to test it.
-
-Currently implemented AMD features:
-
-Monitoring:
-
-- Gpu core clock speed
-- Gpu memory clock speed
-- Gpu temperature
-- Gpu memory usage
+This branch is for experimental AMD support, most features are already implemented, right now only the fan control is missing.
+This branch has only been tested on an RX 7800 XT, open an issue if you encounter any problems.
 
 
-Profiles cannot be applied right now!
 
 
 ## Features
