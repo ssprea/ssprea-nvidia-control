@@ -93,8 +93,10 @@ public class Program
                 }
             
                 CoreOffset = (int)ocProfile.GpuClockOffset;
-                MemoryOffset = (int)ocProfile.GpuClockOffset;
+                MemoryOffset = (int)ocProfile.MemClockOffset;
                 PowerLimit = ocProfile.PowerLimitMw;
+                
+                Console.WriteLine($"Applied from profile: CORE OFFSET: {CoreOffset} MHz, MEM OFFSET: {MemoryOffset} MHz, POWER LIMIT: {PowerLimit} mW");
                 
             }
             else
