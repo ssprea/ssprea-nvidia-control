@@ -529,7 +529,11 @@ WantedBy=multi-user.target
         Systemd.RunSystemdCommand("daemon-reload");
         Systemd.EnableSystemdService("snvctl.service");
         if (Systemd.StartSystemdService("snvctl.service"))
+        {
             SelectedStartupProfile = SelectedOcProfile;
+            //kill gui fan curve process if running
+            Program.KillFanCurveProcess();
+        }
     }
     
     //private readonly FanCurvesFileManager _fanCurvesFileManager = new("fan_curves.json");
