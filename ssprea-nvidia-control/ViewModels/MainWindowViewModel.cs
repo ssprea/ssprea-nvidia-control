@@ -116,7 +116,15 @@ public partial class MainWindowViewModel : ViewModelBase
         ];
     
     
-    public uint TunerCurrentPowerLimitW => TunerCurrentPowerLimitMw / 1000;
+    public uint TunerCurrentPowerLimitW {
+        get => TunerCurrentPowerLimitMw / 1000;
+        set
+        {
+            TunerCurrentPowerLimitMw = (uint)(value * 1000);
+
+        }
+            
+    }
 
     
 

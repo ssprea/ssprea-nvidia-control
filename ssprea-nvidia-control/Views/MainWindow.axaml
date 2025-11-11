@@ -96,6 +96,8 @@
                 <Setter Property="FontFamily" Value="{StaticResource NotoSansFont}"/>
             </Style>
             
+            
+            
             <Style Selector="Button">
                 <Setter Property="CornerRadius" Value="12" />
                 <Setter Property="FontFamily" Value="{StaticResource NotoSansFont}"/>
@@ -494,73 +496,74 @@
                                 
                                 <!--TUNER ITEMS STACK PANEL-->
                                 <StackPanel Spacing="20" Grid.Row="1" Grid.Column="0"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                <!-- <DockPanel  Grid.Row="1" Grid.Column="0"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"> -->
                                     
-                                    <Border DockPanel.Dock="Top" Padding="2" Background="{DynamicResource SmallSectionBackgroundBrushLight}" BorderBrush="Gray" BorderThickness="4" CornerRadius="10" HorizontalAlignment="Center" VerticalAlignment="Top">
-                                        <StackPanel 
-                                            Orientation="Horizontal" 
+                                    <Border DockPanel.Dock="Top" Padding="2" Background="{DynamicResource SmallSectionBackgroundBrushLight}" BorderBrush="Gray" BorderThickness="4" CornerRadius="10" HorizontalAlignment="Stretch" VerticalAlignment="Top">
+                                        <DockPanel
+                                            LastChildFill="True"
                                         >
                             
-                                            <Label VerticalAlignment="Center" Content="{x:Static lang:Resources.TunerCoreOffset}"/>
-                                            <Slider Height="35" VerticalAlignment="Top" HorizontalAlignment="Stretch" 
+                                            <Label DockPanel.Dock="Left" VerticalAlignment="Center" Content="{x:Static lang:Resources.TunerCoreOffset}"/>
+                                            <Label DockPanel.Dock="Right" VerticalAlignment="Center" FontWeight="Bold" Content="MHz"/> 
+                                            
+                                            <NumericUpDown  DockPanel.Dock="Right" Minimum="0" Maximum="1000" FormatString="0"
+                                                            Background="Transparent" BorderBrush="Transparent" 
+                                                            TextAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Value="{Binding TunerCurrentCoreOffset,FallbackValue=0000}"/> 
+                                            
+                                            <Slider DockPanel.Dock="Right" Height="35" VerticalAlignment="Top" HorizontalAlignment="Stretch" 
                                                     Minimum="0"
                                                     Maximum="1000"
                                                     Value="{Binding TunerCurrentCoreOffset}"
-                                                    Width="200"
                                             />
-                                            <Label VerticalAlignment="Center" FontWeight="Bold" Content="{Binding TunerCurrentCoreOffset,FallbackValue=0000}"/> 
-                                            <Label VerticalAlignment="Center" FontWeight="Bold" Content="MHz"/> 
-                                            
-
                             
-                                        </StackPanel>
+                                        </DockPanel>
                                     </Border>
                                     
-                                    <Border DockPanel.Dock="Top" Padding="2" Background="{DynamicResource SmallSectionBackgroundBrushDark}" BorderBrush="Gray" BorderThickness="4" CornerRadius="10" HorizontalAlignment="Center" VerticalAlignment="Top">
-                                        <StackPanel 
-                                            Orientation="Horizontal" 
-                                    
-                                    
-                                        >
+                                    <Border DockPanel.Dock="Top" Padding="2" Background="{DynamicResource SmallSectionBackgroundBrushDark}" BorderBrush="Gray" BorderThickness="4" CornerRadius="10" HorizontalAlignment="Stretch" VerticalAlignment="Top">
+                                            <DockPanel LastChildFill="True">
                             
-                                            <StackPanel 
-                                                Orientation="Horizontal" 
-                                    
-                                    
-                                            >
-                            
-                                                <Label VerticalAlignment="Center" Content="{x:Static lang:Resources.TunerMemoryOffset}"/>
-                                                <Slider Height="35" VerticalAlignment="Top" HorizontalAlignment="Stretch"
+                                                <Label DockPanel.Dock="Left" VerticalAlignment="Center" Content="{x:Static lang:Resources.TunerMemoryOffset}"/>
+                                                
+                                                <Label DockPanel.Dock="Right" VerticalAlignment="Center" FontWeight="Bold" Content="MHz"/> 
+                                                
+                                                <NumericUpDown DockPanel.Dock="Right" Minimum="0" Maximum="3000"
+                                                               FormatString="0" Background="Transparent" BorderBrush="Transparent" 
+                                                               
+                                                               TextAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Value="{Binding TunerCurrentMemoryOffset,FallbackValue=0000}"/> 
+                                                
+                                                
+                                                <Slider DockPanel.Dock="Right"  Height="35" VerticalAlignment="Top" HorizontalAlignment="Stretch"
                                                         Minimum="0"
                                                         Maximum="3000"
                                                         Value="{Binding TunerCurrentMemoryOffset}"
-                                                        Width="200"
+                                                        
                                                 />
-                                                <Label VerticalAlignment="Center" FontWeight="Bold" Content="{Binding TunerCurrentMemoryOffset,FallbackValue=0000}"/> 
-                                                <Label VerticalAlignment="Center" FontWeight="Bold" Content="MHz"/> 
-                                                
-                            
-                                            </StackPanel>
-                            
-                                        </StackPanel>
+                                            </DockPanel>
                                     </Border>
                                     
-                                    <Border DockPanel.Dock="Top" Padding="2" Background="{DynamicResource SmallSectionBackgroundBrushLight}" BorderBrush="Gray" BorderThickness="4" CornerRadius="10" HorizontalAlignment="Center" VerticalAlignment="Top">
-                                        <StackPanel 
-                                            Orientation="Horizontal" 
+                                    <Border DockPanel.Dock="Top" Padding="2" Background="{DynamicResource SmallSectionBackgroundBrushLight}" BorderBrush="Gray" BorderThickness="4" CornerRadius="10" HorizontalAlignment="Stretch" VerticalAlignment="Top">
+                                        <DockPanel LastChildFill="True"
                                         >
                             
-                                            <Label VerticalAlignment="Center" Content="{x:Static lang:Resources.TunerPowerLimit}"/>
-                                            <Slider Height="35" VerticalAlignment="Top" HorizontalAlignment="Stretch"
-                                                    Minimum="{Binding SelectedGpu.PowerLimitMinMw, FallbackValue=0}"
-                                                    Maximum="{Binding SelectedGpu.PowerLimitMaxMw, FallbackValue=400}"
-                                                    Value="{Binding TunerCurrentPowerLimitMw}"
-                                                    Width="200"
-                                            />
-                                            <Label VerticalAlignment="Center" FontWeight="Bold" Content="{Binding TunerCurrentPowerLimitW,FallbackValue=000}"/> 
-                                            <Label VerticalAlignment="Center" FontWeight="Bold" Content="W"/> 
+                                            <Label DockPanel.Dock="Left" VerticalAlignment="Center" Content="{x:Static lang:Resources.TunerPowerLimit}"/>
+                                            
+                                            <Label  DockPanel.Dock="Right"  VerticalAlignment="Center" FontWeight="Bold" Content="W"/> 
+                                            <NumericUpDown DockPanel.Dock="Right"  FormatString="0" Minimum="{Binding SelectedGpu.PowerLimitMinW, FallbackValue=0}" Maximum="{Binding SelectedGpu.PowerLimitMaxW, FallbackValue=400}" 
+                                                           Background="Transparent" BorderBrush="Transparent" TextAlignment="Center" VerticalAlignment="Center"
+                                                           FontWeight="Bold" Value="{Binding TunerCurrentPowerLimitW,FallbackValue=000,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/> 
 
+                                            <Border DockPanel.Dock="Right"  HorizontalAlignment="Stretch">
+                                                
+                                                <Slider  Height="35" VerticalAlignment="Top" HorizontalAlignment="Stretch"
+                                                        Minimum="{Binding SelectedGpu.PowerLimitMinMw, FallbackValue=0}"
+                                                        Maximum="{Binding SelectedGpu.PowerLimitMaxMw, FallbackValue=400}"
+                                                        Value="{Binding TunerCurrentPowerLimitMw}"
+                                                        
+                                                />
+                                            </Border>
+                                            
                             
-                                        </StackPanel>
+                                        </DockPanel>
                                     </Border>
                                     
                                     <Border DockPanel.Dock="Top" Padding="2" Background="{DynamicResource SmallSectionBackgroundBrushDark}" BorderBrush="Gray" BorderThickness="4" CornerRadius="10"  HorizontalAlignment="Center" VerticalAlignment="Top">
