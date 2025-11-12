@@ -51,9 +51,9 @@
             <value>Load to tuner</value>
         </data>
 
-     <data name="ButtonDeleteProfile" xml:space="preserve">
-            <value>Delete this profile</value>
-        </data>
+    <data name="ButtonDeleteProfile" xml:space="preserve">
+        <value>Delete profile</value>
+    </data>
 
      <data name="ButtonSave" xml:space="preserve">
             <value>Save</value>
