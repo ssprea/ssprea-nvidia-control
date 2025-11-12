@@ -29,7 +29,7 @@
 
     <Grid x:Name="MainGrid"
               ColumnDefinitions="*,20*,2*"
-              RowDefinitions="*,10*,8*,*"
+              RowDefinitions="10*,8*,*"
               x:DataType="vm:MainWindowViewModel"
               Background="{DynamicResource BackgroundBrush}"
               
@@ -122,7 +122,7 @@
         
             
             <!--MAIN-->
-            <Border Grid.Column="1" Grid.Row="1" BorderThickness="2">
+            <Border  Grid.Column="1" Grid.Row="0" BorderThickness="2">
                 
                 <Grid ColumnDefinitions="*,13*,*,4*,*" 
                   RowDefinitions="*,*,*,*,*,*,*"
@@ -231,11 +231,11 @@
                         >
                     
                         <!--PROFILES MAIN STACKPANEL-->
-                        <StackPanel Spacing="5">
+                        <Grid ColumnDefinitions="*,*" RowDefinitions="*,*,*,*,*,*">
                         
-                            <Label VerticalAlignment="Stretch" HorizontalAlignment="Center" Content="{x:Static lang:Resources.ProfilesSection}"/>
+                            <Label Grid.ColumnSpan="2" VerticalAlignment="Stretch" HorizontalAlignment="Center" Content="{x:Static lang:Resources.ProfilesSection}"/>
                             
-                            <Border BorderBrush="DimGray" BorderThickness="2" CornerRadius="20" Background="{DynamicResource SectionBackgroundBrushLight}">
+                            <Border Margin="2" VerticalAlignment="Top" Grid.Row="1" Grid.ColumnSpan="2" BorderBrush="DimGray" BorderThickness="2" CornerRadius="20" Background="{DynamicResource SectionBackgroundBrushLight}">
                                 <StackPanel  Orientation="Horizontal" Spacing="3">
                                     <Label/>
                                     
@@ -258,10 +258,10 @@
                                 </StackPanel>
                             </Border> 
                             
-                            <Border BorderBrush="DimGray" BorderThickness="2" CornerRadius="20" Background="{DynamicResource SectionBackgroundBrushLight}">
+                            <Border Margin="2" Grid.Row="2" Grid.ColumnSpan="2" BorderBrush="DimGray" BorderThickness="2" CornerRadius="20" Background="{DynamicResource SectionBackgroundBrushLight}">
                                 <StackPanel  Spacing="3" Orientation="Horizontal">
                                     <Label/>
-                                    <Button VerticalAlignment="Center" FontSize="12" HorizontalAlignment="Center" Command="{Binding SaveAutoApplyProfile}" CommandParameter="{Binding #CurrentSelectedProfileCombobox.SelectedItem}">
+                                    <Button VerticalAlignment="Center" FontSize="12" HorizontalAlignment="Right" Command="{Binding SaveAutoApplyProfile}" CommandParameter="{Binding #CurrentSelectedProfileCombobox.SelectedItem}">
                                         <Image Height="12" Width="12"
                                                Source="avares://ssprea-nvidia-control/Assets/icons/save-icon.png"/>
                                         <ToolTip.Tip>
@@ -272,7 +272,7 @@
                                         
                                     </Button>
                                     <Label/>
-                                    <CheckBox VerticalAlignment="Top" FontSize="12" HorizontalAlignment="Stretch" IsChecked="{Binding IsAutoApplyProfileChecked}" Content="{x:Static lang:Resources.CheckboxDefaultProfile}"/>
+                                    <CheckBox VerticalAlignment="Center" FontSize="12" HorizontalAlignment="Stretch" IsChecked="{Binding IsAutoApplyProfileChecked}" Content="{x:Static lang:Resources.CheckboxDefaultProfile}"/>
                                     <Label VerticalAlignment="Center" FontSize="12" HorizontalAlignment="Stretch" Content="{Binding SelectedAutoApplyOcProfile.Name, FallbackValue=Disabled}"/>
 
                                     
@@ -283,10 +283,10 @@
                             
                             
                             
-                            <ComboBox SelectedItem="{Binding SelectedOcProfile}"
+                            <ComboBox Grid.Row="3" Grid.ColumnSpan="2" SelectedItem="{Binding SelectedOcProfile}"
                                       ItemsSource="{Binding OcProfilesList}" 
                                       x:Name="CurrentSelectedProfileCombobox"
-                                      
+                                      Margin="2"
                                       SelectedIndex="1"
                                       VerticalAlignment="Bottom" 
                                       HorizontalAlignment="Stretch"
@@ -301,14 +301,13 @@
                             </ComboBox>
                             
                             
-                            <DockPanel>
-                                
-                                <Button DockPanel.Dock="Left" Content="{x:Static lang:Resources.ButtonLoadToTuner}" Command="{Binding LoadSelectedOcProfileToTuner}" HorizontalAlignment="Center"/>
-                                <Button DockPanel.Dock="Right" Content="{x:Static lang:Resources.ButtonDeleteProfile}" Command="{Binding DeleteOcProfile}" Background="#40E85F68" HorizontalAlignment="Center"/>
-                                
-                            </DockPanel>
                             
-                            <DockPanel >
+                                
+                            <Button Grid.Row="4" Grid.Column="0" DockPanel.Dock="Left" Content="{x:Static lang:Resources.ButtonLoadToTuner}" Command="{Binding LoadSelectedOcProfileToTuner}" HorizontalAlignment="Left"/>
+                            <Button Grid.Row="4" Grid.Column="1" DockPanel.Dock="Right" Content="{x:Static lang:Resources.ButtonDeleteProfile}" Command="{Binding DeleteOcProfile}" Background="#40E85F68" HorizontalAlignment="Right"/>
+                            
+                            
+                            <DockPanel Grid.Row="5" Grid.ColumnSpan="2" >
                                 
                                 <Button DockPanel.Dock="Right" CornerRadius="10" Content="{x:Static lang:Resources.ButtonSave}" Command="{Binding SaveTempTunerSettingsToProfileAndUpdateFileAsync}">
                                     <ToolTip.Tip>
@@ -317,11 +316,11 @@
                                         </StackPanel>
                                     </ToolTip.Tip>
                                 </Button>
-                                <TextBox MinHeight="0" CornerRadius="10"  HorizontalAlignment="Stretch" Watermark="{x:Static lang:Resources.WatermarkNewProfileName}" UseFloatingWatermark="False" BorderThickness="0" Text="{Binding TunerCurrentProfileName,FallbackValue=''}"></TextBox>
+                                <TextBox Margin="2" MinHeight="0" CornerRadius="10"  HorizontalAlignment="Stretch" Watermark="{x:Static lang:Resources.WatermarkNewProfileName}" UseFloatingWatermark="False" BorderThickness="0" Text="{Binding TunerCurrentProfileName,FallbackValue=''}"></TextBox>
 
                             </DockPanel>
                             
-                        </StackPanel>
+                        </Grid>
                     
                     </Border>
                 
@@ -376,7 +375,7 @@
             
             
             <!--BOTTOM PANEL-->
-            <Panel Grid.Column="1" Grid.Row="2" >
+            <Panel Grid.Column="1" Grid.Row="1" >
                  
                 <Border Background="{DynamicResource SectionBackgroundBrushDark}" BorderThickness="3" CornerRadius="20" BorderBrush="Gray" >
                     
@@ -391,9 +390,10 @@
                             <Label Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Content="{x:Static lang:Resources.InfoSection}"/>
                             
                             <!--INFO ITEMS STACK PANEL-->
-                            <StackPanel Spacing="18" Grid.Row="1" Grid.Column="0"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <Grid  Grid.Row="1" Grid.Column="0"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                   RowDefinitions="*,*,*,*,*">
                                 
-                                <Border DockPanel.Dock="Top" Padding="2" Background="{DynamicResource SmallSectionBackgroundBrushLight}" BorderBrush="Gray" BorderThickness="4" CornerRadius="10" HorizontalAlignment="Center" VerticalAlignment="Top">
+                                <Border Grid.Row="0" DockPanel.Dock="Top" Padding="2" Background="{DynamicResource SmallSectionBackgroundBrushLight}" BorderBrush="Gray" BorderThickness="4" CornerRadius="10" HorizontalAlignment="Center" VerticalAlignment="Center">
                                     <StackPanel 
                                         Orientation="Horizontal" 
                                 
@@ -407,7 +407,7 @@
                                     </StackPanel>
                                 </Border>
                                 
-                                <Border DockPanel.Dock="Top" Padding="2" Background="{DynamicResource SmallSectionBackgroundBrushDark}" BorderBrush="Gray" BorderThickness="4" CornerRadius="10" HorizontalAlignment="Center" VerticalAlignment="Top">
+                                <Border Grid.Row="1" DockPanel.Dock="Top" Padding="2" Background="{DynamicResource SmallSectionBackgroundBrushDark}" BorderBrush="Gray" BorderThickness="4" CornerRadius="10" HorizontalAlignment="Center" VerticalAlignment="Center">
                                     <StackPanel 
                                         Orientation="Horizontal" 
                                 
@@ -426,7 +426,7 @@
                                     </StackPanel>
                                 </Border>
                                 
-                                <Border DockPanel.Dock="Top" Padding="2" Background="{DynamicResource SmallSectionBackgroundBrushLight}" BorderBrush="Gray" BorderThickness="4" CornerRadius="10" HorizontalAlignment="Center" VerticalAlignment="Top">
+                                <Border Grid.Row="2" DockPanel.Dock="Top" Padding="2" Background="{DynamicResource SmallSectionBackgroundBrushLight}" BorderBrush="Gray" BorderThickness="4" CornerRadius="10" HorizontalAlignment="Center" VerticalAlignment="Center">
                                     <StackPanel 
                                         Orientation="Horizontal" 
                                 
@@ -445,7 +445,7 @@
                                     </StackPanel>
                                 </Border>
                                 
-                                <Border DockPanel.Dock="Top" Padding="2" Background="{DynamicResource SmallSectionBackgroundBrushDark}" BorderBrush="Gray" BorderThickness="4" CornerRadius="10" HorizontalAlignment="Center" VerticalAlignment="Top">
+                                <Border Grid.Row="3" DockPanel.Dock="Top" Padding="2" Background="{DynamicResource SmallSectionBackgroundBrushDark}" BorderBrush="Gray" BorderThickness="4" CornerRadius="10" HorizontalAlignment="Center" VerticalAlignment="Center">
                                     <StackPanel 
                                         Orientation="Horizontal" 
                                 
@@ -462,7 +462,7 @@
                                     </StackPanel>
                                 </Border>
                                 
-                                <Border DockPanel.Dock="Top" Padding="2" Background="{DynamicResource SmallSectionBackgroundBrushLight}" BorderBrush="Gray" BorderThickness="4" CornerRadius="10"  HorizontalAlignment="Center" VerticalAlignment="Top">
+                                <Border Grid.Row="4" DockPanel.Dock="Top" Padding="2" Background="{DynamicResource SmallSectionBackgroundBrushLight}" BorderBrush="Gray" BorderThickness="4" CornerRadius="10"  HorizontalAlignment="Center" VerticalAlignment="Center">
                                     <StackPanel 
                                         Orientation="Horizontal" 
                                 
@@ -483,7 +483,7 @@
                                 
                                 
                                 
-                            </StackPanel>
+                            </Grid>
                                 
                         </Grid>
                         
@@ -495,10 +495,11 @@
                                 <Label Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Content="{x:Static lang:Resources.TunerSection}"/>
                                 
                                 <!--TUNER ITEMS STACK PANEL-->
-                                <StackPanel Spacing="20" Grid.Row="1" Grid.Column="0"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                <!-- <StackPanel Spacing="20" Grid.Row="1" Grid.Column="0"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"> -->
+                                <Grid RowDefinitions="*,*,*,*" Grid.Row="1" Grid.Column="0"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                 <!-- <DockPanel  Grid.Row="1" Grid.Column="0"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"> -->
                                     
-                                    <Border DockPanel.Dock="Top" Padding="2" Background="{DynamicResource SmallSectionBackgroundBrushLight}" BorderBrush="Gray" BorderThickness="4" CornerRadius="10" HorizontalAlignment="Stretch" VerticalAlignment="Top">
+                                    <Border DockPanel.Dock="Top" Padding="2" Background="{DynamicResource SmallSectionBackgroundBrushLight}" BorderBrush="Gray" BorderThickness="4" CornerRadius="10" HorizontalAlignment="Stretch" VerticalAlignment="Center">
                                         <DockPanel
                                             LastChildFill="True"
                                         >
@@ -519,7 +520,7 @@
                                         </DockPanel>
                                     </Border>
                                     
-                                    <Border DockPanel.Dock="Top" Padding="2" Background="{DynamicResource SmallSectionBackgroundBrushDark}" BorderBrush="Gray" BorderThickness="4" CornerRadius="10" HorizontalAlignment="Stretch" VerticalAlignment="Top">
+                                    <Border Grid.Row="1" DockPanel.Dock="Top" Padding="2" Background="{DynamicResource SmallSectionBackgroundBrushDark}" BorderBrush="Gray" BorderThickness="4" CornerRadius="10" HorizontalAlignment="Stretch" VerticalAlignment="Center">
                                             <DockPanel LastChildFill="True">
                             
                                                 <Label DockPanel.Dock="Left" VerticalAlignment="Center" Content="{x:Static lang:Resources.TunerMemoryOffset}"/>
@@ -541,7 +542,7 @@
                                             </DockPanel>
                                     </Border>
                                     
-                                    <Border DockPanel.Dock="Top" Padding="2" Background="{DynamicResource SmallSectionBackgroundBrushLight}" BorderBrush="Gray" BorderThickness="4" CornerRadius="10" HorizontalAlignment="Stretch" VerticalAlignment="Top">
+                                    <Border Grid.Row="2" DockPanel.Dock="Top" Padding="2" Background="{DynamicResource SmallSectionBackgroundBrushLight}" BorderBrush="Gray" BorderThickness="4" CornerRadius="10" HorizontalAlignment="Stretch" VerticalAlignment="Center">
                                         <DockPanel LastChildFill="True"
                                         >
                             
@@ -566,7 +567,7 @@
                                         </DockPanel>
                                     </Border>
                                     
-                                    <Border DockPanel.Dock="Top" Padding="2" Background="{DynamicResource SmallSectionBackgroundBrushDark}" BorderBrush="Gray" BorderThickness="4" CornerRadius="10"  HorizontalAlignment="Center" VerticalAlignment="Top">
+                                    <Border Grid.Row="3" DockPanel.Dock="Top" Margin="5" Padding="4" Background="{DynamicResource SmallSectionBackgroundBrushDark}" BorderBrush="Gray" BorderThickness="4" CornerRadius="10"  HorizontalAlignment="Center" VerticalAlignment="Bottom">
                                         <StackPanel 
                                             Orientation="Horizontal" 
                                             Spacing="20"
@@ -590,7 +591,7 @@
                                     
                                     
                                     
-                                </StackPanel>
+                                </Grid>
                                 
                             </Grid>
                             
@@ -615,31 +616,13 @@
                                 <Label  HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Content="{x:Static lang:Resources.FanCurveSection}"/>
                             </Border>
                             <!--FAN CURVE ITEMS STACK PANEL-->
-                            <StackPanel Spacing="3" Grid.Row="1" Grid.Column="0"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <DockPanel  Grid.Row="1" Grid.Column="0"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                 
-                                <lvc:CartesianChart MinHeight="169" MinWidth="150"
-                                                    BorderThickness="0" Padding="0" Margin="0"
-                                                    HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
-                                                    Series="{Binding SelectedFanCurve.CurvePointsSeries}"
-                                                    XAxes="{Binding FanCurveGraphXAxes}"
-                                                    YAxes="{Binding FanCurveGraphYAxes}"
-                                                    TooltipTextPaint="{Binding GraphTooltipTextPaint}"
-                                                    
-                                                    ZoomMode="X"
-                                                    />
                                 
-                                <ComboBox HorizontalAlignment="Stretch"
-                                          ItemsSource="{Binding FanCurvesList}"
-                                          SelectedItem="{Binding SelectedFanCurve}">
-
-                                    <ComboBox.ItemTemplate>
-                                        <DataTemplate>
-                                            <Label Content="{Binding Name}"/>
-                                        </DataTemplate>
-                                    </ComboBox.ItemTemplate>
-                                </ComboBox>
                                 
-                                <Border DockPanel.Dock="Top" Padding="2" Background="#40969696" BorderBrush="Gray" BorderThickness="4" CornerRadius="10"  HorizontalAlignment="Center" VerticalAlignment="Top">
+                                
+                                
+                                <Border DockPanel.Dock="Bottom" Padding="2" Background="#40969696" BorderBrush="Gray" BorderThickness="4" CornerRadius="10"  HorizontalAlignment="Center" VerticalAlignment="Top">
                                     <StackPanel 
                                         Orientation="Horizontal" 
                                         Spacing="15"
@@ -657,8 +640,31 @@
                                     </StackPanel>
                                 </Border>
                                 
+                                <ComboBox HorizontalAlignment="Stretch"
+                                          ItemsSource="{Binding FanCurvesList}"
+                                          SelectedItem="{Binding SelectedFanCurve}"
+                                          DockPanel.Dock="Bottom">
+
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <Label Content="{Binding Name}"/>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
                                 
-                            </StackPanel>
+                                <lvc:CartesianChart MinHeight="169" MinWidth="150"
+                                                    BorderThickness="0" Padding="0" Margin="0"
+                                                    HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+                                                    Series="{Binding SelectedFanCurve.CurvePointsSeries}"
+                                                    XAxes="{Binding FanCurveGraphXAxes}"
+                                                    YAxes="{Binding FanCurveGraphYAxes}"
+                                                    TooltipTextPaint="{Binding GraphTooltipTextPaint}"
+                                                    
+                                                    ZoomMode="X"
+                                                    DockPanel.Dock="Top"
+                                />
+                                
+                            </DockPanel>
                             
                             
                             
@@ -673,10 +679,10 @@
            
             <!--RIGHT PANEL-->
             
-            <Border BorderThickness="20" Grid.Column="2" Grid.Row="1" Grid.RowSpan="2">
+            <Border BorderThickness="20" Grid.Column="2" Grid.Row="0" Grid.RowSpan="2">
                 <Border BorderBrush="Gray" BorderThickness="2" CornerRadius="20" Padding="15">
                     
-                    <StackPanel Spacing="140" >
+                    <Grid RowDefinitions="*,*,*,*" >
                         <Button CornerRadius="20" Command="{Binding OpenSettingsWindowCommand}">
                             <Image Source="avares://ssprea-nvidia-control/Assets/icons/gear-icon.png"/>
                             <ToolTip.Tip>
@@ -685,7 +691,7 @@
                                 </StackPanel>
                             </ToolTip.Tip>
                         </Button>
-                        <Button Command="{Binding ShowComingSoonPopupAsync}" CommandParameter="Extra GPU Info" CornerRadius="20">
+                        <Button Grid.Row="1" Command="{Binding ShowComingSoonPopupAsync}" CommandParameter="Extra GPU Info" CornerRadius="20">
                             <Image Source="avares://ssprea-nvidia-control/Assets/icons/info-icon.png"/>
                             <ToolTip.Tip>
                                 <StackPanel>
@@ -694,7 +700,7 @@
                                 </StackPanel>
                             </ToolTip.Tip>
                         </Button>
-                        <Button Command="{Binding OpenUsageGraphsWindowCommand}" CommandParameter="{Binding SelectedGpu}" CornerRadius="20">
+                        <Button Grid.Row="2" Command="{Binding OpenUsageGraphsWindowCommand}" CommandParameter="{Binding SelectedGpu}" CornerRadius="20">
                             <Image Source="avares://ssprea-nvidia-control/Assets/icons/graph-icon.png"/>
                             <ToolTip.Tip>
                                 <StackPanel>
@@ -702,7 +708,7 @@
                                 </StackPanel>
                             </ToolTip.Tip>
                         </Button>
-                        <Button CornerRadius="20" Command="{Binding OpenDefaultBrowserToUrl}" CommandParameter="https://github.com/ssprea/ssprea-nvidia-control/wiki">
+                        <Button Grid.Row="3"  CornerRadius="20" Command="{Binding OpenDefaultBrowserToUrl}" CommandParameter="https://github.com/ssprea/ssprea-nvidia-control/wiki">
                             <Image Source="avares://ssprea-nvidia-control/Assets/icons/help-icon.png"/>
                             <ToolTip.Tip>
                                 <StackPanel>
@@ -710,7 +716,7 @@
                                 </StackPanel>
                             </ToolTip.Tip>
                         </Button>
-                    </StackPanel>
+                    </Grid>
                     
                 </Border>
             </Border>
