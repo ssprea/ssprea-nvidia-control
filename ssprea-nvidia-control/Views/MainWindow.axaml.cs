@@ -57,7 +57,7 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
 
         Activated += async (s, e) =>
         {
-            await ViewModel!.CheckAndApplyAutoApplyProfile();
+            // await ViewModel!.CheckAndApplyAutoApplyProfile();
         };
         
         

@@ -723,6 +723,7 @@ WantedBy=multi-user.target
             SelectedGpu = NvmlService.GpuList.First();
         
         await CheckAndLoadStartupProfile();
+        await CheckAndApplyAutoApplyProfile();
     }
 
     public void LoadProfileToTuner()
