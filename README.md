@@ -3,11 +3,6 @@
 
 ssprea-nvidia-control is a highly customizable GUI overclocking tool for NVidia GPUs that supports Wayland, X11 and Windows.
 
-## Disclaimer
-
-This project was created mainly to learn Avalonia UI, so it might not be perfect. Feel free to report any bugs or to give me any suggestions you might have by opening an [Issue](https://github.com/ssprea/ssprea-nvidia-control/issues/new).
-
-
 ## Features
 
 - Overclock profiles
