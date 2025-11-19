@@ -1,7 +1,7 @@
 # ssprea-nvidia-control
 
 
-ssprea-nvidia-control is a highly customizable GUI overclocking tool for NVidia GPUs that supports Wayland, X11 and Windows.
+Inspired by MSI Afterburner, ssprea-nvidia-control is a highly customizable GUI overclocking tool for NVidia GPUs that supports Wayland, X11 and Windows.
 
 ## Features
 
