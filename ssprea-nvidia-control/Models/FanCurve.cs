@@ -1,5 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.Linq;
+using System.Reactive.Linq;
+using DynamicData;
 using Newtonsoft.Json;
 
 namespace ssprea_nvidia_control.Models;
@@ -25,10 +30,29 @@ public class FanCurve
     {
         Name = name;
         CurvePoints = new(curvePoints);
+        // CurvePoints.CollectionChanged += CurvePoints_CollectionChanged;
+
+        SanitizePoints();
+
         GenerateGpuTempToFanSpeedMap();
         
+        
     }
+    
 
+    public void SanitizePoints()
+    {
+        for (int i = 0; i < CurvePoints.Count; i++)
+        {
+            if (CurvePoints[i].FanSpeed > 100)
+                CurvePoints[i].FanSpeed = 100;
+        }
+
+        var ordered = CurvePoints.OrderBy(x => x.Temperature).ToList();
+        CurvePoints.Clear();
+        CurvePoints.AddRange(ordered);
+    }
+    
     public void GenerateGpuTempToFanSpeedMap()
     {
         for (int i = 0; i < CurvePoints.Count-1; i++) //per ogni punto
