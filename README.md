@@ -1,12 +1,7 @@
 # ssprea-nvidia-control
 
 
-ssprea-nvidia-control is a highly customizable GUI overclocking tool for NVidia GPUs that supports Wayland, X11 and Windows.
-
-## Disclaimer
-
-This project was created mainly to learn Avalonia UI, so it might not be perfect. Feel free to report any bugs or to give me any suggestions you might have by opening an [Issue](https://github.com/ssprea/ssprea-nvidia-control/issues/new).
-
+Inspired by MSI Afterburner, ssprea-nvidia-control is a highly customizable GUI overclocking tool for NVidia GPUs that supports Wayland, X11 and Windows.
 
 ## Features
 
@@ -26,7 +21,12 @@ This project was created mainly to learn Avalonia UI, so it might not be perfect
 ## Requirements
 
 - NVidia proprietary driver 555+
-- .NET core 9
+
+## Future features:
+
+- AMD Support
+- GPU Undervolting
+  
 ## Installation:
 
 ### Ubuntu/Debian/Mint:
@@ -68,23 +68,26 @@ NOTE: Windows is not the main target platform for this tool so features might be
 
 ### Building:
 
-Quick build and install script (gui & cli):
-
-```
-wget https://gist.githubusercontent.com/ssprea/d82f6fd46b15b7076df162dc66e44204/raw/2278c05805d57e33e036ffa9011ad564900cd50f/snvctl-install.sh && chmod +x ./snvctl-install.sh && ./snvctl-install.sh install
-```
-
-Uninstall: 
+To build this tool you need to install Make and .NET SDK 9.0
 
 
-```
-wget https://gist.githubusercontent.com/ssprea/d82f6fd46b15b7076df162dc66e44204/raw/2278c05805d57e33e036ffa9011ad564900cd50f/snvctl-install.sh && chmod +x ./snvctl-install.sh && ./snvctl-install.sh uninstall
+Build and install GUI & CLI:
+```bash
+  git clone https://github.com/ssprea/ssprea-nvidia-control.git
+  cd ssprea-nvidia-control
+  make publish
+  sudo make installall
 ```
 
+Build and install CLI only:
+```bash
+  git clone https://github.com/ssprea/ssprea-nvidia-control.git
+  cd ssprea-nvidia-control
+  make publish
+  sudo make installcli
+```
 
-### Without quick install script:
-
-Make deb packages to install with dpkg:
+Build deb packages to install with dpkg:
 ```bash
   git clone https://github.com/ssprea/ssprea-nvidia-control.git
   cd ssprea-nvidia-control
@@ -95,25 +98,6 @@ The packages will be located in `ssprea-nvidia-control/ssprea-nvidia-control/bin
 You can install them using `sudo dpkg -i <package_path>`
 
 
-To install GUI and CLI:
-```bash
-  git clone https://github.com/ssprea/ssprea-nvidia-control.git
-  cd ssprea-nvidia-control
-  make publish
-  sudo make installall
-```
-
-Install CLI only:
-```bash
-  git clone https://github.com/ssprea/ssprea-nvidia-control.git
-  cd ssprea-nvidia-control
-  make publish
-  sudo make installcli
-```
-
-
-
-
 Without make:
 
 ```bash
@@ -121,3 +105,4 @@ Without make:
   cd ssprea-nvidia-control
   dotnet run --configuration Release
 ```
+If you run the tool like this the CLI tool won't be found in the path so you will not be able to apply settings.
