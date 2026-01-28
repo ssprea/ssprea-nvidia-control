@@ -5,6 +5,7 @@ using ssprea_nvidia_control.NVML;
 using ssprea_nvidia_control.NVML.NvmlTypes;
 using ssprea_nvidia_control.ViewModels;
 using Newtonsoft.Json;
+using Serilog;
 using ssprea_nvidia_control.Models.Exceptions;
 
 namespace ssprea_nvidia_control.Models;
@@ -70,7 +71,7 @@ public partial class OcProfile
             if (FanCurve != null)
                 targetGpu.ApplyFanCurve(FanCurve);
 
-            Console.WriteLine(r1.ToString() + r2 + r3);
+            Log.Debug(r1.ToString() + r2 + r3);
             return r1 == NvmlReturnCode.NVML_SUCCESS && r2 == NvmlReturnCode.NVML_SUCCESS &&
                    r3 == NvmlReturnCode.NVML_SUCCESS;
         }

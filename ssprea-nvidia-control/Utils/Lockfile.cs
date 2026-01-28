@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Controls;
+using Serilog;
 
 namespace ssprea_nvidia_control.Utils;
 
@@ -42,7 +43,7 @@ public static class Lockfile
         if (IsAnotherInstanceRunning())
         {
             SendMaximizeMessage();
-            Console.WriteLine("Another instance of this tool is running! Exiting...");
+            Log.Information("Another instance of this tool is running! Exiting...");
             Environment.Exit(0);
         }
         

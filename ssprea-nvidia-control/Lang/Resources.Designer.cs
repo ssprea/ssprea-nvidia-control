@@ -398,5 +398,11 @@ namespace ssprea_nvidia_control.Lang {
                 return ResourceManager.GetString("TextCurrentTemp", resourceCulture);
             }
         }
+        
+        public static string SettingUpdateTimeDescription {
+            get {
+                return ResourceManager.GetString("SettingUpdateTimeDescription", resourceCulture);
+            }
+        }
     }
 }

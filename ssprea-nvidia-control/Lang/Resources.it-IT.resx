@@ -234,4 +234,7 @@
     <data name="TextCurrentFanSpeed" xml:space="preserve">
         <value>Veloc. ventole attuale</value>
     </data>
+    <data name="SettingUpdateTimeDescription" xml:space="preserve">
+        <value>Aggiorna valori ogni (secondi):</value>
+    </data>
 </root>

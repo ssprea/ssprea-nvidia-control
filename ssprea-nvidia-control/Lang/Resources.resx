@@ -250,4 +250,7 @@
     <data name="TextCurrentTemp" xml:space="preserve">
         <value>Current Temp:</value>
     </data>
+    <data name="SettingUpdateTimeDescription" xml:space="preserve">
+        <value>Update values every (seconds):</value>
+    </data>
 </root>

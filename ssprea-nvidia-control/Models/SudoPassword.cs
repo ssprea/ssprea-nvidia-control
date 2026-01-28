@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Security;
+using Serilog;
 
 namespace ssprea_nvidia_control.Models;
 
@@ -60,7 +61,7 @@ public class SudoPassword
         psi.UseShellExecute = false;
         psi.CreateNoWindow = true;
 
-        Console.WriteLine("Executing: "+psi.FileName+" "+psi.Arguments);
+        Log.Debug("Executing: "+psi.FileName+" "+psi.Arguments);
         
         
         var process = Process.Start(psi);
@@ -72,7 +73,7 @@ public class SudoPassword
             return false;
         
 
-        Console.WriteLine(process.Id);
+        Log.Debug(process.Id.ToString());
         //var output = process.StandardOutput.ReadToEnd();
         
         return true;

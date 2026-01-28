@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
+using Serilog;
 
 namespace ssprea_nvidia_control.Models;
 
@@ -21,7 +22,7 @@ public class ProfilesFileManager
     {
         if (!File.Exists(_path))
         {
-            Console.WriteLine("File not found: " + _path + ", it will be created when you save a new profile.");
+            Log.Information("Profiles file not found at: " + _path + ", it will be created when you save a new profile.");
             return;
         }
 
@@ -30,54 +31,54 @@ public class ProfilesFileManager
             var deserialized = JsonConvert.DeserializeObject<ObservableCollection<OcProfile>>(File.ReadAllText(_path));
             if (deserialized == null)
             {
-                Console.WriteLine("Error loading file " + _path);
+                Log.Warning("Error loading file " + _path);
                 return;
             }
             
             LoadedProfiles = deserialized;
-            Console.WriteLine("Successfully loaded "+_path);
+            Log.Information("Successfully loaded "+_path);
         }
         catch (ArgumentNullException ex)
         {
-            Console.WriteLine("Error loading file " + _path + ":\n" + ex);
+            Log.Warning("Error loading file " + _path + ":\n" + ex);
         }
         catch (JsonException ex)
         {
-            Console.WriteLine("Invalid "+ _path + " file:\n" + ex);
+            Log.Warning("Invalid "+ _path + " file:\n" + ex);
             
         }
     }
     
-    public async Task LoadProfilesAsync()
-    {
-        if (!File.Exists(_path))
-        {
-            Console.WriteLine("File not found: " + _path + ", it will be created when you save a new profile.");
-            return;
-        }
-
-        try
-        {
-            var deserialized = JsonConvert.DeserializeObject<ObservableCollection<OcProfile>>(await File.ReadAllTextAsync(_path));
-            if (deserialized == null)
-            {
-                Console.WriteLine("Error loading file " + _path);
-                return;
-            }
-            
-            LoadedProfiles = deserialized;
-            Console.WriteLine("Successfully loaded "+_path);
-        }
-        catch (ArgumentNullException ex)
-        {
-            Console.WriteLine("Error loading file " + _path + ":\n" + ex);
-        }
-        catch (JsonException ex)
-        {
-            Console.WriteLine("Invalid "+ _path + " file:\n" + ex);
-            
-        }
-    }
+    // public async Task LoadProfilesAsync()
+    // {
+    //     if (!File.Exists(_path))
+    //     {
+    //         Console.WriteLine("File not found: " + _path + ", it will be created when you save a new profile.");
+    //         return;
+    //     }
+    //
+    //     try
+    //     {
+    //         var deserialized = JsonConvert.DeserializeObject<ObservableCollection<OcProfile>>(await File.ReadAllTextAsync(_path));
+    //         if (deserialized == null)
+    //         {
+    //             Console.WriteLine("Error loading file " + _path);
+    //             return;
+    //         }
+    //         
+    //         LoadedProfiles = deserialized;
+    //         Console.WriteLine("Successfully loaded "+_path);
+    //     }
+    //     catch (ArgumentNullException ex)
+    //     {
+    //         Console.WriteLine("Error loading file " + _path + ":\n" + ex);
+    //     }
+    //     catch (JsonException ex)
+    //     {
+    //         Console.WriteLine("Invalid "+ _path + " file:\n" + ex);
+    //         
+    //     }
+    // }
     
     public async Task UpdateProfilesFileAsync()
     {

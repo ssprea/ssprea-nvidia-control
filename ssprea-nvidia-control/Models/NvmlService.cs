@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Threading;
 using DynamicData;
+using Serilog;
 using ssprea_nvidia_control.NVML;
 
 namespace ssprea_nvidia_control.Models;
@@ -32,7 +33,7 @@ public class NvmlService
         _gpuList.Clear();
         
         //_gpuListVm.Clear();
-        Console.WriteLine("NvmlService destroyed");
+        Log.Debug("NvmlService destroyed");
     }
 
     public void Initialize()
@@ -60,7 +61,7 @@ public class NvmlService
         //StartFanCurveUpdaterThread();
         
         IsInitialized = true;
-        Console.WriteLine("NvmlService initialized");
+        Log.Debug("NvmlService initialized");
     }
 
     

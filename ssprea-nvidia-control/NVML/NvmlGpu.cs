@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Media;
 using Newtonsoft.Json;
+using Serilog;
 using ssprea_nvidia_control.Models;
 using ssprea_nvidia_control.Models.Exceptions;
 using ssprea_nvidia_control.NVML.NvmlTypes;
@@ -79,7 +80,7 @@ namespace ssprea_nvidia_control.NVML;
             {
                 while (true)
                 {
-                    Thread.Sleep(500);
+                    Thread.Sleep((int)Program.LoadedSettings.SelectedUpdateTimeout.TotalMilliseconds);
                     UpdateProperties();
                 }
             });
@@ -274,7 +275,7 @@ namespace ssprea_nvidia_control.NVML;
                 }
                 
                 
-                Console.WriteLine(" set clock offset: ");
+                Log.Information(" set clock offset: ");
 
                 return NvmlReturnCode.NVML_SUCCESS;
             }
@@ -309,7 +310,7 @@ namespace ssprea_nvidia_control.NVML;
             try
             {
                 var result = RunSudoCliCommand($"-p {limitMw}");
-                Console.WriteLine(" set power limit: ");
+                Log.Information(" set power limit: ");
 
                 return NvmlReturnCode.NVML_SUCCESS;
             }
@@ -437,7 +438,7 @@ namespace ssprea_nvidia_control.NVML;
             psi.UseShellExecute = false;
             psi.CreateNoWindow = true;
 
-            Console.WriteLine("Executing: "+psi.FileName+" "+psi.Arguments);
+            Log.Information("Executing: "+psi.FileName+" "+psi.Arguments);
             
             
             var process = Process.Start(psi);
@@ -450,7 +451,7 @@ namespace ssprea_nvidia_control.NVML;
                     return null;
             }
 
-            Console.WriteLine(process.Id);
+            Log.Debug("PID: "+process.Id);
             //var output = process.StandardOutput.ReadToEnd();
             
             return process;

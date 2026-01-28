@@ -9,6 +9,7 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.ReactiveUI;
+using Serilog;
 using ssprea_nvidia_control.Models;
 using ssprea_nvidia_control.Models.Exceptions;
 using ssprea_nvidia_control.NVML;
@@ -21,10 +22,13 @@ sealed class Program
     public static string DefaultDataPath =
         Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "/.snvctl-gui";
 
+    public static string SettingsFilePath = DefaultDataPath + "/settings.json";
+    
+    
     public static Process? FanCurveProcess = null;
 
-    public static string SelectedLocale = "System";
-    
+    //public static string SelectedLocale = "System";
+    public static Settings LoadedSettings = Settings.Default();
     
     // Initialization code. Don't use any Avalonia, third-party APIs or any
     // SynchronizationContext-reliant code before AppMain is called: things aren't initialized
@@ -33,17 +37,21 @@ sealed class Program
     [STAThread]
     public static void Main(string[] args)
     {
-        SelectedLocale = File.Exists(DefaultDataPath+"/SelectedLocale.txt") ? File.ReadAllText(DefaultDataPath+"/SelectedLocale.txt").Trim() : "System";
+        using var log = new LoggerConfiguration()
+            .WriteTo.Console()
+            .CreateLogger();
 
-        if (SelectedLocale != "System")
+        Log.Logger = log;
+        
+        // SelectedLocale = File.Exists(DefaultDataPath+"/SelectedLocale.txt") ? File.ReadAllText(DefaultDataPath+"/SelectedLocale.txt").Trim() : "System";
+        CheckAndConvertLegacySettings();
+        CheckAndLoadSettings();
+        
+        if (LoadedSettings.SelectedLocale != "System")
         {
-            Lang.Resources.Culture = new CultureInfo(SelectedLocale);
+            Lang.Resources.Culture = new CultureInfo(LoadedSettings.SelectedLocale);
         }
-
-        var maximizeThread = new Thread(async () =>
-        {
-            
-        });
+        
         
         Task.Run(async Task?() =>
         {
@@ -51,7 +59,7 @@ sealed class Program
             {
                 await Utils.Lockfile.WaitForMaximizeMessageAsync(CancellationToken.None);
                 
-                Console.WriteLine("Maximize command received!");
+                Log.Debug("Maximize command received!");
                 
                 await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() =>
                 {
@@ -68,9 +76,53 @@ sealed class Program
         
     }
 
-   
-    
-    
+    private static void CheckAndLoadSettings()
+    { 
+
+        if (!File.Exists(SettingsFilePath))
+        {
+            Log.Warning("Settings file not found. Generating default.");
+            File.WriteAllText(SettingsFilePath, Settings.Default().ToJson());
+        }
+
+        var parsedSettings = Settings.FromJson(File.ReadAllText(SettingsFilePath));
+        if (parsedSettings is null)
+        {
+            Log.Warning("Error while reading settings file, loading default. ");
+            return;
+        }
+        
+        LoadedSettings = parsedSettings;
+    }
+
+    private static void CheckAndConvertLegacySettings()
+    {
+
+        if (File.Exists(SettingsFilePath))
+        {
+            Log.Debug("New settings format found, skipping legacy settings conversion.");
+            return;
+        }
+        
+        Directory.CreateDirectory(DefaultDataPath + "/backup");
+        var defaultSettings = Settings.Default();
+
+        if (File.Exists(DefaultDataPath + "/SelectedLocale.txt"))
+        {
+            defaultSettings.SelectedLocale = File.ReadAllText(DefaultDataPath + "/SelectedLocale.txt").Trim();
+            File.Move(DefaultDataPath + "/SelectedLocale.txt",DefaultDataPath + "/backup/SelectedLocale.txt");
+        }
+
+        if (File.Exists(DefaultDataPath + "/SelectedGui.txt"))
+        {
+            defaultSettings.SelectedGui = File.ReadAllText(DefaultDataPath + "/SelectedGui.txt").Trim();
+            File.Move(DefaultDataPath + "/SelectedGui.txt",DefaultDataPath + "/backup/SelectedGui.txt");
+            
+        }
+        
+        File.WriteAllText(SettingsFilePath, defaultSettings.ToJson());
+        Log.Information("Settings converted succesfully!");
+    }
     
     // Avalonia configuration, don't remove; also used by visual designer.
     public static AppBuilder BuildAvaloniaApp()
@@ -85,7 +137,7 @@ sealed class Program
     {
         if (Program.FanCurveProcess is null || Program.FanCurveProcess.HasExited)
         {
-            Console.WriteLine("Fan curve process not running");
+            Log.Debug("Fan curve process not running");
             return;
         }
 

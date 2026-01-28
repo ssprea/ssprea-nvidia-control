@@ -24,6 +24,7 @@ using ssprea_nvidia_control.Models;
 using ssprea_nvidia_control.NVML;
 using Newtonsoft.Json.Linq;
 using ReactiveUI;
+using Serilog;
 using SkiaSharp;
 using ssprea_nvidia_control.Utils;
 
@@ -443,7 +444,7 @@ public partial class MainWindowViewModel : ViewModelBase
         if (!IsAutoApplyProfileChecked)
         {
             File.Delete(Program.DefaultDataPath + "/AutoApplyProfile.json");
-            Console.WriteLine("No default profile selected, disabled auto apply.");
+            Log.Information("No default profile selected, disabled auto apply.");
             return;
         }
         
@@ -477,7 +478,7 @@ public partial class MainWindowViewModel : ViewModelBase
             Systemd.StopSystemdService("snvctl.service");
             Systemd.DisableSystemdService("snvctl.service");
             
-            Console.WriteLine("No startup profile selected, stopped snvctl.service");
+            Log.Information("No startup profile selected, stopped snvctl.service");
             SelectedStartupProfile = null;
             return;
         }
@@ -611,7 +612,7 @@ WantedBy=multi-user.target
     {
         if (SelectedGpu is null)
         {
-            Console.WriteLine("No gpu selected!");
+            Log.Warning("No gpu selected!");
             return;
         }
 
@@ -749,7 +750,7 @@ WantedBy=multi-user.target
         var lines = output.Split('\n');
         CurrentNvidiaDriverVersion = lines[2].Split(':')[1].Trim();
 
-        Console.WriteLine($"Detected NVidia driver version: {CurrentNvidiaDriverVersion}");
+        Log.Information($"Detected NVidia driver version: {CurrentNvidiaDriverVersion}");
 #endif
         //TODO: add windows driver check
         

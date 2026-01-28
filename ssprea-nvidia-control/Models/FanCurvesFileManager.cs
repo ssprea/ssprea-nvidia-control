@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
+using Serilog;
 using ssprea_nvidia_control.ViewModels;
 
 namespace ssprea_nvidia_control.Models;
@@ -25,7 +26,7 @@ public static class FanCurvesFileManager
     {
         if (!File.Exists(path))
         {
-            Console.WriteLine("File not found: " + path + ", it will be created when you save a new curve.");
+            Log.Warning("Fan curves file not found at: " + path + ", it will be created when you save a new curve.");
             return [];
         }
         
@@ -35,20 +36,20 @@ public static class FanCurvesFileManager
             var deserialized = JsonConvert.DeserializeObject<List<FanCurve>>(File.ReadAllText(path));
             if (deserialized == null)
             {
-                Console.WriteLine("Error loading file " + path);
+                Log.Warning("Error loading file " + path);
                 return [];
             }
             
-            Console.WriteLine("Successfully loaded "+path);
+            Log.Information("Successfully loaded "+path);
             return deserialized;
         }
         catch (ArgumentNullException ex)
         {
-            Console.WriteLine("Error loading file " + path + ":\n" + ex);
+            Log.Warning("Error loading file " + path + ":\n" + ex);
         }
         catch (JsonException ex)
         {
-            Console.WriteLine("Invalid "+ path + " file:\n" + ex);
+            Log.Warning("Invalid "+ path + " file:\n" + ex);
             
         }
 

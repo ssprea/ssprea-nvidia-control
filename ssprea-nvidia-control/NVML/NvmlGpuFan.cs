@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using Serilog;
 using ssprea_nvidia_control.NVML;
 using ssprea_nvidia_control.NVML.NvmlTypes;
 
@@ -17,7 +18,7 @@ public class NvmlGpuFan : INotifyPropertyChanged
         {
             while (true)
             {
-                Thread.Sleep(500);
+                Thread.Sleep((int)Program.LoadedSettings.SelectedUpdateTimeout.TotalMilliseconds);
                 Updater();
             }
         });
@@ -54,7 +55,7 @@ public class NvmlGpuFan : INotifyPropertyChanged
     public bool SetPolicy(NvmlFanControlPolicy policy)
     {
         var r= ParentGpu.SetFanControlPolicy(FanId, policy);
-        Console.WriteLine(r);
+        Log.Debug(r.ToString());
         return r == NvmlReturnCode.NVML_SUCCESS;
     }
 

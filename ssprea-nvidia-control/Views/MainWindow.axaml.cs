@@ -11,6 +11,7 @@ using Avalonia.ReactiveUI;
 using ssprea_nvidia_control.Models;
 using ssprea_nvidia_control.ViewModels;
 using ReactiveUI;
+using Serilog;
 
 namespace ssprea_nvidia_control.Views;
 
@@ -157,7 +158,7 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
     {
         if (Design.IsDesignMode)
         {
-            Console.WriteLine("Program executing in design mode. Skipping loading gui from file.");
+            Log.Information("Program executing in design mode. Skipping loading gui from file.");
             return;
         }
         
@@ -177,26 +178,26 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
         // }
         
         
-        if (!File.Exists(Program.DefaultDataPath+"/SelectedGui.txt") || File.ReadAllText(Program.DefaultDataPath+"/SelectedGui.txt").Trim() == string.Empty)
-        {
-            File.WriteAllText(Program.DefaultDataPath+"/SelectedGui.txt", "Default");
-        }
+        // if (!File.Exists(Program.DefaultDataPath+"/SelectedGui.txt") || File.ReadAllText(Program.DefaultDataPath+"/SelectedGui.txt").Trim() == string.Empty)
+        // {
+        //     File.WriteAllText(Program.DefaultDataPath+"/SelectedGui.txt", "Default");
+        // }
         
         //read selected gui name
-        var selectedGuiName =  (File.ReadAllText(Program.DefaultDataPath+"/SelectedGui.txt")).Trim();
-        if (selectedGuiName == "Default")
+        // var selectedGuiName =  (File.ReadAllText(Program.DefaultDataPath+"/SelectedGui.txt")).Trim();
+        if (Program.LoadedSettings.SelectedGui == "Default")
         {
             if (firstRun)
             {
-                Console.WriteLine("Using default gui, skipping loading from file");
+                Log.Information("Using default gui, skipping loading from file");
                 return;
             }
             
-            Console.WriteLine("Restoring default gui.");
+            Log.Information("Restoring default gui.");
 
             if (_defaultGuiGrid is null || _defaultGuiResolution is null)
             {
-                Console.WriteLine("Error while applying default gui. Please restart the tool");
+                Log.Error("Error while applying default gui. Please restart the tool");
                 return;
             }
             MainOcWindow.Width = _defaultGuiResolution[0];
@@ -209,16 +210,16 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
         int[] resolutionArr = [0, 0];
         
         //check if axaml file exists
-        if (File.Exists(Program.DefaultDataPath + "/Guis/" + selectedGuiName+"/MainWindowMainGrid.axaml"))
+        if (File.Exists(Program.DefaultDataPath + "/Guis/" + Program.LoadedSettings.SelectedGui+"/MainWindowMainGrid.axaml"))
         {
-            Console.WriteLine("GUI \""+selectedGuiName+"\" found in external path "+Program.DefaultDataPath + "/Guis/" + selectedGuiName+"/MainWindowMainGrid.axaml"+" . Loading...");
+            Log.Information("GUI \""+Program.LoadedSettings.SelectedGui+"\" found in external path "+Program.DefaultDataPath + "/Guis/" + Program.LoadedSettings.SelectedGui+"/MainWindowMainGrid.axaml"+" . Loading...");
             
-            if (File.Exists(Program.DefaultDataPath + "/Guis/" + selectedGuiName + "/MainWindowResolution.txt"))
+            if (File.Exists(Program.DefaultDataPath + "/Guis/" + Program.LoadedSettings.SelectedGui + "/MainWindowResolution.txt"))
             {
                 try
                 {
                     resolutionArr = File
-                        .ReadAllText(Program.DefaultDataPath + "/Guis/" + selectedGuiName + "/MainWindowResolution.txt")
+                        .ReadAllText(Program.DefaultDataPath + "/Guis/" + Program.LoadedSettings.SelectedGui + "/MainWindowResolution.txt")
                         .Replace("*", "x").Trim().Split("x").Select(int.Parse).ToArray();
 
                     // Console.WriteLine("GUI " + selectedGuiName + " setting resolution: " + res[0] + "x" + res[1]);
@@ -228,11 +229,11 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Exception while loading gui resolution, continuing with default: {ex}");
+                    Log.Warning($"Exception while loading gui resolution, continuing with default: {ex}");
                 }
             }
         
-            var mainGridLoadPath = $"{Program.DefaultDataPath}/Guis/{selectedGuiName}/MainWindowMainGrid.axaml";
+            var mainGridLoadPath = $"{Program.DefaultDataPath}/Guis/{Program.LoadedSettings.SelectedGui}/MainWindowMainGrid.axaml";
         
             guiStream = File.OpenRead(mainGridLoadPath);
             
@@ -242,17 +243,17 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
 
         if (guiStream is null)
         {
-            var guisAssetFolderPath = new Uri("avares://ssprea-nvidia-control/Assets/MainWindowGuis/"+selectedGuiName);
+            var guisAssetFolderPath = new Uri("avares://ssprea-nvidia-control/Assets/MainWindowGuis/"+Program.LoadedSettings.SelectedGui);
             var guiMainWindowMainGridPath = new Uri(guisAssetFolderPath+ "/MainWindowMainGrid.customgui");    
             var guiResolutionPath = new Uri(guisAssetFolderPath+ "/MainWindowResolution.txt");
 
             if (!AssetLoader.Exists(guiMainWindowMainGridPath))
             {
-                Console.WriteLine("Custom GUI not found even in assets, loading Default...");
+                Log.Warning("Custom GUI not found even in assets, loading Default...");
                 return;
             }
         
-            Console.WriteLine($"Found custom GUI in embedded assets at {guiMainWindowMainGridPath}, loading...");
+            Log.Information($"Found custom GUI in embedded assets at {guiMainWindowMainGridPath}, loading...");
 
             guiStream = AssetLoader.Open(guiMainWindowMainGridPath);
         
@@ -270,7 +271,7 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
         //load gui from stream
         if (guiStream is null)
         {
-            Console.WriteLine("An error occurred while loading the custom gui file, loading Default...");
+            Log.Error("An error occurred while loading the custom gui file, loading Default...");
             return;
         }
         
@@ -280,12 +281,12 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
         MainOcWindow.Content =  loadedGrid;
         
         //apply resolution
-        Console.WriteLine("GUI " + selectedGuiName + " setting resolution: " + resolutionArr[0] + "x" + resolutionArr[1]);
+        Log.Information("GUI " + Program.LoadedSettings.SelectedGui + " setting resolution: " + resolutionArr[0] + "x" + resolutionArr[1]);
         
         MainOcWindow.Width = resolutionArr[0];
         MainOcWindow.Height = resolutionArr[1];
         
-        Console.WriteLine("Successfully loaded custom GUI!");
+        Log.Information("Successfully loaded custom GUI!");
         
         //check if resolution file exists
         

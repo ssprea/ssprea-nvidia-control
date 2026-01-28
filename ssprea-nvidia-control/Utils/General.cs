@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using Serilog;
 using ssprea_nvidia_control.Models;
 using ssprea_nvidia_control.Models.Exceptions;
 
@@ -31,7 +32,7 @@ public static class General
         psi.UseShellExecute = false;
         psi.CreateNoWindow = true;
 
-        Console.WriteLine("Executing: "+psi.FileName+" "+psi.Arguments);
+        Log.Information("Executing: "+psi.FileName+" "+psi.Arguments);
             
             
         var process = Process.Start(psi);
@@ -44,7 +45,7 @@ public static class General
                 return null;
         }
 
-        Console.WriteLine(process.Id);
+        Log.Debug("PID: "+process.Id);
         //var output = process.StandardOutput.ReadToEnd();
             
         return process;
@@ -70,7 +71,7 @@ public static class General
         psi.UseShellExecute = false;
         psi.CreateNoWindow = true;
 #endif
-        Console.WriteLine("Executing: "+psi.FileName+" "+psi.Arguments);
+        Log.Information("Executing: "+psi.FileName+" "+psi.Arguments);
 
         try
         {
@@ -81,7 +82,7 @@ public static class General
                     return null;
             }
 
-            Console.WriteLine(process.Id);
+            Log.Debug("PID: "+process.Id);
             //var output = process.StandardOutput.ReadToEnd();
             
             return process;
