@@ -97,7 +97,15 @@ public static class General
 #if WINDOWS
         return false; //TODO: windows support
 #elif LINUX
-        return bool.Parse((RunCliCommand("xset -q | sed -n 's/^.*Caps Lock:\\s*\\(\\S*\\).*$/\\1/p'", "",redirectStdin:false, redirectStdout: true)?.StandardOutput.ReadToEnd() ?? "off").Replace("off","false").Replace("on","true") );
+        if (bool.TryParse(
+                (RunCliCommand("xset -q | sed -n 's/^.*Caps Lock:\\s*\\(\\S*\\).*$/\\1/p'", "", redirectStdin: false,
+                    redirectStdout: true)?.StandardOutput.ReadToEnd() ?? "off").Replace("off", "false")
+                .Replace("on", "true"), out var result))
+        {
+            return result;
+        }
+
+        return false;
 #endif
     }
 }
