@@ -750,6 +750,11 @@ WantedBy=multi-user.target
         var lines = output.Split('\n');
         CurrentNvidiaDriverVersion = lines[2].Split(':')[1].Trim();
 
+        if (CurrentNvidiaDriverVersion.StartsWith("Deprecated"))
+        {
+            CurrentNvidiaDriverVersion = lines[4].Split(':')[1].Trim();
+        }
+
         Log.Information($"Detected NVidia driver version: {CurrentNvidiaDriverVersion}");
 #endif
         //TODO: add windows driver check
