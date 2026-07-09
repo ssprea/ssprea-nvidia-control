@@ -1,5 +1,7 @@
 ﻿using McMaster.Extensions.CommandLineUtils;
 using Newtonsoft.Json;
+using Serilog;
+using Serilog.Core;
 using ssprea_nvidia_control_cli.NVML;
 using ssprea_nvidia_control_cli.NVML.NvmlTypes;
 using ssprea_nvidia_control_cli.Types;
@@ -38,6 +40,8 @@ public class Program
     [Option(CommandOptionType.NoValue, Description = "WARNING: this can cause problems. Skip checking if another snvctl process is already running (when applying fan profile).", LongName = "forceOpen")]
     public static bool SkipMultipleInstancesCheck { get; set; }= false;
     
+    // [Option(CommandOptionType.SingleValue, Description = "Set the logging level. Can be 0 = DEBUG, 1 = INFO, 2 = WARN, 3 = ERR", LongName = "logLevel",ShortName = "ll")]
+    // public static int LogLevel { get; set; }= 1;
     
     // [Option(CommandOptionType.MultipleValue, Description = "select fan id", LongName = "fanId",ShortName = "fi")]
     // public static int[] FanIds { get; set; }
@@ -61,7 +65,13 @@ public class Program
 
     private void OnExecute()
     {
+        
+        
+        using var log = new LoggerConfiguration() 
+            .WriteTo.Console()
+            .CreateLogger();
 
+        Log.Logger = log;
         
         var cancelTokenSource = new CancellationTokenSource();
         
@@ -88,7 +98,7 @@ public class Program
 
                 if (ocProfile is null)
                 {
-                    Console.WriteLine("Invalid oc profile json");
+                    Log.Fatal("Invalid oc profile json");
                     Environment.Exit(1);
                 }
             
@@ -96,12 +106,12 @@ public class Program
                 MemoryOffset = (int)ocProfile.MemClockOffset;
                 PowerLimit = ocProfile.PowerLimitMw;
                 
-                Console.WriteLine($"Applied from profile: CORE OFFSET: {CoreOffset} MHz, MEM OFFSET: {MemoryOffset} MHz, POWER LIMIT: {PowerLimit} mW");
+                Log.Information("Applied from profile: CORE OFFSET: {CoreOffset} MHz, MEM OFFSET: {MemoryOffset} MHz, POWER LIMIT: {PowerLimit} mW",CoreOffset,MemoryOffset,PowerLimit);
                 
             }
             else
             {
-                Console.WriteLine("OC profile file does not exist at path: "+OcProfileJson+" Skipping...");
+                Log.Information("OC profile file does not exist at path: {ocProfileJson} Skipping...",OcProfileJson);
             }
             
         }
@@ -118,7 +128,7 @@ public class Program
 
         if (_selectedGpu == null)
         {
-            Console.WriteLine("GPU index not found");
+            Log.Fatal("GPU index not found");
             return;
         }
         
@@ -146,7 +156,7 @@ public class Program
             //check if another instance is running
             if (!SkipMultipleInstancesCheck && IsAnotherInstanceRunning("snvctl","ssprea-nvidia-control-cli"))
             {
-                Console.WriteLine("Another instance of this program is already running. Exiting...");
+                Log.Fatal("Another instance of this program is already running. Exiting...");
                 Environment.Exit(1);
             }
 
@@ -155,7 +165,7 @@ public class Program
                 var curve = JsonConvert.DeserializeObject<FanCurve>(File.ReadAllText(FanSpeedCurveJson));
                 if (curve is null)
                 {
-                    Console.WriteLine("Fan curve not valid.");
+                    Log.Error("Fan curve not valid.");
                     return;
                 }
                 Thread t = new Thread(() => FanSpeedProfileThread(500,curve,cancelTokenSource.Token));
@@ -163,7 +173,7 @@ public class Program
             }
             else
             {
-                Console.WriteLine("Fan curve file does not exist at path: "+FanSpeedCurveJson+" Skipping...");
+                Log.Error("Fan curve file does not exist at path: {fanSpeedCurveJson} Skipping...",FanSpeedCurveJson);
             }
         }
 
@@ -179,12 +189,12 @@ public class Program
             //get gpu temperature
             if (_selectedGpu is null || _selectedGpu.GpuTemperature == LastFanTemp)
             {
-                Console.WriteLine("No temp change since last update. skipping");
+                Log.Debug("No temp change since last update. skipping");
                 continue;
             }
                 
             LastFanTemp = _selectedGpu.GpuTemperature;
-            Console.WriteLine($"Gpu temp: {_selectedGpu.GpuTemperature}, Fan Speed: {fanCurve.GpuTempToFanSpeedMap[_selectedGpu.GpuTemperature]}");
+            Log.Debug($"Gpu temp: {_selectedGpu.GpuTemperature}, Fan Speed: {fanCurve.GpuTempToFanSpeedMap[_selectedGpu.GpuTemperature]}");
             _selectedGpu.ApplySpeedToAllFans(fanCurve.GpuTempToFanSpeedMap[_selectedGpu.GpuTemperature]);
         }
     }
