@@ -117,19 +117,29 @@ namespace ssprea_nvidia_control_cli.NVML;
 
 
 
-        public bool ApplySpeedToAllFans(uint speed)
+        public bool ApplySpeedToAllFans(uint speed, out NvmlReturnCode returnCode)
         {
             bool result = true;
+            returnCode = NvmlReturnCode.NVML_ERROR_UNKNOWN;
             foreach (var f in FansList)
-                result &= f.SetSpeed(speed);
+            {
+                var returnedCode = f.SetSpeed(speed);
+                result &= (returnedCode == NvmlReturnCode.NVML_SUCCESS);
+                returnCode = returnedCode;
+            }
             return result;
         }
 
-        public bool ApplyPolicyToAllFans(NvmlFanControlPolicy policy)
+        public bool ApplyPolicyToAllFans(NvmlFanControlPolicy policy, out NvmlReturnCode returnCode)
         {
             bool result = true;
+            returnCode = NvmlReturnCode.NVML_ERROR_UNKNOWN;
             foreach (var f in FansList)
-                result &= f.SetPolicy(policy);
+            {
+                var returnedCode = f.SetPolicy(policy);
+                result &= (returnedCode == NvmlReturnCode.NVML_SUCCESS);
+                returnCode = returnedCode;
+            }
             return result;
         }
         

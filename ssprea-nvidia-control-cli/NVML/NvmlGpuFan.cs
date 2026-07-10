@@ -39,18 +39,16 @@ public class NvmlGpuFan : INotifyPropertyChanged
         // GpuClockCurrent = _nvmlGpu.GetCurrentClock(NvmlClockType.NVML_CLOCK_GRAPHICS).Item2;
     }
     
-    public bool SetSpeed(uint speed)
+    public NvmlReturnCode SetSpeed(uint speed)
     {
         var r= ParentGpu.SetFanSpeed(FanId, speed);
-        Console.WriteLine(r);
-        return r == NvmlReturnCode.NVML_SUCCESS;
+        return r;
     }
 
-    public bool SetPolicy(NvmlFanControlPolicy policy)
+    public NvmlReturnCode SetPolicy(NvmlFanControlPolicy policy)
     {
         var r= ParentGpu.SetFanControlPolicy(FanId, policy);
-        Console.WriteLine(r);
-        return r == NvmlReturnCode.NVML_SUCCESS;
+        return r;
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;

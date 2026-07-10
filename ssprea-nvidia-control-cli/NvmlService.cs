@@ -1,3 +1,5 @@
+using Serilog;
+using Serilog.Core;
 using ssprea_nvidia_control_cli.NVML;
 
 namespace ssprea_nvidia_control_cli;
@@ -19,14 +21,14 @@ public class NvmlService
         NvmlWrapper.nvmlShutdown();
         _gpuList.Clear();
         
-        Console.WriteLine("NvmlService destroyed");
+        Log.Debug("NvmlService destroyed");
     }
 
     public void Initialize()
     {
-        Console.WriteLine("NvmlInit: " + NvmlWrapper.nvmlInit());
+        Log.Debug("NvmlInit: " + NvmlWrapper.nvmlInit());
 
-        Console.WriteLine("NvmlDeviceGetCount: "+NvmlWrapper.nvmlDeviceGetCount(out uint deviceCount));
+        Log.Debug("NvmlDeviceGetCount: "+NvmlWrapper.nvmlDeviceGetCount(out uint deviceCount));
 
         for (uint i = 0; i < deviceCount; i++)
         {
@@ -35,7 +37,7 @@ public class NvmlService
         }
 
         
-        Console.WriteLine("NvmlService initialized");
+        Log.Information("NvmlService initialized");
     }
 
  
