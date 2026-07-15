@@ -37,7 +37,11 @@ Deb packages available in releases.
 
 ### Arch:
 
-Package is available in the AUR: https://aur.archlinux.org/packages/ssprea-nvidia-control
+There are two AUR packages available:
+
+Latest release version: https://aur.archlinux.org/packages/ssprea-nvidia-control
+
+Latest git commit: https://aur.archlinux.org/packages/ssprea-nvidia-control-git
 
 ```
 git clone https://aur.archlinux.org/ssprea-nvidia-control.git
@@ -45,11 +49,18 @@ cd ssprea-nvidia-control
 makepkg -si
 ```
 
+
 With yay:
 
 ```
 yay -S ssprea-nvidia-control
 ```
+or
+
+```
+yay -S ssprea-nvidia-control-git
+```
+
 
 ### Windows:
 
