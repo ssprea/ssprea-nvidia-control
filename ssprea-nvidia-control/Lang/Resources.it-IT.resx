@@ -23,13 +23,13 @@
         <value>PROFILI</value>
     </data>
 
-     <data name="CheckboxStartupProfile" xml:space="preserve">
-            <value>Avvio:</value>
-        </data>
+    <data name="CheckboxStartupProfile" xml:space="preserve">
+        <value>Profilo avvio PC:</value>
+    </data>
 
-     <data name="CheckboxDefaultProfile" xml:space="preserve">
-            <value>Default</value>
-        </data>
+    <data name="CheckboxDefaultProfile" xml:space="preserve">
+        <value>Profilo default:</value>
+    </data>
 
      <data name="ButtonLoadToTuner" xml:space="preserve">
             <value>Manda al tuner</value>
@@ -179,9 +179,9 @@
             <value>di:</value>
         </data>
 
-     <data name="SettingsTitle" xml:space="preserve">
-            <value>SNVCTL Settings</value>
-        </data>
+    <data name="SettingsTitle" xml:space="preserve">
+        <value>Impostazioni SNVCTL</value>
+    </data>
 
      <data name="SettingsSubtitle" xml:space="preserve">
             <value>Impostazioni</value>
@@ -236,5 +236,20 @@
     </data>
     <data name="SettingUpdateTimeDescription" xml:space="preserve">
         <value>Aggiorna valori ogni (secondi):</value>
+    </data>
+    <data name="TextDisabled" xml:space="preserve">
+        <value>Disabilitato</value>
+    </data>
+    <data name="SettingsBehaviourGuiTrayStart" xml:space="preserve">
+        <value>Avvia l'app minimizzata nel tray</value>
+    </data>
+    <data name="SettingsBehaviourGuiBootUp" xml:space="preserve">
+        <value>Avvia l'app con l'avvio del pc</value>
+    </data>
+    <data name="SettingsCategoryGuis" xml:space="preserve">
+        <value>Interfacce</value>
+    </data>
+    <data name="SettingsCategoryBehaviour" xml:space="preserve">
+        <value>Comportamento</value>
     </data>
 </root>

@@ -39,13 +39,13 @@
         <value>PROFILES</value>
     </data>
 
-     <data name="CheckboxStartupProfile" xml:space="preserve">
-            <value>Startup</value>
-        </data>
+    <data name="CheckboxStartupProfile" xml:space="preserve">
+        <value>Startup profile:</value>
+    </data>
 
-     <data name="CheckboxDefaultProfile" xml:space="preserve">
-            <value>Default</value>
-        </data>
+    <data name="CheckboxDefaultProfile" xml:space="preserve">
+        <value>Default profile:</value>
+    </data>
 
      <data name="ButtonLoadToTuner" xml:space="preserve">
             <value>Load to tuner</value>
@@ -252,5 +252,23 @@
     </data>
     <data name="SettingUpdateTimeDescription" xml:space="preserve">
         <value>Update values every (seconds):</value>
+    </data>
+    <data name="TextDisabled" xml:space="preserve">
+        <value>Disabled</value>
+    </data>
+    <data name="SettingsBehaviourGuiTrayStart" xml:space="preserve">
+        <value>Start GUI minimized in tray</value>
+    </data>
+    <data name="SettingsBehaviourGuiBootUp" xml:space="preserve">
+        <value>Launch GUI at boot</value>
+    </data>
+    <data name="SettingsCategoryGuis" xml:space="preserve">
+        <value>GUIs</value>
+    </data>
+    <data name="SettingsCategoryValues" xml:space="preserve">
+        <value>Monitoring</value>
+    </data>
+    <data name="SettingsCategoryBehaviour" xml:space="preserve">
+        <value>Behaviour</value>
     </data>
 </root>
