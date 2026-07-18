@@ -36,7 +36,7 @@ install:
 	mkdir -p $(DESTDIR)/usr/share/applications
 
 	mkdir -p $(DESTDIR)/usr/lib/systemd/user
-	mkdir -p $(DESTDIR)/etc/systemd/system
+	mkdir -p $(DESTDIR)/usr/lib/systemd/system
 
 
 
@@ -44,7 +44,7 @@ install:
 	cp Assets/ssprea-nvidia-control.desktop $(DESTDIR)/usr/share/applications/ssprea-nvidia-control.desktop
 
 	cp SystemdServices/snvctl-gui.service $(DESTDIR)/usr/lib/systemd/user/snvctl-gui.service
-	cp SystemdServices/snvctl-profile.service $(DESTDIR)/etc/systemd/system/snvctl-profile.service
+	cp SystemdServices/snvctl-profile.service $(DESTDIR)/usr/lib/systemd/system/snvctl-profile.service
 
 
 		
