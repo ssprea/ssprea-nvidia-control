@@ -19,6 +19,7 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
 {
     private int[]? _defaultGuiResolution;
     private Grid? _defaultGuiGrid;
+    private bool _isFirstRun = true;
     
     public MainWindow()
     {
@@ -80,6 +81,9 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
         {
             
             //await ViewModel!.CheckDependencies();
+            if (_isFirstRun && Program.LoadedSettings.Behaviour_StartGuiInTray)
+                Hide();
+            _isFirstRun = false;
         };
 
         Loaded += async (s, e) =>
@@ -96,9 +100,12 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
         
         LoadGuiGrid(true);
 
+        
     }
+
     
-   
+
+
     private async Task DoShowSettingsDialogAsync(IInteractionContext<SettingsMainWindowViewModel, object?> interaction)
     {
         var dialog = new SettingsMainWindow()

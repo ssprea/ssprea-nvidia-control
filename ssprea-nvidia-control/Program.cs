@@ -43,6 +43,12 @@ sealed class Program
 
         Log.Logger = log;
         
+        //remove the default profile
+        
+        if (File.Exists(DefaultDataPath + "/AutoApplyProfile.json"))
+            File.Delete(Program.DefaultDataPath + "/AutoApplyProfile.json");
+        
+        
         // SelectedLocale = File.Exists(DefaultDataPath+"/SelectedLocale.txt") ? File.ReadAllText(DefaultDataPath+"/SelectedLocale.txt").Trim() : "System";
         CheckAndConvertLegacySettings();
         CheckAndLoadSettings();
@@ -85,7 +91,12 @@ sealed class Program
             File.WriteAllText(SettingsFilePath, Settings.Default().ToJson());
         }
 
-        var parsedSettings = Settings.FromJson(File.ReadAllText(SettingsFilePath));
+
+        var settingsContent = File.ReadAllText(SettingsFilePath);
+        
+        var parsedSettings = Settings.FromJson(settingsContent);
+
+        
         if (parsedSettings is null)
         {
             Log.Warning("Error while reading settings file, loading default. ");
@@ -93,6 +104,7 @@ sealed class Program
         }
         
         LoadedSettings = parsedSettings;
+        
     }
 
     private static void CheckAndConvertLegacySettings()

@@ -257,10 +257,10 @@
         <value>Disabled</value>
     </data>
     <data name="SettingsBehaviourGuiTrayStart" xml:space="preserve">
-        <value>Start GUI minimized in tray</value>
+        <value>Start app minimized in tray</value>
     </data>
     <data name="SettingsBehaviourGuiBootUp" xml:space="preserve">
-        <value>Launch GUI at boot</value>
+        <value>Launch app at boot</value>
     </data>
     <data name="SettingsCategoryGuis" xml:space="preserve">
         <value>GUIs</value>
@@ -270,5 +270,17 @@
     </data>
     <data name="SettingsCategoryBehaviour" xml:space="preserve">
         <value>Behaviour</value>
+    </data>
+    <data name="MsgBoxTitleWarning" xml:space="preserve">
+        <value>Warning!</value>
+    </data>
+    <data name="MsgBoxTitleError" xml:space="preserve">
+        <value>Error!</value>
+    </data>
+    <data name="MsgBoxBodyDefaultProfileEnabled" xml:space="preserve">
+        <value>You are already using the Default profile option, disable it to continue. \nIt's recommended to use this over the Default profile unless you have problems with it.</value>
+    </data>
+    <data name="MsgBoxBodyProfileServiceMissing" xml:space="preserve">
+        <value>does not exist. Try reinstalling the application.</value>
     </data>
 </root>

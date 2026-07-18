@@ -238,22 +238,13 @@
                             <Border Margin="2" VerticalAlignment="Top" Grid.Row="1" Grid.ColumnSpan="2" BorderBrush="DimGray" BorderThickness="2" CornerRadius="20" Background="{DynamicResource SectionBackgroundBrushLight}">
                                 <StackPanel  Orientation="Horizontal" Spacing="3">
                                     <Label/>
-                                    
-                                    <Button VerticalAlignment="Center" FontSize="12" HorizontalAlignment="Right" Command="{Binding SaveStartupProfile}" CommandParameter="{Binding #CurrentSelectedProfileCombobox.SelectedItem}">
-                                        
-                                        <Image Height="12" Width="12"
-                                               Source="avares://ssprea-nvidia-control/Assets/icons/save-icon.png"/>
-                                        
-                                        <ToolTip.Tip>
-                                            <StackPanel>
-                                                <TextBlock Text="{x:Static lang:Resources.TooltipSaveStartupProfile}"/>
-                                            </StackPanel>
-                                        </ToolTip.Tip>
-                                        
-                                    </Button>
                                     <Label/>
-                                    <CheckBox IsChecked="{Binding IsStartupProfileChecked}" VerticalAlignment="Top" FontSize="12" HorizontalAlignment="Stretch" Content="{x:Static lang:Resources.CheckboxStartupProfile}"/>
-                                    <Label VerticalAlignment="Center" FontSize="12" HorizontalAlignment="Stretch" Content="{Binding SelectedStartupProfile.Name, FallbackValue=Disabled}"/>
+                                    <CheckBox IsChecked="{Binding IsStartupProfileChecked}" Command="{Binding SaveStartupProfile}" CommandParameter="{Binding #CurrentSelectedProfileCombobox.SelectedItem}" VerticalAlignment="Top" FontSize="12" HorizontalAlignment="Stretch" Content="{x:Static lang:Resources.CheckboxStartupProfile}">
+                                        <ToolTip.Tip>
+                                            <TextBlock Text="{x:Static lang:Resources.TooltipSaveStartupProfile}"/>
+                                        </ToolTip.Tip>
+                                    </CheckBox>
+                                    <Label VerticalAlignment="Center" FontSize="12" HorizontalAlignment="Stretch" Content="{Binding SelectedStartupProfile.Name, FallbackValue={x:Static lang:Resources.TextDisabled}}"/>
                                     
                                 </StackPanel>
                             </Border> 
@@ -261,19 +252,15 @@
                             <Border Margin="2" Grid.Row="2" Grid.ColumnSpan="2" BorderBrush="DimGray" BorderThickness="2" CornerRadius="20" Background="{DynamicResource SectionBackgroundBrushLight}">
                                 <StackPanel  Spacing="3" Orientation="Horizontal">
                                     <Label/>
-                                    <Button VerticalAlignment="Center" FontSize="12" HorizontalAlignment="Right" Command="{Binding SaveAutoApplyProfile}" CommandParameter="{Binding #CurrentSelectedProfileCombobox.SelectedItem}">
-                                        <Image Height="12" Width="12"
-                                               Source="avares://ssprea-nvidia-control/Assets/icons/save-icon.png"/>
+                                    <Label/>
+                                    <CheckBox IsEnabled="False" VerticalAlignment="Center" FontSize="12" HorizontalAlignment="Stretch" Command="{Binding SaveAutoApplyProfile}" CommandParameter="{Binding #CurrentSelectedProfileCombobox.SelectedItem}" IsChecked="{Binding IsAutoApplyProfileChecked}" Content="{x:Static lang:Resources.CheckboxDefaultProfile}">
                                         <ToolTip.Tip>
-                                            <StackPanel>
-                                                <TextBlock Text="{x:Static lang:Resources.TooltipSaveAutoApplyProfile}"/>
-                                            </StackPanel>
+                                            <TextBlock Text="{x:Static lang:Resources.TooltipSaveAutoApplyProfile}"/>
                                         </ToolTip.Tip>
                                         
-                                    </Button>
-                                    <Label/>
-                                    <CheckBox VerticalAlignment="Center" FontSize="12" HorizontalAlignment="Stretch" IsChecked="{Binding IsAutoApplyProfileChecked}" Content="{x:Static lang:Resources.CheckboxDefaultProfile}"/>
-                                    <Label VerticalAlignment="Center" FontSize="12" HorizontalAlignment="Stretch" Content="{Binding SelectedAutoApplyOcProfile.Name, FallbackValue=Disabled}"/>
+                                    </CheckBox>
+                                        
+                                    <Label VerticalAlignment="Center" FontSize="12" HorizontalAlignment="Stretch" Content="{Binding SelectedAutoApplyOcProfile.Name, FallbackValue={x:Static lang:Resources.TextDisabled}}"/>
 
                                     
                                 </StackPanel>

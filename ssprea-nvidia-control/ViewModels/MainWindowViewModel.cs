@@ -26,7 +26,9 @@ using Newtonsoft.Json.Linq;
 using ReactiveUI;
 using Serilog;
 using SkiaSharp;
+using ssprea_nvidia_control.Lang;
 using ssprea_nvidia_control.Utils;
+using Tmds.DBus.Protocol;
 
 
 namespace ssprea_nvidia_control.ViewModels;
@@ -69,10 +71,11 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty] private string _currentlyLoadedGuiName = "Default";
     [ObservableProperty] private string _selectedLocalizerLang = "it";
     [ObservableProperty] private ObservableCollection<string> _localizerLangs = new ObservableCollection<string>(["it","en"]);
-    
-    
+
     private uint _selectedFanRadioButton = 0;
     private bool FanSpeedSliderVisible => _selectedFanRadioButton == 1;
+    
+    private readonly string _profilesServiceName = "snvctl-profile.service";
     
     
     //Axes styles for fan curve graph graph
@@ -238,6 +241,7 @@ public partial class MainWindowViewModel : ViewModelBase
             var result = await ShowSettingsDialog.Handle(settingsWindowViewModel);
             
             
+            
         });
         
         ShowUsageGraphsDialog = new Interaction<UsageGraphsWindowViewModel, object?>();
@@ -251,6 +255,10 @@ public partial class MainWindowViewModel : ViewModelBase
         });
         
         LoadOcProfileToTuner(new OcProfile("",0,0,SelectedGpu?.PowerLimitMinMw ?? 100000, (FanCurve?)null));
+
+        
+        
+        
     }
 
     partial void OnSelectedGpuChanged(NvmlGpu? value)
@@ -377,7 +385,7 @@ public partial class MainWindowViewModel : ViewModelBase
         
         
         //check startup profile
-        IsStartupProfileChecked = Utils.Systemd.IsSystemdServiceRunning("snvctl.service");
+        IsStartupProfileChecked = Utils.Systemd.IsSystemdServiceEnabled(_profilesServiceName);
         if (IsStartupProfileChecked && File.Exists(DEFAULT_SERVICE_DATA_PATH+"/profile.json"))
         {
             var startupProfileName = OcProfile.FromJson(await File.ReadAllTextAsync(DEFAULT_SERVICE_DATA_PATH+"/profile.json"))?.Name;
@@ -437,10 +445,39 @@ public partial class MainWindowViewModel : ViewModelBase
         SelectedFanCurve?.UpdateSeries();
     }
 
-    public void SaveAutoApplyProfile(OcProfile? profile)
+    public async Task SaveAutoApplyProfile(OcProfile? profile)
     {
         //File.WriteAllText(Program.DefaultDataPath + "/AutoApplyProfile.json", JsonSerializer.Serialize(GpuProfilePairString));
 
+        
+        
+        
+        //show warning before applying
+
+        var warnMsgResp = await MessageBoxManager.GetMessageBoxStandard("Warning!",
+            "The default profile will be applied every time the GUI app is opened, NOT when the PC boots! Do not enable both together as it will cause a conflict. \n" +
+            "If you use the startup profile, your profile will be loaded in the GUI automatically anyways, this option is for some special use cases.\n\n" +
+            "If you are unsure, press \"No\" and enable the Startup profile instead of this.\n\n" +
+            "Do you really want to save the default profile?",
+            ButtonEnum.YesNo,Icon.Warning).ShowAsync();
+
+        if (warnMsgResp == ButtonResult.No)
+        {
+            IsAutoApplyProfileChecked = false;
+            return;
+        }
+
+        if (IsStartupProfileChecked)
+        {
+            await MessageBoxManager.GetMessageBoxStandard("Warning!",
+                "You are already using the startup profile, if it works you don't need this option. \n" +
+                "If you want to enable this, disable the startup profile first.",
+                ButtonEnum.Ok,Icon.Warning).ShowAsync();
+            
+            IsAutoApplyProfileChecked = false;
+            return;
+        }
+        
         if (!IsAutoApplyProfileChecked)
         {
             File.Delete(Program.DefaultDataPath + "/AutoApplyProfile.json");
@@ -460,7 +497,7 @@ public partial class MainWindowViewModel : ViewModelBase
             return;
         }
         
-        File.WriteAllText(Program.DefaultDataPath + "/AutoApplyProfile.json", $"{{\"profile\":\"{profile.Name}\",\"gpu\":\"{SelectedGpu.DeviceIndex}\"}}");
+        await File.WriteAllTextAsync(Program.DefaultDataPath + "/AutoApplyProfile.json", $"{{\"profile\":\"{profile.Name}\",\"gpu\":\"{SelectedGpu.DeviceIndex}\"}}");
     }
     
     
@@ -468,33 +505,58 @@ public partial class MainWindowViewModel : ViewModelBase
     
     public async Task SaveStartupProfile(OcProfile? profile)
     {
+        
+        if (IsAutoApplyProfileChecked)
+        {
+            await MessageBoxManager.GetMessageBoxStandard(Resources.MsgBoxTitleWarning,
+                Resources.MsgBoxBodyDefaultProfileEnabled,
+                ButtonEnum.Ok,Icon.Warning).ShowAsync();
+            IsStartupProfileChecked = false;
+            return;
+
+        }
+        
+        
         //check sudo password
         if (!await RequestSudoPasswordDialogIfNeededAsync())
             return;
         
+        //check if profile service exists
+        if (!Systemd.DoesSystemdServiceExist(_profilesServiceName))
+        {
+            await MessageBoxManager.GetMessageBoxStandard(Resources.MsgBoxTitleError,
+                $"{_profilesServiceName} {Resources.MsgBoxBodyProfileServiceMissing}", ButtonEnum.Ok,
+                Icon.Error).ShowAsync();
+            IsStartupProfileChecked = false;
+            return;
+        }
+        
         //if the checkbox is disabled, stop the service
         if (!IsStartupProfileChecked)
         {
-            Systemd.StopSystemdService("snvctl.service");
-            Systemd.DisableSystemdService("snvctl.service");
+            Systemd.StopSystemdService(_profilesServiceName);
+            Systemd.DisableSystemdService(_profilesServiceName);
             
-            Log.Information("No startup profile selected, stopped snvctl.service");
+            Log.Information("No startup profile selected, stopped {serviceName}.", _profilesServiceName);
             SelectedStartupProfile = null;
             return;
         }
 
         if (profile is null)
         {
-            MessageBoxManager.GetMessageBoxStandard("Warning", "No profile selected!", ButtonEnum.Ok, Icon.Warning);
+            MessageBoxManager.GetMessageBoxStandard(Resources.MsgBoxTitleWarning, "No profile selected!", ButtonEnum.Ok, Icon.Warning);
+            IsStartupProfileChecked = false;
+            
             return;
         }
         
         if (SelectedGpu == null)
         {
-            MessageBoxManager.GetMessageBoxStandard("Warning", "No gpu selected!", ButtonEnum.Ok, Icon.Warning);
+            MessageBoxManager.GetMessageBoxStandard(Resources.MsgBoxTitleWarning, "No gpu selected!", ButtonEnum.Ok, Icon.Warning);
+            IsStartupProfileChecked = false;
+            
             return;
         }
-        
         
         
         //check if directory exists
@@ -503,6 +565,9 @@ public partial class MainWindowViewModel : ViewModelBase
 
         
         //save profile and copy to service data path
+        await File.WriteAllTextAsync(Program.DefaultDataPath + "/temp/deviceidx.txt", SelectedGpu.DeviceIndex.ToString());
+        Files.CopySudo(Program.DefaultDataPath + "/temp/deviceidx.txt", DEFAULT_SERVICE_DATA_PATH+"/deviceidx.txt");
+        
         await File.WriteAllTextAsync(Program.DefaultDataPath + "/temp/profile.json", profile.ToJson());
         Files.CopySudo(Program.DefaultDataPath + "/temp/profile.json", DEFAULT_SERVICE_DATA_PATH+"/profile.json");
 
@@ -516,28 +581,9 @@ public partial class MainWindowViewModel : ViewModelBase
         }
         
         
-        
-        //systemd service (thanks to @Joomsy)
-        string service = $@"
-[Unit]
-Description=Set the Nvidia GPU power profile
-
-[Service]
-Type=exec
-ExecStart=/usr/local/bin/snvctl --forceOpen -g {SelectedGpu.DeviceIndex} -op {DEFAULT_SERVICE_DATA_PATH}/profile.json -fp {DEFAULT_SERVICE_DATA_PATH}/curve.json
-
-[Install]
-WantedBy=multi-user.target
-";
-
-        //write to temp file and copy to service data path
-        await File.WriteAllTextAsync(Program.DefaultDataPath + "/temp/snvctl.service", service);
-        Files.CopySudo(Program.DefaultDataPath + "/temp/snvctl.service", "/etc/systemd/system/snvctl.service");
-        
         //enable service
-        Systemd.RunSystemdCommand("daemon-reload");
-        Systemd.EnableSystemdService("snvctl.service");
-        if (Systemd.StartSystemdService("snvctl.service"))
+        Systemd.EnableSystemdService(_profilesServiceName);
+        if (Systemd.StartSystemdService(_profilesServiceName))
         {
             SelectedStartupProfile = SelectedOcProfile;
             //kill gui fan curve process if running
@@ -597,6 +643,8 @@ WantedBy=multi-user.target
         
     }
 
+    
+    
     public async Task OcProfileApplyCommand()
     {
         await OcProfileParameterApplyCommand(SelectedOcProfile);
@@ -622,7 +670,7 @@ WantedBy=multi-user.target
         
         KillFanCurveProcessCommand();
 
-        if (Utils.Systemd.IsSystemdServiceRunning("snvctl.service"))
+        if (Utils.Systemd.IsSystemdServiceRunning(_profilesServiceName))
         {
             var box = MessageBoxManager.GetMessageBoxCustom(
                 new MessageBoxCustomParams()
@@ -634,9 +682,9 @@ WantedBy=multi-user.target
                         new ButtonDefinition { Name = "Stop service",  },
                     },
                     
-                    ContentTitle = "snvctl.service detected!",
-                    ContentMessage = "snvctl.service (startup profile) is currently active, applying a fan profile with another instance already running can cause problems. \n" +
-                                     "WARNING: if you decide to stop the service, you will have to re-enable the startup profile or run 'sudo systemctl start snvctl.service'",
+                    ContentTitle = $"{_profilesServiceName} detected!",
+                    ContentMessage = $"{_profilesServiceName} (startup profile) is currently active, applying a fan profile with another instance already running can cause problems. \n" +
+                                     $"WARNING: if you decide to stop the service, you will have to re-enable the startup profile or run 'sudo systemctl start {_profilesServiceName}'",
                     Topmost = true,
                     CanResize = false,
                     Icon = Icon.Warning,
@@ -650,7 +698,7 @@ WantedBy=multi-user.target
             switch (result)
             {
                 case "Stop service":
-                    Utils.Systemd.StopSystemdService("snvctl.service");
+                    Utils.Systemd.StopSystemdService(_profilesServiceName);
                     IsStartupProfileChecked = false;
                     break;
                 

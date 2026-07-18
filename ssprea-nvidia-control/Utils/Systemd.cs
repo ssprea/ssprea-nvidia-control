@@ -1,3 +1,8 @@
+using System;
+using System.IO;
+using System.Threading.Tasks;
+using Serilog;
+
 namespace ssprea_nvidia_control.Utils;
 
 public static class Systemd
@@ -27,6 +32,16 @@ public static class Systemd
         return General.RunSudoCliCommand("systemctl","enable "+serviceName)?.ExitCode == 0;
     }
 
+    public static bool EnableUserService(string serviceName)
+    {
+        return General.RunCliCommand("systemctl","--user enable "+serviceName)?.ExitCode == 0;
+    }
+    
+    public static bool DisableUserService(string serviceName)
+    {
+        return General.RunCliCommand("systemctl","--user disable "+serviceName)?.ExitCode == 0;
+    }
+    
     public static bool RunSystemdCommand(string args)
     {
         return General.RunSudoCliCommand("systemctl", args)?.ExitCode == 0;
@@ -39,4 +54,23 @@ public static class Systemd
         
         return p.ExitCode == 0;
     }
+    
+    public static bool IsSystemdServiceEnabled(string serviceName)
+    {
+        var p = General.RunCliCommand("systemctl", "is-enabled --quiet " + serviceName);
+        if (p is null) return false;
+        
+        return p.ExitCode == 0;
+    }
+    
+    public static bool DoesSystemdServiceExist(string serviceName)
+    {
+        var p = General.RunCliCommand("systemctl", "is-enabled --quiet " + serviceName);
+        if (p is null) return false;
+        
+        return p.ExitCode != 4;
+    }
+
+    
+    
 }

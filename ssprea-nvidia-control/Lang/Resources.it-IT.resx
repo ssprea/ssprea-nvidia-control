@@ -252,4 +252,16 @@
     <data name="SettingsCategoryBehaviour" xml:space="preserve">
         <value>Comportamento</value>
     </data>
+    <data name="MsgBoxTitleError" xml:space="preserve">
+        <value>Errore!</value>
+    </data>
+    <data name="MsgBoxTitleWarning" xml:space="preserve">
+        <value>Attenzione!</value>
+    </data>
+    <data name="MsgBoxBodyDefaultProfileEnabled" xml:space="preserve">
+        <value>Stai già utilizzando l'opzione "Profilo default", disabilitalo per continuare. \nÈ consigliato utilizzare questa opzione al posto del "Profilo default".</value>
+    </data>
+    <data name="MsgBoxBodyProfileServiceMissing" xml:space="preserve">
+        <value>non è stato trovato. Prova a reinstallare l'applicazione</value>
+    </data>
 </root>

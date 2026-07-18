@@ -59,8 +59,14 @@ public partial class SettingsMainWindowViewModel : ViewModelBase
         Lang.Resources.Culture = new CultureInfo(Program.LoadedSettings.SelectedLocale);
         WindowsManager.ApplyMainWindowCustomGui();
         
-        
-        
+        //enable gui service if option is set
+        if (CurrentEditingSettings.Behaviour_StartGuiAtBoot)
+            Systemd.EnableUserService("snvctl-gui.service");
+        else
+        {
+            Systemd.DisableUserService("snvctl-gui.service");
+        }
+
     }
     
     

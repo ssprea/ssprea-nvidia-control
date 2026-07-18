@@ -11,7 +11,7 @@ namespace ssprea_nvidia_control_cli;
 public class Program
 {
     [Option(CommandOptionType.SingleValue, Description = "select gpu id", LongName = "gpu", ShortName = "g")]
-    public static uint GpuId { get; set; }
+    public static string GpuIdStr { get; set; }
     
     [Option(CommandOptionType.NoValue, Description = "list available gpus", LongName = "listGpu")]
     public static bool DoListGpus { get; set; }
@@ -46,7 +46,8 @@ public class Program
     // [Option(CommandOptionType.MultipleValue, Description = "select fan id", LongName = "fanId",ShortName = "fi")]
     // public static int[] FanIds { get; set; }
     
-    
+    private readonly string _serviceName = "snvctl-profile.service";
+
     
     static NvmlService? _nvmlService;
     NvmlGpu? _selectedGpu = null;
@@ -60,8 +61,8 @@ public class Program
     //     Console.WriteLine(fancurve.ToString());
     //     return;
     // }
-    
 
+    public static uint GpuId { get; set; }
 
     private void OnExecute()
     {
@@ -74,6 +75,9 @@ public class Program
         Log.Logger = log;
         
         var cancelTokenSource = new CancellationTokenSource();
+
+        
+        
         
         _nvmlService = new NvmlService();
 
@@ -88,7 +92,19 @@ public class Program
         }
         
         
-        
+        if (uint.TryParse(GpuIdStr, out var parsedId))
+        {
+            GpuId = parsedId;
+        }
+        else if (Path.Exists(GpuIdStr) && uint.TryParse(File.ReadAllText(GpuIdStr).Trim(), out var gpuId))
+        {
+            GpuId = gpuId;
+        }
+        else
+        {
+            Log.Fatal("Invalid GPU ID, Exiting...");
+            Environment.Exit(-1);
+        }
         
         if (OcProfileJson != string.Empty)
         {
@@ -245,7 +261,7 @@ public class Program
     private bool IsAnotherInstanceRunning(params string[] names)
     {
         //check if service is running (this requires service to use --forceOpen switch)
-        if (Utils.Systemd.IsSystemdServiceRunning("snvctl.service"))
+        if (Utils.Systemd.IsSystemdServiceRunning(_serviceName))
             return true;
         
         

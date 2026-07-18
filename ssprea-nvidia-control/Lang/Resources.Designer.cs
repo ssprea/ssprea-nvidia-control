@@ -440,5 +440,29 @@ namespace ssprea_nvidia_control.Lang {
                 return ResourceManager.GetString("SettingsCategoryBehaviour", resourceCulture);
             }
         }
+        
+        public static string MsgBoxTitleWarning {
+            get {
+                return ResourceManager.GetString("MsgBoxTitleWarning", resourceCulture);
+            }
+        }
+        
+        public static string MsgBoxTitleError {
+            get {
+                return ResourceManager.GetString("MsgBoxTitleError", resourceCulture);
+            }
+        }
+        
+        public static string MsgBoxBodyDefaultProfileEnabled {
+            get {
+                return ResourceManager.GetString("MsgBoxBodyDefaultProfileEnabled", resourceCulture);
+            }
+        }
+        
+        public static string MsgBoxBodyProfileServiceMissing {
+            get {
+                return ResourceManager.GetString("MsgBoxBodyProfileServiceMissing", resourceCulture);
+            }
+        }
     }
 }
