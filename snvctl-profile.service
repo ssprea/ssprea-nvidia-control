@@ -1,0 +1,9 @@
+[Unit]
+Description=Set the Nvidia GPU power profile
+
+[Service]
+Type=exec
+ExecStart=/usr/local/bin/snvctl --forceOpen -g /etc/snvctl/deviceidx.txt -op /etc/snvctl/profile.json -fp /etc/snvctl/curve.json
+
+[Install]
+WantedBy=multi-user.target
