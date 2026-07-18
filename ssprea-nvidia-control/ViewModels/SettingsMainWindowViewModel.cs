@@ -32,12 +32,8 @@ public partial class SettingsMainWindowViewModel : ViewModelBase
     
     public SettingsMainWindowViewModel()
     {
-        CurrentEditingSettings = new Settings()
-        {
-            SelectedGui = Program.LoadedSettings.SelectedGui, 
-            SelectedLocale = Program.LoadedSettings.SelectedLocale,
-            SelectedUpdateTimeoutSeconds = Program.LoadedSettings.SelectedUpdateTimeoutSeconds
-        };
+        CurrentEditingSettings = new Settings(Program.LoadedSettings);
+        
         CurrentSettingCategoryContent = new GuiSettingsPage();
         
         
@@ -62,7 +58,12 @@ public partial class SettingsMainWindowViewModel : ViewModelBase
         await File.WriteAllTextAsync(Program.SettingsFilePath,Program.LoadedSettings.ToJson());
         Lang.Resources.Culture = new CultureInfo(Program.LoadedSettings.SelectedLocale);
         WindowsManager.ApplyMainWindowCustomGui();
+        
+        
+        
     }
+    
+    
     
     partial void OnSelectedSettingCategoryIndexChanged(int value)
     {
@@ -75,6 +76,9 @@ public partial class SettingsMainWindowViewModel : ViewModelBase
                 break;
             case 1:
                 CurrentSettingCategoryContent = new ValuesSettingsPage();
+                break;
+            case 2:
+                CurrentSettingCategoryContent = new BehaviourSettingsPage();
                 break;
             default:
                 CurrentSettingCategoryContent = new TextBlock() { Text = "Invalid category." };

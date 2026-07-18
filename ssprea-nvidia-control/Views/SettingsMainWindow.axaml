@@ -26,6 +26,7 @@
                 <ListBox Grid.Row="1" Grid.Column="0" SelectedIndex="{Binding SelectedSettingCategoryIndex}">
                     <ListBoxItem Content="GUIs"/>
                     <ListBoxItem Content="Monitoring"/>
+                    <ListBoxItem Content="Behaviour"/>
                     
                     
                 </ListBox>

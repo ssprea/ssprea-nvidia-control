@@ -404,5 +404,41 @@ namespace ssprea_nvidia_control.Lang {
                 return ResourceManager.GetString("SettingUpdateTimeDescription", resourceCulture);
             }
         }
+        
+        public static string TextDisabled {
+            get {
+                return ResourceManager.GetString("TextDisabled", resourceCulture);
+            }
+        }
+        
+        public static string SettingsBehaviourGuiTrayStart {
+            get {
+                return ResourceManager.GetString("SettingsBehaviourGuiTrayStart", resourceCulture);
+            }
+        }
+        
+        public static string SettingsBehaviourGuiBootUp {
+            get {
+                return ResourceManager.GetString("SettingsBehaviourGuiBootUp", resourceCulture);
+            }
+        }
+        
+        public static string SettingsCategoryGuis {
+            get {
+                return ResourceManager.GetString("SettingsCategoryGuis", resourceCulture);
+            }
+        }
+        
+        public static string SettingsCategoryValues {
+            get {
+                return ResourceManager.GetString("SettingsCategoryValues", resourceCulture);
+            }
+        }
+        
+        public static string SettingsCategoryBehaviour {
+            get {
+                return ResourceManager.GetString("SettingsCategoryBehaviour", resourceCulture);
+            }
+        }
     }
 }
