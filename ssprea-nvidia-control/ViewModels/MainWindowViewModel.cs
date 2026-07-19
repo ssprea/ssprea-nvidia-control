@@ -27,6 +27,7 @@ using ReactiveUI;
 using Serilog;
 using SkiaSharp;
 using ssprea_nvidia_control.Lang;
+using ssprea_nvidia_control.Lang;
 using ssprea_nvidia_control.Utils;
 using Tmds.DBus.Protocol;
 
@@ -297,12 +298,12 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         if (SelectedFanCurve is null)
         {
-            await MessageBoxManager.GetMessageBoxStandard("Error","No fan profile selected!",ButtonEnum.Ok,Icon.Warning).ShowAsync();
+            await MessageBoxManager.GetMessageBoxStandard(Resources.MsgBoxTitleError,Resources.MsgBoxBodyNoFancurveSelected,ButtonEnum.Ok,Icon.Warning).ShowAsync();
             return;
         }
 
-        var boxResult = await MessageBoxManager.GetMessageBoxStandard("Are you sure?",
-            $"Are you sure you want to delete fan profile \"{SelectedFanCurve.Name}\"?", ButtonEnum.YesNo,
+        var boxResult = await MessageBoxManager.GetMessageBoxStandard(Resources.MsgBoxTitleAreYouSure,
+            $"{Resources.MsgBoxBodyAreYouSureDelete} \"{SelectedFanCurve.Name}\"?", ButtonEnum.YesNo,
             Icon.Question).ShowAsync();
 
         if (boxResult == ButtonResult.Yes)
@@ -341,7 +342,7 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         if (string.IsNullOrEmpty(TunerCurrentProfileName) || string.IsNullOrWhiteSpace(TunerCurrentProfileName))
         {
-            await MessageBoxManager.GetMessageBoxStandard("Warning","Plase input a name for the new profile",ButtonEnum.Ok,Icon.Warning).ShowAsync();
+            await MessageBoxManager.GetMessageBoxStandard(Resources.MsgBoxTitleWarning,Resources.MsgBoxBodyNewProfileMissingName,ButtonEnum.Ok,Icon.Warning).ShowAsync();
             return;
         }
         
@@ -371,7 +372,7 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         if (SelectedOcProfile is null)
         {
-            await MessageBoxManager.GetMessageBoxStandard("Error","No profile selected!",ButtonEnum.Ok,Icon.Warning).ShowAsync();
+            await MessageBoxManager.GetMessageBoxStandard(Resources.MsgBoxTitleError,Resources.MsgBoxBodyNoProfileSelected,ButtonEnum.Ok,Icon.Warning).ShowAsync();
             return;
         }
         
@@ -544,7 +545,7 @@ public partial class MainWindowViewModel : ViewModelBase
 
         if (profile is null)
         {
-            MessageBoxManager.GetMessageBoxStandard(Resources.MsgBoxTitleWarning, "No profile selected!", ButtonEnum.Ok, Icon.Warning);
+            MessageBoxManager.GetMessageBoxStandard(Resources.MsgBoxTitleWarning, Resources.MsgBoxBodyNoProfileSelected, ButtonEnum.Ok, Icon.Warning);
             IsStartupProfileChecked = false;
             
             return;
@@ -552,7 +553,7 @@ public partial class MainWindowViewModel : ViewModelBase
         
         if (SelectedGpu == null)
         {
-            MessageBoxManager.GetMessageBoxStandard(Resources.MsgBoxTitleWarning, "No gpu selected!", ButtonEnum.Ok, Icon.Warning);
+            MessageBoxManager.GetMessageBoxStandard(Resources.MsgBoxTitleWarning, Resources.MsgBoxBodyNoGpuSelected, ButtonEnum.Ok, Icon.Warning);
             IsStartupProfileChecked = false;
             
             return;
@@ -629,11 +630,11 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         if (SelectedOcProfile is null)
         {
-            await MessageBoxManager.GetMessageBoxStandard("Error", "No profile selected!", ButtonEnum.Ok, Icon.Warning).ShowAsync();
+            await MessageBoxManager.GetMessageBoxStandard(Resources.MsgBoxTitleError, Resources.MsgBoxBodyNoProfileSelected, ButtonEnum.Ok, Icon.Warning).ShowAsync();
             return;
         }
         
-        var boxResult = await MessageBoxManager.GetMessageBoxStandard("Are you sure?", $"Are you sure you want to delete profile \"{SelectedOcProfile.Name}\"?", ButtonEnum.YesNo, Icon.Question).ShowAsync();
+        var boxResult = await MessageBoxManager.GetMessageBoxStandard(Resources.MsgBoxTitleAreYouSure, $"{Resources.MsgBoxBodyAreYouSureDelete} \"{SelectedOcProfile.Name}\"?", ButtonEnum.YesNo, Icon.Question).ShowAsync();
 
         if (boxResult == ButtonResult.Yes)
         {
@@ -683,8 +684,7 @@ public partial class MainWindowViewModel : ViewModelBase
                     },
                     
                     ContentTitle = $"{_profilesServiceName} detected!",
-                    ContentMessage = $"{_profilesServiceName} (startup profile) is currently active, applying a fan profile with another instance already running can cause problems. \n" +
-                                     $"WARNING: if you decide to stop the service, you will have to re-enable the startup profile or run 'sudo systemctl start {_profilesServiceName}'",
+                    ContentMessage = $"{_profilesServiceName} {Resources.MsgBoxBodyServiceConflict} 'sudo systemctl enable {_profilesServiceName}'",
                     Topmost = true,
                     CanResize = false,
                     Icon = Icon.Warning,
@@ -826,21 +826,21 @@ public partial class MainWindowViewModel : ViewModelBase
                 return;
             case 1:
 
-                var box = MessageBoxManager.GetMessageBoxStandard("Nvidia driver not detected!",
-                    "Please make sure you installed Nvidia proprietary driver version 555+", ButtonEnum.Ok, Icon.Error);
+                var box = MessageBoxManager.GetMessageBoxStandard(Resources.MsgBoxTitleDependencyDriverMissing,
+                    Resources.MsgBoxTitleDependencyDriverMissing, ButtonEnum.Ok, Icon.Error);
 
                 await box.ShowAsync();
                 Environment.Exit(1);
                 break;
             case 2:
-                box = MessageBoxManager.GetMessageBoxStandard("Nvidia driver version outdated!",
-                    "The nvidia driver was detected but to apply settings version 555+ is required", ButtonEnum.Ok, Icon.Warning);
+                box = MessageBoxManager.GetMessageBoxStandard(Resources.MsgBoxTitleDependencyDriverOutdated,
+                    Resources.MsgBoxBodyDependencyDriverOutdated, ButtonEnum.Ok, Icon.Warning);
 
                 await box.ShowAsync();
                 break;
             case 3:
-                box = MessageBoxManager.GetMessageBoxStandard("snvctl cli tool not detected!",
-                    "Please make sure you installed the CLI tool otherwise you won't be able to apply settings.", ButtonEnum.Ok, Icon.Warning);
+                box = MessageBoxManager.GetMessageBoxStandard(Resources.MsgBoxTitleDependencyCliMissing,
+                    Resources.MsgBoxBodyDependencyCliMissing, ButtonEnum.Ok, Icon.Warning);
 
                 await box.ShowAsync();
                 break;

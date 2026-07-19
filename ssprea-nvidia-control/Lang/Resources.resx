@@ -283,4 +283,45 @@
     <data name="MsgBoxBodyProfileServiceMissing" xml:space="preserve">
         <value>does not exist. Try reinstalling the application.</value>
     </data>
+    <data name="MsgBoxBodyNoFancurveSelected" xml:space="preserve">
+        <value>No fan curve profile selected!</value>
+    </data>
+    <data name="MsgBoxTitleAreYouSure" xml:space="preserve">
+        <value>Are you sure?</value>
+    </data>
+    <data name="MsgBoxBodyAreYouSureDelete" xml:space="preserve">
+        <value>Are you sure you want to delete profile</value>
+    </data>
+    <data name="MsgBoxBodyNewProfileMissingName" xml:space="preserve">
+        <value>Plase input a name for the new profile</value>
+    </data>
+    <data name="MsgBoxBodyNoProfileSelected" xml:space="preserve">
+        <value>No profile selected!</value>
+    </data>
+    <data name="MsgBoxBodyNoGpuSelected" xml:space="preserve">
+        <value>No GPU selected!</value>
+    </data>
+    <data name="MsgBoxBodyServiceConflict" xml:space="preserve">
+        <value>(startup profile) is currently active, applying a fan profile with another instance already running can cause problems.
+            WARNING: if you decide to stop the service, you will have to re-enable the startup profile or run
+        </value>
+    </data>
+    <data name="MsgBoxTitleDependencyDriverMissing" xml:space="preserve">
+        <value>Nvidia driver not found!</value>
+    </data>
+    <data name="MsgBoxBodyDependencyDriverMissing" xml:space="preserve">
+        <value>Please make sure you installed Nvidia proprietary driver version 555+</value>
+    </data>
+    <data name="MsgBoxTitleDependencyDriverOutdated" xml:space="preserve">
+        <value>Nvidia driver version outdated!</value>
+    </data>
+    <data name="MsgBoxBodyDependencyDriverOutdated" xml:space="preserve">
+        <value>An older version of the Nvidia driver was detected, but to apply settings version 555+ is required.</value>
+    </data>
+    <data name="MsgBoxTitleDependencyCliMissing" xml:space="preserve">
+        <value>snvctl cli tool not detected!</value>
+    </data>
+    <data name="MsgBoxBodyDependencyCliMissing" xml:space="preserve">
+        <value>Please make sure you installed the CLI tool otherwise you won't be able to apply settings.</value>
+    </data>
 </root>

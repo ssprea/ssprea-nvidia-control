@@ -464,5 +464,83 @@ namespace ssprea_nvidia_control.Lang {
                 return ResourceManager.GetString("MsgBoxBodyProfileServiceMissing", resourceCulture);
             }
         }
+        
+        public static string MsgBoxBodyNoFancurveSelected {
+            get {
+                return ResourceManager.GetString("MsgBoxBodyNoFancurveSelected", resourceCulture);
+            }
+        }
+        
+        public static string MsgBoxTitleAreYouSure {
+            get {
+                return ResourceManager.GetString("MsgBoxTitleAreYouSure", resourceCulture);
+            }
+        }
+        
+        public static string MsgBoxBodyAreYouSureDelete {
+            get {
+                return ResourceManager.GetString("MsgBoxBodyAreYouSureDelete", resourceCulture);
+            }
+        }
+        
+        public static string MsgBoxBodyNewProfileMissingName {
+            get {
+                return ResourceManager.GetString("MsgBoxBodyNewProfileMissingName", resourceCulture);
+            }
+        }
+        
+        public static string MsgBoxBodyNoProfileSelected {
+            get {
+                return ResourceManager.GetString("MsgBoxBodyNoProfileSelected", resourceCulture);
+            }
+        }
+        
+        public static string MsgBoxBodyNoGpuSelected {
+            get {
+                return ResourceManager.GetString("MsgBoxBodyNoGpuSelected", resourceCulture);
+            }
+        }
+        
+        public static string MsgBoxBodyServiceConflict {
+            get {
+                return ResourceManager.GetString("MsgBoxBodyServiceConflict", resourceCulture);
+            }
+        }
+        
+        public static string MsgBoxTitleDependencyDriverMissing {
+            get {
+                return ResourceManager.GetString("MsgBoxTitleDependencyDriverMissing", resourceCulture);
+            }
+        }
+        
+        public static string MsgBoxBodyDependencyDriverMissing {
+            get {
+                return ResourceManager.GetString("MsgBoxBodyDependencyDriverMissing", resourceCulture);
+            }
+        }
+        
+        public static string MsgBoxTitleDependencyDriverOutdated {
+            get {
+                return ResourceManager.GetString("MsgBoxTitleDependencyDriverOutdated", resourceCulture);
+            }
+        }
+        
+        public static string MsgBoxBodyDependencyDriverOutdated {
+            get {
+                return ResourceManager.GetString("MsgBoxBodyDependencyDriverOutdated", resourceCulture);
+            }
+        }
+        
+        public static string MsgBoxTitleDependencyCliMissing {
+            get {
+                return ResourceManager.GetString("MsgBoxTitleDependencyCliMissing", resourceCulture);
+            }
+        }
+        
+        public static string MsgBoxBodyDependencyCliMissing {
+            get {
+                return ResourceManager.GetString("MsgBoxBodyDependencyCliMissing", resourceCulture);
+            }
+        }
     }
 }

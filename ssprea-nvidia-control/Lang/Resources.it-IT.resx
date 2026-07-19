@@ -264,4 +264,44 @@
     <data name="MsgBoxBodyProfileServiceMissing" xml:space="preserve">
         <value>non è stato trovato. Prova a reinstallare l'applicazione</value>
     </data>
+    <data name="MsgBoxBodyNoFancurveSelected" xml:space="preserve">
+        <value>Nessun profilo ventole selezionato!</value>
+    </data>
+    <data name="MsgBoxTitleAreYouSure" xml:space="preserve">
+        <value>Sei sicuro?</value>
+    </data>
+    <data name="MsgBoxBodyAreYouSureDelete" xml:space="preserve">
+        <value>Sei sicuro di voler eliminare il profilo </value>
+    </data>
+    <data name="MsgBoxBodyNewProfileMissingName" xml:space="preserve">
+        <value>Inserisci un nome per il nuovo profilo</value>
+    </data>
+    <data name="MsgBoxBodyNoProfileSelected" xml:space="preserve">
+        <value>Nessun profilo selezionato!</value>
+    </data>
+    <data name="MsgBoxBodyNoGpuSelected" xml:space="preserve">
+        <value>Nessuna GPU selezionata!</value>
+    </data>
+    <data name="MsgBoxBodyServiceConflict" xml:space="preserve">
+        <value>(profilo avvio pc) è attualmente attivo, applicare un profilo delle ventole con un'altra istanza già in esecuzione può causare problemi.
+            ATTENZIONE: se decidi di spegnere il servizio dovrai riabilitare l'opzione del profilo avvio pc o eseguire: </value>
+    </data>
+    <data name="MsgBoxTitleDependencyDriverMissing" xml:space="preserve">
+        <value>Driver Nvidia non trovato!</value>
+    </data>
+    <data name="MsgBoxBodyDependencyDriverMissing" xml:space="preserve">
+        <value>Verifica di aver installato il driver Nvidia ufficiale versione 555+</value>
+    </data>
+    <data name="MsgBoxTitleDependencyDriverOutdated" xml:space="preserve">
+        <value>Driver Nvidia troppo vecchio!</value>
+    </data>
+    <data name="MsgBoxTitleDependencyCliMissing" xml:space="preserve">
+        <value>snvctl cli non trovato!</value>
+    </data>
+    <data name="MsgBoxBodyDependencyDriverOutdated" xml:space="preserve">
+        <value>È stata rilevata una versione troppo vecchia del driver Nvidia, per applicare le impostazioni è necessario un driver versione 555+</value>
+    </data>
+    <data name="MsgBoxBodyDependencyCliMissing" xml:space="preserve">
+        <value>Lo strumento snvctl CLI non è stato rilevato, non sarà possibile salvare le modifiche.</value>
+    </data>
 </root>
