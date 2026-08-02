@@ -324,4 +324,7 @@
     <data name="MsgBoxBodyDependencyCliMissing" xml:space="preserve">
         <value>Please make sure you installed the CLI tool otherwise you won't be able to apply settings.</value>
     </data>
+    <data name="GraphsTooltipSecondsAgo" xml:space="preserve">
+        <value>s ago</value>
+    </data>
 </root>

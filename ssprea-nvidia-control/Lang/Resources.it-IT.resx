@@ -304,4 +304,7 @@
     <data name="MsgBoxBodyDependencyCliMissing" xml:space="preserve">
         <value>Lo strumento snvctl CLI non è stato rilevato, non sarà possibile salvare le modifiche.</value>
     </data>
+    <data name="GraphsTooltipSecondsAgo" xml:space="preserve">
+        <value>s fa</value>
+    </data>
 </root>
