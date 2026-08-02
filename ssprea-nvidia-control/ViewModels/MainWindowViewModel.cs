@@ -12,6 +12,9 @@ using System.Windows.Input;
 using Avalonia.Controls;
 using Avalonia.Platform;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using DynamicData;
+using LiveChartsCore;
 using LiveChartsCore.Defaults;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
@@ -72,12 +75,20 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty] private string _currentlyLoadedGuiName = "Default";
     [ObservableProperty] private string _selectedLocalizerLang = "it";
     [ObservableProperty] private ObservableCollection<string> _localizerLangs = new ObservableCollection<string>(["it","en"]);
-
+    [ObservableProperty] private ObservableCollection<ObservablePoint> _selectedFanCurveGraphPoints = new();
+    [ObservableProperty] private MaxSizeObservableCollection<ObservablePoint> _currentFanSpeedGraphPoints = new(1);
+    
+    //graph series
+    [ObservableProperty] private ObservableCollection<ISeries> _fanCurveGraphSeries = new();
+    
     private uint _selectedFanRadioButton = 0;
     private bool FanSpeedSliderVisible => _selectedFanRadioButton == 1;
     
     private readonly string _profilesServiceName = "snvctl-profile.service";
     
+    
+    //graph sync object
+    public object GraphSyncObject { get; } = new object();
     
     //Axes styles for fan curve graph graph
     [ObservableProperty] private SolidColorPaint _graphTooltipTextPaint = new SolidColorPaint(SKColors.Black) {SKTypeface = _fanCurveGraphTypeface};
@@ -101,6 +112,8 @@ public partial class MainWindowViewModel : ViewModelBase
             }
         ];
 
+    
+    
     public Axis[] FanCurveGraphYAxes { get; set; } =
         [
             new Axis
@@ -119,6 +132,9 @@ public partial class MainWindowViewModel : ViewModelBase
                     } 
                 }
         ];
+    
+    
+    
     
     
     public uint TunerCurrentPowerLimitW {
@@ -257,11 +273,30 @@ public partial class MainWindowViewModel : ViewModelBase
         
         LoadOcProfileToTuner(new OcProfile("",0,0,SelectedGpu?.PowerLimitMinMw ?? 100000, (FanCurve?)null));
 
+        FanCurveGraphSeries.Add(new LineSeries<ObservablePoint>(SelectedFanCurveGraphPoints)
+        {
+            GeometryStroke=new SolidColorPaint(SKColors.DodgerBlue) {StrokeThickness = 3},
+            Stroke= new SolidColorPaint(SKColors.DodgerBlue) {StrokeThickness = 3},
+            Fill = new SolidColorPaint(SKColors.DodgerBlue.WithAlpha(50)),
+            YToolTipLabelFormatter = point => $"{point.Model?.Y}%",
+            XToolTipLabelFormatter = point => $"Temp: {point.Model?.X}°C",
+            LineSmoothness = 0
+        });
         
+        FanCurveGraphSeries.Add(new LineSeries<ObservablePoint>(CurrentFanSpeedGraphPoints)
+        {
+            GeometryStroke=new SolidColorPaint(SKColors.DarkRed) {StrokeThickness = 3},
+            Stroke= new SolidColorPaint(SKColors.DarkRed) {StrokeThickness = 3},
+            YToolTipLabelFormatter = point => $"{point.Model?.Y}%",
+            XToolTipLabelFormatter = point => $"{Lang.Resources.TextCurrentTemp} {point.Model?.X}°C",
+            LineSmoothness = 0
+        });
         
         
     }
 
+    
+    
     partial void OnSelectedGpuChanged(NvmlGpu? value)
     {
         if (value is null || value.FansList.Count <= 0)
@@ -271,19 +306,23 @@ public partial class MainWindowViewModel : ViewModelBase
         {
             if (args.PropertyName == "CurrentSpeed")
             {
-                if (SelectedFanCurve?.CurrentFanSpeedPoints.Count > 0 &&
-                    ((int?)SelectedFanCurve?.CurrentFanSpeedPoints.First().X ?? 0) == value.GpuTemperature &&
-                    ((int?)SelectedFanCurve?.CurrentFanSpeedPoints.First().Y ?? 0) == value.FansList[0].CurrentSpeed)
-                    return;
+                lock (GraphSyncObject)
+                {
                     
-                SelectedFanCurve?.CurrentFanSpeedPoints.Add(new ObservablePoint(value.GpuTemperature,value.FansList[0].CurrentSpeed));
+                    if (SelectedFanCurve?.CurrentFanSpeedPoints.Count > 0 &&
+                        ((int?)SelectedFanCurve?.CurrentFanSpeedPoints.First().X ?? 0) == value.GpuTemperature &&
+                        ((int?)SelectedFanCurve?.CurrentFanSpeedPoints.First().Y ?? 0) == value.FansList[0].CurrentSpeed)
+                        return;
+                        
+                    CurrentFanSpeedGraphPoints.Add(new ObservablePoint(value.GpuTemperature,value.FansList[0].CurrentSpeed));
                 
+                }
             }
         };
     }
     
     
-    
+    [RelayCommand]
     public async Task ShowComingSoonPopupAsync(string featureName)
     {
         await MessageBoxManager.GetMessageBoxStandard("Coming soon!", $"{featureName}: Coming Soon!",ButtonEnum.Ok,Icon.Forbidden).ShowAsync();
@@ -442,10 +481,18 @@ public partial class MainWindowViewModel : ViewModelBase
     
     partial void OnSelectedFanCurveChanged(FanCurveViewModel? value)
     {
+        if (value is null)
+            return;
         
-        SelectedFanCurve?.UpdateSeries();
+        lock (GraphSyncObject)
+        {
+            SelectedFanCurveGraphPoints.Clear();
+            SelectedFanCurveGraphPoints.AddRange(value.BaseFanCurve.CurvePoints.Select(x => new ObservablePoint(x.Temperature, x.FanSpeed)).ToArray());
+            
+        }
     }
 
+    [RelayCommand]
     public async Task SaveAutoApplyProfile(OcProfile? profile)
     {
         //File.WriteAllText(Program.DefaultDataPath + "/AutoApplyProfile.json", JsonSerializer.Serialize(GpuProfilePairString));
@@ -503,7 +550,7 @@ public partial class MainWindowViewModel : ViewModelBase
     
     
     
-    
+    [RelayCommand]
     public async Task SaveStartupProfile(OcProfile? profile)
     {
         
@@ -615,7 +662,7 @@ public partial class MainWindowViewModel : ViewModelBase
     }
 
     
-
+    [RelayCommand]
     public void OpenDefaultBrowserToUrl(string destUrl)
     {
 #if LINUX
@@ -689,7 +736,7 @@ public partial class MainWindowViewModel : ViewModelBase
                     CanResize = false,
                     Icon = Icon.Warning,
                     ShowInCenter = true,
-                    SystemDecorations = SystemDecorations.BorderOnly
+                    WindowDecorations = WindowDecorations.BorderOnly
                 }
             );
 
