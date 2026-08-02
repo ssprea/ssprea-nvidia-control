@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Reactive;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
 using ssprea_nvidia_control.Models;
@@ -46,7 +47,8 @@ public partial class FanCurveEditorWindowViewModel : ViewModelBase
         CurrentFanCurve?.BaseFanCurve.CurvePoints.Add(new FanCurvePoint());
     }
 
-    public async Task RemovePointCommand(FanCurvePoint? selectedPoint)
+    [RelayCommand]
+    public async Task RemovePoint(FanCurvePoint? selectedPoint)
     {
         if (selectedPoint is null)
         {

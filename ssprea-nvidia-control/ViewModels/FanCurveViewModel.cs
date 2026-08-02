@@ -1,10 +1,15 @@
 
+using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
+using DynamicData;
 using ssprea_nvidia_control.Models;
 using LiveChartsCore;
 using LiveChartsCore.Defaults;
+using LiveChartsCore.Kernel;
 using LiveChartsCore.SkiaSharpView;
+using LiveChartsCore.SkiaSharpView.Drawing.Geometries;
 using LiveChartsCore.SkiaSharpView.Painting;
 using SkiaSharp;
 using ssprea_nvidia_control.Utils;
@@ -15,8 +20,9 @@ public partial class FanCurveViewModel : ViewModelBase
 {
 
     [ObservableProperty] ObservableCollection<ISeries> _curvePointsSeries;
-    [ObservableProperty] MaxSizeObservableCollection<ObservablePoint> _currentFanSpeedPoints;
     
+    [ObservableProperty] MaxSizeObservableCollection<ObservablePoint> _currentFanSpeedPoints;
+    [ObservableProperty] ObservableCollection<ObservablePoint> _fanCurveGraphPoints;
     
 
     public FanCurve BaseFanCurve { get; private set; }
@@ -26,33 +32,35 @@ public partial class FanCurveViewModel : ViewModelBase
     
     
     
+    
     public FanCurveViewModel(FanCurve curve)
     {
         BaseFanCurve = curve;
-        CurvePointsSeries= new ObservableCollection<ISeries>(){GetSeries()};
+        // CurvePointsSeries= new ObservableCollection<ISeries>(){GetSeries()};
 
         CurrentFanSpeedPoints = new(1);
         
-        
+        //convert points from base curve to observablepoints
+
+        FanCurveGraphPoints = new();
+        CurvePointsSeries = new();
+        CurvePointsSeries.Add(GetSeries());
+        UpdateSeries();        
+
 
     }
 
     public void UpdateSeries()
     {
-        CurvePointsSeries= new ObservableCollection<ISeries>(){GetSeries()};
-        CurvePointsSeries.Add(new LineSeries<ObservablePoint>()
-        {
-            Values = CurrentFanSpeedPoints,
-            Name=Lang.Resources.TextCurrentFanSpeed,
-            YToolTipLabelFormatter = point => $"{point.Model?.Y}%",
-            XToolTipLabelFormatter = point => $"{Lang.Resources.TextCurrentTemp} {point.Model?.X}°C",
-            GeometryStroke=new SolidColorPaint(SKColors.DarkRed) {StrokeThickness = 3},
-            LineSmoothness = 0,
-        });
+        FanCurveGraphPoints.Clear();
+        FanCurveGraphPoints.AddRange(BaseFanCurve.CurvePoints.Select(x => new ObservablePoint(x.Temperature, x.FanSpeed)).ToArray());
     }
+
+
     
     private LineSeries<ObservablePoint> GetSeries()
     {
+        
         var seriesValues = new ObservableCollection<ObservablePoint>();
         foreach (var p in BaseFanCurve.CurvePoints)
         {
@@ -68,6 +76,7 @@ public partial class FanCurveViewModel : ViewModelBase
             XToolTipLabelFormatter = point => $"Temp: {point.Model?.X}°C",
             LineSmoothness = 0
         };
+        
     }
     
 }

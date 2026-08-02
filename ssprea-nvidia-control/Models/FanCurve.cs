@@ -34,7 +34,7 @@ public class FanCurve
 
         SanitizePoints();
 
-        GenerateGpuTempToFanSpeedMap();
+        // GenerateGpuTempToFanSpeedMap();
         
         
     }
@@ -48,7 +48,7 @@ public class FanCurve
                 CurvePoints[i].FanSpeed = 100;
         }
 
-        var ordered = CurvePoints.OrderBy(x => x.Temperature).ToList();
+        var ordered = CurvePoints.OrderBy(x => x.Temperature).DistinctBy(x => x.Temperature).ToList();
         CurvePoints.Clear();
         CurvePoints.AddRange(ordered);
     }
