@@ -542,5 +542,11 @@ namespace ssprea_nvidia_control.Lang {
                 return ResourceManager.GetString("MsgBoxBodyDependencyCliMissing", resourceCulture);
             }
         }
+        
+        public static string GraphsTooltipSecondsAgo {
+            get {
+                return ResourceManager.GetString("GraphsTooltipSecondsAgo", resourceCulture);
+            }
+        }
     }
 }

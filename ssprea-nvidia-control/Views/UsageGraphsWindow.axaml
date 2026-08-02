@@ -28,7 +28,7 @@
                                     Series="{Binding GpuClockSeries}"
                                     YAxes="{Binding GpuClockGraphYAxes}"
                                     XAxes="{Binding GraphXAxes}"
-                                    TooltipTextPaint="{Binding GraphTooltipTextPaint}"
+                                    SyncContext="{Binding GpuClockLock}"
                                     
                                     
                 />
@@ -40,13 +40,13 @@
                 
                 <lvc:CartesianChart MinWidth="150"
                                     BorderThickness="0" Padding="0" Margin="0"
-                                    HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+                                    HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                                     Series="{Binding MemClockSeries}"
                                     YAxes="{Binding MemClockGraphYAxes}"
                                     XAxes="{Binding GraphXAxes}"
-                                    TooltipTextPaint="{Binding GraphTooltipTextPaint}"
-                                    
-                                    
+                                    SyncContext="{Binding MemClockLock}"
+                
+                
                 />
             </Border>
             
@@ -56,14 +56,14 @@
                 
                 <lvc:CartesianChart MinWidth="150"
                                     BorderThickness="0" Padding="0" Margin="0"
-                                    HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+                                    HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                                     Series="{Binding GpuUsageSeries}"
                                     YAxes="{Binding GpuUsageGraphYAxes}"
                                     XAxes="{Binding GraphXAxes}"
-                                    TooltipTextPaint="{Binding GraphTooltipTextPaint}"
-                                    
-                                    
-                                    
+                                    SyncContext="{Binding GpuUsageLock}"
+                
+                
+                
                 />
             </Border>
             
@@ -73,14 +73,11 @@
                 
                 <lvc:CartesianChart MinWidth="150"
                                     BorderThickness="0" Padding="0" Margin="0"
-                                    HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+                                    HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                                     Series="{Binding MemUsageSeries}"
                                     YAxes="{Binding MemUsageGraphYAxes}"
                                     XAxes="{Binding GraphXAxes}"
-                                    TooltipTextPaint="{Binding GraphTooltipTextPaint}"
-                                    
-                                    
-                                    
+                                    SyncContext="{Binding MemUsageLock}"
                 />
             </Border>
             
@@ -90,14 +87,15 @@
                 
                 <lvc:CartesianChart MinWidth="150"
                                     BorderThickness="0" Padding="0" Margin="0"
-                                    HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+                                    HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                                     Series="{Binding GpuTempSeries}"
                                     YAxes="{Binding GpuTempGraphYAxes}"
                                     XAxes="{Binding GraphXAxes}"
-                                    TooltipTextPaint="{Binding GraphTooltipTextPaint}"
-                                    
-                                    
-                                    
+                                    SyncContext="{Binding GpuTempLock}"
+                
+                
+                
+                
                 />
             </Border>
             
@@ -107,14 +105,15 @@
                 
                 <lvc:CartesianChart MinWidth="150"
                                     BorderThickness="0" Padding="0" Margin="0"
-                                    HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+                                    HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                                     Series="{Binding FanSpeedSeries}"
                                     YAxes="{Binding FanSpeedGraphYAxes}"
                                     XAxes="{Binding GraphXAxes}"
-                                    TooltipTextPaint="{Binding GraphTooltipTextPaint}"
-                                    
-                                    
-                                    
+                                    SyncContext="{Binding FanSpeedLock}"
+                
+                
+                
+                
                 />
             </Border>
             
@@ -124,14 +123,15 @@
                 
                 <lvc:CartesianChart MinWidth="150"
                                     BorderThickness="0" Padding="0" Margin="0"
-                                    HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+                                    HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                                     Series="{Binding PowerUsageSeries}"
                                     YAxes="{Binding PowerUsageGraphYAxes}"
                                     XAxes="{Binding GraphXAxes}"
-                                    TooltipTextPaint="{Binding GraphTooltipTextPaint}"
-                                    
-                                    
-                                    
+                                    SyncContext="{Binding PowerUsageLock}"
+                
+                
+                
+                
                 />
             </Border>
             

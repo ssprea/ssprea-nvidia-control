@@ -4,6 +4,7 @@ using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Platform;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using LiveChartsCore;
 using LiveChartsCore.Defaults;
@@ -38,6 +39,14 @@ public partial class UsageGraphsWindowViewModel : ViewModelBase
     private readonly MaxSizeObservableCollection<int> _memClockValues = new(_graphLength);
     private readonly MaxSizeObservableCollection<int> _gpuUsageValues = new(_graphLength);
     private readonly MaxSizeObservableCollection<int> _memUsageValues = new(_graphLength);
+    
+    public object GpuTempLock    {get;} = new();
+    public object PowerUsageLock {get;} = new();
+    public object FanSpeedLock   {get;} = new();
+    public object GpuClockLock   {get;} = new();
+    public object MemClockLock   {get;} = new();
+    public object GpuUsageLock   {get;} = new();
+    public object MemUsageLock   {get;} = new();
     
     private static SKTypeface _defaultGraphTypeface =  SKTypeface.FromStream(AssetLoader.Open(new Uri("avares://ssprea-nvidia-control/Assets/Fonts/NotoSans/NotoSans-Light.ttf")));
         
@@ -97,10 +106,10 @@ public partial class UsageGraphsWindowViewModel : ViewModelBase
         new Axis
         {
             Name = Lang.Resources.GraphsCoreTemp,
-            NamePaint = new SolidColorPaint(SKColors.AntiqueWhite) {SKTypeface = _defaultGraphTypeface}, 
+            // NamePaint = new SolidColorPaint(SKColors.AntiqueWhite) {SKTypeface = _defaultGraphTypeface}, 
             NameTextSize = 10,
 
-            LabelsPaint = new SolidColorPaint(SKColors.AntiqueWhite) {SKTypeface = _defaultGraphTypeface}, 
+            // LabelsPaint = new SolidColorPaint(SKColors.AntiqueWhite) {SKTypeface = _defaultGraphTypeface}, 
             TextSize = 10,
 
             SeparatorsPaint = new SolidColorPaint(SKColors.LightSlateGray) 
@@ -118,10 +127,10 @@ public partial class UsageGraphsWindowViewModel : ViewModelBase
         new Axis
         {
             Name = Lang.Resources.GraphsGpuPower,
-            NamePaint = new SolidColorPaint(SKColors.AntiqueWhite) {SKTypeface = _defaultGraphTypeface}, 
+            // NamePaint = new SolidColorPaint(SKColors.AntiqueWhite) {SKTypeface = _defaultGraphTypeface}, 
             NameTextSize = 10,
 
-            LabelsPaint = new SolidColorPaint(SKColors.AntiqueWhite) {SKTypeface = _defaultGraphTypeface}, 
+            // LabelsPaint = new SolidColorPaint(SKColors.AntiqueWhite) {SKTypeface = _defaultGraphTypeface}, 
             TextSize = 10,
 
             SeparatorsPaint = new SolidColorPaint(SKColors.LightSlateGray) 
@@ -137,10 +146,10 @@ public partial class UsageGraphsWindowViewModel : ViewModelBase
         new Axis
         {
             Name = Lang.Resources.GraphsCoreClock,
-            NamePaint = new SolidColorPaint(SKColors.AntiqueWhite) {SKTypeface = _defaultGraphTypeface}, 
+            // NamePaint = new SolidColorPaint(SKColors.AntiqueWhite) {SKTypeface = _defaultGraphTypeface}, 
             NameTextSize = 10,
-
-            LabelsPaint = new SolidColorPaint(SKColors.AntiqueWhite) {SKTypeface = _defaultGraphTypeface}, 
+            //
+            // LabelsPaint = new SolidColorPaint(SKColors.AntiqueWhite) {SKTypeface = _defaultGraphTypeface}, 
             TextSize = 10,
 
             SeparatorsPaint = new SolidColorPaint(SKColors.LightSlateGray) 
@@ -156,10 +165,10 @@ public partial class UsageGraphsWindowViewModel : ViewModelBase
         new Axis
         {
             Name = Lang.Resources.GraphsMemClock,
-            NamePaint = new SolidColorPaint(SKColors.AntiqueWhite) {SKTypeface = _defaultGraphTypeface}, 
+            // NamePaint = new SolidColorPaint(SKColors.AntiqueWhite) {SKTypeface = _defaultGraphTypeface}, 
             NameTextSize = 10,
 
-            LabelsPaint = new SolidColorPaint(SKColors.AntiqueWhite) {SKTypeface = _defaultGraphTypeface}, 
+            // LabelsPaint = new SolidColorPaint(SKColors.AntiqueWhite) {SKTypeface = _defaultGraphTypeface}, 
             TextSize = 10,
 
             SeparatorsPaint = new SolidColorPaint(SKColors.LightSlateGray) 
@@ -175,10 +184,10 @@ public partial class UsageGraphsWindowViewModel : ViewModelBase
         new Axis
         {
             Name = Lang.Resources.GraphsCoreUsage,
-            NamePaint = new SolidColorPaint(SKColors.AntiqueWhite) {SKTypeface = _defaultGraphTypeface}, 
+            // NamePaint = new SolidColorPaint(SKColors.AntiqueWhite) {SKTypeface = _defaultGraphTypeface}, 
             NameTextSize = 10,
 
-            LabelsPaint = new SolidColorPaint(SKColors.AntiqueWhite) {SKTypeface = _defaultGraphTypeface}, 
+            // LabelsPaint = new SolidColorPaint(SKColors.AntiqueWhite) {SKTypeface = _defaultGraphTypeface}, 
             TextSize = 10,
 
             SeparatorsPaint = new SolidColorPaint(SKColors.LightSlateGray) 
@@ -194,10 +203,10 @@ public partial class UsageGraphsWindowViewModel : ViewModelBase
         new Axis
         {
             Name = Lang.Resources.GraphsMemUsage,
-            NamePaint = new SolidColorPaint(SKColors.AntiqueWhite) {SKTypeface = _defaultGraphTypeface}, 
+            // NamePaint = new SolidColorPaint(SKColors.AntiqueWhite) {SKTypeface = _defaultGraphTypeface}, 
             NameTextSize = 10,
 
-            LabelsPaint = new SolidColorPaint(SKColors.AntiqueWhite) {SKTypeface = _defaultGraphTypeface}, 
+            // LabelsPaint = new SolidColorPaint(SKColors.AntiqueWhite) {SKTypeface = _defaultGraphTypeface}, 
             TextSize = 10,
 
             SeparatorsPaint = new SolidColorPaint(SKColors.LightSlateGray) 
@@ -213,10 +222,10 @@ public partial class UsageGraphsWindowViewModel : ViewModelBase
         new Axis
         {
             Name = Lang.Resources.GraphsFanSpeed,
-            NamePaint = new SolidColorPaint(SKColors.AntiqueWhite) {SKTypeface = _defaultGraphTypeface}, 
+            // NamePaint = new SolidColorPaint(SKColors.AntiqueWhite) {SKTypeface = _defaultGraphTypeface}, 
             NameTextSize = 10,
 
-            LabelsPaint = new SolidColorPaint(SKColors.AntiqueWhite) {SKTypeface = _defaultGraphTypeface}, 
+            // LabelsPaint = new SolidColorPaint(SKColors.AntiqueWhite) {SKTypeface = _defaultGraphTypeface}, 
             TextSize = 10,
 
             SeparatorsPaint = new SolidColorPaint(SKColors.LightSlateGray) 
@@ -240,7 +249,7 @@ public partial class UsageGraphsWindowViewModel : ViewModelBase
             Stroke = new SolidColorPaint(SKColors.Green) {StrokeThickness = 1},
             GeometryStroke = null,//new SolidColorPaint(SKColors.Green) {StrokeThickness = 4},
             GeometryFill = null,
-            YToolTipLabelFormatter = point => $"{Lang.Resources.GraphsCoreTemp}: {point.Model}°C",
+            YToolTipLabelFormatter = point => $"{_gpuTempValues.Count - point.Index}{Lang.Resources.GraphsTooltipSecondsAgo}: {point.Model}°C",
             LineSmoothness = 0,
             
             // GeometrySize = 8
@@ -251,7 +260,7 @@ public partial class UsageGraphsWindowViewModel : ViewModelBase
             Values = _powerUsageValues,
             Fill = new SolidColorPaint(SKColors.MediumPurple.WithAlpha(50)),
             Stroke = new SolidColorPaint(SKColors.MediumPurple) {StrokeThickness = 1},
-            YToolTipLabelFormatter = point => $"{Lang.Resources.GraphsGpuPower}: {point.Model} W",
+            YToolTipLabelFormatter = point => $"{_powerUsageValues.Count - point.Index}{Lang.Resources.GraphsTooltipSecondsAgo}: {point.Model} W",
             
             //GeometryStroke = new SolidColorPaint(SKColors.MediumPurple) {StrokeThickness = 4},
             GeometryStroke = null,
@@ -271,7 +280,7 @@ public partial class UsageGraphsWindowViewModel : ViewModelBase
             Fill = new SolidColorPaint(SKColors.Aqua.WithAlpha(50)),
             Stroke = new SolidColorPaint(SKColors.Aqua) {StrokeThickness = 1},
             LineSmoothness = 0,
-            YToolTipLabelFormatter = point => $"{Lang.Resources.GraphsCoreUsage}: {point.Model}%",
+            YToolTipLabelFormatter = point => $"{_gpuUsageValues.Count - point.Index}{Lang.Resources.GraphsTooltipSecondsAgo}: {point.Model}%",
             
             
             
@@ -287,7 +296,7 @@ public partial class UsageGraphsWindowViewModel : ViewModelBase
             GeometryStroke = null,
             GeometryFill = null,
             LineSmoothness = 0,
-            YToolTipLabelFormatter = point => $"{Lang.Resources.GraphsMemUsage}: {point.Model}%",
+            YToolTipLabelFormatter = point => $"{_memUsageValues.Count - point.Index}{Lang.Resources.GraphsTooltipSecondsAgo}: {point.Model}%",
             
             
             
@@ -303,7 +312,7 @@ public partial class UsageGraphsWindowViewModel : ViewModelBase
             GeometryStroke = null,
             GeometryFill = null,
             LineSmoothness = 0,
-            YToolTipLabelFormatter = point => $"{Lang.Resources.GraphsCoreClock}: {point.Model} MHz",
+            YToolTipLabelFormatter = point => $"{_gpuClockValues.Count - point.Index}{Lang.Resources.GraphsTooltipSecondsAgo}: {point.Model} MHz",
             
             
             
@@ -319,7 +328,7 @@ public partial class UsageGraphsWindowViewModel : ViewModelBase
             //GeometryStroke = new SolidColorPaint(SKColors.Chocolate) {StrokeThickness = 4},
             GeometrySize = 8,
             LineSmoothness = 0,
-            YToolTipLabelFormatter = point => $"{Lang.Resources.GraphsMemClock}: {point.Model} MHz",
+            YToolTipLabelFormatter = point => $"{_memClockValues.Count - point.Index}{Lang.Resources.GraphsTooltipSecondsAgo}: {point.Model} MHz",
             
             
         };
@@ -334,7 +343,7 @@ public partial class UsageGraphsWindowViewModel : ViewModelBase
             //GeometryStroke = new SolidColorPaint(SKColors.IndianRed) {StrokeThickness = 4},
             GeometrySize = 8,
             LineSmoothness = 0,
-            YToolTipLabelFormatter = point => $"{Lang.Resources.GraphsFanSpeed}: {point.Model}%",
+            YToolTipLabelFormatter = point => $"{_fanSpeedValues.Count - point.Index}{Lang.Resources.GraphsTooltipSecondsAgo}: {point.Model}%",
             
             
             
@@ -344,9 +353,9 @@ public partial class UsageGraphsWindowViewModel : ViewModelBase
 
         Task.Run(async () =>
         {
-            while (CancelTokenSrc.Token.IsCancellationRequested == false)
+            while (!CancelTokenSrc.Token.IsCancellationRequested)
             {
-                UpdateGraphs();
+                Dispatcher.UIThread.Post(UpdateGraphs);
                 await Task.Delay(1000);
             }
         });
@@ -354,14 +363,41 @@ public partial class UsageGraphsWindowViewModel : ViewModelBase
 
     private void UpdateGraphs()
     {
-        _gpuClockValues.Add((int)_targetGpu.GpuClockCurrent);
-        _memClockValues.Add((int)_targetGpu.MemClockCurrent);
-        _gpuUsageValues.Add((int)_targetGpu.GpuUtilization.gpu);
-        _memUsageValues.Add((int)_targetGpu.GpuUtilization.memory);
-        _powerUsageValues.Add((int)_targetGpu.GpuPowerUsageW);
+        lock (GpuClockLock)
+        {
+            _gpuClockValues.Add((int)_targetGpu.GpuClockCurrent);
+        }
+
+        lock (MemClockLock)
+        {
+            _memClockValues.Add((int)_targetGpu.MemClockCurrent);
+        }
+
+        lock (GpuUsageLock)
+        {
+            _gpuUsageValues.Add((int)_targetGpu.GpuUtilization.gpu);
+        }
+
+        lock (MemUsageLock)
+        {
+            _memUsageValues.Add((int)_targetGpu.GpuUtilization.memory);
+        }
+
+        lock (PowerUsageLock)
+        {
+            _powerUsageValues.Add((int)_targetGpu.GpuPowerUsageW);
+        }
         // _fanSpeedValues.Add(new DateTimePoint(DateTime.Now,(int)_targetGpu.FansList[0].CurrentSpeed));
-        _fanSpeedValues.Add((int)_targetGpu.FansList[0].CurrentSpeed);
-        _gpuTempValues.Add((int)_targetGpu.GpuTemperature);
+
+        lock (FanSpeedLock)
+        {
+            _fanSpeedValues.Add((int)_targetGpu.FansList[0].CurrentSpeed);
+        }
+
+        lock (GpuTempLock)
+        {
+            _gpuTempValues.Add((int)_targetGpu.GpuTemperature);
+        }
         
         // GraphXAxes[0].CustomSeparators = GetSeparators();
 
