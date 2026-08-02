@@ -77,7 +77,7 @@ sealed class Program
             
         });
         
-        BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
+        BuildAvaloniaApp().WithDeveloperTools().StartWithClassicDesktopLifetime(args);
         
         
     }
