@@ -52,7 +52,7 @@
         </data>
 
     <data name="ButtonDeleteProfile" xml:space="preserve">
-        <value>Delete profile</value>
+        <value>Delete</value>
     </data>
 
      <data name="ButtonSave" xml:space="preserve">
@@ -175,17 +175,17 @@
             <value>Max:</value>
         </data>
 
-     <data name="TextThrottle" xml:space="preserve">
-            <value>Throttle:</value>
-        </data>
+    <data name="TextThrottle" xml:space="preserve">
+        <value>Throttle:</value>
+    </data>
 
-     <data name="TextSlowdown" xml:space="preserve">
-            <value>Slowdown:</value>
-        </data>
+    <data name="TextSlowdown" xml:space="preserve">
+        <value>Slow:</value>
+    </data>
 
-     <data name="TextShutdown" xml:space="preserve">
-            <value>Shutdown:</value>
-        </data>
+    <data name="TextShutdown" xml:space="preserve">
+        <value>POFF:</value>
+    </data>
 
      <data name="TextFree" xml:space="preserve">
             <value>Free:</value>
@@ -326,5 +326,11 @@
     </data>
     <data name="GraphsTooltipSecondsAgo" xml:space="preserve">
         <value>s ago</value>
+    </data>
+    <data name="TextNvidiaDriverVersionShort" xml:space="preserve">
+        <value>Driver Version:</value>
+    </data>
+    <data name="TooltipKofiButton" xml:space="preserve">
+        <value>Buy me a coffee</value>
     </data>
 </root>

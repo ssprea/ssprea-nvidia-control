@@ -77,6 +77,7 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty] private ObservableCollection<string> _localizerLangs = new ObservableCollection<string>(["it","en"]);
     [ObservableProperty] private ObservableCollection<ObservablePoint> _selectedFanCurveGraphPoints = new();
     [ObservableProperty] private MaxSizeObservableCollection<ObservablePoint> _currentFanSpeedGraphPoints = new(1);
+    [ObservableProperty] private bool _flashingAnimationRunning = false;
     
     //graph series
     [ObservableProperty] private ObservableCollection<ISeries> _fanCurveGraphSeries = new();
@@ -91,20 +92,20 @@ public partial class MainWindowViewModel : ViewModelBase
     public object GraphSyncObject { get; } = new object();
     
     //Axes styles for fan curve graph graph
-    [ObservableProperty] private SolidColorPaint _graphTooltipTextPaint = new SolidColorPaint(SKColors.Black) {SKTypeface = _fanCurveGraphTypeface};
+    // [ObservableProperty] private SolidColorPaint _graphTooltipTextPaint = new SolidColorPaint(SKColors.Black) {SKTypeface = _fanCurveGraphTypeface};
     // private static readonly SKTypeface _fanCurveGraphTypeface = SKTypeface.FromFamilyName("Noto Sans Mono",SKFontStyleWeight.Normal,SKFontStyleWidth.Normal,SKFontStyleSlant.Upright);
-    private static readonly SKTypeface _fanCurveGraphTypeface =
-        SKTypeface.FromStream(AssetLoader.Open(new Uri("avares://ssprea-nvidia-control/Assets/Fonts/NotoSans/NotoSans-Light.ttf")));
+    // private static readonly SKTypeface _fanCurveGraphTypeface =
+    //     SKTypeface.FromStream(AssetLoader.Open(new Uri("avares://ssprea-nvidia-control/Assets/Fonts/NotoSans/NotoSans-Light.ttf")));
     
     public Axis[] FanCurveGraphXAxes { get; set; } =
         [
             new Axis
             {
                 Name = "Temperature (°C)",
-                NamePaint = new SolidColorPaint(SKColors.AntiqueWhite) {SKTypeface = _fanCurveGraphTypeface}, 
+                NamePaint = new SolidColorPaint(SKColors.AntiqueWhite) , 
                 NameTextSize = 10,
 
-                LabelsPaint = new SolidColorPaint(SKColors.AntiqueWhite){SKTypeface = _fanCurveGraphTypeface}, 
+                LabelsPaint = new SolidColorPaint(SKColors.AntiqueWhite), 
                 TextSize = 10,
                 
 
@@ -119,10 +120,10 @@ public partial class MainWindowViewModel : ViewModelBase
             new Axis
                 {
                     Name = "Fan Speed (%)",
-                    NamePaint = new SolidColorPaint(SKColors.AntiqueWhite) {SKTypeface = _fanCurveGraphTypeface}, 
+                    NamePaint = new SolidColorPaint(SKColors.AntiqueWhite) , 
                     NameTextSize = 10,
 
-                    LabelsPaint = new SolidColorPaint(SKColors.AntiqueWhite)  {SKTypeface = _fanCurveGraphTypeface}, 
+                    LabelsPaint = new SolidColorPaint(SKColors.AntiqueWhite)  , 
                     TextSize = 10,
 
                     SeparatorsPaint = new SolidColorPaint(SKColors.LightSlateGray) 
@@ -389,6 +390,8 @@ public partial class MainWindowViewModel : ViewModelBase
             TunerCurrentMemoryOffset, TunerCurrentPowerLimitMw, SelectedFanCurve?.BaseFanCurve));
     }
     
+    
+    
     private void LoadOcProfileToTuner(OcProfile? ocProfile)
     {
         
@@ -404,7 +407,21 @@ public partial class MainWindowViewModel : ViewModelBase
         
         if (FanCurvesList.Any(x => x.Name == ocProfile.FanCurveName))
             SelectedFanCurve = FanCurvesList.First(x => x.Name == ocProfile.FanCurveName);
-        
+
+
+    }
+
+    public async Task OnLoadProfileButtonClicked()
+    {
+        await LoadSelectedOcProfileToTuner();
+        await RunFlashingAnimationForSeconds(2);
+    }
+    
+    private async Task RunFlashingAnimationForSeconds(int seconds)
+    {
+        FlashingAnimationRunning = true;
+        await Task.Delay(seconds * 1000);
+        FlashingAnimationRunning = false;
     }
     
     public async Task LoadSelectedOcProfileToTuner()
@@ -416,8 +433,12 @@ public partial class MainWindowViewModel : ViewModelBase
         }
         
         LoadOcProfileToTuner(SelectedOcProfile);
+
+
     }
 
+    
+    
     
     
     private async Task CheckAndLoadStartupProfile()

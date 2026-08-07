@@ -548,5 +548,17 @@ namespace ssprea_nvidia_control.Lang {
                 return ResourceManager.GetString("GraphsTooltipSecondsAgo", resourceCulture);
             }
         }
+        
+        public static string TextNvidiaDriverVersionShort {
+            get {
+                return ResourceManager.GetString("TextNvidiaDriverVersionShort", resourceCulture);
+            }
+        }
+        
+        public static string TooltipKofiButton {
+            get {
+                return ResourceManager.GetString("TooltipKofiButton", resourceCulture);
+            }
+        }
     }
 }

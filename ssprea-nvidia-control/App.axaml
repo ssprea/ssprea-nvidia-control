@@ -13,7 +13,7 @@
      <Application.Styles>
          <FluentTheme />
          <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
-         <StyleInclude Source="avares://ssprea-nvidia-control/Controls/ResponsiveGrid.axaml" />
+         <StyleInclude Source="avares://ssprea-nvidia-control/Controls/ResponsiveGridCarousel.axaml" />
      </Application.Styles>
              
      <Application.Resources>

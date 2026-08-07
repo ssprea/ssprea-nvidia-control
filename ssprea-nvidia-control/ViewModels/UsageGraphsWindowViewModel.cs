@@ -48,9 +48,9 @@ public partial class UsageGraphsWindowViewModel : ViewModelBase
     public object GpuUsageLock   {get;} = new();
     public object MemUsageLock   {get;} = new();
     
-    private static SKTypeface _defaultGraphTypeface =  SKTypeface.FromStream(AssetLoader.Open(new Uri("avares://ssprea-nvidia-control/Assets/Fonts/NotoSans/NotoSans-Light.ttf")));
-        
-    [ObservableProperty] private SolidColorPaint _graphTooltipTextPaint = new SolidColorPaint(SKColors.Black) {SKTypeface = _defaultGraphTypeface};
+    // private static SKTypeface _defaultGraphTypeface =  SKTypeface.FromStream(AssetLoader.Open(new Uri("avares://ssprea-nvidia-control/Assets/Fonts/NotoSans/NotoSans-Light.ttf")));
+    //     
+    // [ObservableProperty] private SolidColorPaint _graphTooltipTextPaint = new SolidColorPaint(SKColors.Black) {SKTypeface = _defaultGraphTypeface};
     
     #region GraphStyles
 

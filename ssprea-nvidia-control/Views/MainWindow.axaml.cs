@@ -59,6 +59,11 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
         {
             // await ViewModel!.CheckAndApplyAutoApplyProfile();
         };
+
+        Resized += async (s, e) =>
+        {
+            // Console.WriteLine(Sborricus.Bounds.Width);
+        };
         
         
         this.WhenActivated(action =>

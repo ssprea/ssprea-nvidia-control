@@ -35,8 +35,8 @@ public partial class SudoPasswordRequestWindow  : ReactiveWindow<SudoPasswordReq
     {
         CapsLockWarningLabel.IsVisible = Utils.General.IsCapsLockEnabled();
         
-        if (ViewModel is not null && e is KeyEventArgs keyArgs && keyArgs.Key == Key.Enter)
-            ViewModel.ReturnIfPasswordCorrect();
+        // if (ViewModel is not null && e is KeyEventArgs keyArgs && keyArgs.Key == Key.Enter)
+        //     ViewModel.ReturnIfPasswordCorrect();
         
     }
 

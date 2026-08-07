@@ -35,9 +35,9 @@
             <value>Manda al tuner</value>
         </data>
 
-     <data name="ButtonDeleteProfile" xml:space="preserve">
-            <value>Elimina profilo</value>
-        </data>
+    <data name="ButtonDeleteProfile" xml:space="preserve">
+        <value>Elimina </value>
+    </data>
 
      <data name="ButtonSave" xml:space="preserve">
             <value>Salva</value>
@@ -147,9 +147,9 @@
             <value>Nome del nuovo profilo</value>
         </data>
 
-     <data name="TextCurrent" xml:space="preserve">
-            <value>Attuale:</value>
-        </data>
+    <data name="TextCurrent" xml:space="preserve">
+        <value>Ora:</value>
+    </data>
 
      <data name="TextMin" xml:space="preserve">
             <value>Min:</value>
@@ -158,20 +158,7 @@
      <data name="TextMax" xml:space="preserve">
             <value>Max:</value>
         </data>
-
-     <data name="TextThrottle" xml:space="preserve">
-            <value>Throttle:</value>
-        </data>
-
-     <data name="TextSlowdown" xml:space="preserve">
-            <value>Slowdown:</value>
-        </data>
-
-     <data name="TextShutdown" xml:space="preserve">
-            <value>Shutdown:</value>
-        </data>
-
-     <data name="TextFree" xml:space="preserve">
+    <data name="TextFree" xml:space="preserve">
             <value>Liberi:</value>
         </data>
 
@@ -306,5 +293,11 @@
     </data>
     <data name="GraphsTooltipSecondsAgo" xml:space="preserve">
         <value>s fa</value>
+    </data>
+    <data name="TextNvidiaDriverVersionShort" xml:space="preserve">
+        <value>Versione driver:</value>
+    </data>
+    <data name="TooltipKofiButton" xml:space="preserve">
+        <value>Offrimi un caffè</value>
     </data>
 </root>
