@@ -21,6 +21,9 @@ public partial class FanCurveEditorWindowViewModel : ViewModelBase
         
         SaveCurveCommand = ReactiveCommand.Create(() =>
         {
+            if (CurrentFanCurve is null)
+                return null;
+            
             CurrentFanCurve?.BaseFanCurve.SanitizePoints();
             CurrentFanCurve?.BaseFanCurve.GenerateGpuTempToFanSpeedMap();
             return CurrentFanCurve;

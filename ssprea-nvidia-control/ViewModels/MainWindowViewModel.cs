@@ -203,7 +203,7 @@ public partial class MainWindowViewModel : ViewModelBase
         ShowFanCurveEditorDialog = new Interaction<FanCurveEditorWindowViewModel, FanCurveViewModel?>();
         OpenFanCurveEditorCommand = ReactiveCommand.CreateFromTask<FanCurveViewModel?>(async (toEdit) =>
         {
-            var fanCurveEditorWindowViewModel = new FanCurveEditorWindowViewModel(toEdit);
+            var fanCurveEditorWindowViewModel = new FanCurveEditorWindowViewModel(toEdit?.CloneInstance());
 
             var result = await ShowFanCurveEditorDialog.Handle(fanCurveEditorWindowViewModel);
 

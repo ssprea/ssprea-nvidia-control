@@ -78,5 +78,10 @@ public partial class FanCurveViewModel : ViewModelBase
         };
         
     }
+
+    public FanCurveViewModel CloneInstance()
+    {
+        return new FanCurveViewModel(BaseFanCurve.CloneInstance());
+    }
     
 }

@@ -19,6 +19,11 @@ public class FanCurve
 
     [JsonIgnore]
     public bool NeedsUpdate { get; private set; } = false;
+
+    public FanCurve CloneInstance()
+    {
+        return new FanCurve(Name, CurvePoints.ToArray());
+    }
     
     public FanCurve(params FanCurvePoint[] curvePoints)
     {
