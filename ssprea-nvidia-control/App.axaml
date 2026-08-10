@@ -12,7 +12,19 @@
     </Application.DataTemplates>
   
      <Application.Styles>
-         <FluentTheme />
+         <FluentTheme >
+             <FluentTheme.Palettes>
+
+                 <ColorPaletteResources
+                     x:Key="Light"
+                     Accent="{DynamicResource AccentColor}" />
+
+                 <ColorPaletteResources
+                     x:Key="Dark"
+                     Accent="{DynamicResource AccentColor}" />
+
+             </FluentTheme.Palettes>
+         </FluentTheme>
          <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
          <StyleInclude Source="avares://ssprea-nvidia-control/Controls/ResponsiveGridCarousel.axaml" />
          
@@ -95,12 +107,12 @@
                     <SolidColorBrush x:Key='TextColor'>#F1F0F5</SolidColorBrush>
                     
                     <!--Slider thumb override-->
-                    <SolidColorBrush x:Key="SliderThumbBackground">#505BE6</SolidColorBrush>
-                    <SolidColorBrush x:Key="SliderThumbBackgroundPointerOver">#4F229E</SolidColorBrush>
-                    <SolidColorBrush x:Key="SliderThumbBackgroundPressed">#9C1FE8</SolidColorBrush>
-                    <SolidColorBrush x:Key="SliderThumbBackgroundDisabled">#66505BE6</SolidColorBrush>
-                    <SolidColorBrush x:Key="SliderTrackValueFillPointerOver" Color="{StaticResource AccentColor}"/>
-                    <SolidColorBrush x:Key="SliderTrackValueFillPressed" Color="{StaticResource StrongAccentColor}"/>
+                    <!-- <SolidColorBrush x:Key="SliderThumbBackground">#505BE6</SolidColorBrush> -->
+                    <!-- <SolidColorBrush x:Key="SliderThumbBackgroundPointerOver">#4F229E</SolidColorBrush> -->
+                    <!-- <SolidColorBrush x:Key="SliderThumbBackgroundPressed">#9C1FE8</SolidColorBrush> -->
+                    <!-- <SolidColorBrush x:Key="SliderThumbBackgroundDisabled">#66505BE6</SolidColorBrush> -->
+                    <!-- <SolidColorBrush x:Key="SliderTrackValueFillPointerOver" Color="{StaticResource AccentColor}"/> -->
+                    <!-- <SolidColorBrush x:Key="SliderTrackValueFillPressed" Color="{StaticResource StrongAccentColor}"/> -->
                 </ResourceDictionary>
         <!-- <ResourceDictionary x:Key="Dark"></ResourceDictionary> -->
             </ResourceDictionary.ThemeDictionaries>

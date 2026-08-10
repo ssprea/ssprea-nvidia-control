@@ -11,15 +11,11 @@
         <Setter Property="FontFamily" Value="{DynamicResource NotoSansMonoFont}"/>
     </Style>
     
-    <Style Selector="CheckBox:checked /template/ Border#NormalRectangle">
-        <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
-        <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
-    </Style>
     
-    <Style Selector="CheckBox:pointerover /template/ Border#NormalRectangle">
-        <Setter Property="Background" Value="{DynamicResource StrongAccentBrush}" />
-        <Setter Property="BorderBrush" Value="{DynamicResource StrongAccentBrush}" />
-    </Style>
+    <!-- <Style Selector="CheckBox:pointerover /template/ Border#NormalRectangle"> -->
+    <!--     <Setter Property="Background" Value="{DynamicResource StrongAccentBrush}" /> -->
+    <!--     <Setter Property="BorderBrush" Value="{DynamicResource StrongAccentBrush}" /> -->
+    <!-- </Style> -->
     
     <Style Selector="CheckBox:checked /template/ Path#CheckGlyph">
         <Setter Property="Fill" Value="{DynamicResource ForegroundBrush}" />
