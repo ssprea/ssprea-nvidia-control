@@ -38,6 +38,12 @@ public static class General
         var process = Process.Start(psi);
             
             
+        if (process is null)
+        {
+            Log.Error("Failed to start process: "+psi.FileName);
+            return null;
+        }
+        
         process.StandardInput.Write(SudoPasswordManager.CurrentPassword.Password+"\n");
         if (waitForExit)
         {
@@ -80,9 +86,9 @@ public static class General
             {
                 if (!process.WaitForExit(4000))
                     return null;
+                Log.Debug("PID: "+process.Id);
             }
 
-            Log.Debug("PID: "+process.Id);
             //var output = process.StandardOutput.ReadToEnd();
             
             return process;

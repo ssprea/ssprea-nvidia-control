@@ -30,7 +30,6 @@ using ReactiveUI;
 using Serilog;
 using SkiaSharp;
 using ssprea_nvidia_control.Lang;
-using ssprea_nvidia_control.Lang;
 using ssprea_nvidia_control.Utils;
 using Tmds.DBus.Protocol;
 
@@ -274,11 +273,14 @@ public partial class MainWindowViewModel : ViewModelBase
         
         LoadOcProfileToTuner(new OcProfile("",0,0,SelectedGpu?.PowerLimitMinMw ?? 100000, (FanCurve?)null));
 
+        var accentColor = SKColor.Parse("#505BE6");
+        var strongAccentColor = SKColor.Parse("#9C1FE8");
+        
         FanCurveGraphSeries.Add(new LineSeries<ObservablePoint>(SelectedFanCurveGraphPoints)
         {
-            GeometryStroke=new SolidColorPaint(SKColors.DodgerBlue) {StrokeThickness = 3},
-            Stroke= new SolidColorPaint(SKColors.DodgerBlue) {StrokeThickness = 3},
-            Fill = new SolidColorPaint(SKColors.DodgerBlue.WithAlpha(50)),
+            GeometryStroke=new SolidColorPaint(accentColor) {StrokeThickness = 3},
+            Stroke= new SolidColorPaint(accentColor) {StrokeThickness = 3},
+            Fill = new SolidColorPaint(accentColor.WithAlpha(50)),
             YToolTipLabelFormatter = point => $"{point.Model?.Y}%",
             XToolTipLabelFormatter = point => $"Temp: {point.Model?.X}°C",
             LineSmoothness = 0
@@ -286,8 +288,8 @@ public partial class MainWindowViewModel : ViewModelBase
         
         FanCurveGraphSeries.Add(new LineSeries<ObservablePoint>(CurrentFanSpeedGraphPoints)
         {
-            GeometryStroke=new SolidColorPaint(SKColors.DarkRed) {StrokeThickness = 3},
-            Stroke= new SolidColorPaint(SKColors.DarkRed) {StrokeThickness = 3},
+            GeometryStroke=new SolidColorPaint(strongAccentColor) {StrokeThickness = 3},
+            Stroke= new SolidColorPaint(strongAccentColor) {StrokeThickness = 3},
             YToolTipLabelFormatter = point => $"{point.Model?.Y}%",
             XToolTipLabelFormatter = point => $"{Lang.Resources.TextCurrentTemp} {point.Model?.X}°C",
             LineSmoothness = 0

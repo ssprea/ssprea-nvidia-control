@@ -2,6 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="ssprea_nvidia_control.App"
              xmlns:local="using:ssprea_nvidia_control"
+             xmlns:converters="clr-namespace:ssprea_nvidia_control.Converters"
 
              RequestedThemeVariant="Dark">
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
@@ -18,6 +19,11 @@
              
      <Application.Resources>
          <FontFamily x:Key="NotoSansFont">avares://ssprea-nvidia-control/Assets/Fonts/NotoSans/NotoSans-VariableFont.ttf</FontFamily>
+         <FontFamily x:Key="NotoSansMonoFont">avares://ssprea-nvidia-control/Assets/Fonts/NotoSansMono/NotoSansMono-VariableFont.ttf</FontFamily>
+         <FontFamily x:Key="RobotoMonoFont">avares://ssprea-nvidia-control/Assets/Fonts/Roboto/RobotoMono-VariableFont.ttf</FontFamily>
+         
+         <converters:LiveStatsGridResponsiveColumnConverter x:Key="LiveStatsGridResponsiveColumnConverter"/>
+         <converters:PStateFriendlyNameConverter x:Key="PStateFriendlyNameConverter"/>
      </Application.Resources>
              
      <TrayIcon.Icons>

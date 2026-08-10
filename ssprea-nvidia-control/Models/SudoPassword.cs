@@ -65,7 +65,12 @@ public class SudoPassword
         
         
         var process = Process.Start(psi);
-        
+
+        if (process is null)
+        {
+            Log.Error("Failed to start process: "+psi.FileName);
+            return false;
+        }
         
         process.StandardInput.Write(Password+"\n");
         

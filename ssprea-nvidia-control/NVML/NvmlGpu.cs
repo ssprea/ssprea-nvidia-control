@@ -356,50 +356,7 @@ namespace ssprea_nvidia_control.NVML;
             return(NvmlWrapper.nvmlDeviceGetTemperatureThreshold(_handle,temperatureThresholdType,out uint temperatureThreshold),temperatureThreshold);
         }
 
-        private (int,string) RunCommandWithBash(string command)
-        {
-            var psi = new ProcessStartInfo();
-            psi.FileName = "/bin/bash";
-            psi.Arguments = command;
-            psi.RedirectStandardOutput = true;
-            psi.UseShellExecute = false;
-            psi.CreateNoWindow = true;
-
-            
-            
-            using var process = Process.Start(psi);
-
-            process.WaitForExit();
-
-            
-            var output = process.StandardOutput.ReadToEnd();
-
-            return (process.ExitCode,output);
-        }
         
-        private (int,string) RunCliCommand(string args, string file="/usr/local/bin/snvctl")
-        {
-            var psi = new ProcessStartInfo();
-            psi.FileName = file;
-            psi.Arguments = args;
-            psi.RedirectStandardOutput = true;
-            psi.RedirectStandardInput = true;
-            psi.UseShellExecute = false;
-            psi.CreateNoWindow = true;
-
-            
-            
-            using var process = Process.Start(psi);
-
-            
-            
-            process.WaitForExit();
-
-            
-            var output = process.StandardOutput.ReadToEnd();
-
-            return (process.ExitCode,output);
-        }
 
         private Process? TryRunSudoCliCommandUntilSuccess(string args, string file = "/usr/local/bin/snvctl",
             bool waitForExit = true)

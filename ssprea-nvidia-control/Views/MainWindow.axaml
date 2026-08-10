@@ -12,6 +12,7 @@
         xmlns:lang="clr-namespace:ssprea_nvidia_control.Lang"
         xmlns:controls="clr-namespace:ssprea_nvidia_control.Controls"
         xmlns:sk="clr-namespace:SkiaSharp;assembly=SkiaSharp"
+        xmlns:converters="clr-namespace:ssprea_nvidia_control.Converters"
         x:Class="ssprea_nvidia_control.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
@@ -55,26 +56,60 @@
                     <SolidColorBrush x:Key='TextColor'>Black</SolidColorBrush>
                 </ResourceDictionary>
                 
-                <ResourceDictionary x:Key='Dark'>
-                    <SolidColorBrush x:Key='BackgroundBrush'>#AA262626</SolidColorBrush>
-                    <SolidColorBrush x:Key='BorderBrush'>#1e1f22</SolidColorBrush>
-                    <SolidColorBrush x:Key='ForegroundBrush'>#8b8d92</SolidColorBrush>
-                    <SolidColorBrush x:Key='SmallSectionBackgroundBrushLight'>#DD606060</SolidColorBrush>
-                    <SolidColorBrush x:Key='SmallSectionBackgroundBrushDark'>#DD404848</SolidColorBrush>
-                    <SolidColorBrush x:Key='SmallSectionBorderBrush'>Gray</SolidColorBrush>
-                    <SolidColorBrush x:Key='SectionBackgroundBrushLight'>#AA606060</SolidColorBrush>
-                    <SolidColorBrush x:Key='SectionBackgroundBrushDark'>#AA404848</SolidColorBrush>
-                    <SolidColorBrush x:Key='InfoBarsBorderBrush'>Transparent</SolidColorBrush>
-                    <SolidColorBrush x:Key='HighlightColor'>DodgerBlue</SolidColorBrush>
-                    <!-- <LinearGradientBrush x:Key='ProgressBarGradient' StartPoint="0%,0%" EndPoint="100%,0%"> -->
-                    <!--     <GradientStop Color="#904ECDC4" Offset="0.0"/> -->
-                    <!--     <GradientStop Color="#90FF6B6B" Offset="1.0"/> -->
-                    <!-- </LinearGradientBrush> -->
-                    <Color x:Key='SectionBackgroundColorLight'>#AA606060</Color>
-                    <Color x:Key='SectionBackgroundColorDark'>#AA404848</Color>
-                    <SolidColorBrush x:Key='SelectionColor'>#C191FF</SolidColorBrush>
-                    <SolidColorBrush x:Key='TextColor'>#BDBDBD</SolidColorBrush>
+                <!-- <ResourceDictionary x:Key='goddog'> -->
+                <!-- <SolidColorBrush x:Key='BackgroundBrush'>#AA262626</SolidColorBrush> -->
+                <!-- <SolidColorBrush x:Key='BorderBrush'>#1e1f22</SolidColorBrush> -->
+                <!-- <SolidColorBrush x:Key='ForegroundBrush'>#8b8d92</SolidColorBrush> -->
+                <!-- <SolidColorBrush x:Key='SmallSectionBackgroundBrushLight'>#DD606060</SolidColorBrush> -->
+                <!-- <SolidColorBrush x:Key='SmallSectionBackgroundBrushDark'>#DD404848</SolidColorBrush> -->
+                <!-- <SolidColorBrush x:Key='SmallSectionBorderBrush'>Gray</SolidColorBrush> -->
+                <!-- <SolidColorBrush x:Key='SectionBackgroundBrushLight'>#AA606060</SolidColorBrush> -->
+                <!-- <SolidColorBrush x:Key='SectionBackgroundBrushDark'>#AA404848</SolidColorBrush> -->
+                <!-- <SolidColorBrush x:Key='InfoBarsBorderBrush'>Black</SolidColorBrush> -->
+                <!-- <SolidColorBrush x:Key='HighlightColor'>DodgerBlue</SolidColorBrush> -->
+                <!-- ~1~ <LinearGradientBrush x:Key='ProgressBarGradient' StartPoint="0%,0%" EndPoint="100%,0%"> @1@ -->
+                <!-- ~1~     <GradientStop Color="#904ECDC4" Offset="0.0"/> @1@ -->
+                <!-- ~1~     <GradientStop Color="#90FF6B6B" Offset="1.0"/> @1@ -->
+                <!-- ~1~ </LinearGradientBrush> @1@ -->
+                <!-- <Color x:Key='SectionBackgroundColorLight'>#AA606060</Color> -->
+                <!-- <Color x:Key='SectionBackgroundColorDark'>#AA404848</Color> -->
+                <!-- <SolidColorBrush x:Key='SelectionColor'>#C191FF</SolidColorBrush> -->
+                <!-- <SolidColorBrush x:Key='TextColor'>#BDBDBD</SolidColorBrush> -->
+                <!-- </ResourceDictionary> -->
+                <ResourceDictionary x:Key="Dark">
+                    
+                    <Color x:Key="SuccessColor">#18A88F</Color>
+                    <Color x:Key="WarningColor">#E5A84B</Color>
+                    <Color x:Key="DangerColor">#D9576A</Color>
+                    
+                    <Color x:Key="AccentColor">#505BE6</Color>
+                    <Color x:Key="StrongAccentColor">#9C1FE8</Color>
+
+                    <SolidColorBrush x:Key="SuccessBrush" Color="{StaticResource SuccessColor}" />
+                    <SolidColorBrush x:Key="WarningBrush" Color="{StaticResource WarningColor}" />
+                    <SolidColorBrush x:Key="DangerBrush" Color="{StaticResource DangerColor}" />
+                    <SolidColorBrush x:Key="InfoBrush" Color="{StaticResource AccentColor}" />
+                    
+                    <SolidColorBrush x:Key='BackgroundBrush'>#AA121D30</SolidColorBrush>
+                    <SolidColorBrush x:Key='BorderBrush'>#66224D75</SolidColorBrush>
+                    <SolidColorBrush x:Key='ForegroundBrush'>#E6FFFFFF</SolidColorBrush>
+                    <SolidColorBrush x:Key='SmallSectionBackgroundBrushLight'>#33224D75</SolidColorBrush>
+                    <SolidColorBrush x:Key='SmallSectionBackgroundBrushDark'>#22121D30</SolidColorBrush>
+                    <SolidColorBrush x:Key='SmallSectionBorderBrush'>#66224D75</SolidColorBrush>
+                    <SolidColorBrush x:Key='SectionBackgroundBrushDark'>#11121D30</SolidColorBrush>
+                    <SolidColorBrush x:Key='SectionBackgroundBrushLight'>#22224D75</SolidColorBrush>
+                    <SolidColorBrush x:Key='InfoBarsBorderBrush'>Black</SolidColorBrush>
+                    <SolidColorBrush x:Key='AccentBrush' Color="{StaticResource AccentColor}"/>
+                    <SolidColorBrush x:Key='StrongAccentBrush' Color="{StaticResource StrongAccentColor}"/>
+                    <SolidColorBrush x:Key='TextColor'>#F1F0F5</SolidColorBrush>
+                    
+                    <!--Slider thumb override-->
+                    <SolidColorBrush x:Key="SliderThumbBackground">#505BE6</SolidColorBrush>
+                    <SolidColorBrush x:Key="SliderThumbBackgroundPointerOver">#9C1FE8</SolidColorBrush>
+                    <SolidColorBrush x:Key="SliderThumbBackgroundPressed">#9C1FE8</SolidColorBrush>
+                    <SolidColorBrush x:Key="SliderThumbBackgroundDisabled">#66505BE6</SolidColorBrush>
                 </ResourceDictionary>
+                <!-- <ResourceDictionary x:Key="Dark"></ResourceDictionary> -->
             </ResourceDictionary.ThemeDictionaries>
         </ResourceDictionary>
             
@@ -95,52 +130,126 @@
             <!--     <Setter Property="Foreground" Value="{DynamicResource HighlightColor}" /> -->
             <!-- </Style> -->
             
+            <Style Selector="Label.h1">
+                <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
+                <Setter Property="FontWeight" Value="ExtraBold"/>
+            </Style>
+            
+            <Style Selector="NumericUpDown">
+                <Setter Property="Foreground" Value="{DynamicResource AccentBrush}"/>
+                <Setter Property="FontFamily" Value="{StaticResource NotoSansMonoFont}"/>
+            </Style>
+            
+            <Style Selector="Slider">
+                <Setter Property="Foreground" Value="{DynamicResource AccentBrush}"/>
+            </Style>
+            
+            <Style Selector="Slider /template/ Thumb">
+                <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+            </Style>
+            
             <Style Selector="ProgressBar">
-                <Setter Property="CornerRadius" Value="12" />
-                <Setter Property="Foreground" Value="{DynamicResource HighlightColor}" />
+                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="Foreground" Value="{DynamicResource AccentBrush}" />
+                <Setter Property="Background" Value="Transparent"/>
             </Style>
             
             <Style Selector="Label">
-                <Setter Property="FontFamily" Value="{StaticResource NotoSansFont}"/>
+                <Setter Property="FontFamily" Value="{StaticResource NotoSansMonoFont}"/>
+                <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
             </Style>
             
             <Style Selector="ToolTip">
-                <Setter Property="FontFamily" Value="{StaticResource NotoSansFont}"/>
+                <Setter Property="FontFamily" Value="{StaticResource NotoSansMonoFont}"/>
             </Style>
             
             <Style Selector="Border.panelItem">
-                <Setter Property="BorderBrush" Value="{DynamicResource SmallSectionBorderBrush}"/>
-                <Setter Property="BorderThickness" Value="4"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+                <Setter Property="BorderThickness" Value="0"/>
                 <Setter Property="CornerRadius" Value="10"/>
+                <Setter Property="Margin" Value="10"/>
+                <Setter Property="Padding" Value="2"/>
                 <Setter Property="Background" Value="{DynamicResource SmallSectionBackgroundBrushLight}"/>
+                
             </Style>
+            
+            <Style Selector="Border.panelItem Button">
+                <Setter Property="Margin" Value="2"/>
+            </Style>
+            
+            <Style Selector="Border.section">
+                <Setter Property="Padding" Value="4"/>
+            </Style>
+            
+            <Style Selector="ComboBox">
+                <Setter Property="BorderBrush" Value="Transparent"/>
+                <Setter Property="Margin" Value="3,0,3,0"/>
+                <Setter Property="FontFamily" Value="{StaticResource NotoSansMonoFont}"/>
+            </Style>
+            
+            <!-- <Style Selector="Border.panelItem:nth-child(2n+1)" > -->
+            <!--     <Setter Property="Background" Value="{DynamicResource SmallSectionBackgroundBrushDark}"/> -->
+            <!--      -->
+            <!-- </Style> -->
+            <!-- s -->
+            <!-- <Style Selector="Border.flashable"> -->
+            <!--     <Setter Property="BorderThickness" -->
+            <!-- </Style> -->
             
             <Style Selector="Border.flashing">
                 <Style.Animations>
                     <Animation Duration="0:0:1" IterationCount="INFINITE">
                         <KeyFrame Cue="0%">
-                            <Setter Property="BorderBrush" Value="{DynamicResource SmallSectionBorderBrush}"/>
+                            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
                         </KeyFrame>
                         <KeyFrame Cue="25%">
-                            <Setter Property="BorderBrush" Value="{DynamicResource HighlightColor}"/>
+                            <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
                         </KeyFrame>
                         <KeyFrame Cue="50%">
-                            <Setter Property="BorderBrush" Value="{DynamicResource SmallSectionBorderBrush}"/>
+                            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
                         </KeyFrame>
                         <KeyFrame Cue="75%">
-                            <Setter Property="BorderBrush" Value="{DynamicResource HighlightColor}"/>
+                            <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
                         </KeyFrame>
                         <KeyFrame Cue="100%">
-                            <Setter Property="BorderBrush" Value="{DynamicResource SmallSectionBorderBrush}"/>
+                            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
                         </KeyFrame>
                     </Animation>
                 </Style.Animations>
+                <Setter Property="BorderThickness" Value="3"/>
+                <Setter Property="Padding" Value="0"/>
+                <Setter Property="Margin" Value="0"/>
+            </Style>
+            
+            <Style Selector="Grid.liveStatsPanel Label">
+                <Setter Property="FontFamily" Value="{StaticResource NotoSansMonoFont}"/>
+                <Setter Property="FontWeight" Value="Bold"/>
+                <Setter Property="VerticalAlignment" Value="Center"/>
+            </Style>
+            
+            <Style Selector="Grid.liveStatsPanel ProgressBar">
+                <Setter Property="MinWidth" Value="0"/>
+            </Style>
+            
+            <Style Selector="Grid.liveStatsPanel > Border">
+                <Setter Property="BorderBrush" Value="{DynamicResource InfoBarsBorderBrush}"/>
+                <Setter Property="Background" Value="{DynamicResource SmallSectionBackgroundBrushDark}"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="Padding" Value="3"/>
+                <Setter Property="Margin" Value="0,2,0,2"/>
+            </Style>
+            
+            <Style Selector="Grid.liveStatsPanel > Border:nth-child(8n+1), Grid.liveStatsPanel > Border:nth-child(8n+2), Grid.liveStatsPanel > Border:nth-child(8n+3), Grid.liveStatsPanel > Border:nth-child(8n+4)">
+                <Setter Property="Background" Value="{DynamicResource SmallSectionBackgroundBrushLight}"/>
             </Style>
             
             
             <Style Selector="Button">
                 <Setter Property="CornerRadius" Value="12" />
-                <Setter Property="FontFamily" Value="{StaticResource NotoSansFont}"/>
+                <Setter Property="FontFamily" Value="{StaticResource NotoSansMonoFont}"/> 
+                <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/> 
+                <Setter Property="Background" Value="#33BBBBBB"/> 
             </Style>
         
         
@@ -162,126 +271,187 @@
         
             
             <!--MAIN-->
-            <Border Background="red"  Grid.Column="1" Grid.Row="0" BorderThickness="2">
+            <Border  Grid.Column="1" Grid.Row="0" BorderThickness="2">
                 
                     <!--lasciare qualcosa tipo *.20*,* di colonne e fare una singola responsivecarouselgrid-->
                 
-                <Grid ColumnDefinitions="*,13*,*,4*,*" 
-                  RowDefinitions="*,*,*,*,*,*,*"
-                   
+                <Grid RowDefinitions="*,*,*,*,*,*,*" Name="TopGrid"
                   
                   >
                 
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                        <ColumnDefinition Width="{Binding #TopGrid.Bounds.Width, Converter={StaticResource LiveStatsGridResponsiveColumnConverter}}"></ColumnDefinition>
+                        <!--   <ColumnDefinition Width="{Binding #LiveStatsGrid.Bounds.Width,  -->
+                        <!-- Converter={StaticResource LiveStatsGridResponsiveColumnConverter}}"></ColumnDefinition> -->
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                        <ColumnDefinition Width="6*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    
                     <!--live stats-->
                     <Border Grid.Column="1" Grid.RowSpan="5"
-                            Grid.Row="1" BorderBrush="Gray" BorderThickness="2" Padding="8" CornerRadius="10" Background="{DynamicResource SectionBackgroundBrushDark}"
+                            Grid.Row="1"  BorderThickness="2" Padding="8" CornerRadius="10" Background="{DynamicResource SectionBackgroundBrushDark}"
                             >
                         
-                        <Grid RowDefinitions="*,*,*,*,*,*"
-                              ColumnDefinitions="2*,12*,*,*,*"
-                              
-                              >
+                        
+                        <Grid Classes="liveStatsPanel" RowDefinitions="*,*,*,*,*,*,*" HorizontalAlignment="Stretch">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                              <!--   <ColumnDefinition Width="{Binding #LiveStatsGrid.Bounds.Width,  -->
+                              <!-- Converter={StaticResource LiveStatsGridResponsiveColumnConverter}}"></ColumnDefinition> -->
+                                <ColumnDefinition Width="*"></ColumnDefinition>
+                                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
                     
                             <!--GPU CLOCK-->
-                            <Label Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" FontSize="12" HorizontalAlignment="Right"> CORE CLCK </Label>
+                            <Border Grid.Column="0" Grid.Row="0">
+                                <Label   FontSize="12" HorizontalAlignment="Right"> CORE CLCK </Label>
+                            </Border>
                                     
-                            <Border Grid.Column="1" Grid.Row="0" BorderBrush="{DynamicResource InfoBarsBorderBrush}" BorderThickness="2" Padding="3">
-                                <ProgressBar Minimum="0" Maximum="3000" Value="{Binding SelectedGpu.GpuClockCurrent, FallbackValue=0}"  VerticalAlignment="Stretch" />
+                            <Border  Grid.Column="1" Grid.Row="0"  HorizontalAlignment="Stretch" >
+                                <ProgressBar Minimum="0" Maximum="3000" MinWidth="0" Value="{Binding SelectedGpu.GpuClockCurrent, FallbackValue=0}"  VerticalAlignment="Stretch" />
                             </Border>
-                            <Border Grid.Column="2" Grid.Row="0" BorderBrush="{DynamicResource InfoBarsBorderBrush}" BorderThickness="2">
-                                <Label  VerticalAlignment="Center" HorizontalAlignment="Right" FontWeight="Bold" Content="{Binding SelectedGpu.GpuClockCurrent, FallbackValue=0000}" /> 
+                            <Border  Grid.Column="2" Grid.Row="0" >
+                                <Label   HorizontalAlignment="Right"  Content="{Binding SelectedGpu.GpuClockCurrent, FallbackValue=0000}" /> 
                             </Border>
-                            <Label Grid.Column="3" Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Left"> MHz </Label>
+                            
+                            <Border Grid.Column="3" Grid.Row="0">
+                                
+                                <Label   HorizontalAlignment="Right"> MHz </Label>
+                            </Border>
                             
                             <!--MEM CLOCK-->
-                            <Label Grid.Column="0" Grid.Row="1" VerticalAlignment="Center" FontSize="12" HorizontalAlignment="Right"> MEM CLCK </Label>
-                            <Border Grid.Column="1" Grid.Row="1" BorderBrush="{DynamicResource InfoBarsBorderBrush}" BorderThickness="2" Padding="3">
+                            <Border Grid.Column="0" Grid.Row="1">
+                                <Label  VerticalAlignment="Center" FontSize="12" HorizontalAlignment="Right"> MEM CLCK </Label>
+                            </Border>
+                                
+                            <Border Grid.Column="1" Grid.Row="1" >
                                 <ProgressBar Minimum="0" Maximum="10000" Value="{Binding SelectedGpu.MemClockCurrent, FallbackValue=0}"  VerticalAlignment="Stretch" />
                             </Border>
                             
-                            <Border Grid.Column="2" Grid.Row="1" BorderBrush="{DynamicResource InfoBarsBorderBrush}" BorderThickness="2">
+                            <Border Grid.Column="2" Grid.Row="1" >
                                 <Label  VerticalAlignment="Center" HorizontalAlignment="Right" Content="{Binding SelectedGpu.MemClockCurrent, FallbackValue=0000}"/>
                             </Border>
                             
-                            <Label Grid.Column="3" Grid.Row="1" VerticalAlignment="Center"> MHz </Label>
+                            <Border Grid.Column="3" Grid.Row="1">
+                                
+                                <Label  VerticalAlignment="Center"> MHz </Label>
+                            </Border>
                             
                             <!--MEM USE-->
-                            <Label Grid.Column="0" Grid.Row="2" VerticalAlignment="Center" FontSize="12" HorizontalAlignment="Right"> MEM USE </Label>
-                            
-                            <Border Grid.Column="1" Grid.Row="2"  BorderBrush="{DynamicResource InfoBarsBorderBrush}" BorderThickness="2" Padding="3">
-                                <ProgressBar  VerticalAlignment="Stretch" Value="{Binding SelectedGpu.MemoryUsed, FallbackValue=0}" Minimum="0" Maximum="{Binding SelectedGpu.MemoryTotal,FallbackValue=1000000}"/>
-                                
+                            <Border Grid.Column="0" Grid.Row="2">
+                                <Label  VerticalAlignment="Center" FontSize="12" HorizontalAlignment="Right"> MEM USE </Label>
                             </Border>
-                            <Border Grid.Column="2" Grid.Row="2" BorderBrush="{DynamicResource InfoBarsBorderBrush}" BorderThickness="2">
+                            <Border Grid.Column="1" Grid.Row="2"  >
+                                <ProgressBar  VerticalAlignment="Stretch" Value="{Binding SelectedGpu.MemoryUsed, FallbackValue=0}" Minimum="0" Maximum="{Binding SelectedGpu.MemoryTotal,FallbackValue=1000000}"/>
+                            
+                            </Border>
+                            <Border Grid.Column="2" Grid.Row="2" >
                             
                                 <Label  VerticalAlignment="Center" HorizontalAlignment="Right" Content="{Binding SelectedGpu.MemoryUsedMBFormatted, FallbackValue=00000}"/>
                             </Border>
-                            <Label Grid.Column="3" Grid.Row="2" VerticalAlignment="Center"> MB </Label>
+                            
+                            <Border Grid.Column="3" Grid.Row="2">
+                                
+                                <Label  VerticalAlignment="Center"> MB </Label>
+                            </Border>
                             <!-- <Label Grid.Column="3" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Right">/ </Label> -->
                             <!-- <Label Grid.Column="4" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Left" Content="{Binding SelectedGpu.MemoryTotalMB, FallbackValue=00000}"/> -->
                             
                             
                             <!--POWER USAGE-->
-                            <Label Grid.Column="0" Grid.Row="3" VerticalAlignment="Center" FontSize="12" HorizontalAlignment="Right"> POWER </Label>
-                            
-                            <Border Grid.Column="1" Grid.Row="3"  BorderBrush="{DynamicResource InfoBarsBorderBrush}" BorderThickness="2" Padding="3">
+                            <Border Grid.Column="0" Grid.Row="3">
+                                <Label  VerticalAlignment="Center" FontSize="12" HorizontalAlignment="Right"> POWER </Label>
+                            </Border>
+                            <Border Grid.Column="1" Grid.Row="3"  >
                                 <ProgressBar  VerticalAlignment="Stretch"  Minimum="0" Value="{Binding SelectedGpu.GpuPowerUsage, FallbackValue=0}" Maximum="{Binding SelectedGpu.PowerLimitCurrentMw,FallbackValue=1000}"/>
                             </Border>
                             
-                            <Border Grid.Column="2" Grid.Row="3" BorderBrush="{DynamicResource InfoBarsBorderBrush}" BorderThickness="2">
+                            <Border Grid.Column="2" Grid.Row="3" >
                                 <Label  VerticalAlignment="Center" HorizontalAlignment="Right" Content="{Binding SelectedGpu.GpuPowerUsageWFormatted, FallbackValue=0000}"/>
                             </Border>
-                            <Label Grid.Column="3" Grid.Row="3" VerticalAlignment="Center"> W </Label>
+                            
+                            
+                            <Border Grid.Column="3" Grid.Row="3">
+                                <Label  VerticalAlignment="Center"> W </Label>
+                            </Border>
                             <!-- <Label Grid.Column="3" Grid.Row="3" VerticalAlignment="Center" HorizontalAlignment="Right">/ </Label> -->
                             <!-- <Label Grid.Column="4" Grid.Row="3" VerticalAlignment="Center" HorizontalAlignment="Left" Content="{Binding SelectedGpu.PowerLimitCurrentW, FallbackValue=00000}"/> -->
                             
                             <!--CORE TEMP-->
-                            <Label Grid.Column="0" Grid.Row="4" VerticalAlignment="Center" FontSize="12" HorizontalAlignment="Right"> CORE TEMP </Label>
-                            
-                            <Border Grid.Column="1" Grid.Row="4"  BorderBrush="{DynamicResource InfoBarsBorderBrush}" BorderThickness="2" Padding="3">
+                            <Border Grid.Column="0" Grid.Row="4">
+                                <Label  VerticalAlignment="Center" FontSize="12" HorizontalAlignment="Right"> CORE TEMP </Label>
+                            </Border>
+                            <Border Grid.Column="1" Grid.Row="4"  >
                                 <ProgressBar  VerticalAlignment="Stretch" Minimum="0" Maximum="{Binding SelectedGpu.TemperatureThresholdShutdown,FallbackValue=98}" Value="{Binding SelectedGpu.GpuTemperature,FallbackValue=0}"/>
                             </Border>
-                            <Border Grid.Column="2" Grid.Row="4" BorderBrush="{DynamicResource InfoBarsBorderBrush}" BorderThickness="2">
+                            <Border Grid.Column="2" Grid.Row="4" >
                                 <Label  VerticalAlignment="Center" HorizontalAlignment="Right" Content="{Binding SelectedGpu.GpuTemperature, FallbackValue=0000}" Foreground="{Binding SelectedGpu.TemperatureIndicatorColorBrush}" />
                             </Border>
-                            <Label Grid.Column="3" Grid.Row="4" VerticalAlignment="Center" Foreground="{Binding SelectedGpu.TemperatureIndicatorColorBrush}"> °C </Label>
+                            <Border Grid.Column="3" Grid.Row="4">
+                                <Label  VerticalAlignment="Center" Foreground="{Binding SelectedGpu.TemperatureIndicatorColorBrush}"> °C </Label>
+                            </Border>
                             
                             <!--GPU USAGE-->
-                            <Label Grid.Column="0" Grid.Row="5" VerticalAlignment="Center" FontSize="12" HorizontalAlignment="Right"> GPU USAGE </Label>
-                            
-                            <Border Grid.Column="1" Grid.Row="5" BorderBrush="{DynamicResource InfoBarsBorderBrush}" BorderThickness="2" Padding="3">
+                            <Border Grid.Column="0" Grid.Row="5">
+                                <Label  VerticalAlignment="Center" FontSize="12" HorizontalAlignment="Right"> GPU USAGE </Label>
+                            </Border>
+                            <Border Grid.Column="1" Grid.Row="5" >
                                 <ProgressBar  Minimum="0" Maximum="100" Value="{Binding SelectedGpu.UtilizationCore,FallbackValue=0}" VerticalAlignment="Stretch"/>
                             </Border>
-                            <Border Grid.Column="2" Grid.Row="5" BorderBrush="{DynamicResource InfoBarsBorderBrush}" BorderThickness="2">
+                            <Border Grid.Column="2" Grid.Row="5" >
                                 <Label  VerticalAlignment="Center" HorizontalAlignment="Right" Content="{Binding SelectedGpu.UtilizationCore, FallbackValue=000}" />
                             </Border>
-                            <Label Grid.Column="3" Grid.Row="5" VerticalAlignment="Center"> % </Label>
+                            
+                            <Border Grid.Column="3" Grid.Row="5">
+                                <Label  VerticalAlignment="Center"> % </Label>
+                            </Border>
+                            
+                            <!--mem ctl USAGE-->
+                            <Border Grid.Column="0" Grid.Row="6">
+                                <Label  VerticalAlignment="Center" FontSize="12" HorizontalAlignment="Right"> MEM CTL </Label>
+                            </Border>
+                            <Border Grid.Column="1" Grid.Row="6" >
+                                <ProgressBar  Minimum="0" Maximum="100" Value="{Binding SelectedGpu.UtilizationMemCtl,FallbackValue=0}" VerticalAlignment="Stretch"/>
+                            </Border>
+                            <Border Grid.Column="2" Grid.Row="6" >
+                                <Label  VerticalAlignment="Center" HorizontalAlignment="Right" Content="{Binding SelectedGpu.UtilizationMemCtl, FallbackValue=000}" />
+                            </Border>
+                            <Border Grid.Column="3" Grid.Row="6">
+                                <Label  VerticalAlignment="Center"> % </Label>
+                            </Border>
                     
                         </Grid>
                         
                     </Border>
                 
-                    <!--PROFILES AND GPU SELECT-->
-                    <DockPanel Background="Blue" Grid.Column="3" Grid.RowSpan="5" Grid.Row="1">
+                    <!--PROFILES-->
+                    
                         
-                        <Border
-                                BorderBrush="DimGray"
-                                Background="{DynamicResource SectionBackgroundBrushDark}"
-                                BorderThickness="2"
-                                CornerRadius="20"
-                                Padding="2"
-                                DockPanel.Dock="Top"
-                        >
+                    <Border Grid.Column="3" Grid.RowSpan="5" Grid.Row="1"
+                            BorderBrush="Transparent"
+                            Background="{DynamicResource SectionBackgroundBrushLight}"
+                            BorderThickness="0"
+                            CornerRadius="20"
+                            Padding="8"
+                            DockPanel.Dock="Top"
+                    >
                     
                             <!--PROFILES MAIN STACKPANEL-->
-                            <Grid ColumnDefinitions="*,*"  RowDefinitions="*,*,*,*,*,*">
+                        <DockPanel LastChildFill="False">
                         
-                            <Label Grid.ColumnSpan="2" VerticalAlignment="Stretch" HorizontalAlignment="Center" Content="{x:Static lang:Resources.ProfilesSection}"/>
+                            <DockPanel.Styles>
+                                <Style Selector="Border">
+                                    <Setter Property="Padding" Value="10,0,10,0"/>
+                                    <Setter Property="Margin" Value="0,5,0,5"/>
+                                </Style>
+                            </DockPanel.Styles>
                             
-                            <Border Margin="2" VerticalAlignment="Top" Grid.Row="1" Grid.ColumnSpan="2" BorderBrush="DimGray" BorderThickness="2" CornerRadius="20" Background="{DynamicResource SectionBackgroundBrushLight}">
+                            <Label DockPanel.Dock="Top" Classes="h1" VerticalAlignment="Stretch" HorizontalAlignment="Center" Content="{x:Static lang:Resources.ProfilesSection}"/>
+                            
+                            <Border DockPanel.Dock="Top"  VerticalAlignment="Top"  Classes="panelItem" >
                                 <StackPanel  Orientation="Horizontal" Spacing="3">
-                                    <Label/>
-                                    <Label/>
                                     <CheckBox IsChecked="{Binding IsStartupProfileChecked}" Command="{Binding SaveStartupProfileCommand}" CommandParameter="{Binding #CurrentSelectedProfileCombobox.SelectedItem}" VerticalAlignment="Top" FontSize="12" HorizontalAlignment="Stretch" Content="{x:Static lang:Resources.CheckboxStartupProfile}">
                                         <ToolTip.Tip>
                                             <TextBlock Text="{x:Static lang:Resources.TooltipSaveStartupProfile}"/>
@@ -292,10 +462,9 @@
                                 </StackPanel>
                             </Border> 
                             
-                            <Border Margin="2" Grid.Row="2" Grid.ColumnSpan="2" BorderBrush="DimGray" BorderThickness="2" CornerRadius="20" Background="{DynamicResource SectionBackgroundBrushLight}">
+                            <Border  DockPanel.Dock="Top" Classes="panelItem">
                                 <StackPanel  Spacing="3" Orientation="Horizontal">
-                                    <Label/>
-                                    <Label/>
+                                    
                                     <CheckBox IsEnabled="False" VerticalAlignment="Center" FontSize="12" HorizontalAlignment="Stretch" Command="{Binding SaveAutoApplyProfileCommand}" CommandParameter="{Binding #CurrentSelectedProfileCombobox.SelectedItem}" IsChecked="{Binding IsAutoApplyProfileChecked}" Content="{x:Static lang:Resources.CheckboxDefaultProfile}">
                                         <ToolTip.Tip>
                                             <TextBlock Text="{x:Static lang:Resources.TooltipSaveAutoApplyProfile}"/>
@@ -313,74 +482,81 @@
                             
                             
                             
-                            <ComboBox Grid.Row="3" Grid.ColumnSpan="2" SelectedItem="{Binding SelectedOcProfile}"
-                                      ItemsSource="{Binding OcProfilesList}" 
-                                      x:Name="CurrentSelectedProfileCombobox"
-                                      Margin="2"
-                                      SelectedIndex="1"
-                                      VerticalAlignment="Bottom" 
-                                      HorizontalAlignment="Stretch"
-                            >
-                        
-                                <ComboBox.ItemTemplate>
-                                    <DataTemplate>
-                                        <Label Content="{Binding Name} " />
-                                    </DataTemplate>
-                                </ComboBox.ItemTemplate>
-                                
-                            </ComboBox>
                             
                             
                             
-                                
-                            <Button Grid.Row="4" Grid.Column="0" DockPanel.Dock="Left" Content="{x:Static lang:Resources.ButtonLoadToTuner}" Command="{Binding OnLoadProfileButtonClicked}" HorizontalAlignment="Left"/>
-                            <Button Grid.Row="4" Grid.Column="1" DockPanel.Dock="Right" Content="{x:Static lang:Resources.ButtonDeleteProfile}" Command="{Binding DeleteOcProfile}" Background="#40E85F68" HorizontalAlignment="Right"/>
-                            
-                            
-                            <DockPanel Grid.Row="5" Grid.ColumnSpan="2" >
-                                
-                                <Button DockPanel.Dock="Right" CornerRadius="10" Content="{x:Static lang:Resources.ButtonSave}" Command="{Binding SaveTempTunerSettingsToProfileAndUpdateFileAsync}">
-                                    <ToolTip.Tip>
-                                        <StackPanel>
-                                            <TextBlock Text="{x:Static lang:Resources.TooltipSaveAsProfile}" />
-                                        </StackPanel>
-                                    </ToolTip.Tip>
-                                </Button>
-                                <TextBox Margin="2" MinHeight="0" CornerRadius="10"  HorizontalAlignment="Stretch" Watermark="{x:Static lang:Resources.WatermarkNewProfileName}" UseFloatingWatermark="False" BorderThickness="0" Text="{Binding TunerCurrentProfileName,FallbackValue=''}"></TextBox>
+                            <Border  DockPanel.Dock="Bottom" Classes="panelItem">
+                                <DockPanel Grid.Row="5" Grid.ColumnSpan="2"  >
+                                    
+                                    <Button DockPanel.Dock="Right" CornerRadius="10" Content="{x:Static lang:Resources.ButtonSave}" Command="{Binding SaveTempTunerSettingsToProfileAndUpdateFileAsync}">
+                                        <ToolTip.Tip>
+                                            <StackPanel>
+                                                <TextBlock Text="{x:Static lang:Resources.TooltipSaveAsProfile}" />
+                                            </StackPanel>
+                                        </ToolTip.Tip>
+                                    </Button>
+                                    <TextBox  MinHeight="30" CornerRadius="10" VerticalAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" PlaceholderText="{x:Static lang:Resources.WatermarkNewProfileName}" UseFloatingPlaceholder="False" BorderThickness="0" Text="{Binding TunerCurrentProfileName,FallbackValue=''}"></TextBox>
 
-                            </DockPanel>
+                                </DockPanel>
+                            </Border>
                             
-                        </Grid>
-                    
-                        </Border>
-                        
-                        <!--gpu select-->
-                        <Border   DockPanel.Dock="Bottom" Padding="2" Background="{DynamicResource SmallSectionBackgroundBrushDark}" BorderBrush="{DynamicResource HighlightColor}" BorderThickness="4" CornerRadius="10" HorizontalAlignment="Center" VerticalAlignment="Top"
-                        >
-                            <DockPanel >
-                        
-                                <Label DockPanel.Dock="Left" VerticalAlignment="Center" Content="{x:Static lang:Resources.SelectGpu}"/>
-                                <ComboBox SelectedItem="{Binding SelectedGpu}"
-                                          ItemsSource="{Binding NvmlService.GpuList}" 
-                                          SelectedIndex="1" VerticalAlignment="Center" HorizontalAlignment="Stretch"
-                                          DockPanel.Dock="Right"
+                            <Border  DockPanel.Dock="Bottom" >
+                                <DockPanel DockPanel.Dock="Top">
+                                    <Button Grid.Row="4" Grid.Column="0" DockPanel.Dock="Left" Content="{x:Static lang:Resources.ButtonLoadToTuner}" Command="{Binding OnLoadProfileButtonClicked}" HorizontalAlignment="Left"/>
+                                    <Button Grid.Row="4" Grid.Column="1" DockPanel.Dock="Right" Content="{x:Static lang:Resources.ButtonDeleteProfile}" Command="{Binding DeleteOcProfile}" Background="#40E85F68" HorizontalAlignment="Right"/>
+                                </DockPanel>
+                            </Border>
+                            
+                            <Border  DockPanel.Dock="Bottom">
+                                <ComboBox DockPanel.Dock="Top" SelectedItem="{Binding SelectedOcProfile}"
+                                          ItemsSource="{Binding OcProfilesList}" 
+                                          x:Name="CurrentSelectedProfileCombobox"
+                                          Margin="0"
+                                          SelectedIndex="1"
+                                          VerticalAlignment="Bottom" 
+                                          HorizontalAlignment="Stretch" MinHeight="50"
                                 >
+                            
                                     <ComboBox.ItemTemplate>
                                         <DataTemplate>
                                             <Label Content="{Binding Name} " />
                                         </DataTemplate>
                                     </ComboBox.ItemTemplate>
+                                    
                                 </ComboBox>
+                            </Border>
+                            
+                        </DockPanel>
+                    </Border>
+                        
+                        
+                    
+                   
+                    
+                    <!--gpu select-->
+                    <Border   Grid.Column="1" Grid.Row="6" Padding="2" 
+                              Margin="5"
+                              Background="{DynamicResource SmallSectionBackgroundBrushLight}" 
+                              BorderBrush="{DynamicResource BorderBrush}" BorderThickness="4" CornerRadius="10" HorizontalAlignment="Center" VerticalAlignment="Top"
+                    >
+                        <DockPanel >
+                        
+                            <Label DockPanel.Dock="Left" VerticalAlignment="Center" Content="{x:Static lang:Resources.SelectGpu}"/>
+                            <ComboBox SelectedItem="{Binding SelectedGpu}"
+                                      ItemsSource="{Binding NvmlService.GpuList}" 
+                                      SelectedIndex="1" VerticalAlignment="Center" HorizontalAlignment="Stretch"
+                                      DockPanel.Dock="Right"  CornerRadius="10"
+                            >
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Label Content="{Binding Name} " />
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
                                         
                         
-                            </DockPanel>
-                        </Border>
-                        
-                        
-                    </DockPanel>
-                    <!--profiles-->
-                    
-                
+                        </DockPanel>
+                    </Border>
                     
                     
                     <!-- ~1~kofi@1@ -->
@@ -413,10 +589,6 @@
                         <Style Selector="Label.onlyWideMode">
                             <Setter Property="IsVisible" Value="False"/>
                         </Style>
-                        
-                                    
-                                    
-                                    
                     </ContainerQuery>
                                 
                     <ContainerQuery Name="InfosContainer" Query="min-width:320">
@@ -429,386 +601,356 @@
                                 
                 </Panel.Styles>
                 
-                <Border Background="{DynamicResource SectionBackgroundBrushDark}" BorderThickness="3" CornerRadius="20" BorderBrush="Gray" >
+                <Border Background="{DynamicResource SectionBackgroundBrushDark}" BorderThickness="3" CornerRadius="20" BorderBrush="{DynamicResource BorderBrush}" >
                     <!-- <ScrollViewer FlowDirection="LeftToRight" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled"> -->
                     <!--BOTTOM MENU-->
                     
                         <controls:ResponsiveGridCarousel  GridColumnDefinitions="*,*,*" Breakpoint="700">
-                                
                             
+                                <!--INFO GRID-->
+                                <Grid RowDefinitions="*,5*" IsVisible="True">
+                    
+                                    <Label Classes="h1" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Content="{x:Static lang:Resources.InfoSection}"/>
                         
-                            <!--INFO GRID-->
-                            <Grid 
-                        RowDefinitions="*,5*"
-                        IsVisible="True"
-                        >
-                    
-                        <Label Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Content="{x:Static lang:Resources.InfoSection}"/>
-                        
-                        <!--INFO ITEMS STACK PANEL-->
-                        <Grid  Grid.Row="1" Grid.Column="0"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                               RowDefinitions="*,*,*,*,*">
-                            
-                            
-                            
-                            <Border  
-                                Container.Name="InfosContainer" Container.Sizing="Width"
-                                Grid.Row="0" DockPanel.Dock="Top" Classes="panelItem" Padding="2" Margin="10"  HorizontalAlignment="Center" VerticalAlignment="Center">
-                                <StackPanel 
-                                    Orientation="Horizontal" 
-                                    HorizontalAlignment="Center"
-                                >
-                                    
-                                    <Label Classes="onlyWideMode" VerticalAlignment="Center" Content="{x:Static lang:Resources.CurrentPstate}"/>
-                                    <Label  VerticalAlignment="Center" FontWeight="Bold" Content="{Binding SelectedGpu.GpuPState, FallbackValue=0000}"/>
+                                    <!--INFO ITEMS GRID-->
+                                    <Grid  Grid.Row="1" Grid.Column="0"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" RowDefinitions="*,*,*,*,*">
+                                        
+                                        <Border  
+                                            Container.Name="InfosContainer" Container.Sizing="Width"
+                                            Grid.Row="0" DockPanel.Dock="Top" Classes="panelItem" Padding="2" Margin="10"  HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <StackPanel 
+                                                Orientation="Horizontal" 
+                                                HorizontalAlignment="Center"
+                                            >
+                                                
+                                                <Label Classes="onlyWideMode" VerticalAlignment="Center" Content="{x:Static lang:Resources.CurrentPstate}"/>
+                                                <Label  VerticalAlignment="Center" FontWeight="Bold" Content="{Binding SelectedGpu.GpuPState,Converter={StaticResource PStateFriendlyNameConverter}, FallbackValue=0000}"/>
 
-                    
-                                </StackPanel>
-                            </Border>
-                            
-                            <Border 
-                                Container.Name="InfosContainer" Container.Sizing="Width"
-                                Grid.Row="1" DockPanel.Dock="Top" Classes="panelItem" Padding="2" Margin="10" Background="{DynamicResource SmallSectionBackgroundBrushDark}" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                <StackPanel 
-                                    Orientation="Horizontal" 
-                                    HorizontalAlignment="Center"
-                                >
-                    
-                                    <Label Classes="onlyWideMode" VerticalAlignment="Center" Content="{x:Static lang:Resources.TextPowerLimit}"/>
-                                    <Label Classes="onlySemiWideMode" VerticalAlignment="Center" Content="PL:"/>
-                                    <Label Classes="onlyWideMode" VerticalAlignment="Center" Content="{x:Static lang:Resources.TextCurrent}"/>
-                                    <Label VerticalAlignment="Center" FontWeight="Bold" Content="{Binding SelectedGpu.PowerLimitCurrentW, FallbackValue=0000}"/> 
-                                    <Label Classes="onlyWideMode" VerticalAlignment="Center" Content="{x:Static lang:Resources.TextMin}"/>
-                                    <Label Classes="onlySemiWideMode"  VerticalAlignment="Center" Content="|"/>
-                                    <Label VerticalAlignment="Center" Foreground="Aquamarine" FontWeight="Bold" Content="{Binding SelectedGpu.PowerLimitMinW, FallbackValue=0000}"/> 
-                                    <Label Classes="onlyWideMode" VerticalAlignment="Center" Content="{x:Static lang:Resources.TextMax}"/>
-                                    <Label Classes="onlySemiWideMode"  VerticalAlignment="Center" Content="-"/>
-                                    <Label VerticalAlignment="Center" Foreground="Coral" FontWeight="Bold" Content="{Binding SelectedGpu.PowerLimitMaxW, FallbackValue=0000}"/> 
-
-                    
-                                </StackPanel>
-                            </Border>
-                            
-                            <Border 
-                                Container.Name="InfosContainer" Container.Sizing="Width"
-                                Grid.Row="2" DockPanel.Dock="Top" Classes="panelItem" Padding="2" Margin="10"  HorizontalAlignment="Center" VerticalAlignment="Center">
-                                <StackPanel 
-                                    Orientation="Horizontal" 
-                                    HorizontalAlignment="Center"
-                                    
-                                >
-                    
-                                    <Label Classes="onlyWideMode" VerticalAlignment="Center" Content="{x:Static lang:Resources.TextTemps}"/>
-                                    <Label Classes="onlySemiWideMode" VerticalAlignment="Center" Content="Max Temps:"/>
-                                    <Label Classes="onlyWideMode" VerticalAlignment="Center" Content="{x:Static lang:Resources.TextThrottle}"/>
-                                    <Label VerticalAlignment="Center" Foreground="Coral" FontWeight="Bold" Content="{Binding SelectedGpu.TemperatureThresholdThrottle, FallbackValue=00}"/> 
-                                    <Label Classes="onlyWideMode" VerticalAlignment="Center" Content="{x:Static lang:Resources.TextSlowdown}"/>
-                                    <Label Classes="onlySemiWideMode"  VerticalAlignment="Center" Content="-"/>
-                                    <Label VerticalAlignment="Center" Foreground="OrangeRed" FontWeight="Bold" Content="{Binding SelectedGpu.TemperatureThresholdSlowdown,FallbackValue=00}"/> 
-                                    <Label Classes="onlyWideMode" VerticalAlignment="Center" Content="{x:Static lang:Resources.TextShutdown}"/>
-                                    <Label Classes="onlySemiWideMode"  VerticalAlignment="Center" Content="-"/>
-                                    <Label VerticalAlignment="Center" Foreground="DarkRed" FontWeight="Bold" Content="{Binding SelectedGpu.TemperatureThresholdShutdown,FallbackValue=00}"/> 
-
-                    
-                                </StackPanel>
-                            </Border>
-                            
-                            <Border 
-                                Container.Name="InfosContainer" Container.Sizing="Width"
-                                Grid.Row="3" DockPanel.Dock="Top" Classes="panelItem" Padding="2" Margin="10" Background="{DynamicResource SmallSectionBackgroundBrushDark}"  HorizontalAlignment="Center" VerticalAlignment="Center">
-                                <StackPanel 
-                                    Orientation="Horizontal" 
-                                    HorizontalAlignment="Center"
-                            
-                                >
-                    
-                                    <Label Classes="onlyWideMode" VerticalAlignment="Center" Content="{x:Static lang:Resources.TextMemoryStats}"/>
-                                    <Label Classes="onlySemiWideMode" VerticalAlignment="Center" Content="Mem:"/>
-                                    <Label Classes="onlyWideMode" VerticalAlignment="Center" Content="{x:Static lang:Resources.TextFree}"/>
-                                    <Label VerticalAlignment="Center" Foreground="LightGreen" FontWeight="Bold" Content="{Binding SelectedGpu.MemoryFreeMBFormatted, FallbackValue=00000}"/> 
-                                    <Label Classes="onlyWideMode" VerticalAlignment="Center" Content="{x:Static lang:Resources.TextOutOf}"/>
-                                    <Label Classes="onlySemiWideMode"  VerticalAlignment="Center" Content="-"/>
-                                    <Label VerticalAlignment="Center"  FontWeight="Bold" Content="{Binding SelectedGpu.MemoryTotalMBFormatted,FallbackValue=00000}"/> 
-
-                    
-                                </StackPanel>
-                            </Border>
-                            
-                            <Border 
-                                Container.Name="InfosContainer" Container.Sizing="Width"
-                                Grid.Row="4" DockPanel.Dock="Top" Classes="panelItem" Padding="2" Margin="10"   HorizontalAlignment="Center" VerticalAlignment="Center">
-                                <StackPanel 
-                                    Orientation="Horizontal" 
-                                    HorizontalAlignment="Center"
-                            
-                                >
-                    
-                                    <Label Classes="onlyWideMode" VerticalAlignment="Center" Content="{x:Static lang:Resources.TextNvidiaDriverVersion}"/>
-                                    <Label Classes="onlySemiWideMode" VerticalAlignment="Center" Content="{x:Static lang:Resources.TextNvidiaDriverVersionShort}"/>
-                                    <Label VerticalAlignment="Center" FontWeight="Bold" Content="{Binding CurrentNvidiaDriverVersion}"/> 
-
-                    
-                                </StackPanel>
-                            </Border>
-                            
-                            
-                            
-                            
-                            
-                            
-                            
-                            
-                        </Grid>
-                            
-                    </Grid>
-                    
-                            <!--TUNER GRID-->
-                            <Border Grid.Column="1"  BorderBrush="Gray" BorderThickness="1" >
-                                <Grid RowDefinitions="*,5*"
-                                        Background="{DynamicResource SectionBackgroundBrushLight}">
-                        
-                                    <Grid.Styles>
-                                        <ContainerQuery Name="InfosContainer" Query="max-width:320">
-                                            <Style Selector="Label.onlyWideMode">
-                                                <Setter Property="IsVisible" Value="False"/>
-                                            </Style>
-                                    
-                                    
-                                    
-                                        </ContainerQuery>
                                 
-                                        <ContainerQuery Name="InfosContainer" Query="min-width:320">
-                                            <Style Selector="Label.onlySemiWideMode">
-                                                <Setter Property="IsVisible" Value="False"/>
-                                            </Style>
-                                        </ContainerQuery>
+                                            </StackPanel>
+                                        </Border>
                                 
-                                
-                                
-                                    </Grid.Styles>
-                                    
-                                    <Label Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Content="{x:Static lang:Resources.TunerSection}"/>
-                            
-                                    <!--TUNER ITEMS STACK PANEL-->
-                                    <!-- <StackPanel Spacing="20" Grid.Row="1" Grid.Column="0"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"> -->
-                                    <Grid Container.Name="InfosContainer" Container.Sizing="Width" RowDefinitions="*,*,*,*" Grid.Row="1" Grid.Column="0"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                                    <!-- <DockPanel  Grid.Row="1" Grid.Column="0"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"> -->
-                                    
-                                    
-                                    
-                                        <Border DockPanel.Dock="Top" Padding="2" Classes.flashing="{Binding FlashingAnimationRunning}" Classes="panelItem"  HorizontalAlignment="Stretch" VerticalAlignment="Center">
-                                            <DockPanel
-                                                LastChildFill="True"
+                                        <Border 
+                                            Container.Name="InfosContainer" Container.Sizing="Width"
+                                            Grid.Row="1" DockPanel.Dock="Top" Classes="panelItem" Padding="2" Margin="10"  HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <StackPanel 
+                                                Orientation="Horizontal" 
+                                                HorizontalAlignment="Center"
                                             >
                                 
-                                                <Label Classes="onlyWideMode" DockPanel.Dock="Left" VerticalAlignment="Center" Content="{x:Static lang:Resources.TunerCoreOffset}"/>
-                                                <Label Classes="onlySemiWideMode" DockPanel.Dock="Left" VerticalAlignment="Center" Content="C:"/>
-                                                <Label DockPanel.Dock="Right" VerticalAlignment="Center" FontWeight="Bold" Content="MHz"/> 
-                                                
-                                                <NumericUpDown  DockPanel.Dock="Right" Minimum="0" Maximum="1000" FormatString="0"
-                                                                Background="Transparent" BorderBrush="Transparent" 
-                                                                TextAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Value="{Binding TunerCurrentCoreOffset,FallbackValue=0000}"/> 
-                                                
-                                                <Slider DockPanel.Dock="Right" Height="35" VerticalAlignment="Top" HorizontalAlignment="Stretch" 
-                                                        Minimum="0"
-                                                        Maximum="1000"
-                                                        Value="{Binding TunerCurrentCoreOffset}"
-                                                />
-                                
-                                            </DockPanel>
-                                        </Border>
-                                
-                                        <Border Grid.Row="1" DockPanel.Dock="Top" Padding="2" Classes.flashing="{Binding FlashingAnimationRunning}" Classes="panelItem" Background="{DynamicResource SmallSectionBackgroundBrushDark}"  HorizontalAlignment="Stretch" VerticalAlignment="Center">
-                                            <DockPanel LastChildFill="True">
-                            
-                                                <Label Classes="onlyWideMode" DockPanel.Dock="Left" VerticalAlignment="Center" Content="{x:Static lang:Resources.TunerMemoryOffset}"/>
-                                                <Label Classes="onlySemiWideMode" DockPanel.Dock="Left" VerticalAlignment="Center" Content="M:"/>
-                                                
-                                                <Label DockPanel.Dock="Right" VerticalAlignment="Center" FontWeight="Bold" Content="MHz"/> 
-                                                
-                                                <NumericUpDown DockPanel.Dock="Right" Minimum="0" Maximum="3000"
-                                                               FormatString="0" Background="Transparent" BorderBrush="Transparent" 
-                                                               
-                                                               TextAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Value="{Binding TunerCurrentMemoryOffset,FallbackValue=0000}"/> 
-                                                
-                                                
-                                                <Slider DockPanel.Dock="Right"  Height="35" VerticalAlignment="Top" HorizontalAlignment="Stretch"
-                                                        Minimum="0"
-                                                        Maximum="3000"
-                                                        Value="{Binding TunerCurrentMemoryOffset}"
-                                                        
-                                                />
-                                            </DockPanel>
-                                        </Border>
-                                
-                                        <Border Grid.Row="2" DockPanel.Dock="Top" Padding="2" Classes.flashing="{Binding FlashingAnimationRunning}" Classes="panelItem" HorizontalAlignment="Stretch" VerticalAlignment="Center">
-                                            <DockPanel LastChildFill="True">
-                        
-                                                <Label Classes="onlyWideMode" DockPanel.Dock="Left" VerticalAlignment="Center" Content="{x:Static lang:Resources.TunerPowerLimit}"/>
-                                                <Label Classes="onlySemiWideMode" DockPanel.Dock="Left" VerticalAlignment="Center" Content="P:"/>
-                                                
-                                                
-                                                <Label  DockPanel.Dock="Right"  VerticalAlignment="Center" FontWeight="Bold" Content="W"/> 
-                                                <NumericUpDown DockPanel.Dock="Right"  FormatString="0" Minimum="{Binding SelectedGpu.PowerLimitMinW, FallbackValue=0}" Maximum="{Binding SelectedGpu.PowerLimitMaxW, FallbackValue=400}" 
-                                                               Background="Transparent" BorderBrush="Transparent" TextAlignment="Center" VerticalAlignment="Center"
-                                                               FontWeight="Bold" Value="{Binding TunerCurrentPowerLimitW,FallbackValue=000,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/> 
+                                                <Label Classes="onlyWideMode" VerticalAlignment="Center" Content="{x:Static lang:Resources.TextPowerLimit}"/>
+                                                <Label Classes="onlySemiWideMode" VerticalAlignment="Center" Content="PL:"/>
+                                                <Label Classes="onlyWideMode" VerticalAlignment="Center" Content="{x:Static lang:Resources.TextCurrent}"/>
+                                                <Label VerticalAlignment="Center" FontWeight="Bold" Content="{Binding SelectedGpu.PowerLimitCurrentW, FallbackValue=0000}"/> 
+                                                <Label Classes="onlyWideMode" VerticalAlignment="Center" Content="{x:Static lang:Resources.TextMin}"/>
+                                                <Label Classes="onlySemiWideMode"  VerticalAlignment="Center" Content="|"/>
+                                                <Label VerticalAlignment="Center" Foreground="Aquamarine" FontWeight="Bold" Content="{Binding SelectedGpu.PowerLimitMinW, FallbackValue=0000}"/> 
+                                                <Label Classes="onlyWideMode" VerticalAlignment="Center" Content="{x:Static lang:Resources.TextMax}"/>
+                                                <Label Classes="onlySemiWideMode"  VerticalAlignment="Center" Content="-"/>
+                                                <Label VerticalAlignment="Center" Foreground="Coral" FontWeight="Bold" Content="{Binding SelectedGpu.PowerLimitMaxW, FallbackValue=0000}"/> 
 
-                                                <Border DockPanel.Dock="Right"  HorizontalAlignment="Stretch">
+                                
+                                            </StackPanel>
+                                        </Border>
+                                        
+                                        <Border 
+                                            Container.Name="InfosContainer" Container.Sizing="Width"
+                                            Grid.Row="2" DockPanel.Dock="Top" Classes="panelItem" Padding="2" Margin="10"  HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <StackPanel 
+                                                Orientation="Horizontal" 
+                                                HorizontalAlignment="Center"
+                                                
+                                            >
+                                
+                                                <Label Classes="onlyWideMode" VerticalAlignment="Center" Content="{x:Static lang:Resources.TextTemps}"/>
+                                                <Label Classes="onlySemiWideMode" VerticalAlignment="Center" Content="Max Temps:"/>
+                                                <Label Classes="onlyWideMode" VerticalAlignment="Center" Content="{x:Static lang:Resources.TextThrottle}"/>
+                                                <Label VerticalAlignment="Center" Foreground="Coral" FontWeight="Bold" Content="{Binding SelectedGpu.TemperatureThresholdThrottle, FallbackValue=00}"/> 
+                                                <Label Classes="onlyWideMode" VerticalAlignment="Center" Content="{x:Static lang:Resources.TextSlowdown}"/>
+                                                <Label Classes="onlySemiWideMode"  VerticalAlignment="Center" Content="-"/>
+                                                <Label VerticalAlignment="Center" Foreground="OrangeRed" FontWeight="Bold" Content="{Binding SelectedGpu.TemperatureThresholdSlowdown,FallbackValue=00}"/> 
+                                                <Label Classes="onlyWideMode" VerticalAlignment="Center" Content="{x:Static lang:Resources.TextShutdown}"/>
+                                                <Label Classes="onlySemiWideMode"  VerticalAlignment="Center" Content="-"/>
+                                                <Label VerticalAlignment="Center" Foreground="DarkRed" FontWeight="Bold" Content="{Binding SelectedGpu.TemperatureThresholdShutdown,FallbackValue=00}"/> 
+
+                                
+                                            </StackPanel>
+                                        </Border>
+                                        
+                                        <Border 
+                                            Container.Name="InfosContainer" Container.Sizing="Width"
+                                            Grid.Row="3" DockPanel.Dock="Top" Classes="panelItem" Padding="2" Margin="10"   HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <StackPanel 
+                                                Orientation="Horizontal" 
+                                                HorizontalAlignment="Center"
+                                        
+                                            >
+                                
+                                                <Label Classes="onlyWideMode" VerticalAlignment="Center" Content="{x:Static lang:Resources.TextMemoryStats}"/>
+                                                <Label Classes="onlySemiWideMode" VerticalAlignment="Center" Content="Mem:"/>
+                                                <Label Classes="onlyWideMode" VerticalAlignment="Center" Content="{x:Static lang:Resources.TextFree}"/>
+                                                <Label VerticalAlignment="Center" Foreground="LightGreen" FontWeight="Bold" Content="{Binding SelectedGpu.MemoryFreeMBFormatted, FallbackValue=00000}"/> 
+                                                <Label Classes="onlyWideMode" VerticalAlignment="Center" Content="{x:Static lang:Resources.TextOutOf}"/>
+                                                <Label Classes="onlySemiWideMode"  VerticalAlignment="Center" Content="-"/>
+                                                <Label VerticalAlignment="Center"  FontWeight="Bold" Content="{Binding SelectedGpu.MemoryTotalMBFormatted,FallbackValue=00000}"/> 
+
+                                
+                                            </StackPanel>
+                                        </Border>
+                                        
+                                        <Border 
+                                            Container.Name="InfosContainer" Container.Sizing="Width"
+                                            Grid.Row="4" DockPanel.Dock="Top" Classes="panelItem" Padding="2" Margin="10"   HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <StackPanel 
+                                                Orientation="Horizontal" 
+                                                HorizontalAlignment="Center"
+                                        
+                                            >
+                                
+                                                <Label Classes="onlyWideMode" VerticalAlignment="Center" Content="{x:Static lang:Resources.TextNvidiaDriverVersion}"/>
+                                                <Label Classes="onlySemiWideMode" VerticalAlignment="Center" Content="{x:Static lang:Resources.TextNvidiaDriverVersionShort}"/>
+                                                <Label VerticalAlignment="Center" FontWeight="Bold" Content="{Binding CurrentNvidiaDriverVersion}"/> 
+
+                                
+                                            </StackPanel>
+                                        </Border>
+                                    </Grid>
+                                </Grid>
+                    
+                                <!--TUNER GRID-->
+                                <Border  Grid.Column="1"  BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" >
+                                    <Grid RowDefinitions="*,5*"
+                                            Background="{DynamicResource SectionBackgroundBrushLight}">
+                            
+                                        <Grid.Styles>
+                                            <ContainerQuery Name="InfosContainer" Query="max-width:320">
+                                                <Style Selector="Label.onlyWideMode">
+                                                    <Setter Property="IsVisible" Value="False"/>
+                                                </Style>
+                                        
+                                        
+                                        
+                                            </ContainerQuery>
+                                    
+                                            <ContainerQuery Name="InfosContainer" Query="min-width:320">
+                                                <Style Selector="Label.onlySemiWideMode">
+                                                    <Setter Property="IsVisible" Value="False"/>
+                                                </Style>
+                                            </ContainerQuery>
+                                    
+                                    
+                                    
+                                        </Grid.Styles>
+                                        
+                                        <Label Classes="h1" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Content="{x:Static lang:Resources.TunerSection}"/>
+                                
+                                        <!--TUNER ITEMS STACK PANEL-->
+                                        <!-- <StackPanel Spacing="20" Grid.Row="1" Grid.Column="0"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"> -->
+                                        <Grid Container.Name="InfosContainer" Container.Sizing="Width" RowDefinitions="*,*,*,*" Grid.Row="1" Grid.Column="0"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                        <!-- <DockPanel  Grid.Row="1" Grid.Column="0"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"> -->
+                                        
+                                            <Grid.Styles>
+                                                <Style Selector="Border.panelItem">
+                                                    <Setter Property="Margin" Value="5,0,5,0"/>
+                                                </Style>
+                                            </Grid.Styles>
+                                        
+                                            <Border  DockPanel.Dock="Top"  Classes.flashing="{Binding FlashingAnimationRunning}" Classes="panelItem"  HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                                                <DockPanel
+                                                    LastChildFill="True"
+                                                >
+                                    
+                                                    <Label Classes="onlyWideMode" DockPanel.Dock="Left" VerticalAlignment="Center" Content="{x:Static lang:Resources.TunerCoreOffset}"/>
+                                                    <Label Classes="onlySemiWideMode" DockPanel.Dock="Left" VerticalAlignment="Center" Content="C:"/>
+                                                    <Label DockPanel.Dock="Right" VerticalAlignment="Center" FontWeight="Bold" Content="MHz"/> 
                                                     
-                                                    <Slider  Height="35" VerticalAlignment="Top" HorizontalAlignment="Stretch"
-                                                            Minimum="{Binding SelectedGpu.PowerLimitMinMw, FallbackValue=0}"
-                                                            Maximum="{Binding SelectedGpu.PowerLimitMaxMw, FallbackValue=400}"
-                                                            Value="{Binding TunerCurrentPowerLimitMw}"
+                                                    <NumericUpDown  DockPanel.Dock="Right" Minimum="0" Maximum="1000" FormatString="0"
+                                                                    Background="Transparent" BorderBrush="Transparent" 
+                                                                    TextAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Value="{Binding TunerCurrentCoreOffset,FallbackValue=0000}"/> 
+                                                    
+                                                    <Slider DockPanel.Dock="Right" Height="35" VerticalAlignment="Top" HorizontalAlignment="Stretch" 
+                                                            Minimum="0"
+                                                            Maximum="1000"
+                                                            Value="{Binding TunerCurrentCoreOffset}"
+                                                    />
+                                    
+                                                </DockPanel>
+                                            </Border>
+                                    
+                                            <Border Grid.Row="1" DockPanel.Dock="Top"   Classes.flashing="{Binding FlashingAnimationRunning}" Classes="panelItem"   HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                                                <DockPanel LastChildFill="True">
+                                
+                                                    <Label Classes="onlyWideMode" DockPanel.Dock="Left" VerticalAlignment="Center" Content="{x:Static lang:Resources.TunerMemoryOffset}"/>
+                                                    <Label Classes="onlySemiWideMode" DockPanel.Dock="Left" VerticalAlignment="Center" Content="M:"/>
+                                                    
+                                                    <Label DockPanel.Dock="Right" VerticalAlignment="Center" FontWeight="Bold" Content="MHz"/> 
+                                                    
+                                                    <NumericUpDown DockPanel.Dock="Right" Minimum="0" Maximum="3000"
+                                                                   FormatString="0" Background="Transparent" BorderBrush="Transparent" 
+                                                                   
+                                                                   TextAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Value="{Binding TunerCurrentMemoryOffset,FallbackValue=0000}"/> 
+                                                    
+                                                    
+                                                    <Slider DockPanel.Dock="Right"  Height="35" VerticalAlignment="Top" HorizontalAlignment="Stretch"
+                                                            Minimum="0"
+                                                            Maximum="3000"
+                                                            Value="{Binding TunerCurrentMemoryOffset}"
                                                             
                                                     />
-                                                </Border>
-                                                
-                                            </DockPanel>
-                                        </Border>
-                                
-                                        <Border Grid.Row="3" DockPanel.Dock="Top" Margin="5" Padding="4" Background="{DynamicResource SmallSectionBackgroundBrushDark}" BorderBrush="Gray" BorderThickness="4" CornerRadius="10"  HorizontalAlignment="Center" VerticalAlignment="Bottom">
-                                    <StackPanel 
-                                        Orientation="Horizontal" 
-                                        Spacing="20"
-                                
-                                
-                                    >
-                        
-                                        <Button CornerRadius="10" Content="{x:Static lang:Resources.ButtonApply}" Command="{Binding ApplyTempTunerSettings}"/>
-                                        <Button CornerRadius="10" Content="{x:Static lang:Resources.ButtonReset}" Command="{Binding ResetTunerOptions}"/>
-                                        
-
-                        
-                                    </StackPanel>
-                                </Border>
+                                                </DockPanel>
+                                            </Border>
                                     
+                                            <Border Grid.Row="2" DockPanel.Dock="Top"  Classes.flashing="{Binding FlashingAnimationRunning}" Classes="panelItem" HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                                                <DockPanel LastChildFill="True">
+                            
+                                                    <Label Classes="onlyWideMode" DockPanel.Dock="Left" VerticalAlignment="Center" Content="{x:Static lang:Resources.TunerPowerLimit}"/>
+                                                    <Label Classes="onlySemiWideMode" DockPanel.Dock="Left" VerticalAlignment="Center" Content="P:"/>
+                                                    
+                                                    
+                                                    <Label  DockPanel.Dock="Right"  VerticalAlignment="Center" FontWeight="Bold" Content="W"/> 
+                                                    <NumericUpDown DockPanel.Dock="Right"  FormatString="0" Minimum="{Binding SelectedGpu.PowerLimitMinW, FallbackValue=0}" Maximum="{Binding SelectedGpu.PowerLimitMaxW, FallbackValue=400}" 
+                                                                   Background="Transparent" BorderBrush="Transparent" TextAlignment="Center" VerticalAlignment="Center"
+                                                                   FontWeight="Bold" Value="{Binding TunerCurrentPowerLimitW,FallbackValue=000,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/> 
+
+                                                    <Border DockPanel.Dock="Right"  HorizontalAlignment="Stretch">
+                                                        
+                                                        <Slider  Height="35" VerticalAlignment="Top" HorizontalAlignment="Stretch"
+                                                                Minimum="{Binding SelectedGpu.PowerLimitMinMw, FallbackValue=0}"
+                                                                Maximum="{Binding SelectedGpu.PowerLimitMaxMw, FallbackValue=400}"
+                                                                Value="{Binding TunerCurrentPowerLimitMw}"
+                                                                
+                                                        />
+                                                    </Border>
+                                                    
+                                                </DockPanel>
+                                            </Border>
+                                    
+                                            <Border Classes="panelItem" Grid.Row="3" DockPanel.Dock="Top" Margin="5" Padding="4" HorizontalAlignment="Center" VerticalAlignment="Bottom">
+                                                <StackPanel 
+                                                    Orientation="Horizontal" 
+                                                    Spacing="20">
+                                
+                                                <Button CornerRadius="10" Content="{x:Static lang:Resources.ButtonApply}" Command="{Binding ApplyTempTunerSettings}"/>
+                                                <Button CornerRadius="10" Content="{x:Static lang:Resources.ButtonReset}" Command="{Binding ResetTunerOptions}"/>
+                                                
+
+                                
+                                                </StackPanel>
+                                            </Border>
+                                        
+                                    
+                                        </Grid>
                                 
                                     </Grid>
                             
+                                </Border>
+                    
+                                <!--FAN CURVE GRID-->
+                                <Grid Grid.Column="2" RowDefinitions="*,5*">
+                            
+                                <!-- <Grid.Background> -->
+                                <!--      -->
+                                <!--     <LinearGradientBrush StartPoint="0%,50%" EndPoint="100%,50%"> -->
+                                <!--         <GradientStop Color="{DynamicResource SectionBackgroundColorLight}" Offset="0.0"/> -->
+                                <!--         <GradientStop Color="{DynamicResource SectionBackgroundColorDark}" Offset="0.2"/> -->
+                                <!--     </LinearGradientBrush> -->
+                                <!--      -->
+                                <!-- </Grid.Background> -->
+                            
+                                    <Border Grid.Row="0" >
+                                        <Label Classes="h1" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Content="{x:Static lang:Resources.FanCurveSection}"/>
+                                    </Border>
+                                    <!--FAN CURVE ITEMS BORDER-->
+                                    <Border Classes="section" Grid.Column="0" Grid.Row="1">
+                                        <DockPanel  HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                        
+                                            <Border DockPanel.Dock="Bottom" Classes="panelItem"   HorizontalAlignment="Center" VerticalAlignment="Top">
+                                                <StackPanel 
+                                                    Orientation="Horizontal" 
+                                                    Spacing="15">
+                                                    
+                                                    <Button Command="{Binding  OpenFanCurveEditorCommand}" Content="{x:Static lang:Resources.ButtonNew}"/>
+                                                    <Button Content="{x:Static lang:Resources.ButtonEdit}"  Command="{Binding  OpenFanCurveEditorCommand}" CommandParameter="{Binding SelectedFanCurve}"/>
+                                                    <Button Content="{x:Static lang:Resources.ButtonDelete}"  Command="{Binding DeleteSelectedFanProfile}"/>
+                                                    <CheckBox Content="{x:Static lang:Resources.CheckboxEnableFanCurve}"  IsChecked="{Binding IsFanCurveIncludedInProfileChecked}" />
+                                                </StackPanel>
+                                            </Border>
+                                        
+                                            <ComboBox HorizontalAlignment="Stretch"
+                                                  ItemsSource="{Binding FanCurvesList}"
+                                                  SelectedItem="{Binding SelectedFanCurve}"
+                                                  DockPanel.Dock="Bottom">
+
+                                            <ComboBox.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Label Content="{Binding Name}"/>
+                                                </DataTemplate>
+                                            </ComboBox.ItemTemplate>
+                                        </ComboBox>
+                                        
+                                        <!-- <lvc:CartesianChart MinHeight="169" MinWidth="150" -->
+                                        <!--                     SyncContext="{Binding SelectedFanCurve.GraphSyncObject}" -->
+                                        <!--                     BorderThickness="0" Padding="0" Margin="0" -->
+                                        <!--                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  -->
+                                        <!--                     Series="{Binding SelectedFanCurve.CurvePointsSeries}" -->
+                                        <!--                     XAxes="{Binding FanCurveGraphXAxes}" -->
+                                        <!--                     YAxes="{Binding FanCurveGraphYAxes}" -->
+                                        <!--                     TooltipTextPaint="{Binding GraphTooltipTextPaint}" -->
+                                        <!--                      -->
+                                        <!--                     ZoomMode="X" -->
+                                        <!--                     DockPanel.Dock="Top" -->
+                                        <!-- /> -->
+                                        
+                                            <lvc:CartesianChart
+                                            SyncContext="{Binding GraphSyncObject}"
+                                            MinHeight="169" MinWidth="150"
+                                            BorderThickness="0" Padding="0" Margin="0"
+                                            HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                            
+                                            ZoomMode="X"
+                                            XAxes="{Binding FanCurveGraphXAxes}"
+                                            YAxes="{Binding FanCurveGraphYAxes}"
+                                            
+                                            Series = "{Binding FanCurveGraphSeries}"
+                                            DockPanel.Dock="Top"
+                                            >
+                                            
+                                            <!-- <lvc:CartesianChart.Series> -->
+                                            <!-- -->
+                                            <!--     ~1~Fan speed live indicator@1@ -->
+                                            <!--     ~1~ <lvc:XamlLineSeries @1@ -->
+                                            <!--     ~1~     Values="{Binding SelectedFanCurve.CurrentFanSpeedPoints}" @1@ -->
+                                            <!--     ~1~     Name = "{x:Static lang:Resources.TextCurrentFanSpeed}" @1@ -->
+                                            <!--     ~1~     YToolTipLabelFormatter="{Binding SelectedFanCurve.CurrentSpeedYFormatter}" @1@ -->
+                                            <!--     ~1~     XToolTipLabelFormatter="{Binding SelectedFanCurve.CurrentSpeedXFormatter}" @1@ -->
+                                            <!--     ~1~     LineSmoothness="0" @1@ -->
+                                            <!--     ~1~     GeometryStroke="{lvc:SolidColorPaint Color='#560d0d', StrokeWidth='3'}"/> @1@ -->
+                                            <!-- -->
+                                            <!--     ~1~Fan curve graph@1@ -->
+                                            <!--     <lvc:XamlLineSeries -->
+                                            <!--         Values="{Binding SelectedFanCurveGraphPoints}" -->
+                                            <!--         Fill="{lvc:SolidColorPaint Color='#1E90FF', StrokeWidth='3'}" -->
+                                            <!--         Stroke="{lvc:SolidColorPaint Color='#1E90FF', StrokeWidth='3'}" -->
+                                            <!--         GeometryStroke="{lvc:SolidColorPaint Color='#1E90FF', StrokeWidth='3'}" -->
+                                            <!--         /> -->
+                                            <!-- -->
+                                            <!-- </lvc:CartesianChart.Series> -->
+                                            
+                                            <!-- <lvc:CartesianChart.XAxes> -->
+                                            <!--     <lvc:XamlDateTimeAxis -->
+                                            <!--         Name="Temperature (°C)" -->
+                                            <!--         DateFormatter="{Binding LabelsFormatter}" -->
+                                            <!--         AnimationsSpeed="0" -->
+                                            <!--         SeparatorsPaint="{lvc:SolidColorPaint Color='64B4B4B4'}" -->
+                                            <!--         CustomSeparators="{Binding Separators}"/> -->
+                                            <!-- </lvc:CartesianChart.XAxes> -->
+                                        </lvc:CartesianChart>
+                                    </DockPanel>
+                                        
+                                    </Border>
                                 </Grid>
-                        
-                            </Border>
-                    
-                            <!--FAN CURVE GRID-->
-                            <Grid Grid.Column="2"
-                        RowDefinitions="*,5*"
-                        >
-                        
-                        <!-- <Grid.Background> -->
-                        <!--      -->
-                        <!--     <LinearGradientBrush StartPoint="0%,50%" EndPoint="100%,50%"> -->
-                        <!--         <GradientStop Color="{DynamicResource SectionBackgroundColorLight}" Offset="0.0"/> -->
-                        <!--         <GradientStop Color="{DynamicResource SectionBackgroundColorDark}" Offset="0.2"/> -->
-                        <!--     </LinearGradientBrush> -->
-                        <!--      -->
-                        <!-- </Grid.Background> -->
-                        
-                        <Border Grid.Row="0" >
-                                                
-                            <Label  HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Content="{x:Static lang:Resources.FanCurveSection}"/>
-                        </Border>
-                        <!--FAN CURVE ITEMS STACK PANEL-->
-                        <DockPanel  Grid.Row="1" Grid.Column="0"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                            
-                            
-                            
-                            
-                            
-                            <Border DockPanel.Dock="Bottom" Padding="2" Background="#40969696" BorderBrush="Gray" BorderThickness="4" CornerRadius="10"  HorizontalAlignment="Center" VerticalAlignment="Top">
-                                <StackPanel 
-                                    Orientation="Horizontal" 
-                                    Spacing="15"
-                            
-                            
-                                >
-                                    
-                                    <Button Command="{Binding  OpenFanCurveEditorCommand}" Content="{x:Static lang:Resources.ButtonNew}"/>
-                                    <Button Content="{x:Static lang:Resources.ButtonEdit}"  Command="{Binding  OpenFanCurveEditorCommand}" CommandParameter="{Binding SelectedFanCurve}"/>
-                                    <Button Content="{x:Static lang:Resources.ButtonDelete}"  Command="{Binding DeleteSelectedFanProfile}"/>
-                                    <CheckBox Content="{x:Static lang:Resources.CheckboxEnableFanCurve}"  IsChecked="{Binding IsFanCurveIncludedInProfileChecked}" />
-                                    
-
-                    
-                                </StackPanel>
-                            </Border>
-                            
-                            <ComboBox HorizontalAlignment="Stretch"
-                                      ItemsSource="{Binding FanCurvesList}"
-                                      SelectedItem="{Binding SelectedFanCurve}"
-                                      DockPanel.Dock="Bottom">
-
-                                <ComboBox.ItemTemplate>
-                                    <DataTemplate>
-                                        <Label Content="{Binding Name}"/>
-                                    </DataTemplate>
-                                </ComboBox.ItemTemplate>
-                            </ComboBox>
-                            
-                            <!-- <lvc:CartesianChart MinHeight="169" MinWidth="150" -->
-                            <!--                     SyncContext="{Binding SelectedFanCurve.GraphSyncObject}" -->
-                            <!--                     BorderThickness="0" Padding="0" Margin="0" -->
-                            <!--                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  -->
-                            <!--                     Series="{Binding SelectedFanCurve.CurvePointsSeries}" -->
-                            <!--                     XAxes="{Binding FanCurveGraphXAxes}" -->
-                            <!--                     YAxes="{Binding FanCurveGraphYAxes}" -->
-                            <!--                     TooltipTextPaint="{Binding GraphTooltipTextPaint}" -->
-                            <!--                      -->
-                            <!--                     ZoomMode="X" -->
-                            <!--                     DockPanel.Dock="Top" -->
-                            <!-- /> -->
-                            
-                            <lvc:CartesianChart
-                                SyncContext="{Binding GraphSyncObject}"
-                                MinHeight="169" MinWidth="150"
-                                BorderThickness="0" Padding="0" Margin="0"
-                                HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                                 
-                                ZoomMode="X"
-                                XAxes="{Binding FanCurveGraphXAxes}"
-                                YAxes="{Binding FanCurveGraphYAxes}"
-                                
-                                Series = "{Binding FanCurveGraphSeries}"
-                                DockPanel.Dock="Top"
-                                >
-                                
-                                <!-- <lvc:CartesianChart.Series> -->
-                                <!-- -->
-                                <!--     ~1~Fan speed live indicator@1@ -->
-                                <!--     ~1~ <lvc:XamlLineSeries @1@ -->
-                                <!--     ~1~     Values="{Binding SelectedFanCurve.CurrentFanSpeedPoints}" @1@ -->
-                                <!--     ~1~     Name = "{x:Static lang:Resources.TextCurrentFanSpeed}" @1@ -->
-                                <!--     ~1~     YToolTipLabelFormatter="{Binding SelectedFanCurve.CurrentSpeedYFormatter}" @1@ -->
-                                <!--     ~1~     XToolTipLabelFormatter="{Binding SelectedFanCurve.CurrentSpeedXFormatter}" @1@ -->
-                                <!--     ~1~     LineSmoothness="0" @1@ -->
-                                <!--     ~1~     GeometryStroke="{lvc:SolidColorPaint Color='#560d0d', StrokeWidth='3'}"/> @1@ -->
-                                <!-- -->
-                                <!--     ~1~Fan curve graph@1@ -->
-                                <!--     <lvc:XamlLineSeries -->
-                                <!--         Values="{Binding SelectedFanCurveGraphPoints}" -->
-                                <!--         Fill="{lvc:SolidColorPaint Color='#1E90FF', StrokeWidth='3'}" -->
-                                <!--         Stroke="{lvc:SolidColorPaint Color='#1E90FF', StrokeWidth='3'}" -->
-                                <!--         GeometryStroke="{lvc:SolidColorPaint Color='#1E90FF', StrokeWidth='3'}" -->
-                                <!--         /> -->
-                                <!-- -->
-                                <!-- </lvc:CartesianChart.Series> -->
-                                
-                                <!-- <lvc:CartesianChart.XAxes> -->
-                                <!--     <lvc:XamlDateTimeAxis -->
-                                <!--         Name="Temperature (°C)" -->
-                                <!--         DateFormatter="{Binding LabelsFormatter}" -->
-                                <!--         AnimationsSpeed="0" -->
-                                <!--         SeparatorsPaint="{lvc:SolidColorPaint Color='64B4B4B4'}" -->
-                                <!--         CustomSeparators="{Binding Separators}"/> -->
-                                <!-- </lvc:CartesianChart.XAxes> -->
-                            </lvc:CartesianChart>
-                            
-                        </DockPanel>
-                        
-                        
-                        
-                    </Grid>
-                            
-                    </controls:ResponsiveGridCarousel>
+                        </controls:ResponsiveGridCarousel>
                     <!-- </ScrollViewer> -->
                 </Border>
             
@@ -819,7 +961,7 @@
             <!--RIGHT PANEL-->
             
             <Border BorderThickness="20" Grid.Column="2" Grid.Row="0" Grid.RowSpan="2">
-                <Border BorderBrush="Gray" BorderThickness="2" CornerRadius="20" Padding="15">
+                <Border BorderBrush="{DynamicResource BorderBrush}" Background="{DynamicResource SmallSectionBackgroundBrushLight}" BorderThickness="0" CornerRadius="20" Padding="15">
                     
                     <Grid RowDefinitions="*,*,*,*,*" >
                         <Button CornerRadius="20" Command="{Binding OpenSettingsWindowCommand}">

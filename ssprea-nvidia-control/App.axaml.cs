@@ -58,7 +58,7 @@ public partial class App : Application
 
     private void TrayIcon_OnClicked(object? sender, EventArgs e)
     {
-        WindowsManager.AllWindows.FirstOrDefault(x => x.Name == "MainOcWindow").Show();
+        WindowsManager.AllWindows.FirstOrDefault(x => x.Name == "MainOcWindow")?.Show();
     }
 
     private void NativeMenuItem_OnClick(object? sender, EventArgs e)
