@@ -14,9 +14,7 @@ Inspired by MSI Afterburner, ssprea-nvidia-control is a highly customizable GUI 
 
 ## Screenshots
 
-![Main window](https://i.ibb.co/DH0M6QLm/Schermata-20250722-153534.png)
-
-![Curve creation](https://i.ibb.co/mnhFbwc/Schermata-20250722-153726.png)
+![Main window](https://i.ibb.co/vxGJnvjn/Schermata-20260810-183314.png)
 
 ## Requirements
 
