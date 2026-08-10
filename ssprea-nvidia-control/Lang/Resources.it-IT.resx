@@ -63,9 +63,9 @@
             <value>Azzera</value>
         </data>
 
-     <data name="SelectGpu" xml:space="preserve">
-            <value>Selez. GPU:</value>
-        </data>
+    <data name="SelectGpu" xml:space="preserve">
+        <value>Seleziona GPU:</value>
+    </data>
 
      <data name="InfoSection" xml:space="preserve">
             <value>INFO</value>
@@ -299,5 +299,26 @@
     </data>
     <data name="TooltipKofiButton" xml:space="preserve">
         <value>Offrimi un caffè</value>
+    </data>
+    <data name="HeaderFanCurveEditor" xml:space="preserve">
+        <value>MODIFICA CURVA VENTOLE</value>
+    </data>
+    <data name="TextName" xml:space="preserve">
+        <value>Nome:</value>
+    </data>
+    <data name="TextTemperatureWithUnit" xml:space="preserve">
+        <value>Temperatura (°C):</value>
+    </data>
+    <data name="TextFanSpeedWithUnit" xml:space="preserve">
+        <value>Veloc. Ventole (%):</value>
+    </data>
+    <data name="TextFanCurveAddPoint" xml:space="preserve">
+        <value>Aggiungi punto</value>
+    </data>
+    <data name="TextFanCurveDeletePoint" xml:space="preserve">
+        <value>Rimuovi punto</value>
+    </data>
+    <data name="ButtonCancel" xml:space="preserve">
+        <value>Annulla</value>
     </data>
 </root>

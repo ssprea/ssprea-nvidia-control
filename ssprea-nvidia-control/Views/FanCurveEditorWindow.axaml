@@ -3,6 +3,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="using:ssprea_nvidia_control.ViewModels"
+        xmlns:lang="clr-namespace:ssprea_nvidia_control.Lang"
         mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="480"
         Width="400" Height="470"
         x:Class="ssprea_nvidia_control.Views.FanCurveEditorWindow"
@@ -11,8 +12,8 @@
         Background="Transparent"
         WindowStartupLocation="CenterScreen"
         ExtendClientAreaToDecorationsHint="True"
-        SystemDecorations="None"
         CanResize="False"
+        WindowDecorations="None"
         
         
         >
@@ -23,23 +24,23 @@
         <vm:FanCurveEditorWindowViewModel/>
     </Design.DataContext>
     
-    <Border CornerRadius="30" Background="DarkSlateGray" BorderBrush="DarkSlateBlue" BorderThickness="3">
+    <Border CornerRadius="30" Background="{DynamicResource BackgroundBrushOpaque}" BorderBrush="{DynamicResource AccentBrush}" BorderThickness="3">
         <DockPanel Margin="10"
         >
                 
-            <Label DockPanel.Dock="Top" HorizontalAlignment="Center"  VerticalAlignment="Top" FontWeight="Bold">FAN CURVE EDITOR</Label>
+            <Label Classes="h1" DockPanel.Dock="Top" HorizontalAlignment="Center"  VerticalAlignment="Top" Content="{x:Static lang:Resources.HeaderFanCurveEditor}"/>
                 
             
             <DockPanel DockPanel.Dock="Top"  >
                 
-                <Label DockPanel.Dock="Left" VerticalAlignment="Center">Name: </Label>
+                <Label DockPanel.Dock="Left" VerticalAlignment="Center" Content="{x:Static lang:Resources.TextName}"/> 
                 <TextBox Margin="2" CornerRadius="10" HorizontalAlignment="Stretch" Text="{Binding CurrentFanCurve.BaseFanCurve.Name}"></TextBox>
                 
             </DockPanel>
             
             
             <Label DockPanel.Dock="Top" VerticalAlignment="Stretch" Content=" "/>
-            <Border DockPanel.Dock="Top" BorderBrush="DimGray" BorderThickness="2" Padding="4" CornerRadius="10" >
+            <Border Classes="panelItem" DockPanel.Dock="Top"   Padding="10" CornerRadius="10" >
                 
                 <DockPanel >
                           
@@ -56,28 +57,35 @@
                               VerticalAlignment="Stretch"
                               BorderThickness="3" 
                               MaxHeight="280"
-                              BorderBrush="Black"
+                              BorderBrush="{DynamicResource BorderBrush}"
                               
                               >
                               
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Temperature (°C)"  Binding="{Binding Temperature}"/>
-                            <DataGridTextColumn Header="Fan Speed (%)" Binding="{Binding FanSpeed}" />
+                            <DataGridTextColumn Header="{x:Static lang:Resources.TextTemperatureWithUnit}"  Binding="{Binding Temperature}"/>
+                            <DataGridTextColumn Header="{x:Static lang:Resources.TextFanSpeedWithUnit}" Binding="{Binding FanSpeed}" />
                         </DataGrid.Columns>
                         
                     </DataGrid>
                     
-                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Left" Spacing="30" Margin="3"> 
-                        <Button CornerRadius="20" VerticalAlignment="Top" Command="{Binding AddPointCommand}" >Add point</Button>
-                        <Button CornerRadius="20" VerticalAlignment="Top" Command="{Binding RemovePointCommand}" CommandParameter="{Binding #PointsDataGrid.SelectedItem}" >Delete point</Button>
-                    </StackPanel>
+                    <DockPanel LastChildFill="False" DockPanel.Dock="Left"  Margin="3">
+                         
+                        <Button VerticalAlignment="Top" 
+                                Command="{Binding AddPointCommand}" Content="{x:Static lang:Resources.TextFanCurveAddPoint}"
+                                DockPanel.Dock="Left"/>
+                        
+                        <Button Classes="danger"  VerticalAlignment="Top" 
+                                Command="{Binding RemovePointCommand}" CommandParameter="{Binding #PointsDataGrid.SelectedItem}"
+                                Content="{x:Static lang:Resources.TextFanCurveDeletePoint}"
+                                DockPanel.Dock="Right"/>
+                    </DockPanel>
                     
                 </DockPanel>
             </Border>  
 
             <DockPanel DockPanel.Dock="Bottom">
-                <Button CornerRadius="20" VerticalAlignment="Bottom" DockPanel.Dock="Right" Command="{Binding SaveCurveCommand}"  >Save</Button>
-                <Button CornerRadius="20"  VerticalAlignment="Bottom" DockPanel.Dock="Left" Command="{Binding CancelCommand}" >Cancel</Button>
+                <Button  VerticalAlignment="Bottom" DockPanel.Dock="Right" Command="{Binding SaveCurveCommand}" Content="{x:Static lang:Resources.ButtonSave}" />
+                <Button   VerticalAlignment="Bottom" DockPanel.Dock="Left" Command="{Binding CancelCommand}" Content="{x:Static lang:Resources.ButtonCancel}"/>
             </DockPanel>
             
             </DockPanel>

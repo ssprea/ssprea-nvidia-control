@@ -95,20 +95,22 @@ public partial class MainWindowViewModel : ViewModelBase
     // private static readonly SKTypeface _fanCurveGraphTypeface = SKTypeface.FromFamilyName("Noto Sans Mono",SKFontStyleWeight.Normal,SKFontStyleWidth.Normal,SKFontStyleSlant.Upright);
     // private static readonly SKTypeface _fanCurveGraphTypeface =
     //     SKTypeface.FromStream(AssetLoader.Open(new Uri("avares://ssprea-nvidia-control/Assets/Fonts/NotoSans/NotoSans-Light.ttf")));
+
+    private static readonly SKColor ThemeTextColor = SKColor.Parse("#F1F0F5");
     
     public Axis[] FanCurveGraphXAxes { get; set; } =
         [
             new Axis
             {
                 Name = "Temperature (°C)",
-                NamePaint = new SolidColorPaint(SKColors.AntiqueWhite) , 
+                NamePaint = new SolidColorPaint(ThemeTextColor) , 
                 NameTextSize = 10,
 
-                LabelsPaint = new SolidColorPaint(SKColors.AntiqueWhite), 
+                LabelsPaint = new SolidColorPaint(ThemeTextColor), 
                 TextSize = 10,
                 
 
-                SeparatorsPaint = new SolidColorPaint(SKColors.LightSlateGray) { StrokeThickness = 2 }  
+                SeparatorsPaint = new SolidColorPaint(SKColors.LightSlateGray.WithAlpha(60)) { StrokeThickness = 2 }  
             }
         ];
 
@@ -119,13 +121,13 @@ public partial class MainWindowViewModel : ViewModelBase
             new Axis
                 {
                     Name = "Fan Speed (%)",
-                    NamePaint = new SolidColorPaint(SKColors.AntiqueWhite) , 
+                    NamePaint = new SolidColorPaint(ThemeTextColor) , 
                     NameTextSize = 10,
 
-                    LabelsPaint = new SolidColorPaint(SKColors.AntiqueWhite)  , 
+                    LabelsPaint = new SolidColorPaint(ThemeTextColor)  , 
                     TextSize = 10,
 
-                    SeparatorsPaint = new SolidColorPaint(SKColors.LightSlateGray) 
+                    SeparatorsPaint = new SolidColorPaint(SKColors.LightSlateGray.WithAlpha(60)) 
                     { 
                         StrokeThickness = 2, 
                         PathEffect = new DashEffect([ 3, 3 ]) 
@@ -220,10 +222,11 @@ public partial class MainWindowViewModel : ViewModelBase
                 FanCurvesList.Add(result);
             }
 
-            SelectedFanCurve = result;
+            SelectedFanCurve = FanCurvesList.First(x => x.Name == result.Name);
+            UpdateFanCurveGraphSeriesValues(SelectedFanCurve);
             SelectedFanCurve?.UpdateSeries();
             
-            OnPropertyChanged(nameof(SelectedFanCurve));
+            // OnPropertyChanged(nameof(SelectedFanCurve));
             await FanCurvesFileManager.SaveFanCurvesAsync(Program.DefaultDataPath+"/fan_curves.json", FanCurvesList.Select(x => x.BaseFanCurve));
 
             
@@ -276,8 +279,9 @@ public partial class MainWindowViewModel : ViewModelBase
         var accentColor = SKColor.Parse("#505BE6");
         var strongAccentColor = SKColor.Parse("#9C1FE8");
         
-        FanCurveGraphSeries.Add(new LineSeries<ObservablePoint>(SelectedFanCurveGraphPoints)
+        FanCurveGraphSeries.Add(new LineSeries<ObservablePoint>()
         {
+            Values=SelectedFanCurveGraphPoints,
             GeometryStroke=new SolidColorPaint(accentColor) {StrokeThickness = 3},
             Stroke= new SolidColorPaint(accentColor) {StrokeThickness = 3},
             Fill = new SolidColorPaint(accentColor.WithAlpha(50)),
@@ -506,7 +510,12 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         if (value is null)
             return;
-        
+
+        UpdateFanCurveGraphSeriesValues(value);
+    }
+
+    private void UpdateFanCurveGraphSeriesValues(FanCurveViewModel value)
+    {
         lock (GraphSyncObject)
         {
             SelectedFanCurveGraphPoints.Clear();

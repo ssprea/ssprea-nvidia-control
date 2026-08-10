@@ -11,8 +11,13 @@
     <StackPanel x:Name="BehaviourSettingsContent">
                             
         <StackPanel Spacing="20">
-            <CheckBox  HorizontalAlignment="Left" VerticalAlignment="Bottom" IsChecked="{Binding CurrentEditingSettings.Behaviour_StartGuiAtBoot}"  Content="{x:Static lang:Resources.SettingsBehaviourGuiBootUp}"/>
-            <CheckBox  HorizontalAlignment="Left" VerticalAlignment="Bottom" IsChecked="{Binding CurrentEditingSettings.Behaviour_StartGuiInTray}"  Content="{x:Static lang:Resources.SettingsBehaviourGuiTrayStart}"/>
+            <Border Classes="panelItem">
+                <CheckBox  HorizontalAlignment="Left" VerticalAlignment="Bottom" IsChecked="{Binding CurrentEditingSettings.Behaviour_StartGuiAtBoot}"  Content="{x:Static lang:Resources.SettingsBehaviourGuiBootUp}"/>
+            </Border>
+            
+            <Border Classes="panelItem">
+                <CheckBox  HorizontalAlignment="Left" VerticalAlignment="Bottom" IsChecked="{Binding CurrentEditingSettings.Behaviour_StartGuiInTray}"  Content="{x:Static lang:Resources.SettingsBehaviourGuiTrayStart}"/>
+            </Border>
             
         </StackPanel>
                         

@@ -10,8 +10,17 @@
         <Setter Property="Template">
             <ControlTemplate>
                 <Panel>
+                    <Panel.Styles>
+                        <Style Selector="Grid.transparentbg">
+                            <Setter Property="Background" Value="Transparent"/>
+                        </Style>
+                        <Style Selector="Border.transparentbg">
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="BorderBrush" Value="Transparent"/>
+                        </Style>
+                    </Panel.Styles>
                     <Grid Name="PART_Grid" />
-                    <controls:NonVirtualizingCarousel ColumnDefinitions="*,10*,*" ClipToBounds="True" Name="PART_NVCarousel" />
+                    <controls:NonVirtualizingCarousel ColumnDefinitions="*,10*,*" ClipToBounds="True" Name="PART_NVCarousel"/>
                 </Panel>
             </ControlTemplate>
         </Setter>

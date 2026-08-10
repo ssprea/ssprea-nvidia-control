@@ -34,8 +34,8 @@
     
 
     <Grid x:Name="MainGrid"
-              ColumnDefinitions="*,20*,2*"
-              RowDefinitions="10*,8*,*"
+              ColumnDefinitions="*,20*,*"
+              RowDefinitions="2*,14*,12*,*"
               x:DataType="vm:MainWindowViewModel"
               Background="{DynamicResource BackgroundBrush}"
               
@@ -43,217 +43,9 @@
               
         >
             
-        <Grid.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.ThemeDictionaries>
-                
-                <ResourceDictionary x:Key='Light'>
-                    <SolidColorBrush x:Key='BackgroundBrush'>GhostWhite</SolidColorBrush>
-                    <SolidColorBrush x:Key='BorderBrush'>DimGray</SolidColorBrush>
-                    <SolidColorBrush x:Key='ForegroundBrush'>Black</SolidColorBrush>
-                    <SolidColorBrush x:Key='SectionBackgroundBrush'>LightGray</SolidColorBrush>
-                    <SolidColorBrush x:Key='SelectionColor'>#C191FF</SolidColorBrush>
-                    <SolidColorBrush x:Key='TextColor'>Black</SolidColorBrush>
-                </ResourceDictionary>
-                
-                <!-- <ResourceDictionary x:Key='goddog'> -->
-                <!-- <SolidColorBrush x:Key='BackgroundBrush'>#AA262626</SolidColorBrush> -->
-                <!-- <SolidColorBrush x:Key='BorderBrush'>#1e1f22</SolidColorBrush> -->
-                <!-- <SolidColorBrush x:Key='ForegroundBrush'>#8b8d92</SolidColorBrush> -->
-                <!-- <SolidColorBrush x:Key='SmallSectionBackgroundBrushLight'>#DD606060</SolidColorBrush> -->
-                <!-- <SolidColorBrush x:Key='SmallSectionBackgroundBrushDark'>#DD404848</SolidColorBrush> -->
-                <!-- <SolidColorBrush x:Key='SmallSectionBorderBrush'>Gray</SolidColorBrush> -->
-                <!-- <SolidColorBrush x:Key='SectionBackgroundBrushLight'>#AA606060</SolidColorBrush> -->
-                <!-- <SolidColorBrush x:Key='SectionBackgroundBrushDark'>#AA404848</SolidColorBrush> -->
-                <!-- <SolidColorBrush x:Key='InfoBarsBorderBrush'>Black</SolidColorBrush> -->
-                <!-- <SolidColorBrush x:Key='HighlightColor'>DodgerBlue</SolidColorBrush> -->
-                <!-- ~1~ <LinearGradientBrush x:Key='ProgressBarGradient' StartPoint="0%,0%" EndPoint="100%,0%"> @1@ -->
-                <!-- ~1~     <GradientStop Color="#904ECDC4" Offset="0.0"/> @1@ -->
-                <!-- ~1~     <GradientStop Color="#90FF6B6B" Offset="1.0"/> @1@ -->
-                <!-- ~1~ </LinearGradientBrush> @1@ -->
-                <!-- <Color x:Key='SectionBackgroundColorLight'>#AA606060</Color> -->
-                <!-- <Color x:Key='SectionBackgroundColorDark'>#AA404848</Color> -->
-                <!-- <SolidColorBrush x:Key='SelectionColor'>#C191FF</SolidColorBrush> -->
-                <!-- <SolidColorBrush x:Key='TextColor'>#BDBDBD</SolidColorBrush> -->
-                <!-- </ResourceDictionary> -->
-                <ResourceDictionary x:Key="Dark">
-                    
-                    <Color x:Key="SuccessColor">#18A88F</Color>
-                    <Color x:Key="WarningColor">#E5A84B</Color>
-                    <Color x:Key="DangerColor">#D9576A</Color>
-                    
-                    <Color x:Key="AccentColor">#505BE6</Color>
-                    <Color x:Key="StrongAccentColor">#9C1FE8</Color>
-
-                    <SolidColorBrush x:Key="SuccessBrush" Color="{StaticResource SuccessColor}" />
-                    <SolidColorBrush x:Key="WarningBrush" Color="{StaticResource WarningColor}" />
-                    <SolidColorBrush x:Key="DangerBrush" Color="{StaticResource DangerColor}" />
-                    <SolidColorBrush x:Key="InfoBrush" Color="{StaticResource AccentColor}" />
-                    
-                    <SolidColorBrush x:Key='BackgroundBrush'>#AA121D30</SolidColorBrush>
-                    <SolidColorBrush x:Key='BorderBrush'>#66224D75</SolidColorBrush>
-                    <SolidColorBrush x:Key='ForegroundBrush'>#E6FFFFFF</SolidColorBrush>
-                    <SolidColorBrush x:Key='SmallSectionBackgroundBrushLight'>#33224D75</SolidColorBrush>
-                    <SolidColorBrush x:Key='SmallSectionBackgroundBrushDark'>#22121D30</SolidColorBrush>
-                    <SolidColorBrush x:Key='SmallSectionBorderBrush'>#66224D75</SolidColorBrush>
-                    <SolidColorBrush x:Key='SectionBackgroundBrushDark'>#11121D30</SolidColorBrush>
-                    <SolidColorBrush x:Key='SectionBackgroundBrushLight'>#22224D75</SolidColorBrush>
-                    <SolidColorBrush x:Key='InfoBarsBorderBrush'>Black</SolidColorBrush>
-                    <SolidColorBrush x:Key='AccentBrush' Color="{StaticResource AccentColor}"/>
-                    <SolidColorBrush x:Key='StrongAccentBrush' Color="{StaticResource StrongAccentColor}"/>
-                    <SolidColorBrush x:Key='TextColor'>#F1F0F5</SolidColorBrush>
-                    
-                    <!--Slider thumb override-->
-                    <SolidColorBrush x:Key="SliderThumbBackground">#505BE6</SolidColorBrush>
-                    <SolidColorBrush x:Key="SliderThumbBackgroundPointerOver">#9C1FE8</SolidColorBrush>
-                    <SolidColorBrush x:Key="SliderThumbBackgroundPressed">#9C1FE8</SolidColorBrush>
-                    <SolidColorBrush x:Key="SliderThumbBackgroundDisabled">#66505BE6</SolidColorBrush>
-                </ResourceDictionary>
-                <!-- <ResourceDictionary x:Key="Dark"></ResourceDictionary> -->
-            </ResourceDictionary.ThemeDictionaries>
-        </ResourceDictionary>
-            
-        
-    </Grid.Resources>
+       
     
         
-        
-        <Grid.Styles>
-            
-            
-            <!-- <Style Selector="Grid#MainGrid"> -->
-            <!--     <Setter Property="Background" Value="{DynamicResource BackgroundBrush}" /> -->
-            <!--     <Setter Property="TextElement.Foreground" Value="{DynamicResource ForegroundBrush}" /> -->
-            <!-- </Style> -->
-            
-            <!-- <Style Selector="Slider"> -->
-            <!--     <Setter Property="Foreground" Value="{DynamicResource HighlightColor}" /> -->
-            <!-- </Style> -->
-            
-            <Style Selector="Label.h1">
-                <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
-                <Setter Property="FontWeight" Value="ExtraBold"/>
-            </Style>
-            
-            <Style Selector="NumericUpDown">
-                <Setter Property="Foreground" Value="{DynamicResource AccentBrush}"/>
-                <Setter Property="FontFamily" Value="{StaticResource NotoSansMonoFont}"/>
-            </Style>
-            
-            <Style Selector="Slider">
-                <Setter Property="Foreground" Value="{DynamicResource AccentBrush}"/>
-            </Style>
-            
-            <Style Selector="Slider /template/ Thumb">
-                <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
-                <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
-            </Style>
-            
-            <Style Selector="ProgressBar">
-                <Setter Property="CornerRadius" Value="10" />
-                <Setter Property="Foreground" Value="{DynamicResource AccentBrush}" />
-                <Setter Property="Background" Value="Transparent"/>
-            </Style>
-            
-            <Style Selector="Label">
-                <Setter Property="FontFamily" Value="{StaticResource NotoSansMonoFont}"/>
-                <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
-            </Style>
-            
-            <Style Selector="ToolTip">
-                <Setter Property="FontFamily" Value="{StaticResource NotoSansMonoFont}"/>
-            </Style>
-            
-            <Style Selector="Border.panelItem">
-                <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
-                <Setter Property="BorderThickness" Value="0"/>
-                <Setter Property="CornerRadius" Value="10"/>
-                <Setter Property="Margin" Value="10"/>
-                <Setter Property="Padding" Value="2"/>
-                <Setter Property="Background" Value="{DynamicResource SmallSectionBackgroundBrushLight}"/>
-                
-            </Style>
-            
-            <Style Selector="Border.panelItem Button">
-                <Setter Property="Margin" Value="2"/>
-            </Style>
-            
-            <Style Selector="Border.section">
-                <Setter Property="Padding" Value="4"/>
-            </Style>
-            
-            <Style Selector="ComboBox">
-                <Setter Property="BorderBrush" Value="Transparent"/>
-                <Setter Property="Margin" Value="3,0,3,0"/>
-                <Setter Property="FontFamily" Value="{StaticResource NotoSansMonoFont}"/>
-            </Style>
-            
-            <!-- <Style Selector="Border.panelItem:nth-child(2n+1)" > -->
-            <!--     <Setter Property="Background" Value="{DynamicResource SmallSectionBackgroundBrushDark}"/> -->
-            <!--      -->
-            <!-- </Style> -->
-            <!-- s -->
-            <!-- <Style Selector="Border.flashable"> -->
-            <!--     <Setter Property="BorderThickness" -->
-            <!-- </Style> -->
-            
-            <Style Selector="Border.flashing">
-                <Style.Animations>
-                    <Animation Duration="0:0:1" IterationCount="INFINITE">
-                        <KeyFrame Cue="0%">
-                            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
-                        </KeyFrame>
-                        <KeyFrame Cue="25%">
-                            <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
-                        </KeyFrame>
-                        <KeyFrame Cue="50%">
-                            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
-                        </KeyFrame>
-                        <KeyFrame Cue="75%">
-                            <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
-                        </KeyFrame>
-                        <KeyFrame Cue="100%">
-                            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
-                        </KeyFrame>
-                    </Animation>
-                </Style.Animations>
-                <Setter Property="BorderThickness" Value="3"/>
-                <Setter Property="Padding" Value="0"/>
-                <Setter Property="Margin" Value="0"/>
-            </Style>
-            
-            <Style Selector="Grid.liveStatsPanel Label">
-                <Setter Property="FontFamily" Value="{StaticResource NotoSansMonoFont}"/>
-                <Setter Property="FontWeight" Value="Bold"/>
-                <Setter Property="VerticalAlignment" Value="Center"/>
-            </Style>
-            
-            <Style Selector="Grid.liveStatsPanel ProgressBar">
-                <Setter Property="MinWidth" Value="0"/>
-            </Style>
-            
-            <Style Selector="Grid.liveStatsPanel > Border">
-                <Setter Property="BorderBrush" Value="{DynamicResource InfoBarsBorderBrush}"/>
-                <Setter Property="Background" Value="{DynamicResource SmallSectionBackgroundBrushDark}"/>
-                <Setter Property="BorderThickness" Value="0"/>
-                <Setter Property="Padding" Value="3"/>
-                <Setter Property="Margin" Value="0,2,0,2"/>
-            </Style>
-            
-            <Style Selector="Grid.liveStatsPanel > Border:nth-child(8n+1), Grid.liveStatsPanel > Border:nth-child(8n+2), Grid.liveStatsPanel > Border:nth-child(8n+3), Grid.liveStatsPanel > Border:nth-child(8n+4)">
-                <Setter Property="Background" Value="{DynamicResource SmallSectionBackgroundBrushLight}"/>
-            </Style>
-            
-            
-            <Style Selector="Button">
-                <Setter Property="CornerRadius" Value="12" />
-                <Setter Property="FontFamily" Value="{StaticResource NotoSansMonoFont}"/> 
-                <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/> 
-                <Setter Property="Background" Value="#33BBBBBB"/> 
-            </Style>
-        
-        
-        </Grid.Styles>
         
             <!-- <Border Grid.Row="1" Grid.Column="2" Grid.RowSpan="2"  -->
             <!--              -->
@@ -271,11 +63,11 @@
         
             
             <!--MAIN-->
-            <Border  Grid.Column="1" Grid.Row="0" BorderThickness="2">
+            <Border  Grid.Column="1" Grid.Row="1" BorderThickness="2">
                 
                     <!--lasciare qualcosa tipo *.20*,* di colonne e fare una singola responsivecarouselgrid-->
                 
-                <Grid RowDefinitions="*,*,*,*,*,*,*" Name="TopGrid"
+                <Grid  RowDefinitions="*,*,*,*,*,*,*" Name="TopGrid"
                   
                   >
                 
@@ -427,14 +219,11 @@
                     </Border>
                 
                     <!--PROFILES-->
-                    
-                        
                     <Border Grid.Column="3" Grid.RowSpan="5" Grid.Row="1"
                             BorderBrush="Transparent"
                             Background="{DynamicResource SectionBackgroundBrushLight}"
                             BorderThickness="0"
                             CornerRadius="20"
-                            Padding="8"
                             DockPanel.Dock="Top"
                     >
                     
@@ -442,9 +231,9 @@
                         <DockPanel LastChildFill="False">
                         
                             <DockPanel.Styles>
-                                <Style Selector="Border">
-                                    <Setter Property="Padding" Value="10,0,10,0"/>
-                                    <Setter Property="Margin" Value="0,5,0,5"/>
+                                <Style Selector="ComboBox /template/ Border">
+                                    <!-- <Setter Property="Padding" Value="0,10,0,10"/> -->
+                                    <Setter Property="Margin" Value="0,10,0,10"/>
                                 </Style>
                             </DockPanel.Styles>
                             
@@ -478,13 +267,6 @@
                                 </StackPanel>
                             </Border> 
                             
-                                
-                            
-                            
-                            
-                            
-                            
-                            
                             <Border  DockPanel.Dock="Bottom" Classes="panelItem">
                                 <DockPanel Grid.Row="5" Grid.ColumnSpan="2"  >
                                     
@@ -500,20 +282,20 @@
                                 </DockPanel>
                             </Border>
                             
-                            <Border  DockPanel.Dock="Bottom" >
+                            <Border Padding="10,0,10,0" DockPanel.Dock="Bottom" >
                                 <DockPanel DockPanel.Dock="Top">
                                     <Button Grid.Row="4" Grid.Column="0" DockPanel.Dock="Left" Content="{x:Static lang:Resources.ButtonLoadToTuner}" Command="{Binding OnLoadProfileButtonClicked}" HorizontalAlignment="Left"/>
-                                    <Button Grid.Row="4" Grid.Column="1" DockPanel.Dock="Right" Content="{x:Static lang:Resources.ButtonDeleteProfile}" Command="{Binding DeleteOcProfile}" Background="#40E85F68" HorizontalAlignment="Right"/>
+                                    <Button Grid.Row="4" Grid.Column="1" Classes="danger" DockPanel.Dock="Right" Content="{x:Static lang:Resources.ButtonDeleteProfile}" Command="{Binding DeleteOcProfile}"  HorizontalAlignment="Right"/>
                                 </DockPanel>
                             </Border>
                             
-                            <Border  DockPanel.Dock="Bottom">
+                            <Border Classes="panelItem" Background="Transparent" DockPanel.Dock="Bottom">
                                 <ComboBox DockPanel.Dock="Top" SelectedItem="{Binding SelectedOcProfile}"
                                           ItemsSource="{Binding OcProfilesList}" 
                                           x:Name="CurrentSelectedProfileCombobox"
                                           Margin="0"
                                           SelectedIndex="1"
-                                          VerticalAlignment="Bottom" 
+                                          VerticalAlignment="Center" 
                                           HorizontalAlignment="Stretch" MinHeight="50"
                                 >
                             
@@ -534,10 +316,8 @@
                    
                     
                     <!--gpu select-->
-                    <Border   Grid.Column="1" Grid.Row="6" Padding="2" 
-                              Margin="5"
-                              Background="{DynamicResource SmallSectionBackgroundBrushLight}" 
-                              BorderBrush="{DynamicResource BorderBrush}" BorderThickness="4" CornerRadius="10" HorizontalAlignment="Center" VerticalAlignment="Top"
+                    <Border   Grid.Column="1" Grid.Row="6" 
+                              Classes="panelItem" HorizontalAlignment="Left" VerticalAlignment="Top"
                     >
                         <DockPanel >
                         
@@ -582,7 +362,7 @@
             
             
             <!--BOTTOM PANEL-->
-            <Panel Grid.Column="1" Grid.Row="1" >
+            <Panel Grid.Column="1" Grid.Row="2" >
                  
                 <Panel.Styles>
                     <ContainerQuery Name="InfosContainer" Query="max-width:320">
@@ -718,9 +498,9 @@
                                 </Grid>
                     
                                 <!--TUNER GRID-->
-                                <Border  Grid.Column="1"  BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" >
+                                <controls:CarousellableBorder  Grid.Column="1"  Classes="lightSection" >
                                     <Grid RowDefinitions="*,5*"
-                                            Background="{DynamicResource SectionBackgroundBrushLight}">
+                                            >
                             
                                         <Grid.Styles>
                                             <ContainerQuery Name="InfosContainer" Query="max-width:320">
@@ -843,7 +623,7 @@
                                 
                                     </Grid>
                             
-                                </Border>
+                                </controls:CarousellableBorder>
                     
                                 <!--FAN CURVE GRID-->
                                 <Grid Grid.Column="2" RowDefinitions="*,5*">
@@ -864,14 +644,14 @@
                                     <Border Classes="section" Grid.Column="0" Grid.Row="1">
                                         <DockPanel  HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                         
-                                            <Border DockPanel.Dock="Bottom" Classes="panelItem"   HorizontalAlignment="Center" VerticalAlignment="Top">
+                                            <Border DockPanel.Dock="Bottom" Classes="panelItem"    HorizontalAlignment="Center" VerticalAlignment="Top">
                                                 <StackPanel 
                                                     Orientation="Horizontal" 
                                                     Spacing="15">
                                                     
                                                     <Button Command="{Binding  OpenFanCurveEditorCommand}" Content="{x:Static lang:Resources.ButtonNew}"/>
                                                     <Button Content="{x:Static lang:Resources.ButtonEdit}"  Command="{Binding  OpenFanCurveEditorCommand}" CommandParameter="{Binding SelectedFanCurve}"/>
-                                                    <Button Content="{x:Static lang:Resources.ButtonDelete}"  Command="{Binding DeleteSelectedFanProfile}"/>
+                                                    <Button Classes="danger" Content="{x:Static lang:Resources.ButtonDelete}"  Command="{Binding DeleteSelectedFanProfile}"/>
                                                     <CheckBox Content="{x:Static lang:Resources.CheckboxEnableFanCurve}"  IsChecked="{Binding IsFanCurveIncludedInProfileChecked}" />
                                                 </StackPanel>
                                             </Border>
@@ -958,58 +738,60 @@
             </Panel>
             
            
-            <!--RIGHT PANEL-->
+            <!--TOP BAR -->
             
-            <Border BorderThickness="20" Grid.Column="2" Grid.Row="0" Grid.RowSpan="2">
-                <Border BorderBrush="{DynamicResource BorderBrush}" Background="{DynamicResource SmallSectionBackgroundBrushLight}" BorderThickness="0" CornerRadius="20" Padding="15">
-                    
-                    <Grid RowDefinitions="*,*,*,*,*" >
-                        <Button CornerRadius="20" Command="{Binding OpenSettingsWindowCommand}">
-                            <Image Source="avares://ssprea-nvidia-control/Assets/icons/gear-icon.png"/>
-                            <ToolTip.Tip>
-                                <StackPanel>
-                                    <TextBlock Text="{x:Static lang:Resources.TooltipApplicationSettings}"/>
-                                </StackPanel>
-                            </ToolTip.Tip>
-                        </Button>
-                        <Button Grid.Row="1" Command="{Binding ShowComingSoonPopupCommand}" CommandParameter="Extra GPU Info" CornerRadius="20">
-                            <Image Source="avares://ssprea-nvidia-control/Assets/icons/info-icon.png"/>
-                            <ToolTip.Tip>
-                                <StackPanel>
-                                    <TextBlock Text="{x:Static lang:Resources.TooltipExtraGpuInfo}"/>
-                                    <TextBlock>COMING SOON!</TextBlock>
-                                </StackPanel>
-                            </ToolTip.Tip>
-                        </Button>
-                        <!--kofi-->
-                        <Button Grid.Row="2" Command="{Binding ShowComingSoonPopupCommand}" CommandParameter="Extra GPU Info" CornerRadius="20">
-                            <Image Source="avares://ssprea-nvidia-control/Assets/icons/coffee-icon5.png"/>
-                            <ToolTip.Tip>
-                                <StackPanel>
-                                    <TextBlock Text="{x:Static lang:Resources.TooltipKofiButton}"/>
-                                </StackPanel>
-                            </ToolTip.Tip>
-                        </Button>
-                        <Button Grid.Row="3" Command="{Binding OpenUsageGraphsWindowCommand}" CommandParameter="{Binding SelectedGpu}" CornerRadius="20">
-                            <Image Source="avares://ssprea-nvidia-control/Assets/icons/graph-icon.png"/>
-                            <ToolTip.Tip>
-                                <StackPanel>
-                                    <TextBlock Text="{x:Static lang:Resources.TooltipUsageGraphs}"/>
-                                </StackPanel>
-                            </ToolTip.Tip>
-                        </Button>
-                        <Button Grid.Row="4"  CornerRadius="20" Command="{Binding OpenDefaultBrowserToUrlCommand}" CommandParameter="https://github.com/ssprea/ssprea-nvidia-control/wiki">
-                            <Image Source="avares://ssprea-nvidia-control/Assets/icons/help-icon.png"/>
-                            <ToolTip.Tip>
-                                <StackPanel>
-                                    <TextBlock Text="{x:Static lang:Resources.TooltipGuide}"/>
-                                </StackPanel>
-                            </ToolTip.Tip>
-                        </Button>
-                    </Grid>
-                    
-                </Border>
+            
+            <Border Classes="panelBar"
+                    Grid.Column="1" Grid.Row="0"
+                    >
+                
+                <UniformGrid Rows="1" >
+                    <Button  Command="{Binding OpenSettingsWindowCommand}">
+                        <Image Source="avares://ssprea-nvidia-control/Assets/icons/gear-icon.png" />
+                        <ToolTip.Tip>
+                            <StackPanel>
+                                <TextBlock Text="{x:Static lang:Resources.TooltipApplicationSettings}"/>
+                            </StackPanel>
+                        </ToolTip.Tip>
+                    </Button>
+                    <Button Grid.Row="1" Command="{Binding ShowComingSoonPopupCommand}" CommandParameter="Extra GPU Info" >
+                        <Image Source="avares://ssprea-nvidia-control/Assets/icons/info-icon.png"/>
+                        <ToolTip.Tip>
+                            <StackPanel>
+                                <TextBlock Text="{x:Static lang:Resources.TooltipExtraGpuInfo}"/>
+                                <TextBlock>COMING SOON!</TextBlock>
+                            </StackPanel>
+                        </ToolTip.Tip>
+                    </Button>
+                    <!--kofi-->
+                    <Button Grid.Row="2" Command="{Binding ShowComingSoonPopupCommand}" CommandParameter="Extra GPU Info" >
+                        <Image Source="avares://ssprea-nvidia-control/Assets/icons/coffee-icon5.png"/>
+                        <ToolTip.Tip>
+                            <StackPanel>
+                                <TextBlock Text="{x:Static lang:Resources.TooltipKofiButton}"/>
+                            </StackPanel>
+                        </ToolTip.Tip>
+                    </Button>
+                    <Button Grid.Row="3" Command="{Binding OpenUsageGraphsWindowCommand}" CommandParameter="{Binding SelectedGpu}" >
+                        <Image Source="avares://ssprea-nvidia-control/Assets/icons/graph-icon.png"/>
+                        <ToolTip.Tip>
+                            <StackPanel>
+                                <TextBlock Text="{x:Static lang:Resources.TooltipUsageGraphs}"/>
+                            </StackPanel>
+                        </ToolTip.Tip>
+                    </Button>
+                    <Button Grid.Row="4"  Command="{Binding OpenDefaultBrowserToUrlCommand}" CommandParameter="https://github.com/ssprea/ssprea-nvidia-control/wiki">
+                        <Image Source="avares://ssprea-nvidia-control/Assets/icons/help-icon.png"/>
+                        <ToolTip.Tip>
+                            <StackPanel>
+                                <TextBlock Text="{x:Static lang:Resources.TooltipGuide}"/>
+                            </StackPanel>
+                        </ToolTip.Tip>
+                    </Button>
+                </UniformGrid>
+                
             </Border>
+            
         </Grid>
     
     

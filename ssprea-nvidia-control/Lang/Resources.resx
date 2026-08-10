@@ -333,4 +333,25 @@
     <data name="TooltipKofiButton" xml:space="preserve">
         <value>Buy me a coffee</value>
     </data>
+    <data name="HeaderFanCurveEditor" xml:space="preserve">
+        <value>FAN CURVE EDITOR</value>
+    </data>
+    <data name="TextName" xml:space="preserve">
+        <value>Name:</value>
+    </data>
+    <data name="TextTemperatureWithUnit" xml:space="preserve">
+        <value>Temperature (°C):</value>
+    </data>
+    <data name="TextFanSpeedWithUnit" xml:space="preserve">
+        <value>Fan Speed (%):</value>
+    </data>
+    <data name="TextFanCurveAddPoint" xml:space="preserve">
+        <value>Add point</value>
+    </data>
+    <data name="TextFanCurveDeletePoint" xml:space="preserve">
+        <value>Delete point</value>
+    </data>
+    <data name="ButtonCancel" xml:space="preserve">
+        <value>Cancel</value>
+    </data>
 </root>

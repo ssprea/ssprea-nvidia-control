@@ -18,7 +18,7 @@
         <vm:UsageGraphsWindowViewModel/>
     </Design.DataContext>
     
-        <Grid Background="#AA404848" RowDefinitions="*,4,*,4,*,4,*,4,*,4,*,4,*">
+        <Grid Background="{DynamicResource BackgroundBrush}" RowDefinitions="*,4,*,4,*,4,*,4,*,4,*,4,*">
             
             
             <Border DockPanel.Dock="Top" BorderBrush="Gray" BorderThickness="1" CornerRadius="10" Margin="5" Padding="2">

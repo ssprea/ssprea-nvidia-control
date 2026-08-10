@@ -15,15 +15,98 @@
          <FluentTheme />
          <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
          <StyleInclude Source="avares://ssprea-nvidia-control/Controls/ResponsiveGridCarousel.axaml" />
+         
+         <StyleInclude Source="avares://ssprea-nvidia-control/Styles/General.axaml"/>
+         <StyleInclude Source="avares://ssprea-nvidia-control/Styles/Inputs.axaml"/>
+         <StyleInclude Source="avares://ssprea-nvidia-control/Styles/Sections.axaml"/>
      </Application.Styles>
              
      <Application.Resources>
-         <FontFamily x:Key="NotoSansFont">avares://ssprea-nvidia-control/Assets/Fonts/NotoSans/NotoSans-VariableFont.ttf</FontFamily>
-         <FontFamily x:Key="NotoSansMonoFont">avares://ssprea-nvidia-control/Assets/Fonts/NotoSansMono/NotoSansMono-VariableFont.ttf</FontFamily>
-         <FontFamily x:Key="RobotoMonoFont">avares://ssprea-nvidia-control/Assets/Fonts/Roboto/RobotoMono-VariableFont.ttf</FontFamily>
          
-         <converters:LiveStatsGridResponsiveColumnConverter x:Key="LiveStatsGridResponsiveColumnConverter"/>
-         <converters:PStateFriendlyNameConverter x:Key="PStateFriendlyNameConverter"/>
+         
+         <ResourceDictionary>
+             
+             <FontFamily x:Key="NotoSansFont">avares://ssprea-nvidia-control/Assets/Fonts/NotoSans/NotoSans-VariableFont.ttf</FontFamily>
+             <FontFamily x:Key="NotoSansMonoFont">avares://ssprea-nvidia-control/Assets/Fonts/NotoSansMono/NotoSansMono-VariableFont.ttf</FontFamily>
+             <FontFamily x:Key="RobotoMonoFont">avares://ssprea-nvidia-control/Assets/Fonts/Roboto/RobotoMono-VariableFont.ttf</FontFamily>
+         
+             <converters:LiveStatsGridResponsiveColumnConverter x:Key="LiveStatsGridResponsiveColumnConverter"/>
+             <converters:PStateFriendlyNameConverter x:Key="PStateFriendlyNameConverter"/>
+             
+             <ResourceDictionary.ThemeDictionaries>
+                
+                <ResourceDictionary x:Key='Light'>
+                    <SolidColorBrush x:Key='BackgroundBrush'>GhostWhite</SolidColorBrush>
+                    <SolidColorBrush x:Key='BorderBrush'>DimGray</SolidColorBrush>
+                    <SolidColorBrush x:Key='ForegroundBrush'>Black</SolidColorBrush>
+                    <SolidColorBrush x:Key='SectionBackgroundBrush'>LightGray</SolidColorBrush>
+                    <SolidColorBrush x:Key='SelectionColor'>#C191FF</SolidColorBrush>
+                    <SolidColorBrush x:Key='TextColor'>Black</SolidColorBrush>
+                </ResourceDictionary>
+        
+            <!-- <ResourceDictionary x:Key=''> -->
+            <!-- <SolidColorBrush x:Key='BackgroundBrush'>#AA262626</SolidColorBrush> -->
+            <!-- <SolidColorBrush x:Key='BorderBrush'>#1e1f22</SolidColorBrush> -->
+            <!-- <SolidColorBrush x:Key='ForegroundBrush'>#8b8d92</SolidColorBrush> -->
+            <!-- <SolidColorBrush x:Key='SmallSectionBackgroundBrushLight'>#DD606060</SolidColorBrush> -->
+            <!-- <SolidColorBrush x:Key='SmallSectionBackgroundBrushDark'>#DD404848</SolidColorBrush> -->
+            <!-- <SolidColorBrush x:Key='SmallSectionBorderBrush'>Gray</SolidColorBrush> -->
+            <!-- <SolidColorBrush x:Key='SectionBackgroundBrushLight'>#AA606060</SolidColorBrush> -->
+            <!-- <SolidColorBrush x:Key='SectionBackgroundBrushDark'>#AA404848</SolidColorBrush> -->
+            <!-- <SolidColorBrush x:Key='InfoBarsBorderBrush'>Black</SolidColorBrush> -->
+            <!-- <SolidColorBrush x:Key='HighlightColor'>DodgerBlue</SolidColorBrush> -->
+            <!-- ~1~ <LinearGradientBrush x:Key='ProgressBarGradient' StartPoint="0%,0%" EndPoint="100%,0%"> @1@ -->
+            <!-- ~1~     <GradientStop Color="#904ECDC4" Offset="0.0"/> @1@ -->
+            <!-- ~1~     <GradientStop Color="#90FF6B6B" Offset="1.0"/> @1@ -->
+            <!-- ~1~ </LinearGradientBrush> @1@ -->
+            <!-- <Color x:Key='SectionBackgroundColorLight'>#AA606060</Color> -->
+            <!-- <Color x:Key='SectionBackgroundColorDark'>#AA404848</Color> -->
+            <!-- <SolidColorBrush x:Key='SelectionColor'>#C191FF</SolidColorBrush> -->
+            <!-- <SolidColorBrush x:Key='TextColor'>#BDBDBD</SolidColorBrush> -->
+            <!-- </ResourceDictionary> -->
+                <ResourceDictionary x:Key="Dark">
+                
+                    <Color x:Key="SuccessColor">#18A88F</Color>
+                    <Color x:Key="WarningColor">#E5A84B</Color>
+                    <Color x:Key="DangerHoverColor">DarkRed</Color>
+                    <Color x:Key="DangerColor">#40E85F68</Color>
+                    
+                    <Color x:Key="AccentColor">#505BE6</Color>
+                    <Color x:Key="StrongAccentColor">#9C1FE8</Color>
+
+                    <SolidColorBrush x:Key="SuccessBrush" Color="{StaticResource SuccessColor}" />
+                    <SolidColorBrush x:Key="WarningBrush" Color="{StaticResource WarningColor}" />
+                    <SolidColorBrush x:Key="DangerHoverBrush" Color="{StaticResource DangerHoverColor}" />
+                    <SolidColorBrush x:Key="DangerBrush" Color="{StaticResource DangerColor}" />
+                    <SolidColorBrush x:Key="InfoBrush" Color="{StaticResource AccentColor}" />
+                    
+                    <SolidColorBrush x:Key='BackgroundBrush'>#AA121D30</SolidColorBrush>
+                    <SolidColorBrush x:Key='BackgroundBrushOpaque'>#FF121D30</SolidColorBrush>
+                    <SolidColorBrush x:Key='BorderBrush'>#66224D75</SolidColorBrush>
+                    <SolidColorBrush x:Key='ForegroundBrush'>#E6FFFFFF</SolidColorBrush>
+                    <SolidColorBrush x:Key='SmallSectionBackgroundBrushLight'>#33224D75</SolidColorBrush>
+                    <SolidColorBrush x:Key='SmallSectionBackgroundBrushDark'>#22121D30</SolidColorBrush>
+                    <SolidColorBrush x:Key='SmallSectionBorderBrush'>#66224D75</SolidColorBrush>
+                    <SolidColorBrush x:Key='SectionBackgroundBrushDark'>#11121D30</SolidColorBrush>
+                    <SolidColorBrush x:Key='SectionBackgroundBrushLight'>#22224D75</SolidColorBrush>
+                    <SolidColorBrush x:Key='InfoBarsBorderBrush'>Black</SolidColorBrush>
+                    <SolidColorBrush x:Key='AccentBrush' Color="{StaticResource AccentColor}"/>
+                    <SolidColorBrush x:Key='StrongAccentBrush' Color="{StaticResource StrongAccentColor}"/>
+                    <SolidColorBrush x:Key='TextColor'>#F1F0F5</SolidColorBrush>
+                    
+                    <!--Slider thumb override-->
+                    <SolidColorBrush x:Key="SliderThumbBackground">#505BE6</SolidColorBrush>
+                    <SolidColorBrush x:Key="SliderThumbBackgroundPointerOver">#4F229E</SolidColorBrush>
+                    <SolidColorBrush x:Key="SliderThumbBackgroundPressed">#9C1FE8</SolidColorBrush>
+                    <SolidColorBrush x:Key="SliderThumbBackgroundDisabled">#66505BE6</SolidColorBrush>
+                    <SolidColorBrush x:Key="SliderTrackValueFillPointerOver" Color="{StaticResource AccentColor}"/>
+                    <SolidColorBrush x:Key="SliderTrackValueFillPressed" Color="{StaticResource StrongAccentColor}"/>
+                </ResourceDictionary>
+        <!-- <ResourceDictionary x:Key="Dark"></ResourceDictionary> -->
+            </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
+             
+         
      </Application.Resources>
              
      <TrayIcon.Icons>

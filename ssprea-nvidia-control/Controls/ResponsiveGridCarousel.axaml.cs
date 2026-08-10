@@ -3,6 +3,7 @@ using System.Collections.Specialized;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
+using Avalonia.Media;
 using Avalonia.Metadata;
 using Avalonia.Reactive;
 using Serilog;
@@ -62,6 +63,7 @@ public class ResponsiveGridCarousel : TemplatedControl
     private bool _isWide = false;
 
     
+    
 
     private void ApplyMode(bool wide, bool force = false)
     {
@@ -76,7 +78,7 @@ public class ResponsiveGridCarousel : TemplatedControl
         _carousel.ClearAllItemsExceptButtons();
         
         
-        //wait for next frame for reparenting to allow for carousel to disown children
+        
         
                 
         
@@ -91,6 +93,10 @@ public class ResponsiveGridCarousel : TemplatedControl
             for (int i = 0; i < Children.Count; i++)
             {
                 var childControl = Children[i];
+                
+                if (childControl is CarousellableBorder border)
+                    border.UnsetCarouselled();
+                
                 Grid.SetColumn(childControl, i);
                 _grid.Children.Add(childControl);
                 childControl.IsVisible = true;
@@ -103,7 +109,12 @@ public class ResponsiveGridCarousel : TemplatedControl
             foreach (var child in Children)
             {
                 if (child is not null)
+                {
+                    if (child is CarousellableBorder border)
+                        border.SetCarouselled();
+                        
                     _carousel.Children.Add(child);
+                }
             }
 
             _carousel.SelectedIndex = 2;

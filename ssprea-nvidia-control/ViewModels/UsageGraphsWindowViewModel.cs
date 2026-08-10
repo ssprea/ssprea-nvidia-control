@@ -54,6 +54,15 @@ public partial class UsageGraphsWindowViewModel : ViewModelBase
     
     #region GraphStyles
 
+    private static readonly SKColor ThemeTextColor = SKColor.Parse("#F1F0F5");
+
+    private static readonly SolidColorPaint GraphsSeparatorsPaint = new SolidColorPaint(ThemeTextColor.WithAlpha(60))
+    {
+        StrokeThickness = 2,
+        PathEffect = new DashEffect([3, 3])
+    };
+    
+    
     // private static string XAxisFormatter(DateTime date)
     // {
     //     var secsAgo = (DateTime.Now - date).TotalSeconds;
@@ -112,11 +121,7 @@ public partial class UsageGraphsWindowViewModel : ViewModelBase
             // LabelsPaint = new SolidColorPaint(SKColors.AntiqueWhite) {SKTypeface = _defaultGraphTypeface}, 
             TextSize = 10,
 
-            SeparatorsPaint = new SolidColorPaint(SKColors.LightSlateGray) 
-            { 
-                StrokeThickness = 2, 
-                PathEffect = new DashEffect([ 3, 3 ]) 
-            } 
+            SeparatorsPaint = GraphsSeparatorsPaint
             
             
         }
@@ -133,11 +138,7 @@ public partial class UsageGraphsWindowViewModel : ViewModelBase
             // LabelsPaint = new SolidColorPaint(SKColors.AntiqueWhite) {SKTypeface = _defaultGraphTypeface}, 
             TextSize = 10,
 
-            SeparatorsPaint = new SolidColorPaint(SKColors.LightSlateGray) 
-            { 
-                StrokeThickness = 2, 
-                PathEffect = new DashEffect([ 3, 3 ]) 
-            } 
+            SeparatorsPaint = GraphsSeparatorsPaint
         }
     ];
     
@@ -152,11 +153,7 @@ public partial class UsageGraphsWindowViewModel : ViewModelBase
             // LabelsPaint = new SolidColorPaint(SKColors.AntiqueWhite) {SKTypeface = _defaultGraphTypeface}, 
             TextSize = 10,
 
-            SeparatorsPaint = new SolidColorPaint(SKColors.LightSlateGray) 
-            { 
-                StrokeThickness = 2, 
-                PathEffect = new DashEffect([ 3, 3 ]) 
-            } 
+            SeparatorsPaint = GraphsSeparatorsPaint
         }
     ];
     
@@ -171,11 +168,7 @@ public partial class UsageGraphsWindowViewModel : ViewModelBase
             // LabelsPaint = new SolidColorPaint(SKColors.AntiqueWhite) {SKTypeface = _defaultGraphTypeface}, 
             TextSize = 10,
 
-            SeparatorsPaint = new SolidColorPaint(SKColors.LightSlateGray) 
-            { 
-                StrokeThickness = 2, 
-                PathEffect = new DashEffect([ 3, 3 ]) 
-            } 
+            SeparatorsPaint = GraphsSeparatorsPaint
         }
     ];
     
@@ -190,11 +183,7 @@ public partial class UsageGraphsWindowViewModel : ViewModelBase
             // LabelsPaint = new SolidColorPaint(SKColors.AntiqueWhite) {SKTypeface = _defaultGraphTypeface}, 
             TextSize = 10,
 
-            SeparatorsPaint = new SolidColorPaint(SKColors.LightSlateGray) 
-            { 
-                StrokeThickness = 2, 
-                PathEffect = new DashEffect([ 3, 3 ]) 
-            } 
+            SeparatorsPaint = GraphsSeparatorsPaint
         }
     ];
     
@@ -209,11 +198,7 @@ public partial class UsageGraphsWindowViewModel : ViewModelBase
             // LabelsPaint = new SolidColorPaint(SKColors.AntiqueWhite) {SKTypeface = _defaultGraphTypeface}, 
             TextSize = 10,
 
-            SeparatorsPaint = new SolidColorPaint(SKColors.LightSlateGray) 
-            { 
-                StrokeThickness = 2, 
-                PathEffect = new DashEffect([ 3, 3 ]) 
-            } 
+            SeparatorsPaint = GraphsSeparatorsPaint
         }
     ];
     
@@ -228,11 +213,7 @@ public partial class UsageGraphsWindowViewModel : ViewModelBase
             // LabelsPaint = new SolidColorPaint(SKColors.AntiqueWhite) {SKTypeface = _defaultGraphTypeface}, 
             TextSize = 10,
 
-            SeparatorsPaint = new SolidColorPaint(SKColors.LightSlateGray) 
-            { 
-                StrokeThickness = 2, 
-                PathEffect = new DashEffect([ 3, 3 ]) 
-            } 
+            SeparatorsPaint = GraphsSeparatorsPaint
         }
     ];
     

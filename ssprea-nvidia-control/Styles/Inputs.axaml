@@ -1,0 +1,70 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Design.PreviewWith>
+        <Border Padding="20">
+            <!-- Add Controls for Previewer Here -->
+        </Border>
+    </Design.PreviewWith>
+
+    <Style Selector="NumericUpDown">
+        <Setter Property="Foreground" Value="{DynamicResource AccentBrush}"/>
+        <Setter Property="FontFamily" Value="{DynamicResource NotoSansMonoFont}"/>
+    </Style>
+    
+    <Style Selector="CheckBox:checked /template/ Border#NormalRectangle">
+        <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+    </Style>
+    
+    <Style Selector="CheckBox:pointerover /template/ Border#NormalRectangle">
+        <Setter Property="Background" Value="{DynamicResource StrongAccentBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource StrongAccentBrush}" />
+    </Style>
+    
+    <Style Selector="CheckBox:checked /template/ Path#CheckGlyph">
+        <Setter Property="Fill" Value="{DynamicResource ForegroundBrush}" />
+    </Style>
+    
+    <Style Selector="Slider">
+        <Setter Property="Foreground" Value="{DynamicResource AccentBrush}"/>
+    </Style>
+        
+    
+    
+    <Style Selector="Slider /template/ Thumb">
+        <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+    </Style>
+    
+    <Style Selector="ComboBox">
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="Margin" Value="3,0,3,0"/>
+        <Setter Property="FontFamily" Value="{DynamicResource NotoSansMonoFont}"/>
+    </Style>
+    
+    <Style Selector="NumericUpDown /template/ TextBox:pointerover, NumericUpDown /template/ Button:pointerover">
+        <Setter Property="Foreground" Value="{DynamicResource StrongAccentBrush}"/>
+    </Style>
+    
+    
+    
+    
+    <Style Selector="Button">
+        <Setter Property="CornerRadius" Value="12" />
+        <Setter Property="FontFamily" Value="{DynamicResource NotoSansMonoFont}"/> 
+        <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/> 
+        <Setter Property="Background" Value="#33BBBBBB"/> 
+    </Style>
+        
+    <Style Selector="Button.danger">
+        <Setter Property="Background" Value="{DynamicResource DangerBrush}"/>
+    </Style>
+    
+    <Style Selector="Button.danger:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource DangerHoverBrush}"/>
+    </Style>
+    
+    <Style Selector="Button:pointerover">
+        <Setter Property="Background" Value="{DynamicResource StrongAccentBrush}"/>
+    </Style>
+</Styles>

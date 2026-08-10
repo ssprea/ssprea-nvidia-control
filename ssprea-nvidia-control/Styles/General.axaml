@@ -1,0 +1,42 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Design.PreviewWith>
+        <Border Padding="20">
+            <!-- Add Controls for Previewer Here -->
+        </Border>
+    </Design.PreviewWith>
+    
+    
+    <Style Selector="Label.h1">
+        <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
+        <Setter Property="FontWeight" Value="ExtraBold"/>
+    </Style>
+    
+    
+    
+    <Style Selector="ProgressBar">
+        <Setter Property="CornerRadius" Value="10" />
+        <Setter Property="Foreground" Value="{DynamicResource AccentBrush}" />
+        <Setter Property="Background" Value="Transparent"/>
+    </Style>
+    
+    <Style Selector="Label">
+        <Setter Property="FontFamily" Value="{DynamicResource NotoSansMonoFont}"/>
+        <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
+    </Style>
+
+    <Style Selector="TextBlock">
+        <Setter Property="FontFamily" Value="{DynamicResource NotoSansMonoFont}"/>
+    </Style>
+    
+    <Style Selector="TextBlock.wrap">
+        <Setter Property="FontFamily" Value="{DynamicResource NotoSansMonoFont}"/>
+        <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
+        <Setter Property="TextWrapping" Value="Wrap"/>
+    </Style>
+    
+    <Style Selector="ToolTip">
+        <Setter Property="FontFamily" Value="{DynamicResource NotoSansMonoFont}"/>
+    </Style>
+    
+</Styles>

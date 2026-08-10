@@ -560,5 +560,47 @@ namespace ssprea_nvidia_control.Lang {
                 return ResourceManager.GetString("TooltipKofiButton", resourceCulture);
             }
         }
+        
+        public static string HeaderFanCurveEditor {
+            get {
+                return ResourceManager.GetString("HeaderFanCurveEditor", resourceCulture);
+            }
+        }
+        
+        public static string TextName {
+            get {
+                return ResourceManager.GetString("TextName", resourceCulture);
+            }
+        }
+        
+        public static string TextTemperatureWithUnit {
+            get {
+                return ResourceManager.GetString("TextTemperatureWithUnit", resourceCulture);
+            }
+        }
+        
+        public static string TextFanSpeedWithUnit {
+            get {
+                return ResourceManager.GetString("TextFanSpeedWithUnit", resourceCulture);
+            }
+        }
+        
+        public static string TextFanCurveAddPoint {
+            get {
+                return ResourceManager.GetString("TextFanCurveAddPoint", resourceCulture);
+            }
+        }
+        
+        public static string TextFanCurveDeletePoint {
+            get {
+                return ResourceManager.GetString("TextFanCurveDeletePoint", resourceCulture);
+            }
+        }
+        
+        public static string ButtonCancel {
+            get {
+                return ResourceManager.GetString("ButtonCancel", resourceCulture);
+            }
+        }
     }
 }
