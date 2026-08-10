@@ -92,7 +92,7 @@
                     <SolidColorBrush x:Key="DangerBrush" Color="{StaticResource DangerColor}" />
                     <SolidColorBrush x:Key="InfoBrush" Color="{StaticResource AccentColor}" />
                     
-                    <SolidColorBrush x:Key='BackgroundBrush'>#AA121D30</SolidColorBrush>
+                    <SolidColorBrush x:Key='BackgroundBrush'>#DD121D30</SolidColorBrush>
                     <SolidColorBrush x:Key='BackgroundBrushOpaque'>#FF121D30</SolidColorBrush>
                     <SolidColorBrush x:Key='BorderBrush'>#66224D75</SolidColorBrush>
                     <SolidColorBrush x:Key='ForegroundBrush'>#E6FFFFFF</SolidColorBrush>
