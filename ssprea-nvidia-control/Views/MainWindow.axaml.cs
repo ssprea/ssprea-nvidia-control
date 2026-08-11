@@ -327,7 +327,7 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
 
     private void Window_OnClosed(object? sender, EventArgs e)
     {
-        MainWindowViewModel.NvmlService.Shutdown();
+        Program.GpuService.Shutdown();
     }
 
     

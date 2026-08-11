@@ -1,20 +1,24 @@
-﻿using McMaster.Extensions.CommandLineUtils;
+﻿using System.Text.RegularExpressions;
+using GpuSSharp;
+using GpuSSharp.Types;
+using McMaster.Extensions.CommandLineUtils;
 using Newtonsoft.Json;
 using Serilog;
 using Serilog.Core;
-using ssprea_nvidia_control_cli.NVML;
-using ssprea_nvidia_control_cli.NVML.NvmlTypes;
 using ssprea_nvidia_control_cli.Types;
 
 namespace ssprea_nvidia_control_cli;
 
 public class Program
 {
-    [Option(CommandOptionType.SingleValue, Description = "select gpu id", LongName = "gpu", ShortName = "g")]
-    public static string GpuIdStr { get; set; }
+    [Option(CommandOptionType.SingleValue, Description = "select gpu by pci address", LongName = "gpu", ShortName = "g")]
+    public static string? GpuPciIdStr { get; set; }
     
     [Option(CommandOptionType.NoValue, Description = "list available gpus", LongName = "listGpu")]
     public static bool DoListGpus { get; set; }
+    
+    [Option(CommandOptionType.NoValue, Description = "list specified gpu info", LongName = "info", ShortName = "i")]
+    public static bool ShowGpuInfo { get; set; }
     
     [Option(CommandOptionType.SingleValue, Description = "set core offset MHz", LongName = "coreOffset", ShortName = "c")]
     public static int CoreOffset { get; set; } = -1;
@@ -49,12 +53,15 @@ public class Program
     private readonly string _serviceName = "snvctl-profile.service";
 
     
-    static NvmlService? _nvmlService;
-    NvmlGpu? _selectedGpu = null;
+    static GpuService? _gpuService;
+    IGpu? _selectedGpu = null;
     
     public static void Main(string[] args)
         => CommandLineApplication.Execute<Program>(args);
 
+    
+    private Task? _fanCurveTask;
+    
     // public static void Main(string[] args)
     // {
     //     var fancurve = FanCurve.DefaultFanCurve();
@@ -62,9 +69,14 @@ public class Program
     //     return;
     // }
 
-    public static uint GpuId { get; set; }
+    public static string? GpuPciAddress { get; set; }
 
-    private void OnExecute()
+    private bool IsValidPciAddress(string address)
+    {
+        return Regex.Match(address, @"^[0-9a-fA-F]{4}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}\.[0-9a-fA-F]$").Success;
+    }
+
+    private async Task OnExecute()
     {
         
         
@@ -79,32 +91,93 @@ public class Program
         
         
         
-        _nvmlService = new NvmlService();
+        _gpuService = new GpuService();
 
         if (DoListGpus)
         {
-            foreach (var g in _nvmlService.GpuList)
+            foreach (var g in _gpuService.GpuList)
             {
-                Console.WriteLine("Name: " + g.Name + "\tID: " + g.DeviceIndex);
+                Console.WriteLine("Name: " + g.Name + "\tID: " + g.DevicePciAddress);
             }
 
             return;
         }
+
+        if (GpuPciIdStr is null)
+        {
+            Log.Fatal("No gpu address provided. Exiting.");
+            Environment.Exit(1);
+        }
         
         
-        if (uint.TryParse(GpuIdStr, out var parsedId))
+        if (IsValidPciAddress(GpuPciIdStr)) //if arg is already valid pci address use that
         {
-            GpuId = parsedId;
+            GpuPciAddress = GpuPciIdStr;
         }
-        else if (Path.Exists(GpuIdStr) && uint.TryParse(File.ReadAllText(GpuIdStr).Trim(), out var gpuId))
+        else if (Path.Exists(GpuPciIdStr)) //if is valid path read from path and verify 
         {
-            GpuId = gpuId;
+            var read = File.ReadAllText(GpuPciIdStr).Trim();
+            
+            if (IsValidPciAddress(read))
+                GpuPciAddress = read;  
+            
         }
-        else
+        
+        if (GpuPciAddress is null)
         {
             Log.Fatal("Invalid GPU ID, Exiting...");
             Environment.Exit(-1);
         }
+        
+        foreach (var gpu in _gpuService.GpuList)
+        {
+            if (gpu.DevicePciAddress == GpuPciAddress)
+                _selectedGpu = gpu;
+        }
+        
+
+        if (_selectedGpu == null)
+        {
+            Log.Fatal("GPU address not found");
+            return;
+        }
+        
+        
+        if (ShowGpuInfo)
+        {
+            if (_selectedGpu is null)
+            {
+                Log.Fatal("Invalid GPU , Exiting...");
+                Environment.Exit(-1);
+            }
+            
+            var reading = _selectedGpu.GetMetrics();
+            
+            int textPadding = 35;
+            var infoRows = new List<string>([
+                $"|\n|  {(_selectedGpu.Vendor == GpuVendor.Nvidia ? "NVML" : "DRM")} ID: {_selectedGpu.DeviceIndex}".PadRight(textPadding) + $"PState: {reading.GpuPState}".PadRight(textPadding)+ $"Mem Use: {(reading.MemoryUsedB/1000000d):F2} MB".PadRight(textPadding)+$"Power limit: {reading.PowerLimitCurrentMilliW/1000}W".PadRight(textPadding)+$"Power Use: {reading.GpuPowerUsageMilliW/1000:F2}"+"",
+                $"|\n|  Vendor: {_selectedGpu.Vendor}".PadRight(textPadding)+ $"Core clock: {reading.GpuClockCurrent} MHz".PadRight(textPadding) + $"Gpu Use: {reading.UtilizationCore} %".PadRight(textPadding)+$"PL MAX: {_selectedGpu.PowerLimitMaxMw/1000}W".PadRight(textPadding)+ $"Temp: {reading.GpuTemperature} °C",
+                $"|\n|  Address: {_selectedGpu.DevicePciAddress}".PadRight(textPadding)+ $"Mem clock: {reading.MemClockCurrent} MHz".PadRight(textPadding)+ $"Mem Ctrl Use: {reading.UtilizationMemCtl} %".PadRight(textPadding)+$"PL MIN: {_selectedGpu.PowerLimitMinMw/1000}W".PadRight(textPadding)+$"Fan 0 speed: {reading.FansSpeedPercent.Fan0Speed} %",
+            ]);
+            
+            var longestRow = infoRows.Max(row => row.Length);
+            Console.WriteLine(longestRow);
+            var title = $"[ GPU Info: {_selectedGpu.Name} ]";
+            Console.WriteLine("\no"+new string('=',(longestRow-title.Length)/2)+ title +new string('=',(longestRow-title.Length)/2)+"o");
+            
+            infoRows.ForEach(Console.WriteLine);
+            
+            // Console.WriteLine("memusemb:"+_selectedGpu.MemoryUsedMB);
+            // Console.WriteLine("memfreemb:"+_selectedGpu.MemoryFreeMB);
+            // Console.WriteLine("memtotmb:"+_selectedGpu.MemoryTotalMB);
+            // Console.WriteLine("memuse:"+_selectedGpu.MemoryUsed);
+            // Console.WriteLine("memfree:"+_selectedGpu.MemoryFree);
+            // Console.WriteLine("memtot:"+_selectedGpu.MemoryTotal);
+            Console.WriteLine($"\t\t  ");
+            Console.WriteLine("\t");
+                // \t DRMID: {((AmdSysfsGpu)_selectedGpu).DrmId} 
+        }
+        
         
         if (OcProfileJson != string.Empty)
         {
@@ -135,56 +208,45 @@ public class Program
         
 
         
-        foreach (var gpu in _nvmlService.GpuList)
-        {
-            if (gpu.DeviceIndex == GpuId)
-                _selectedGpu = gpu;
-        }
         
-
-        if (_selectedGpu == null)
-        {
-            Log.Fatal("GPU index not found");
-            return;
-        }
 
 
         if (CoreOffset >= 0)
         {
 
-            var clockRes = _selectedGpu.SetClockOffset(NvmlClockType.NVML_CLOCK_GRAPHICS, NvmlPStates.NVML_PSTATE_0, CoreOffset);
-            if (clockRes != NvmlReturnCode.NVML_SUCCESS)
+            var clockRes = _selectedGpu.SetCoreOffset(GpuPState.GPU_PSTATE_0, CoreOffset);
+            if (!clockRes)
                 Log.Error("Error while applying core clock offset: {coreClockOffsetApplyErrorDesc}",clockRes);
         }
 
         if (MemoryOffset >= 0)
         {
             
-            var memRes = _selectedGpu.SetClockOffset(NvmlClockType.NVML_CLOCK_MEM, NvmlPStates.NVML_PSTATE_0, MemoryOffset);
-            if (memRes != NvmlReturnCode.NVML_SUCCESS)
+            var memRes = _selectedGpu.SetMemOffset( GpuPState.GPU_PSTATE_0, MemoryOffset);
+            if (!memRes)
                 Log.Error("Error while applying memory clock offset: {memoryClockOffsetApplyErrorDesc}",memRes);
 
         }
 
         if (PowerLimit > 0)
         {
-            var plRes = _selectedGpu.SetPowerLimit(PowerLimit);
-            if (plRes != NvmlReturnCode.NVML_SUCCESS)
+            var plRes = _selectedGpu.SetGpuPowerLimit(PowerLimit);
+            if (!plRes)
                 Log.Error("Error while applying power limit: {powerLimitApplyErrorDesc}",plRes);
                 
         }
 
         if (FanSpeed >= 0)
         {
-            if (!_selectedGpu.ApplySpeedToAllFans((uint)FanSpeed,out var fsRc))
-                Log.Error("Error while applying static fan speed: {fanSpeedReturnCode}",fsRc);
+            if (!_selectedGpu.ApplySpeedToAllFans((uint)FanSpeed))
+                Log.Error("Error while applying static fan speed.");
             else
                 Log.Information("Successfully applied static fan speed: {appliedFanSpeed}%",FanSpeed);
         }
 
         if (AutoFanSpeed)
-            if (!_selectedGpu.ApplyPolicyToAllFans(NvmlFanControlPolicy.NVML_FAN_POLICY_TEMPERATURE_CONTINOUS_SW,out var afsRc))
-                Log.Error("Error while applying auto fan speed: {autoFanSpeedReturnCode}",afsRc);
+            if (!_selectedGpu.ApplyAutoSpeedToAllFans())
+                Log.Error("Error while applying auto fan speed.");
             else
                 Log.Information("Successfully applied auto fan speed");
             
@@ -210,8 +272,8 @@ public class Program
                     Log.Error("Fan curve not valid.");
                     return;
                 }
-                Thread t = new Thread(() => FanSpeedProfileThread(500,curve,cancelTokenSource.Token));
-                t.Start();
+                _fanCurveTask = Task.Run(async () => await FanSpeedProfileThread(500,curve,cancelTokenSource.Token),cancelTokenSource.Token);
+                await _fanCurveTask;
             }
             else
             {
@@ -221,39 +283,71 @@ public class Program
 
     }
 
-    private uint LastFanTemp = 0;
+    private uint _lastFanTemp = 0;
     
-    private void FanSpeedProfileThread(int updateDelayMilliseconds, FanCurve fanCurve,CancellationToken cancelToken)
+    private async Task FanSpeedProfileThread(int updateDelayMilliseconds, FanCurve fanCurve,CancellationToken cancelToken)
     {
         int errorCounter = 0;
         int errorQuitThreshold = 50;
-        
-        while (!cancelToken.IsCancellationRequested)
+
+        if (_selectedGpu is null)
         {
-            Thread.Sleep(updateDelayMilliseconds);
-            //get gpu temperature
-            if (_selectedGpu is null || _selectedGpu.GpuTemperature == LastFanTemp)
+            Log.Error("Cannot start fan curve thread: No gpu selected.");
+            return;
+        }
+        
+        Log.Information("Starting fan curve thread for GPU: {gpuName}, update delay: {pollDelay}ms",_selectedGpu.Name,updateDelayMilliseconds);
+        using var timer = new PeriodicTimer(
+            TimeSpan.FromMilliseconds(updateDelayMilliseconds));
+        
+        while (await timer.WaitForNextTickAsync(cancelToken))
+        {
+            //get metrics reading
+            if (_selectedGpu is null)
             {
-                Log.Debug("No temp change since last update. skipping");
-                continue;
+                Log.Fatal("Fan curve thread interrupted: selected gpu became invalid.");
+                return;
             }
-                
-            LastFanTemp = _selectedGpu.GpuTemperature;
-            Log.Debug($"Gpu temp: {_selectedGpu.GpuTemperature}, Fan Speed: {fanCurve.GpuTempToFanSpeedMap[_selectedGpu.GpuTemperature]}");
-            if (!_selectedGpu.ApplySpeedToAllFans(fanCurve.GpuTempToFanSpeedMap[_selectedGpu.GpuTemperature],
-                    out var rc))
+
+            try
             {
-                errorCounter++;
-                Log.Error("({errorCount}) Error while applying fan speed: {nvmlFanSpeedReturnCode}", errorCounter, rc);
-            }
-            else
-                errorCounter = 0;
 
 
-            if (errorCounter > errorQuitThreshold)
+                var latestMetrics = _selectedGpu.GetMetrics();
+                var currentTemp = (uint)latestMetrics.GpuTemperature;
+
+                //get gpu temperature
+                if (_selectedGpu is null || currentTemp == _lastFanTemp)
+                {
+                    Log.Debug("No temp change since last update. skipping");
+                    continue;
+                }
+
+
+
+                Log.Debug("Gpu temp: {gpuTemp}, Fan Speed: {fanSpeed}", currentTemp,
+                    fanCurve.GpuTempToFanSpeedMap[currentTemp]);
+                if (!_selectedGpu.ApplySpeedToAllFans(fanCurve.GpuTempToFanSpeedMap[currentTemp]))
+                {
+                    errorCounter++;
+                    Log.Error("({errorCount}) Error while applying fan speed.", errorCounter);
+                }
+                else
+                    errorCounter = 0;
+
+
+                if (errorCounter > errorQuitThreshold)
+                {
+                    Log.Fatal("More than {quitThreshold} errors when applying fan curve. Quitting program.",
+                        errorQuitThreshold);
+                    Environment.Exit(-1);
+                }
+
+                _lastFanTemp = (uint)latestMetrics.GpuTemperature;
+            }
+            catch (Exception ex)
             {
-                Log.Fatal("More than {quitThreshold} errors when applying fan curve. Quitting program.",errorQuitThreshold);
-                Environment.Exit(-1);
+                Console.WriteLine(ex);
             }
         }
     }

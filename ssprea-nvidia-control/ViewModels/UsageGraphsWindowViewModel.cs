@@ -13,7 +13,6 @@ using LiveChartsCore.SkiaSharpView.Painting;
 using LiveChartsCore.SkiaSharpView.Painting.Effects;
 using SkiaSharp;
 using ssprea_nvidia_control.Models;
-using ssprea_nvidia_control.NVML;
 using ssprea_nvidia_control.Utils;
 
 namespace ssprea_nvidia_control.ViewModels;
@@ -21,7 +20,7 @@ namespace ssprea_nvidia_control.ViewModels;
 public partial class UsageGraphsWindowViewModel : ViewModelBase
 {
     public CancellationTokenSource CancelTokenSrc = new();
-    private readonly NvmlGpu _targetGpu;
+    private readonly GpuViewModel _targetGpu;
     private static int _graphLength = 300; //seconds of data in graph
     
     [ObservableProperty] private ISeries[] _gpuTempSeries = [new LineSeries<int>()]  ;
@@ -220,8 +219,8 @@ public partial class UsageGraphsWindowViewModel : ViewModelBase
     #endregion GraphStyles
     
     
-    public UsageGraphsWindowViewModel() : this(MainWindowViewModel.NvmlService.GpuList[0]) {}
-    public UsageGraphsWindowViewModel(NvmlGpu targetGpu)
+    // public UsageGraphsWindowViewModel() : this(MainWindowViewModel.NvmlService.GpuList[0]) {}
+    public UsageGraphsWindowViewModel(GpuViewModel targetGpu)
     {
         GpuTempSeries[0] = new LineSeries<int>()
         {
@@ -344,40 +343,42 @@ public partial class UsageGraphsWindowViewModel : ViewModelBase
 
     private void UpdateGraphs()
     {
+        if (_targetGpu.LatestGpuMetrics is null) return;
+        
         lock (GpuClockLock)
         {
-            _gpuClockValues.Add((int)_targetGpu.GpuClockCurrent);
+            _gpuClockValues.Add((int)_targetGpu.LatestGpuMetrics.GpuClockCurrent);
         }
 
         lock (MemClockLock)
         {
-            _memClockValues.Add((int)_targetGpu.MemClockCurrent);
+            _memClockValues.Add((int)_targetGpu.LatestGpuMetrics.MemClockCurrent);
         }
 
         lock (GpuUsageLock)
         {
-            _gpuUsageValues.Add((int)_targetGpu.GpuUtilization.gpu);
+            _gpuUsageValues.Add((int)_targetGpu.LatestGpuMetrics.UtilizationCore);
         }
 
         lock (MemUsageLock)
         {
-            _memUsageValues.Add((int)_targetGpu.GpuUtilization.memory);
+            _memUsageValues.Add((int)_targetGpu.LatestGpuMetrics.UtilizationMemCtl);
         }
 
         lock (PowerUsageLock)
         {
-            _powerUsageValues.Add((int)_targetGpu.GpuPowerUsageW);
+            _powerUsageValues.Add((int)_targetGpu.LatestGpuMetrics.GpuPowerUsageMilliW/1000);
         }
         // _fanSpeedValues.Add(new DateTimePoint(DateTime.Now,(int)_targetGpu.FansList[0].CurrentSpeed));
 
         lock (FanSpeedLock)
         {
-            _fanSpeedValues.Add((int)_targetGpu.FansList[0].CurrentSpeed);
+            _fanSpeedValues.Add((int)_targetGpu.LatestGpuMetrics.FansSpeedPercent.Fan0Speed);
         }
 
         lock (GpuTempLock)
         {
-            _gpuTempValues.Add((int)_targetGpu.GpuTemperature);
+            _gpuTempValues.Add((int)_targetGpu.LatestGpuMetrics.GpuTemperature);
         }
         
         // GraphXAxes[0].CustomSeparators = GetSeparators();

@@ -82,4 +82,8 @@
     <ItemGroup>
       <Folder Include="Themes\" />
     </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\GpuSSharp\GpuSSharp.csproj" />
+    </ItemGroup>
 </Project>

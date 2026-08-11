@@ -9,10 +9,10 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.ReactiveUI;
+using GpuSSharp;
 using Serilog;
 using ssprea_nvidia_control.Models;
 using ssprea_nvidia_control.Models.Exceptions;
-using ssprea_nvidia_control.NVML;
 
 namespace ssprea_nvidia_control;
 
@@ -30,6 +30,8 @@ sealed class Program
     //public static string SelectedLocale = "System";
     public static Settings LoadedSettings = Settings.Default();
     
+    public static GpuService GpuService = new();
+    
     // Initialization code. Don't use any Avalonia, third-party APIs or any
     // SynchronizationContext-reliant code before AppMain is called: things aren't initialized
     // yet and stuff might break.
@@ -42,6 +44,8 @@ sealed class Program
             .CreateLogger();
 
         Log.Logger = log;
+        
+        
         
         //remove the default profile
         

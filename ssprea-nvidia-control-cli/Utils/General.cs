@@ -19,7 +19,9 @@ public static class General
             
             
         var process = Process.Start(psi);
-            
+
+        if (process is null)
+            return null;
             
         if (waitForExit)
         {
@@ -49,6 +51,8 @@ public static class General
             
         var process = Process.Start(psi);
             
+        if (process is null)
+            return null;
         
         if (waitForExit)
         {

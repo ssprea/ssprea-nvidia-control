@@ -102,10 +102,10 @@
                             </Border>
                                     
                             <Border  Grid.Column="1" Grid.Row="0"  HorizontalAlignment="Stretch" >
-                                <ProgressBar Minimum="0" Maximum="3000" MinWidth="0" Value="{Binding SelectedGpu.GpuClockCurrent, FallbackValue=0}"  VerticalAlignment="Stretch" />
+                                <ProgressBar Minimum="0" Maximum="3000" MinWidth="0" Value="{Binding SelectedGpu.LatestGpuMetrics.GpuClockCurrent, FallbackValue=0}"  VerticalAlignment="Stretch" />
                             </Border>
                             <Border  Grid.Column="2" Grid.Row="0" >
-                                <Label   HorizontalAlignment="Right"  Content="{Binding SelectedGpu.GpuClockCurrent, FallbackValue=0000}" /> 
+                                <Label   HorizontalAlignment="Right"  Content="{Binding SelectedGpu.LatestGpuMetrics.GpuClockCurrent, FallbackValue=0000}" /> 
                             </Border>
                             
                             <Border Grid.Column="3" Grid.Row="0">
@@ -119,11 +119,11 @@
                             </Border>
                                 
                             <Border Grid.Column="1" Grid.Row="1" >
-                                <ProgressBar Minimum="0" Maximum="10000" Value="{Binding SelectedGpu.MemClockCurrent, FallbackValue=0}"  VerticalAlignment="Stretch" />
+                                <ProgressBar Minimum="0" Maximum="10000" Value="{Binding SelectedGpu.LatestGpuMetrics.MemClockCurrent, FallbackValue=0}"  VerticalAlignment="Stretch" />
                             </Border>
                             
                             <Border Grid.Column="2" Grid.Row="1" >
-                                <Label  VerticalAlignment="Center" HorizontalAlignment="Right" Content="{Binding SelectedGpu.MemClockCurrent, FallbackValue=0000}"/>
+                                <Label  VerticalAlignment="Center" HorizontalAlignment="Right" Content="{Binding SelectedGpu.LatestGpuMetrics.MemClockCurrent, FallbackValue=0000}"/>
                             </Border>
                             
                             <Border Grid.Column="3" Grid.Row="1">
@@ -136,12 +136,13 @@
                                 <Label  VerticalAlignment="Center" FontSize="12" HorizontalAlignment="Right"> MEM USE </Label>
                             </Border>
                             <Border Grid.Column="1" Grid.Row="2"  >
-                                <ProgressBar  VerticalAlignment="Stretch" Value="{Binding SelectedGpu.MemoryUsed, FallbackValue=0}" Minimum="0" Maximum="{Binding SelectedGpu.MemoryTotal,FallbackValue=1000000}"/>
+                                <ProgressBar  VerticalAlignment="Stretch" Value="{Binding SelectedGpu.LatestGpuMetrics.MemoryUsedB, FallbackValue=0}" Minimum="0" Maximum="{Binding SelectedGpu.LatestGpuMetrics.MemoryTotalB,FallbackValue=1000000}"/>
                             
                             </Border>
                             <Border Grid.Column="2" Grid.Row="2" >
                             
-                                <Label  VerticalAlignment="Center" HorizontalAlignment="Right" Content="{Binding SelectedGpu.MemoryUsedMBFormatted, FallbackValue=00000}"/>
+                                <Label  VerticalAlignment="Center" HorizontalAlignment="Right" 
+                                        Content="{Binding SelectedGpu.LatestGpuMetrics.MemoryUsedB,Converter={StaticResource BytesConverter},ConverterParameter=MB, StringFormat=\{0:0\}, FallbackValue=00000}"/>
                             </Border>
                             
                             <Border Grid.Column="3" Grid.Row="2">
@@ -157,11 +158,13 @@
                                 <Label  VerticalAlignment="Center" FontSize="12" HorizontalAlignment="Right"> POWER </Label>
                             </Border>
                             <Border Grid.Column="1" Grid.Row="3"  >
-                                <ProgressBar  VerticalAlignment="Stretch"  Minimum="0" Value="{Binding SelectedGpu.GpuPowerUsage, FallbackValue=0}" Maximum="{Binding SelectedGpu.PowerLimitCurrentMw,FallbackValue=1000}"/>
+                                <ProgressBar  VerticalAlignment="Stretch"  Minimum="0" 
+                                              Value="{Binding SelectedGpu.LatestGpuMetrics.GpuPowerUsageMilliW , FallbackValue=0}" Maximum="{Binding SelectedGpu.LatestGpuMetrics.PowerLimitCurrentMilliW,FallbackValue=1000}"/>
                             </Border>
                             
                             <Border Grid.Column="2" Grid.Row="3" >
-                                <Label  VerticalAlignment="Center" HorizontalAlignment="Right" Content="{Binding SelectedGpu.GpuPowerUsageWFormatted, FallbackValue=0000}"/>
+                                <Label  VerticalAlignment="Center" HorizontalAlignment="Right" 
+                                        Content="{Binding SelectedGpu.LatestGpuMetrics.GpuPowerUsageMilliW, Converter={StaticResource WattsConverter},StringFormat=\{0:0.00\}, FallbackValue=0000}"/>
                             </Border>
                             
                             
@@ -176,13 +179,15 @@
                                 <Label  VerticalAlignment="Center" FontSize="12" HorizontalAlignment="Right"> CORE TEMP </Label>
                             </Border>
                             <Border Grid.Column="1" Grid.Row="4"  >
-                                <ProgressBar  VerticalAlignment="Stretch" Minimum="0" Maximum="{Binding SelectedGpu.TemperatureThresholdShutdown,FallbackValue=98}" Value="{Binding SelectedGpu.GpuTemperature,FallbackValue=0}"/>
+                                <ProgressBar  VerticalAlignment="Stretch" Minimum="0" 
+                                              Maximum="{Binding SelectedGpu.GpuTemperatureThresholdShutdown,FallbackValue=100}" 
+                                              Value="{Binding SelectedGpu.LatestGpuMetrics.GpuTemperature,FallbackValue=0}"/>
                             </Border>
                             <Border Grid.Column="2" Grid.Row="4" >
-                                <Label  VerticalAlignment="Center" HorizontalAlignment="Right" Content="{Binding SelectedGpu.GpuTemperature, FallbackValue=0000}" Foreground="{Binding SelectedGpu.TemperatureIndicatorColorBrush}" />
+                                <Label  VerticalAlignment="Center" HorizontalAlignment="Right" Content="{Binding SelectedGpu.LatestGpuMetrics.GpuTemperature, FallbackValue=0000}" />
                             </Border>
                             <Border Grid.Column="3" Grid.Row="4">
-                                <Label  VerticalAlignment="Center" Foreground="{Binding SelectedGpu.TemperatureIndicatorColorBrush}"> °C </Label>
+                                <Label  VerticalAlignment="Center"> °C </Label>
                             </Border>
                             
                             <!--GPU USAGE-->
@@ -190,10 +195,10 @@
                                 <Label  VerticalAlignment="Center" FontSize="12" HorizontalAlignment="Right"> GPU USAGE </Label>
                             </Border>
                             <Border Grid.Column="1" Grid.Row="5" >
-                                <ProgressBar  Minimum="0" Maximum="100" Value="{Binding SelectedGpu.UtilizationCore,FallbackValue=0}" VerticalAlignment="Stretch"/>
+                                <ProgressBar  Minimum="0" Maximum="100" Value="{Binding SelectedGpu.LatestGpuMetrics.UtilizationCore,FallbackValue=0}" VerticalAlignment="Stretch"/>
                             </Border>
                             <Border Grid.Column="2" Grid.Row="5" >
-                                <Label  VerticalAlignment="Center" HorizontalAlignment="Right" Content="{Binding SelectedGpu.UtilizationCore, FallbackValue=000}" />
+                                <Label  VerticalAlignment="Center" HorizontalAlignment="Right" Content="{Binding SelectedGpu.LatestGpuMetrics.UtilizationCore, FallbackValue=000}" />
                             </Border>
                             
                             <Border Grid.Column="3" Grid.Row="5">
@@ -205,10 +210,10 @@
                                 <Label  VerticalAlignment="Center" FontSize="12" HorizontalAlignment="Right"> MEM CTL </Label>
                             </Border>
                             <Border Grid.Column="1" Grid.Row="6" >
-                                <ProgressBar  Minimum="0" Maximum="100" Value="{Binding SelectedGpu.UtilizationMemCtl,FallbackValue=0}" VerticalAlignment="Stretch"/>
+                                <ProgressBar  Minimum="0" Maximum="100" Value="{Binding SelectedGpu.LatestGpuMetrics.UtilizationMemCtl,FallbackValue=0}" VerticalAlignment="Stretch"/>
                             </Border>
                             <Border Grid.Column="2" Grid.Row="6" >
-                                <Label  VerticalAlignment="Center" HorizontalAlignment="Right" Content="{Binding SelectedGpu.UtilizationMemCtl, FallbackValue=000}" />
+                                <Label  VerticalAlignment="Center" HorizontalAlignment="Right" Content="{Binding SelectedGpu.LatestGpuMetrics.UtilizationMemCtl, FallbackValue=000}" />
                             </Border>
                             <Border Grid.Column="3" Grid.Row="6">
                                 <Label  VerticalAlignment="Center"> % </Label>
@@ -323,7 +328,7 @@
                         
                             <Label DockPanel.Dock="Left" VerticalAlignment="Center" Content="{x:Static lang:Resources.SelectGpu}"/>
                             <ComboBox SelectedItem="{Binding SelectedGpu}"
-                                      ItemsSource="{Binding NvmlService.GpuList}" 
+                                      ItemsSource="{Binding AvailableGpus}" 
                                       SelectedIndex="1" VerticalAlignment="Center" HorizontalAlignment="Stretch"
                                       DockPanel.Dock="Right"  CornerRadius="10"
                             >
@@ -404,7 +409,7 @@
                                             >
                                                 
                                                 <Label Classes="onlyWideMode" VerticalAlignment="Center" Content="{x:Static lang:Resources.CurrentPstate}"/>
-                                                <Label  VerticalAlignment="Center" FontWeight="Bold" Content="{Binding SelectedGpu.GpuPState,Converter={StaticResource PStateFriendlyNameConverter}, FallbackValue=0000}"/>
+                                                <Label  VerticalAlignment="Center" FontWeight="Bold" Content="{Binding SelectedGpu.LatestGpuMetrics.GpuPState,Converter={StaticResource PStateFriendlyNameConverter}, FallbackValue=0000}"/>
 
                                 
                                             </StackPanel>
@@ -421,13 +426,13 @@
                                                 <Label Classes="onlyWideMode" VerticalAlignment="Center" Content="{x:Static lang:Resources.TextPowerLimit}"/>
                                                 <Label Classes="onlySemiWideMode" VerticalAlignment="Center" Content="PL:"/>
                                                 <Label Classes="onlyWideMode" VerticalAlignment="Center" Content="{x:Static lang:Resources.TextCurrent}"/>
-                                                <Label VerticalAlignment="Center" FontWeight="Bold" Content="{Binding SelectedGpu.PowerLimitCurrentW, FallbackValue=0000}"/> 
+                                                <Label VerticalAlignment="Center" FontWeight="Bold" Content="{Binding SelectedGpu.LatestGpuMetrics.PowerLimitCurrentMilliW,Converter={StaticResource WattsConverter}, FallbackValue=0000}"/> 
                                                 <Label Classes="onlyWideMode" VerticalAlignment="Center" Content="{x:Static lang:Resources.TextMin}"/>
                                                 <Label Classes="onlySemiWideMode"  VerticalAlignment="Center" Content="|"/>
-                                                <Label VerticalAlignment="Center" Foreground="Aquamarine" FontWeight="Bold" Content="{Binding SelectedGpu.PowerLimitMinW, FallbackValue=0000}"/> 
+                                                <Label VerticalAlignment="Center" Foreground="Aquamarine" FontWeight="Bold" Content="{Binding SelectedGpu.GpuPowerLimitMinW, FallbackValue=0000}"/> 
                                                 <Label Classes="onlyWideMode" VerticalAlignment="Center" Content="{x:Static lang:Resources.TextMax}"/>
                                                 <Label Classes="onlySemiWideMode"  VerticalAlignment="Center" Content="-"/>
-                                                <Label VerticalAlignment="Center" Foreground="Coral" FontWeight="Bold" Content="{Binding SelectedGpu.PowerLimitMaxW, FallbackValue=0000}"/> 
+                                                <Label VerticalAlignment="Center" Foreground="Coral" FontWeight="Bold" Content="{Binding SelectedGpu.GpuPowerLimitMaxW, FallbackValue=0000}"/> 
 
                                 
                                             </StackPanel>
@@ -445,13 +450,13 @@
                                                 <Label Classes="onlyWideMode" VerticalAlignment="Center" Content="{x:Static lang:Resources.TextTemps}"/>
                                                 <Label Classes="onlySemiWideMode" VerticalAlignment="Center" Content="Max Temps:"/>
                                                 <Label Classes="onlyWideMode" VerticalAlignment="Center" Content="{x:Static lang:Resources.TextThrottle}"/>
-                                                <Label VerticalAlignment="Center" Foreground="Coral" FontWeight="Bold" Content="{Binding SelectedGpu.TemperatureThresholdThrottle, FallbackValue=00}"/> 
+                                                <Label VerticalAlignment="Center" Foreground="Coral" FontWeight="Bold" Content="{Binding SelectedGpu.GpuTemperatureThresholdThrottle, FallbackValue=00}"/> 
                                                 <Label Classes="onlyWideMode" VerticalAlignment="Center" Content="{x:Static lang:Resources.TextSlowdown}"/>
                                                 <Label Classes="onlySemiWideMode"  VerticalAlignment="Center" Content="-"/>
-                                                <Label VerticalAlignment="Center" Foreground="OrangeRed" FontWeight="Bold" Content="{Binding SelectedGpu.TemperatureThresholdSlowdown,FallbackValue=00}"/> 
+                                                <Label VerticalAlignment="Center" Foreground="OrangeRed" FontWeight="Bold" Content="{Binding SelectedGpu.GpuTemperatureThresholdSlowdown,FallbackValue=00}"/> 
                                                 <Label Classes="onlyWideMode" VerticalAlignment="Center" Content="{x:Static lang:Resources.TextShutdown}"/>
                                                 <Label Classes="onlySemiWideMode"  VerticalAlignment="Center" Content="-"/>
-                                                <Label VerticalAlignment="Center" Foreground="DarkRed" FontWeight="Bold" Content="{Binding SelectedGpu.TemperatureThresholdShutdown,FallbackValue=00}"/> 
+                                                <Label VerticalAlignment="Center" Foreground="DarkRed" FontWeight="Bold" Content="{Binding SelectedGpu.GpuTemperatureThresholdShutdown,FallbackValue=00}"/> 
 
                                 
                                             </StackPanel>
@@ -469,10 +474,12 @@
                                                 <Label Classes="onlyWideMode" VerticalAlignment="Center" Content="{x:Static lang:Resources.TextMemoryStats}"/>
                                                 <Label Classes="onlySemiWideMode" VerticalAlignment="Center" Content="Mem:"/>
                                                 <Label Classes="onlyWideMode" VerticalAlignment="Center" Content="{x:Static lang:Resources.TextFree}"/>
-                                                <Label VerticalAlignment="Center" Foreground="LightGreen" FontWeight="Bold" Content="{Binding SelectedGpu.MemoryFreeMBFormatted, FallbackValue=00000}"/> 
+                                                <Label VerticalAlignment="Center" Foreground="LightGreen" FontWeight="Bold" 
+                                                       Content="{Binding SelectedGpu.LatestGpuMetrics.MemoryFreeB,Converter={StaticResource BytesConverter},ConverterParameter=MB,StringFormat=\{0:0.00\}, FallbackValue=00000}"/> 
                                                 <Label Classes="onlyWideMode" VerticalAlignment="Center" Content="{x:Static lang:Resources.TextOutOf}"/>
                                                 <Label Classes="onlySemiWideMode"  VerticalAlignment="Center" Content="-"/>
-                                                <Label VerticalAlignment="Center"  FontWeight="Bold" Content="{Binding SelectedGpu.MemoryTotalMBFormatted,FallbackValue=00000}"/> 
+                                                <Label VerticalAlignment="Center"  FontWeight="Bold" 
+                                                       Content="{Binding SelectedGpu.LatestGpuMetrics.MemoryTotalB,Converter={StaticResource BytesConverter},ConverterParameter=MB,StringFormat=\{0:0.00\},FallbackValue=00000}"/> 
 
                                 
                                             </StackPanel>
@@ -588,15 +595,16 @@
                                                     
                                                     
                                                     <Label  DockPanel.Dock="Right"  VerticalAlignment="Center" FontWeight="Bold" Content="W"/> 
-                                                    <NumericUpDown DockPanel.Dock="Right"  FormatString="0" Minimum="{Binding SelectedGpu.PowerLimitMinW, FallbackValue=0}" Maximum="{Binding SelectedGpu.PowerLimitMaxW, FallbackValue=400}" 
+                                                    <NumericUpDown DockPanel.Dock="Right"  FormatString="0" Minimum="{Binding SelectedGpu.GpuPowerLimitMinMilliW, FallbackValue=0}" 
+                                                                   Maximum="{Binding SelectedGpu.GpuPowerLimitMaxMilliW, FallbackValue=400}" 
                                                                    Background="Transparent" BorderBrush="Transparent" TextAlignment="Center" VerticalAlignment="Center"
                                                                    FontWeight="Bold" Value="{Binding TunerCurrentPowerLimitW,FallbackValue=000,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/> 
 
                                                     <Border DockPanel.Dock="Right"  HorizontalAlignment="Stretch">
                                                         
                                                         <Slider  Height="35" VerticalAlignment="Top" HorizontalAlignment="Stretch"
-                                                                Minimum="{Binding SelectedGpu.PowerLimitMinMw, FallbackValue=0}"
-                                                                Maximum="{Binding SelectedGpu.PowerLimitMaxMw, FallbackValue=400}"
+                                                                Minimum="{Binding SelectedGpu.GpuPowerLimitMinMilliW, FallbackValue=0}"
+                                                                Maximum="{Binding SelectedGpu.GpuPowerLimitMaxMilliW, FallbackValue=600}"
                                                                 Value="{Binding TunerCurrentPowerLimitMw}"
                                                                 
                                                         />
@@ -764,7 +772,7 @@
                         </ToolTip.Tip>
                     </Button>
                     <!--kofi-->
-                    <Button Grid.Row="2" Command="{Binding ShowComingSoonPopupCommand}" CommandParameter="Extra GPU Info" >
+                    <Button Grid.Row="2" Command="{Binding OpenDefaultBrowserToUrlCommand}" CommandParameter="https://ko-fi.com/ssprea" >
                         <Image Source="avares://ssprea-nvidia-control/Assets/icons/coffee-icon5.png"/>
                         <ToolTip.Tip>
                             <StackPanel>

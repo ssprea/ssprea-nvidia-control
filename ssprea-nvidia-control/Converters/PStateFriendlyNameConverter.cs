@@ -1,6 +1,7 @@
 using System;
 using System.Globalization;
 using Avalonia.Data.Converters;
+using GpuSSharp.Types;
 
 namespace ssprea_nvidia_control.Converters;
 
@@ -8,7 +9,7 @@ public class PStateFriendlyNameConverter : IValueConverter
 {
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        if (value is not NVML.NvmlTypes.NvmlPStates pstate)
+        if (value is not GpuPState pstate)
             return null;
 
         return (int)pstate;

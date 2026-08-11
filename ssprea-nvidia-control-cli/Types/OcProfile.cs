@@ -1,8 +1,6 @@
 using System;
 using System.Linq;
 using Newtonsoft.Json;
-using ssprea_nvidia_control_cli.NVML;
-using ssprea_nvidia_control_cli.NVML.NvmlTypes;
 
 namespace ssprea_nvidia_control_cli.Types;
 

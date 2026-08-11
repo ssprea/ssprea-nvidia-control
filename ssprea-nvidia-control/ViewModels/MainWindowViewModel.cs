@@ -14,6 +14,7 @@ using Avalonia.Platform;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DynamicData;
+using GpuSSharp.Types;
 using LiveChartsCore;
 using LiveChartsCore.Defaults;
 using LiveChartsCore.SkiaSharpView;
@@ -24,7 +25,6 @@ using MsBox.Avalonia.Dto;
 using MsBox.Avalonia.Enums;
 using MsBox.Avalonia.Models;
 using ssprea_nvidia_control.Models;
-using ssprea_nvidia_control.NVML;
 using Newtonsoft.Json.Linq;
 using ReactiveUI;
 using Serilog;
@@ -57,8 +57,9 @@ public partial class MainWindowViewModel : ViewModelBase
 
     #endregion
     
-    [ObservableProperty] private NvmlGpu? _selectedGpu;
-    [ObservableProperty] private NvmlGpuFan? _selectedGpuFan;
+    #region Observable Properties
+    [ObservableProperty] private GpuViewModel? _selectedGpu;
+    // [ObservableProperty] private NvmlGpuFan? _selectedGpuFan;
     [ObservableProperty] private OcProfile? _selectedOcProfile;
     [ObservableProperty] private OcProfile? _selectedAutoApplyOcProfile;
     [ObservableProperty] private FanCurveViewModel? _selectedFanCurve;
@@ -81,11 +82,15 @@ public partial class MainWindowViewModel : ViewModelBase
     //graph series
     [ObservableProperty] private ObservableCollection<ISeries> _fanCurveGraphSeries = new();
     
+    #endregion
+    
+    public ObservableCollection<GpuViewModel> AvailableGpus { get; private set; } = new();
+    
     private uint _selectedFanRadioButton = 0;
     private bool FanSpeedSliderVisible => _selectedFanRadioButton == 1;
     
     private readonly string _profilesServiceName = "snvctl-profile.service";
-    
+
     
     //graph sync object
     public object GraphSyncObject { get; } = new object();
@@ -169,7 +174,7 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         Lockfile.CheckAndUpdateLockfile();
         
-        
+        InitGpus();
         
         
         if (!Directory.Exists(Program.DefaultDataPath))
@@ -189,7 +194,9 @@ public partial class MainWindowViewModel : ViewModelBase
         ShowOcProfileDialog = new Interaction<NewOcProfileWindowViewModel, OcProfile?>();
         OpenNewProfileWindowCommand = ReactiveCommand.CreateFromTask(async () =>
         {
-            var ocProfileWindowViewModel = new NewOcProfileWindowViewModel(this);
+            if (SelectedGpu is null) return;
+            
+            var ocProfileWindowViewModel = new NewOcProfileWindowViewModel(SelectedGpu);
 
             var result = await ShowOcProfileDialog.Handle(ocProfileWindowViewModel);
             
@@ -265,7 +272,7 @@ public partial class MainWindowViewModel : ViewModelBase
         });
         
         ShowUsageGraphsDialog = new Interaction<UsageGraphsWindowViewModel, object?>();
-        OpenUsageGraphsWindowCommand = ReactiveCommand.CreateFromTask<NvmlGpu>(async (targetGpu) =>
+        OpenUsageGraphsWindowCommand = ReactiveCommand.CreateFromTask<GpuViewModel>(async (targetGpu) =>
         {
             var usageGraphsViewModel = new UsageGraphsWindowViewModel(targetGpu);
 
@@ -274,7 +281,7 @@ public partial class MainWindowViewModel : ViewModelBase
             
         });
         
-        LoadOcProfileToTuner(new OcProfile("",0,0,SelectedGpu?.PowerLimitMinMw ?? 100000, (FanCurve?)null));
+        LoadOcProfileToTuner(new OcProfile("",0,0,SelectedGpu?.GpuPowerLimitMinMilliW ?? 100000, (FanCurve?)null));
 
         var accentColor = SKColor.Parse("#505BE6");
         var strongAccentColor = SKColor.Parse("#9C1FE8");
@@ -302,29 +309,42 @@ public partial class MainWindowViewModel : ViewModelBase
         
     }
 
-    
-    
-    partial void OnSelectedGpuChanged(NvmlGpu? value)
+    partial void OnSelectedGpuChanging(GpuViewModel? oldValue, GpuViewModel? newValue)
     {
-        if (value is null || value.FansList.Count <= 0)
+        if (oldValue is not null)
+            oldValue.StopUpdating();
+        
+        if (newValue is not null)
+            newValue.StartUpdating();
+    }
+    
+    partial void OnSelectedGpuChanged(GpuViewModel? value)
+    {
+        if (value is null || value.GpuFansCount <= 0)
             return;
         
-        value.FansList.First().PropertyChanged += (s, args) =>
+        
+        
+        value.GpuMetricsUpdatedEvent += (s, args) =>
         {
-            if (args.PropertyName == "CurrentSpeed")
+            if (args is not GpuMetricsUpdatedEventArgs gpuMetricsArgs) return;
+
+            var gpuMetrics = gpuMetricsArgs.NewMetrics;
+            
+            
+            
+            lock (GraphSyncObject)
             {
-                lock (GraphSyncObject)
-                {
-                    
-                    if (SelectedFanCurve?.CurrentFanSpeedPoints.Count > 0 &&
-                        ((int?)SelectedFanCurve?.CurrentFanSpeedPoints.First().X ?? 0) == value.GpuTemperature &&
-                        ((int?)SelectedFanCurve?.CurrentFanSpeedPoints.First().Y ?? 0) == value.FansList[0].CurrentSpeed)
-                        return;
-                        
-                    CurrentFanSpeedGraphPoints.Add(new ObservablePoint(value.GpuTemperature,value.FansList[0].CurrentSpeed));
                 
-                }
+                if (SelectedFanCurve?.CurrentFanSpeedPoints.Count > 0 &&
+                    ((int?)SelectedFanCurve?.CurrentFanSpeedPoints.First().X ?? 0) == (int)gpuMetrics.GpuTemperature &&
+                    ((int?)SelectedFanCurve?.CurrentFanSpeedPoints.First().Y ?? 0) == (int)gpuMetrics.FansSpeedPercent.Fan0Speed)
+                    return;
+                    
+                CurrentFanSpeedGraphPoints.Add(new ObservablePoint((int)gpuMetrics.GpuTemperature,(int)gpuMetrics.FansSpeedPercent.Fan0Speed));
+            
             }
+            
         };
     }
     
@@ -337,7 +357,7 @@ public partial class MainWindowViewModel : ViewModelBase
     
     public void ResetTunerOptions()
     {
-        LoadOcProfileToTuner(new OcProfile("",0,0,SelectedGpu?.PowerLimitMinMw ?? 100000, (FanCurve?)null));
+        LoadOcProfileToTuner(new OcProfile("",0,0,SelectedGpu?.GpuPowerLimitMinMilliW ?? 100000, (FanCurve?)null));
     }
 
     public async Task DeleteSelectedFanProfile()
@@ -495,7 +515,7 @@ public partial class MainWindowViewModel : ViewModelBase
             var profile = (string)jobj["profile"];
                 
             //apply profile
-            SelectedGpu = NvmlService.GpuList.FirstOrDefault(x => x.DeviceIndex == gpuid);
+            SelectedGpu = AvailableGpus.FirstOrDefault(x => x.DeviceIndex == gpuid);
             SelectedOcProfile = OcProfilesList.FirstOrDefault(x => x.Name == profile);
             SelectedAutoApplyOcProfile = SelectedOcProfile;
             IsAutoApplyProfileChecked = true;
@@ -804,23 +824,24 @@ public partial class MainWindowViewModel : ViewModelBase
     
     public async Task<bool> FanApplyButtonClick(uint speed)
     {
-        if (SelectedGpuFan is null || SelectedGpu is null) return false;
+        // if (SelectedGpuFan is null || SelectedGpu is null) return false;
+        //
+        // //check sudo password
+        // if (!await RequestSudoPasswordDialogIfNeededAsync())
+        //     return false;
+        //
+        //
+        // switch (_selectedFanRadioButton)
+        // {
+        //     case 0:
+        //         return SelectedGpu.ApplyAutoSpeedToAllFans();
+        //     case 1:
+        //         return SelectedGpu.ApplySpeedToAllFans(speed);
+        //     default:
+        //         return false;
+        // }
+        return true;
 
-        //check sudo password
-        if (!await RequestSudoPasswordDialogIfNeededAsync())
-            return false;
-        
-        
-        switch (_selectedFanRadioButton)
-        {
-            case 0:
-                return SelectedGpu.ApplyAutoSpeedToAllFans();
-            case 1:
-                return SelectedGpu.ApplySpeedToAllFans(speed);
-            default:
-                return false;
-        }
-       
     }
 
     public void FanRadioButtonClicked(uint id)
@@ -830,10 +851,6 @@ public partial class MainWindowViewModel : ViewModelBase
         _selectedFanRadioButton = id;
         
     }
-
-    public static NvmlService NvmlService { get; set; } = new();
-    
-
     
     public void SelectGpu(uint id)
     {
@@ -844,20 +861,26 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         await ShowDependenciesMsgbox(await CheckDependencies());
         
-        NvmlService.Initialize();
+        //convert loaded gpus to gpuviewmodel
         
         
-        if (SelectedGpu is null && NvmlService.GpuList.Any())
-            SelectedGpu = NvmlService.GpuList.First();
+        
+        if (SelectedGpu is null && AvailableGpus.Any())
+            SelectedGpu = AvailableGpus.First();
         
         await CheckAndLoadStartupProfile();
         await CheckAndApplyAutoApplyProfile();
     }
 
-    public void LoadProfileToTuner()
+    private void InitGpus()
     {
-        
+        foreach (var gpu in Program.GpuService.GpuList)
+        {
+            AvailableGpus.Add(new GpuViewModel(gpu));
+        }
     }
+    
+
 
     /// <summary>
     /// Check nvidia drivers and cli tool

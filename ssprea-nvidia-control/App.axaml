@@ -44,6 +44,8 @@
          
              <converters:LiveStatsGridResponsiveColumnConverter x:Key="LiveStatsGridResponsiveColumnConverter"/>
              <converters:PStateFriendlyNameConverter x:Key="PStateFriendlyNameConverter"/>
+             <converters:BytesConverter x:Key="BytesConverter"/>
+             <converters:WattsConverter x:Key="WattsConverter"/>
              
              <ResourceDictionary.ThemeDictionaries>
                 
