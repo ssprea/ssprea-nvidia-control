@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reactive;
@@ -11,11 +12,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Avalonia.Controls;
-using Avalonia.Platform;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DynamicData;
-using GpuSSharp.Types;
 using LiveChartsCore;
 using LiveChartsCore.Defaults;
 using LiveChartsCore.SkiaSharpView;
@@ -32,12 +31,12 @@ using SkiaSharp;
 using sspreaNvidiaControl.Lang;
 using sspreaNvidiaControl.Models;
 using sspreaNvidiaControl.Utils;
-using Tmds.DBus.Protocol;
+
 
 
 namespace sspreaNvidiaControl.ViewModels;
 
-public partial class MainWindowViewModel : ViewModelBase  
+public partial class MainWindowViewModel : ViewModelBase, IDisposable
 
 {
     #region Interaction Definitions
@@ -64,21 +63,21 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty] private OcProfile? _selectedOcProfile;
     [ObservableProperty] private OcProfile? _selectedAutoApplyOcProfile;
     [ObservableProperty] private FanCurveViewModel? _selectedFanCurve;
-    [ObservableProperty] private bool _isAutoApplyProfileChecked = false;
+    [ObservableProperty] private bool _isAutoApplyProfileChecked ;
     [ObservableProperty] private OcProfile? _selectedStartupProfile;
-    [ObservableProperty] private bool _isStartupProfileChecked = false;
+    [ObservableProperty] private bool _isStartupProfileChecked ;
     [ObservableProperty] private string _currentNvidiaDriverVersion = "Unknown";
     [ObservableProperty] private bool _isFanCurveIncludedInProfileChecked = true;
-    [ObservableProperty] private uint _tunerCurrentCoreOffset = 0;
-    [ObservableProperty] private uint _tunerCurrentMemoryOffset = 0;
-    [ObservableProperty] private uint _tunerCurrentPowerLimitMw = 0;
+    [ObservableProperty] private uint _tunerCurrentCoreOffset;
+    [ObservableProperty] private uint _tunerCurrentMemoryOffset;
+    [ObservableProperty] private uint _tunerCurrentPowerLimitMw;
     [ObservableProperty] private string _tunerCurrentProfileName = "";
     [ObservableProperty] private string _currentlyLoadedGuiName = "Default";
     [ObservableProperty] private string _selectedLocalizerLang = "it";
-    [ObservableProperty] private ObservableCollection<string> _localizerLangs = new ObservableCollection<string>(["it","en"]);
+    [ObservableProperty] private ObservableCollection<string> _localizerLangs = new (["it","en"]);
     [ObservableProperty] private ObservableCollection<ObservablePoint> _selectedFanCurveGraphPoints = new();
     [ObservableProperty] private MaxSizeObservableCollection<ObservablePoint> _currentFanSpeedGraphPoints = new(1);
-    [ObservableProperty] private bool _flashingAnimationRunning = false;
+    [ObservableProperty] private bool _flashingAnimationRunning;
     
     //graph series
     [ObservableProperty] private ObservableCollection<ISeries> _fanCurveGraphSeries = new();
@@ -87,7 +86,7 @@ public partial class MainWindowViewModel : ViewModelBase
     
     public ObservableCollection<GpuViewModel> AvailableGpus { get; private set; } = new();
     
-    private uint _selectedFanRadioButton = 0;
+    private uint _selectedFanRadioButton;
     private bool FanSpeedSliderVisible => _selectedFanRadioButton == 1;
     
     private readonly string _profilesServiceName = "snvctl-profile.service";
@@ -351,7 +350,7 @@ public partial class MainWindowViewModel : ViewModelBase
     
     
     [RelayCommand]
-    public async Task ShowComingSoonPopupAsync(string featureName)
+    public static async Task ShowComingSoonPopupAsync(string featureName)
     {
         await MessageBoxManager.GetMessageBoxStandard("Coming soon!", $"{featureName}: Coming Soon!",ButtonEnum.Ok,Icon.Forbidden).ShowAsync();
     }
@@ -674,7 +673,7 @@ public partial class MainWindowViewModel : ViewModelBase
 
         
         //save profile and copy to service data path
-        await File.WriteAllTextAsync(Program.DefaultDataPath + "/temp/deviceidx.txt", SelectedGpu.DeviceIndex.ToString());
+        await File.WriteAllTextAsync(Program.DefaultDataPath + "/temp/deviceidx.txt", SelectedGpu.DeviceIndex.ToString(CultureInfo.InvariantCulture));
         Files.CopySudo(Program.DefaultDataPath + "/temp/deviceidx.txt", DEFAULT_SERVICE_DATA_PATH+"/deviceidx.txt");
         
         await File.WriteAllTextAsync(Program.DefaultDataPath + "/temp/profile.json", profile.ToJson());
@@ -709,7 +708,7 @@ public partial class MainWindowViewModel : ViewModelBase
     public static ObservableCollection<FanCurveViewModel> FanCurvesList { get; private set; } = new();
 
 
-    private void LoadFanCurvesFromFile()
+    private static void LoadFanCurvesFromFile()
     {
         foreach (var fanCurve in FanCurvesFileManager.GetFanCurves(Program.DefaultDataPath+"/fan_curves.json"))
         {
@@ -717,14 +716,14 @@ public partial class MainWindowViewModel : ViewModelBase
         }
     }
 
-    public void KillFanCurveProcessCommand( )
+    public static void KillFanCurveProcessCommand( )
     {
         Program.KillFanCurveProcess();
     }
 
     
     [RelayCommand]
-    public void OpenDefaultBrowserToUrl(string destUrl)
+    public static void OpenDefaultBrowserToUrl(string destUrl)
     {
 #if LINUX
         Process.Start(new ProcessStartInfo("xdg-open", destUrl));
@@ -831,7 +830,7 @@ public partial class MainWindowViewModel : ViewModelBase
         return SelectedGpu != null;
     }
     
-    public async Task<bool> FanApplyButtonClick(uint speed)
+    public static async Task<bool> FanApplyButtonClick(uint speed)
     {
         // if (SelectedGpuFan is null || SelectedGpu is null) return false;
         //
@@ -861,7 +860,7 @@ public partial class MainWindowViewModel : ViewModelBase
         
     }
     
-    public void SelectGpu(uint id)
+    public static void SelectGpu(uint id)
     {
         
     }
@@ -909,12 +908,12 @@ public partial class MainWindowViewModel : ViewModelBase
         var lines = output.Split('\n');
         CurrentNvidiaDriverVersion = lines[2].Split(':')[1].Trim();
 
-        if (CurrentNvidiaDriverVersion.StartsWith("Deprecated"))
+        if (CurrentNvidiaDriverVersion.StartsWith("Deprecated", StringComparison.InvariantCultureIgnoreCase))
         {
             CurrentNvidiaDriverVersion = lines[4].Split(':')[1].Trim();
         }
 
-        Log.Information($"Detected NVidia driver version: {CurrentNvidiaDriverVersion}");
+        Log.Information("Detected NVidia driver version: {CurrentNvidiaDriverVersion}",CurrentNvidiaDriverVersion);
 #endif
         //TODO: add windows driver check
         
@@ -927,7 +926,7 @@ public partial class MainWindowViewModel : ViewModelBase
         return 0;
     }
 
-    public async Task ShowDependenciesMsgbox(ushort errCode)
+    public static async Task ShowDependenciesMsgbox(ushort errCode)
     {
        
         
@@ -956,5 +955,13 @@ public partial class MainWindowViewModel : ViewModelBase
                 await box.ShowAsync();
                 break;
         }
+    }
+
+    public void Dispose()
+    {
+        SelectedGpu?.Dispose();
+        _sudoPasswordDialogClosed.Dispose();
+        OpenFanCurveEditorCommand.Dispose();
+        GC.SuppressFinalize(this);
     }
 }

@@ -40,7 +40,7 @@ sealed class Program
     public static void Main(string[] args)
     {
         using var log = new LoggerConfiguration()
-            .WriteTo.Console()
+            .WriteTo.Console(formatProvider: CultureInfo.CurrentCulture)
             .CreateLogger();
 
         Log.Logger = log;
@@ -157,7 +157,7 @@ sealed class Program
             return;
         }
 
-        Utils.General.RunSudoCliCommand("kill", Program.FanCurveProcess.Id.ToString());
+        Utils.General.RunSudoCliCommand("kill", Program.FanCurveProcess.Id.ToString(CultureInfo.InvariantCulture));
     }
 
     

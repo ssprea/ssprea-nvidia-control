@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using Newtonsoft.Json;
 using Serilog;
@@ -61,7 +62,7 @@ public static class SnvctlCliTool
         try
         {
             var tempPath = Program.DefaultDataPath + "/temp/fanCurve-" + fanCurve.Name.Replace(" ","_").Replace("/","_").Replace("\\","_").Replace(":","_") +
-                           DateTime.Now.ToString("yyyyMMddHHmmss")+".json";
+                           DateTime.Now.ToString("yyyyMMddHHmmss",CultureInfo.InvariantCulture)+".json";
             File.WriteAllText(tempPath,JsonConvert.SerializeObject(fanCurve, Formatting.None));
             
             Program.FanCurveProcess = RunSudoCliCommand($"-fp {tempPath}",deviceIdx,waitForExit:false);

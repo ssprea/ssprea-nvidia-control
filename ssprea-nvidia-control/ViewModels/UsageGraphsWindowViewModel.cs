@@ -17,9 +17,9 @@ using sspreaNvidiaControl.Utils;
 
 namespace sspreaNvidiaControl.ViewModels;
 
-public partial class UsageGraphsWindowViewModel : ViewModelBase
+public partial class UsageGraphsWindowViewModel : ViewModelBase, IDisposable
 {
-    public CancellationTokenSource CancelTokenSrc = new();
+    private readonly CancellationTokenSource _cancelTokenSrc = new();
     private readonly GpuViewModel _targetGpu;
     private static int _graphLength = 300; //seconds of data in graph
     
@@ -333,12 +333,17 @@ public partial class UsageGraphsWindowViewModel : ViewModelBase
 
         Task.Run(async () =>
         {
-            while (!CancelTokenSrc.Token.IsCancellationRequested)
+            while (!_cancelTokenSrc.Token.IsCancellationRequested)
             {
                 Dispatcher.UIThread.Post(UpdateGraphs);
                 await Task.Delay(1000);
             }
         });
+    }
+
+    public void StopUpdating()
+    {
+        _cancelTokenSrc.Cancel();
     }
 
     private void UpdateGraphs()
@@ -384,5 +389,11 @@ public partial class UsageGraphsWindowViewModel : ViewModelBase
         // GraphXAxes[0].CustomSeparators = GetSeparators();
 
     }
-    
+
+    public void Dispose()
+    {
+        _cancelTokenSrc.Dispose();
+        _targetGpu.Dispose();
+        GC.SuppressFinalize(this);
+    }
 }

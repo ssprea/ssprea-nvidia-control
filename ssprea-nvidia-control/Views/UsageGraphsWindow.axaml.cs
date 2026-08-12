@@ -17,6 +17,6 @@ public partial class UsageGraphsWindow : ReactiveWindow<UsageGraphsWindowViewMod
 
     private void Window_OnClosing(object? sender, WindowClosingEventArgs e)
     {
-        ViewModel?.CancelTokenSrc.Cancel();
+        ViewModel?.StopUpdating();
     }
 }

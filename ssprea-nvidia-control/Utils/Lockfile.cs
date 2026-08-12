@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
@@ -22,7 +23,7 @@ public static class Lockfile
             var pid = File.ReadAllText(LockFilePath);
             try
             {
-                var oldProc = Process.GetProcessById(int.Parse(pid));
+                var oldProc = Process.GetProcessById(int.Parse(pid,CultureInfo.InvariantCulture));
                 return !oldProc.HasExited;
             }
             catch (Exception)
@@ -47,7 +48,7 @@ public static class Lockfile
             Environment.Exit(0);
         }
         
-        File.WriteAllText(Program.DefaultDataPath+"/.guiLock",Environment.ProcessId.ToString());
+        File.WriteAllText(Program.DefaultDataPath+"/.guiLock",Environment.ProcessId.ToString(CultureInfo.InvariantCulture));
     }
 
     private static bool SendMaximizeMessage()

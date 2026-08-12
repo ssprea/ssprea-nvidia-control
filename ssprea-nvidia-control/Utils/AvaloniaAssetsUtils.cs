@@ -16,7 +16,7 @@ public static class AvaloniaAssetsUtils
         
         foreach (var assetUri in AssetLoader.GetAssets(guisAssetFolderPath,null))
         {
-            if (assetUri.AbsolutePath.EndsWith(".customgui"))
+            if (assetUri.AbsolutePath.EndsWith(".customgui", StringComparison.InvariantCultureIgnoreCase))
                 foundGuis.Add(Path.GetFileName(Path.GetDirectoryName(assetUri.AbsolutePath)!));
         }
         

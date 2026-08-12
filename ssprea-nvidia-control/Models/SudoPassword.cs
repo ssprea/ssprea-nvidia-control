@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.Security;
 using Serilog;
 
@@ -61,14 +62,14 @@ public class SudoPassword
         psi.UseShellExecute = false;
         psi.CreateNoWindow = true;
 
-        Log.Debug("Executing: "+psi.FileName+" "+psi.Arguments);
+        Log.Debug("Executing: {fileName} {args}",psi.FileName,psi.Arguments);
         
         
         var process = Process.Start(psi);
 
         if (process is null)
         {
-            Log.Error("Failed to start process: "+psi.FileName);
+            Log.Error("Failed to start process: {fileName}",psi.FileName);
             return false;
         }
         
@@ -78,7 +79,7 @@ public class SudoPassword
             return false;
         
 
-        Log.Debug(process.Id.ToString());
+        Log.Debug("sudo pid: {pid}",process.Id.ToString(CultureInfo.InvariantCulture));
         //var output = process.StandardOutput.ReadToEnd();
         
         return true;
