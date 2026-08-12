@@ -4,6 +4,7 @@ namespace GpuSSharp.Libs.Nvml.NvmlTypes;
 /// <summary>
 /// GPU Utilization pair. Contains info on kernel execution time and gpu memory utilization
 /// </summary>
+#pragma warning disable CA1051
 public struct NvmlUtilization
 {
     /*
@@ -17,3 +18,4 @@ public struct NvmlUtilization
      */
     public uint memory;
 }
+#pragma warning restore CA1051

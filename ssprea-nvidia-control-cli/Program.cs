@@ -215,7 +215,7 @@ public class Program
         if (CoreOffset >= 0)
         {
 
-            var clockRes = _selectedGpu.SetCoreOffset(GpuPState.GPU_PSTATE_0, CoreOffset);
+            var clockRes = _selectedGpu.SetCoreOffset(GpuPState.GpuPstate0, CoreOffset);
             if (!clockRes)
                 Log.Error("Error while applying core clock offset: {coreClockOffsetApplyErrorDesc}",clockRes);
         }
@@ -223,7 +223,7 @@ public class Program
         if (MemoryOffset >= 0)
         {
             
-            var memRes = _selectedGpu.SetMemOffset( GpuPState.GPU_PSTATE_0, MemoryOffset);
+            var memRes = _selectedGpu.SetMemOffset( GpuPState.GpuPstate0, MemoryOffset);
             if (!memRes)
                 Log.Error("Error while applying memory clock offset: {memoryClockOffsetApplyErrorDesc}",memRes);
 

@@ -1,5 +1,6 @@
 namespace GpuSSharp.Libs.Nvml.NvmlTypes;
 
+#pragma warning disable CA1707
 public enum NvmlPStates
 {
     NVML_PSTATE_0               = 0,       //!< Performance state 0 -- Maximum Performance
@@ -20,3 +21,4 @@ public enum NvmlPStates
     NVML_PSTATE_15              = 15,      //!< Performance state 15 -- Minimum Performance
     NVML_PSTATE_UNKNOWN         = 32       //!< Unknown performance state
 }
+#pragma warning restore CA1707

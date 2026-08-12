@@ -1,5 +1,6 @@
 namespace GpuSSharp.Libs.Nvml.NvmlTypes;
 
+#pragma warning disable CA1707
 public enum NvmlReturnCode
 {
     NVML_SUCCESS = 0,                          //!< The operation was successful
@@ -34,3 +35,4 @@ public enum NvmlReturnCode
     NVML_ERROR_INVALID_STATE = 29,             //!< Resource not in correct state to perform requested operation
     NVML_ERROR_UNKNOWN = 999                   //!< An internal driver error occurred
 }
+#pragma warning restore CA1707

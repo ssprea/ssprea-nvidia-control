@@ -1,5 +1,7 @@
 namespace GpuSSharp.Libs.Nvml.NvmlTypes;
 
+// ReSharper disable once InconsistentNaming
+
 public struct NvmlPowerValue_v2
 {
     public NvmlPowerValue_v2()
