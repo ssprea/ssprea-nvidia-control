@@ -1,13 +1,14 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Globalization;
+using System.Text.RegularExpressions;
 using GpuSSharp;
 using GpuSSharp.Types;
 using McMaster.Extensions.CommandLineUtils;
 using Newtonsoft.Json;
 using Serilog;
 using Serilog.Core;
-using ssprea_nvidia_control_cli.Types;
+using sspreaNvidiaControlCli.Types;
 
-namespace ssprea_nvidia_control_cli;
+namespace sspreaNvidiaControlCli;
 
 public class Program
 {
@@ -54,7 +55,7 @@ public class Program
 
     
     static GpuService? _gpuService;
-    IGpu? _selectedGpu = null;
+    IGpu? _selectedGpu;
     
     public static void Main(string[] args)
         => CommandLineApplication.Execute<Program>(args);
@@ -71,17 +72,17 @@ public class Program
 
     public static string? GpuPciAddress { get; set; }
 
-    private bool IsValidPciAddress(string address)
+    private static bool IsValidPciAddress(string address)
     {
-        return Regex.Match(address, @"^[0-9a-fA-F]{4}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}\.[0-9a-fA-F]$").Success;
+        return Regex.IsMatch(address, @"^[0-9a-fA-F]{4}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}\.[0-9a-fA-F]$");
     }
 
     private async Task OnExecute()
     {
         
         
-        using var log = new LoggerConfiguration() 
-            .WriteTo.Console()
+        await using var log = new LoggerConfiguration() 
+            .WriteTo.Console(formatProvider: CultureInfo.CurrentCulture)
             .CreateLogger();
 
         Log.Logger = log;
@@ -116,7 +117,7 @@ public class Program
         }
         else if (Path.Exists(GpuPciIdStr)) //if is valid path read from path and verify 
         {
-            var read = File.ReadAllText(GpuPciIdStr).Trim();
+            var read = (await File.ReadAllTextAsync(GpuPciIdStr)).Trim();
             
             if (IsValidPciAddress(read))
                 GpuPciAddress = read;  
@@ -183,7 +184,7 @@ public class Program
         {
             if (File.Exists(OcProfileJson))
             {
-                var ocProfile = OcProfile.FromJson(File.ReadAllText(OcProfileJson));
+                var ocProfile = OcProfile.FromJson(await File.ReadAllTextAsync(OcProfileJson));
 
                 if (ocProfile is null)
                 {
@@ -266,7 +267,7 @@ public class Program
 
             if (File.Exists(FanSpeedCurveJson))
             {
-                var curve = JsonConvert.DeserializeObject<FanCurve>(File.ReadAllText(FanSpeedCurveJson));
+                var curve = JsonConvert.DeserializeObject<FanCurve>(await File.ReadAllTextAsync(FanSpeedCurveJson));
                 if (curve is null)
                 {
                     Log.Error("Fan curve not valid.");
@@ -283,7 +284,7 @@ public class Program
 
     }
 
-    private uint _lastFanTemp = 0;
+    private uint _lastFanTemp;
     
     private async Task FanSpeedProfileThread(int updateDelayMilliseconds, FanCurve fanCurve,CancellationToken cancelToken)
     {
@@ -368,10 +369,10 @@ public class Program
                 instanceCount--;
         
         
-        instanceCount += System.Diagnostics.Process.GetProcessesByName(System.IO.Path.GetFileNameWithoutExtension(System.Reflection.Assembly.GetEntryAssembly()?.Location)).Count();
+        instanceCount += System.Diagnostics.Process.GetProcessesByName(System.IO.Path.GetFileNameWithoutExtension(System.Reflection.Assembly.GetEntryAssembly()?.Location)).Length;
         foreach (var n in names)
         {
-            instanceCount += System.Diagnostics.Process.GetProcessesByName(n).Count();
+            instanceCount += System.Diagnostics.Process.GetProcessesByName(n).Length;
         }
         // Console.WriteLine("instancecount: "+instanceCount);
         return instanceCount > 1;

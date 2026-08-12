@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using Newtonsoft.Json;
 
-namespace ssprea_nvidia_control_cli.Types;
+namespace sspreaNvidiaControlCli.Types;
 
 public class OcProfile
 {

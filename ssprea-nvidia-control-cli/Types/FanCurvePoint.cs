@@ -1,4 +1,4 @@
-namespace ssprea_nvidia_control_cli.Types;
+namespace sspreaNvidiaControlCli.Types;
 
 public class FanCurvePoint(uint temperature, uint fanSpeed)
 {

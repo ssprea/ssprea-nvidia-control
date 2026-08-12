@@ -1,4 +1,4 @@
-namespace ssprea_nvidia_control_cli.Utils;
+namespace sspreaNvidiaControlCli.Utils;
 
 public static class Files
 {

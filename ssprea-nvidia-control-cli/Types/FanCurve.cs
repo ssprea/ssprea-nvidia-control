@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Newtonsoft.Json;
 
-namespace ssprea_nvidia_control_cli.Types;
+namespace sspreaNvidiaControlCli.Types;
 
 public class FanCurve
 {
@@ -99,7 +99,7 @@ public class FanCurve
     /// <param name="perc2">fan speed of curvepoint2</param>
     /// <param name="intemp">the temperature to convert into fan speed</param>
     /// <returns>fan speed % at the given intemp</returns>
-    private uint MapGpuTempToFanPercent(uint temp1, uint temp2, uint perc1, uint perc2, uint intemp)
+    private static uint MapGpuTempToFanPercent(uint temp1, uint temp2, uint perc1, uint perc2, uint intemp)
     {
         return perc1 + (intemp-temp1)*(perc2-perc1)/(temp2-temp1);
     }
