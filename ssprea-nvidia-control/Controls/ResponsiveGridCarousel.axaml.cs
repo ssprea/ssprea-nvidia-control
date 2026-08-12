@@ -8,7 +8,7 @@ using Avalonia.Metadata;
 using Avalonia.Reactive;
 using Serilog;
 
-namespace ssprea_nvidia_control.Controls;
+namespace sspreaNvidiaControl.Controls;
 
 public class ResponsiveGridCarousel : TemplatedControl
 {
@@ -60,7 +60,7 @@ public class ResponsiveGridCarousel : TemplatedControl
     
     private Grid? _grid;
     private NonVirtualizingCarousel? _carousel;
-    private bool _isWide = false;
+    private bool _isWide;
 
     
     
@@ -70,7 +70,7 @@ public class ResponsiveGridCarousel : TemplatedControl
         if (_grid is null || _carousel is null ) return;
         if (!force && _isWide == wide) return;
 
-        Log.Debug($"Applying mode {wide}");
+        Log.Debug("Applying mode {wide}",wide);
         
         _isWide = wide;
         

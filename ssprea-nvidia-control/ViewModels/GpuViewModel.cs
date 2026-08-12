@@ -5,12 +5,12 @@ using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using GpuSSharp.Types;
 using Serilog;
-using ssprea_nvidia_control.Models;
-using ssprea_nvidia_control.Utils;
+using sspreaNvidiaControl.Models;
+using sspreaNvidiaControl.Utils;
 
-namespace ssprea_nvidia_control.ViewModels;
+namespace sspreaNvidiaControl.ViewModels;
 
-public partial class GpuViewModel : ViewModelBase
+public partial class GpuViewModel : ViewModelBase, IDisposable
 {
     private readonly IGpu _gpu;
     private CancellationTokenSource? _updateCts;
@@ -108,9 +108,13 @@ public partial class GpuViewModel : ViewModelBase
         }
     }
 
-    
-    
-    
+
+    public void Dispose()
+    {
+        _updateCts?.Dispose();
+        _runningUpdateTask?.Dispose();
+        GC.SuppressFinalize(this);
+    }
 }
 
 public class GpuMetricsUpdatedEventArgs(GpuMetrics metrics) : EventArgs

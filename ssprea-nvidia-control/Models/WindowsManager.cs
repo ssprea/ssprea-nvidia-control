@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Avalonia.Controls;
-using ssprea_nvidia_control.Views;
+using sspreaNvidiaControl.Views;
 
-namespace ssprea_nvidia_control.Models;
+namespace sspreaNvidiaControl.Models;
 
 public static class WindowsManager
 {

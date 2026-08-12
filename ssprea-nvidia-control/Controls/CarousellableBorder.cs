@@ -1,7 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Controls.Metadata;
 
-namespace ssprea_nvidia_control.Controls;
+namespace sspreaNvidiaControl.Controls;
 
 [PseudoClasses(":carouselled")]
 public class CarousellableBorder : Border

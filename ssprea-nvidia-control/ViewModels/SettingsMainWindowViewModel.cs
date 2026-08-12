@@ -12,15 +12,15 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using DynamicData;
 using ReactiveUI;
 using Serilog;
-using ssprea_nvidia_control.Models;
-using ssprea_nvidia_control.Utils;
-using ssprea_nvidia_control.Views.SettingsPages;
+using sspreaNvidiaControl.Models;
+using sspreaNvidiaControl.Utils;
+using sspreaNvidiaControl.Views.SettingsPages;
 
-namespace ssprea_nvidia_control.ViewModels;
+namespace sspreaNvidiaControl.ViewModels;
 
 public partial class SettingsMainWindowViewModel : ViewModelBase
 {
-    public ReactiveCommand<Unit, object?> CloseSettingsCommand { get; }
+    public ReactiveCommand<Unit, object> CloseSettingsCommand { get; }
 
     public ObservableCollection<string> AvailableGuiSettings { get; private set; }
     public static ObservableCollection<string> AvailableLocales => new(["it-IT", "en-US", "System"]);
@@ -60,7 +60,7 @@ public partial class SettingsMainWindowViewModel : ViewModelBase
         WindowsManager.ApplyMainWindowCustomGui();
         
         //enable gui service if option is set
-        if (CurrentEditingSettings.Behaviour_StartGuiAtBoot)
+        if (CurrentEditingSettings.BehaviourStartGuiAtBoot)
             Systemd.EnableUserService("snvctl-gui.service");
         else
         {

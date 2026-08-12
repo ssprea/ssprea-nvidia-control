@@ -6,11 +6,11 @@ using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
 using DynamicData.Binding;
-using ssprea_nvidia_control.Models;
-using ssprea_nvidia_control.ViewModels;
+using sspreaNvidiaControl.Models;
 using ReactiveUI;
+using sspreaNvidiaControl.ViewModels;
 
-namespace ssprea_nvidia_control.Views;
+namespace sspreaNvidiaControl.Views;
 
 public partial class SudoPasswordRequestWindow  : ReactiveWindow<SudoPasswordRequestWindowViewModel>
 {

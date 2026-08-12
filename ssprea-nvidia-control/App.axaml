@@ -1,8 +1,8 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             x:Class="ssprea_nvidia_control.App"
-             xmlns:local="using:ssprea_nvidia_control"
-             xmlns:converters="clr-namespace:ssprea_nvidia_control.Converters"
+             x:Class="sspreaNvidiaControl.App"
+             xmlns:local="using:sspreaNvidiaControl"
+             xmlns:converters="clr-namespace:sspreaNvidiaControl.Converters"
 
              RequestedThemeVariant="Dark">
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->

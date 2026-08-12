@@ -8,12 +8,12 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Avalonia.Platform;
 using Avalonia.ReactiveUI;
-using ssprea_nvidia_control.Models;
-using ssprea_nvidia_control.ViewModels;
 using ReactiveUI;
 using Serilog;
+using sspreaNvidiaControl.Models;
+using sspreaNvidiaControl.ViewModels;
 
-namespace ssprea_nvidia_control.Views;
+namespace sspreaNvidiaControl.Views;
 
 public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
 {
@@ -29,7 +29,7 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
             
         if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            desktop.ShutdownRequested += (sender, e) =>
+            desktop.ShutdownRequested += (_, _) =>
             {
                 File.Delete(Program.DefaultDataPath+"/.guiLock");
                 Program.KillFanCurveProcess();
@@ -55,15 +55,14 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
             
         };
 
-        Activated += async (s, e) =>
-        {
-            // await ViewModel!.CheckAndApplyAutoApplyProfile();
-        };
-
-        Resized += async (s, e) =>
-        {
-            // Console.WriteLine(Sborricus.Bounds.Width);
-        };
+        // Activated += async (s, e) =>
+        // {
+        //     // await ViewModel!.CheckAndApplyAutoApplyProfile();
+        // };
+        //
+        // Resized += async (s, e) =>
+        // {
+        // };
         
         
         this.WhenActivated(action =>
@@ -80,16 +79,16 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
 
         });
 
-        Opened += async (s, e) =>
+        Opened += async (_, _) =>
         {
             
             //await ViewModel!.CheckDependencies();
-            if (_isFirstRun && Program.LoadedSettings.Behaviour_StartGuiInTray)
+            if (_isFirstRun && Program.LoadedSettings.BehaviourStartGuiInTray)
                 Hide();
             _isFirstRun = false;
         };
 
-        Loaded += async (s, e) =>
+        Loaded += async (_, _) =>
         {
             await ViewModel!.LoadedEvent();
 
@@ -160,7 +159,7 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
             DataContext = interaction.Input
         };
 
-        var result = await dialog.ShowDialog<object?>(this);
+        await dialog.ShowDialog<object?>(this);
         interaction.SetOutput(null);
     }
     
@@ -270,7 +269,7 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
             if (AssetLoader.Exists(guiResolutionPath))
             {
                 var streamReader = new StreamReader(AssetLoader.Open(guiResolutionPath));
-                resolutionArr = streamReader.ReadToEnd().Replace("*", "x").Trim().Split("x").Select(int.Parse).ToArray();;
+                resolutionArr = streamReader.ReadToEnd().Replace("*", "x").Trim().Split("x").Select(int.Parse).ToArray();
             }
         
             
@@ -313,10 +312,10 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
     // }
 
 
-    private void Window_OnClosing(object? sender, WindowClosingEventArgs e)
-    {
-        
-    }
+    // private void Window_OnClosing(object? sender, WindowClosingEventArgs e)
+    // {
+    //     
+    // }
 
     // private void FanComboBox_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
     // {

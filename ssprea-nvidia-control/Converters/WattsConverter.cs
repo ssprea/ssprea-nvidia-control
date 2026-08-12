@@ -2,7 +2,7 @@ using System;
 using System.Globalization;
 using Avalonia.Data.Converters;
 
-namespace ssprea_nvidia_control.Converters;
+namespace sspreaNvidiaControl.Converters;
 
 public class WattsConverter : IValueConverter
 {

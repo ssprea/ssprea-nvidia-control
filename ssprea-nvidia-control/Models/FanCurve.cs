@@ -7,7 +7,7 @@ using System.Reactive.Linq;
 using DynamicData;
 using Newtonsoft.Json;
 
-namespace ssprea_nvidia_control.Models;
+namespace sspreaNvidiaControl.Models;
 
 public class FanCurve
 {

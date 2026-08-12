@@ -4,16 +4,16 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DynamicData.Kernel;
 using ReactiveUI;
-using ssprea_nvidia_control.Models;
+using sspreaNvidiaControl.Models;
 
-namespace ssprea_nvidia_control.ViewModels;
+namespace sspreaNvidiaControl.ViewModels;
 
 public partial class SudoPasswordRequestWindowViewModel : ViewModelBase
 {
     //[ObservableProperty] private SudoPassword? _currentSudoPassword;
     public ReactiveCommand<Unit, SudoPassword?> SavePasswordCommand { get; }
     private SudoPassword? _sudoPassword;
-    private bool _isPasswordCorrect = false;
+    private bool _isPasswordCorrect;
 
     [ObservableProperty] private string _passwordBoxText = "";
     [ObservableProperty] private string _errorMessage = "";

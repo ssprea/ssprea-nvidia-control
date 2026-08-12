@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ssprea_nvidia_control.Lang {
+namespace sspreaNvidiaControl.Lang {
     using System;
     
     

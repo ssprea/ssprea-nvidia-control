@@ -1,15 +1,15 @@
 using System;
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
-using ssprea_nvidia_control.ViewModels;
 using Newtonsoft.Json;
 using Serilog;
-using ssprea_nvidia_control.Models.Exceptions;
+using sspreaNvidiaControl.Models.Exceptions;
+using sspreaNvidiaControl.ViewModels;
 
-namespace ssprea_nvidia_control.Models;
+namespace sspreaNvidiaControl.Models;
 
-[ObservableObject]
-public partial class OcProfile
+
+public partial class OcProfile : ObservableObject
 {
     public OcProfile(string name,uint gpuClockOffset, uint memClockOffset, uint powerLimitMw, FanCurve? fanCurve)
     {

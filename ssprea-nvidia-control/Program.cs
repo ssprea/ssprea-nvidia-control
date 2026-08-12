@@ -11,10 +11,10 @@ using System.Threading.Tasks;
 using Avalonia.ReactiveUI;
 using GpuSSharp;
 using Serilog;
-using ssprea_nvidia_control.Models;
-using ssprea_nvidia_control.Models.Exceptions;
+using sspreaNvidiaControl.Models.Exceptions;
+using sspreaNvidiaControl.Models;
 
-namespace ssprea_nvidia_control;
+namespace sspreaNvidiaControl;
 
 sealed class Program
 {
@@ -25,7 +25,7 @@ sealed class Program
     public static string SettingsFilePath = DefaultDataPath + "/settings.json";
     
     
-    public static Process? FanCurveProcess = null;
+    public static Process? FanCurveProcess;
 
     //public static string SelectedLocale = "System";
     public static Settings LoadedSettings = Settings.Default();

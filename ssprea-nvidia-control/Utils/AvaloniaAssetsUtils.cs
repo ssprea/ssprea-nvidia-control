@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using Avalonia.Platform;
 
-namespace ssprea_nvidia_control.Utils;
+namespace sspreaNvidiaControl.Utils;
 
 public static class AvaloniaAssetsUtils
 {

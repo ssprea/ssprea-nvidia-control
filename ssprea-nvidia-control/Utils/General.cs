@@ -1,10 +1,10 @@
 using System;
 using System.Diagnostics;
 using Serilog;
-using ssprea_nvidia_control.Models;
-using ssprea_nvidia_control.Models.Exceptions;
+using sspreaNvidiaControl.Models;
+using sspreaNvidiaControl.Models.Exceptions;
 
-namespace ssprea_nvidia_control.Utils;
+namespace sspreaNvidiaControl.Utils;
 
 public static class General
 {

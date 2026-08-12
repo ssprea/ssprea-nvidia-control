@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using Serilog;
 
-namespace ssprea_nvidia_control.Utils;
+namespace sspreaNvidiaControl.Utils;
 
 public static class Lockfile
 {
@@ -47,7 +47,7 @@ public static class Lockfile
             Environment.Exit(0);
         }
         
-        File.WriteAllText(Program.DefaultDataPath+"/.guiLock",Process.GetCurrentProcess().Id.ToString());
+        File.WriteAllText(Program.DefaultDataPath+"/.guiLock",Environment.ProcessId.ToString());
     }
 
     private static bool SendMaximizeMessage()

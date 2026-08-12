@@ -1,7 +1,7 @@
 using System.Collections.Concurrent;
-using ssprea_nvidia_control.Models.Exceptions;
+using sspreaNvidiaControl.Models.Exceptions;
 
-namespace ssprea_nvidia_control.Models;
+namespace sspreaNvidiaControl.Models;
 
 public static class SudoPasswordManager
 {

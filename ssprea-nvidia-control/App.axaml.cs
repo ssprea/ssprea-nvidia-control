@@ -10,11 +10,11 @@ using Avalonia.Platform;
 using LiveChartsCore;
 using LiveChartsCore.SkiaSharpView;
 using SkiaSharp;
-using ssprea_nvidia_control.ViewModels;
-using ssprea_nvidia_control.Views;
-using ssprea_nvidia_control.Models;
+using sspreaNvidiaControl.Models;
+using sspreaNvidiaControl.ViewModels;
+using sspreaNvidiaControl.Views;
 
-namespace ssprea_nvidia_control;
+namespace sspreaNvidiaControl;
 
 public partial class App : Application
 {

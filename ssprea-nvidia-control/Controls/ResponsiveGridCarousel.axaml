@@ -1,6 +1,6 @@
 <Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:controls="using:ssprea_nvidia_control.Controls">
+        xmlns:controls="using:sspreaNvidiaControl.Controls">
     <Design.PreviewWith>
         <controls:ResponsiveGridCarousel />
     </Design.PreviewWith>

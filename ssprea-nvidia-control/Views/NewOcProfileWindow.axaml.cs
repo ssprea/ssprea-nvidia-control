@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
-using ssprea_nvidia_control.Models;
-using ssprea_nvidia_control.ViewModels;
+using sspreaNvidiaControl.Models;
 using ReactiveUI;
+using sspreaNvidiaControl.ViewModels;
 
 
-namespace ssprea_nvidia_control.Views;
+namespace sspreaNvidiaControl.Views;
 
 public partial class NewOcProfileWindow : ReactiveWindow<NewOcProfileWindowViewModel>
 {

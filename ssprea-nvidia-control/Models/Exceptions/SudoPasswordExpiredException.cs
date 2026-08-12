@@ -1,6 +1,6 @@
 using System;
 
-namespace ssprea_nvidia_control.Models.Exceptions;
+namespace sspreaNvidiaControl.Models.Exceptions;
 
 public class SudoPasswordExpiredException : Exception
 {

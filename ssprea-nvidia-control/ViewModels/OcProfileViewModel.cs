@@ -1,4 +1,4 @@
-namespace ssprea_nvidia_control.ViewModels;
+namespace sspreaNvidiaControl.ViewModels;
 
 public class OcProfileViewModel
 {

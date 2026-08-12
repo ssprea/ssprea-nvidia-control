@@ -3,7 +3,7 @@ using System.Globalization;
 using Avalonia.Controls;
 using Avalonia.Data.Converters;
 
-namespace ssprea_nvidia_control.Converters;
+namespace sspreaNvidiaControl.Converters;
 
 public class LiveStatsGridResponsiveColumnConverter : IValueConverter
 {

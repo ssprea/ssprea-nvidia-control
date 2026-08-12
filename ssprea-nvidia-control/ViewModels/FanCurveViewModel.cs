@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DynamicData;
-using ssprea_nvidia_control.Models;
 using LiveChartsCore;
 using LiveChartsCore.Defaults;
 using LiveChartsCore.Kernel;
@@ -12,9 +11,10 @@ using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Drawing.Geometries;
 using LiveChartsCore.SkiaSharpView.Painting;
 using SkiaSharp;
-using ssprea_nvidia_control.Utils;
+using sspreaNvidiaControl.Models;
+using sspreaNvidiaControl.Utils;
 
-namespace ssprea_nvidia_control.ViewModels;
+namespace sspreaNvidiaControl.ViewModels;
 
 public partial class FanCurveViewModel : ViewModelBase
 {

@@ -12,10 +12,10 @@ using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using LiveChartsCore.SkiaSharpView.Painting.Effects;
 using SkiaSharp;
-using ssprea_nvidia_control.Models;
-using ssprea_nvidia_control.Utils;
+using sspreaNvidiaControl.Models;
+using sspreaNvidiaControl.Utils;
 
-namespace ssprea_nvidia_control.ViewModels;
+namespace sspreaNvidiaControl.ViewModels;
 
 public partial class UsageGraphsWindowViewModel : ViewModelBase
 {

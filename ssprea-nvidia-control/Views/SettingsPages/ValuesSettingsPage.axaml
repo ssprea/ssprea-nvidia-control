@@ -2,10 +2,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:vm="clr-namespace:ssprea_nvidia_control.ViewModels"
-             xmlns:lang="clr-namespace:ssprea_nvidia_control.Lang"
+             xmlns:vm="clr-namespace:sspreaNvidiaControl.ViewModels"
+             xmlns:lang="clr-namespace:sspreaNvidiaControl.Lang"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="ssprea_nvidia_control.Views.SettingsPages.ValuesSettingsPage"
+             x:Class="sspreaNvidiaControl.Views.SettingsPages.ValuesSettingsPage"
              x:DataType="vm:SettingsMainWindowViewModel">
     <StackPanel x:Name="ValuesSettingsContent">
                     

@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 using System.Threading.Tasks;
 using Serilog;
 
-namespace ssprea_nvidia_control.Models;
+namespace sspreaNvidiaControl.Models;
 
 public class ProfilesFileManager
 {

@@ -2,9 +2,9 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
-using ssprea_nvidia_control.ViewModels;
+using sspreaNvidiaControl.ViewModels;
 
-namespace ssprea_nvidia_control.Views;
+namespace sspreaNvidiaControl.Views;
 
 public partial class UsageGraphsWindow : ReactiveWindow<UsageGraphsWindowViewModel>
 {

@@ -1,10 +1,10 @@
 using System.Collections.ObjectModel;
 using System.Reactive;
 using CommunityToolkit.Mvvm.ComponentModel;
-using ssprea_nvidia_control.Models;
 using ReactiveUI;
+using sspreaNvidiaControl.Models;
 
-namespace ssprea_nvidia_control.ViewModels;
+namespace sspreaNvidiaControl.ViewModels;
 
 public partial class NewOcProfileWindowViewModel : ViewModelBase
 {
@@ -18,7 +18,7 @@ public partial class NewOcProfileWindowViewModel : ViewModelBase
     
     
     public GpuViewModel? SelectedGpu { get; private set; }
-    public ObservableCollection<FanCurveViewModel>? FanCurvesList => MainWindowViewModel.FanCurvesList;
+    public static ObservableCollection<FanCurveViewModel>? FanCurvesList => MainWindowViewModel.FanCurvesList;
 
 
     public NewOcProfileWindowViewModel(GpuViewModel targetGpu)
@@ -33,7 +33,7 @@ public partial class NewOcProfileWindowViewModel : ViewModelBase
     public ReactiveCommand<Unit, OcProfile> CreateProfileCommand { get; }
     
     
-    public void CancelButtonCommand()
+    public static void CancelButtonCommand()
     {
         
     }

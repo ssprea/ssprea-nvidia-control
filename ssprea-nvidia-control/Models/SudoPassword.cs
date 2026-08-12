@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Security;
 using Serilog;
 
-namespace ssprea_nvidia_control.Models;
+namespace sspreaNvidiaControl.Models;
 
 public class SudoPassword
 {
@@ -12,7 +12,7 @@ public class SudoPassword
     public DateTime ExpirationTime { get; private set; }
     public bool IsExpired => ExpirationTime < DateTime.Now;
 
-    public bool OperationCanceled { get; set; } = false;
+    public bool OperationCanceled { get; set; }
     
     public bool IsValid => ValidatePassword();
 

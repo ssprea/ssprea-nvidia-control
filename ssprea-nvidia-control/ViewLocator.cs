@@ -1,9 +1,9 @@
 using System;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
-using ssprea_nvidia_control.ViewModels;
+using sspreaNvidiaControl.ViewModels;
 
-namespace ssprea_nvidia_control;
+namespace sspreaNvidiaControl;
 
 public class ViewLocator : IDataTemplate
 {

@@ -1,7 +1,7 @@
 using System;
 using Newtonsoft.Json;
 
-namespace ssprea_nvidia_control.Models;
+namespace sspreaNvidiaControl.Models;
 
 public class Settings
 {
@@ -9,8 +9,11 @@ public class Settings
     public string SelectedLocale { get; set; } =  "System";
     public double SelectedUpdateTimeoutSeconds { get; set; } = 0.5;
 
-    public bool Behaviour_StartGuiAtBoot { get; set; } = false;
-    public bool Behaviour_StartGuiInTray { get; set; } = false;
+    [JsonProperty(PropertyName = "Behaviour_StartGuiAtBoot")]
+    public bool BehaviourStartGuiAtBoot { get; set; }
+    
+    [JsonProperty(PropertyName = "Behaviour_StartGuiInTray")]
+    public bool BehaviourStartGuiInTray { get; set; }
 
     [JsonIgnore]
     public TimeSpan SelectedUpdateTimeout => TimeSpan.FromSeconds(SelectedUpdateTimeoutSeconds);
@@ -27,8 +30,8 @@ public class Settings
         SelectedGui = source.SelectedGui;
         SelectedLocale = source.SelectedLocale;
         SelectedUpdateTimeoutSeconds = source.SelectedUpdateTimeoutSeconds;
-        Behaviour_StartGuiAtBoot = source.Behaviour_StartGuiAtBoot;
-        Behaviour_StartGuiInTray = source.Behaviour_StartGuiInTray;
+        BehaviourStartGuiAtBoot = source.BehaviourStartGuiAtBoot;
+        BehaviourStartGuiInTray = source.BehaviourStartGuiInTray;
     }
     
     
@@ -51,8 +54,8 @@ public class Settings
             SelectedGui = "Default",
             SelectedLocale = "System",
             SelectedUpdateTimeoutSeconds = 0.5,
-            Behaviour_StartGuiAtBoot = false,
-            Behaviour_StartGuiInTray =  false,
+            BehaviourStartGuiAtBoot = false,
+            BehaviourStartGuiInTray =  false,
         };
     }
 }

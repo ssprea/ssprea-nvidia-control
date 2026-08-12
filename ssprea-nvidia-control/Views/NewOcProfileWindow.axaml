@@ -1,12 +1,12 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:vm="using:ssprea_nvidia_control.ViewModels"
+        xmlns:vm="using:sspreaNvidiaControl.ViewModels"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:system="clr-namespace:System;assembly=System.Runtime"
         mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="450"
         Width="400" Height="450"
-        x:Class="ssprea_nvidia_control.Views.NewOcProfileWindow"
+        x:Class="sspreaNvidiaControl.Views.NewOcProfileWindow"
         x:DataType="vm:NewOcProfileWindowViewModel"
         Title="Create new profile">
     

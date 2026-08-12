@@ -1,4 +1,4 @@
-namespace ssprea_nvidia_control.Models;
+namespace sspreaNvidiaControl.Models;
 
 public class FanCurvePoint(uint temperature, uint fanSpeed)
 {

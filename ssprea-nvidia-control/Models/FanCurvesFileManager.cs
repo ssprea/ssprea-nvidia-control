@@ -5,9 +5,9 @@ using System.IO;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
 using Serilog;
-using ssprea_nvidia_control.ViewModels;
+using sspreaNvidiaControl.ViewModels;
 
-namespace ssprea_nvidia_control.Models;
+namespace sspreaNvidiaControl.Models;
 
 public static class FanCurvesFileManager
 {

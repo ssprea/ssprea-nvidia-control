@@ -6,10 +6,10 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
-using ssprea_nvidia_control.Models;
 using ReactiveUI;
+using sspreaNvidiaControl.Models;
 
-namespace ssprea_nvidia_control.ViewModels;
+namespace sspreaNvidiaControl.ViewModels;
 
 public partial class FanCurveEditorWindowViewModel : ViewModelBase
 {

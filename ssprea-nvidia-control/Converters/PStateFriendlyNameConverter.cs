@@ -3,7 +3,7 @@ using System.Globalization;
 using Avalonia.Data.Converters;
 using GpuSSharp.Types;
 
-namespace ssprea_nvidia_control.Converters;
+namespace sspreaNvidiaControl.Converters;
 
 public class PStateFriendlyNameConverter : IValueConverter
 {

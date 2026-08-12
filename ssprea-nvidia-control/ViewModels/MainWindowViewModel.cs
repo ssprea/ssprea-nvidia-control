@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reactive;
@@ -24,17 +25,17 @@ using MsBox.Avalonia;
 using MsBox.Avalonia.Dto;
 using MsBox.Avalonia.Enums;
 using MsBox.Avalonia.Models;
-using ssprea_nvidia_control.Models;
 using Newtonsoft.Json.Linq;
 using ReactiveUI;
 using Serilog;
 using SkiaSharp;
-using ssprea_nvidia_control.Lang;
-using ssprea_nvidia_control.Utils;
+using sspreaNvidiaControl.Lang;
+using sspreaNvidiaControl.Models;
+using sspreaNvidiaControl.Utils;
 using Tmds.DBus.Protocol;
 
 
-namespace ssprea_nvidia_control.ViewModels;
+namespace sspreaNvidiaControl.ViewModels;
 
 public partial class MainWindowViewModel : ViewModelBase  
 
@@ -168,7 +169,7 @@ public partial class MainWindowViewModel : ViewModelBase
     private AutoResetEvent _sudoPasswordDialogClosed = new(false);
 
     
-    private bool _autoApplyProfileLoaded = false;
+    private bool _autoApplyProfileLoaded;
 
     public MainWindowViewModel()
     {
@@ -505,14 +506,22 @@ public partial class MainWindowViewModel : ViewModelBase
     }
     
     
+    [SuppressMessage("ReSharper", "ConvertTypeCheckPatternToNullCheck")]
     public async Task CheckAndApplyAutoApplyProfile()
     {
         //check default profile
         if (!_autoApplyProfileLoaded && File.Exists(Program.DefaultDataPath + "/AutoApplyProfile.json"))
         {
             var jobj = JObject.Parse(await File.ReadAllTextAsync(Program.DefaultDataPath + "/AutoApplyProfile.json"));
-            var gpuid = (uint)jobj["gpu"];
-            var profile = (string)jobj["profile"];
+            
+
+            if (jobj["gpu"]?.Value<uint?>() is not uint gpuid || jobj["profile"]?.Value<string>() is not string profile)
+            {
+                return;
+            }
+            
+                
+            
                 
             //apply profile
             SelectedGpu = AvailableGpus.FirstOrDefault(x => x.DeviceIndex == gpuid);

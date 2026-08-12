@@ -3,7 +3,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Serilog;
 
-namespace ssprea_nvidia_control.Utils;
+namespace sspreaNvidiaControl.Utils;
 
 public static class Systemd
 {

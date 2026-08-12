@@ -6,7 +6,7 @@ using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Media;
 
-namespace ssprea_nvidia_control.Controls;
+namespace sspreaNvidiaControl.Controls;
 
 public class NonVirtualizingCarousel : Grid
 {
