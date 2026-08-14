@@ -8,7 +8,7 @@
         Width="400" Height="470"
         x:Class="sspreaNvidiaControl.Views.FanCurveEditorWindow"
         x:DataType="vm:FanCurveEditorWindowViewModel"
-        Title="FanCurveEditorWindow" 
+        Title="sLimit - Fan Curve Editor" 
         Background="Transparent"
         WindowStartupLocation="CenterScreen"
         ExtendClientAreaToDecorationsHint="True"

@@ -882,6 +882,9 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
 
     private void InitGpus()
     {
+        if (Program.GpuService?.GpuList is null)
+            return;
+        
         foreach (var gpu in Program.GpuService.GpuList)
         {
             AvailableGpus.Add(new GpuViewModel(gpu));
@@ -893,16 +896,25 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
     /// <summary>
     /// Check nvidia drivers and cli tool
     /// </summary>
-    /// <returns>0: success, 1: no nvidia driver, 2: nvidia driver version less than 555, 3: cli tool not installed </returns>
+    /// <returns>0: success, 1: no compatible gpus found, 2: nvidia driver version less than 555, 3: cli tool not installed </returns>
     private async Task<ushort> CheckDependencies()
     {
-        //check nvidia drivers installed
+        //check compatible gpus
+
+        if (Program.GpuService is null || AvailableGpus.Count == 0)
+        {
+            return 1;
+        }
+        
 # if LINUX
+
+        
+        
+        
+        //check nvidia drivers version
         var vercmd = Utils.General.RunCliCommand("nvidia-smi", "--version", true,false,true);
         if (vercmd is null || vercmd.ExitCode != 0)
             return 1;
-
-        //check nvidia drivers version
 
         var output = await vercmd.StandardOutput.ReadToEndAsync();
         var lines = output.Split('\n');

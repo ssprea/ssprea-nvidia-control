@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.ReactiveUI;
 using GpuSSharp;
+using GpuSSharp.Types.Exceptions;
 using Serilog;
 using sspreaNvidiaControl.Models.Exceptions;
 using sspreaNvidiaControl.Models;
@@ -30,7 +31,7 @@ sealed class Program
     //public static string SelectedLocale = "System";
     public static Settings LoadedSettings = Settings.Default();
     
-    public static GpuService GpuService = new();
+    public static GpuService? GpuService;
     
     // Initialization code. Don't use any Avalonia, third-party APIs or any
     // SynchronizationContext-reliant code before AppMain is called: things aren't initialized
@@ -44,6 +45,15 @@ sealed class Program
             .CreateLogger();
 
         Log.Logger = log;
+
+        try
+        {
+            GpuService = new GpuService();
+        }
+        catch (Exception ex)
+        {
+            Log.Error("Error while initializing GpuService: {exMsg}", ex.Message);
+        }
         
         
         

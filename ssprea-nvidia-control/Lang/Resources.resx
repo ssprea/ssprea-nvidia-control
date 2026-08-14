@@ -195,9 +195,9 @@
             <value>out of:</value>
         </data>
 
-     <data name="SettingsTitle" xml:space="preserve">
-            <value>SNVCTL Settings</value>
-        </data>
+    <data name="SettingsTitle" xml:space="preserve">
+        <value>sLimit - Settings</value>
+    </data>
 
      <data name="SettingsSubtitle" xml:space="preserve">
             <value>Settings</value>

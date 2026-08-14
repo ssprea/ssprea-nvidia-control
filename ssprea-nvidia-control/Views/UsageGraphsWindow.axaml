@@ -9,7 +9,7 @@
         xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
         xmlns:liveChartsCore="clr-namespace:LiveChartsCore;assembly=LiveChartsCore"
         xmlns:skiaSharpView="clr-namespace:LiveChartsCore.SkiaSharpView;assembly=LiveChartsCore.SkiaSharpView"
-        Title="GPU Graphs"
+        Title="sLimit - GPU Graphs"
         Closing="Window_OnClosing"
         >
     <Design.DataContext>

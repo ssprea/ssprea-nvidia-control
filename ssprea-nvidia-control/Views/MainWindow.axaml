@@ -16,7 +16,7 @@
         x:Class="sspreaNvidiaControl.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
-        Title="ssprea NVidia Control"
+        Title="sLimit"
         Name="MainOcWindow"
         Closed="Window_OnClosed"
         TransparencyLevelHint="AcrylicBlur, Blur, Transparent"
