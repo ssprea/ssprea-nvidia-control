@@ -29,6 +29,8 @@ namespace GpuSSharp.Libs.Nvml;
         private NvmlPciInfo PciInfo { get; set; }
         public GpuVendor Vendor => GpuVendor.Nvidia;
 
+        public GpuCapabilities Capabilities { get; } = new GpuCapabilities(GpuClockTuningMode.Offset, GpuClockTuningMode.Offset, true,true);
+
         private void ReadFixedProperties()
         {
             
@@ -283,14 +285,27 @@ namespace GpuSSharp.Libs.Nvml;
             return NvmlWrapper.nvmlDeviceSetClockOffsets(_handle, ref clockOffset);
         }
 
-        public bool SetCoreOffset(GpuPState pState, int clockOffsetMhz)
+        public bool SetCoreTuning(GpuClockTune tuneSettings)
         {
-            return SetClockOffset(NvmlClockType.NVML_CLOCK_GRAPHICS, pState, clockOffsetMhz) == NvmlReturnCode.NVML_SUCCESS;
+            return tuneSettings switch
+            {
+                GpuClockTune.Offset offset =>
+                    SetClockOffset(NvmlClockType.NVML_CLOCK_GRAPHICS, offset.PState, offset.OffsetMhz) == NvmlReturnCode.NVML_SUCCESS,
+
+                _ => false
+            };
+            
         }
         
-        public bool SetMemOffset(GpuPState pState, int clockOffsetMhz)
+        public bool SetMemTuning(GpuClockTune tuneSettings)
         {
-            return SetClockOffset(NvmlClockType.NVML_CLOCK_GRAPHICS, pState, clockOffsetMhz) == NvmlReturnCode.NVML_SUCCESS;
+            return tuneSettings switch
+            {
+                GpuClockTune.Offset offset =>
+                    SetClockOffset(NvmlClockType.NVML_CLOCK_MEM, offset.PState, offset.OffsetMhz) == NvmlReturnCode.NVML_SUCCESS,
+
+                _ => false
+            };
         }
 
         public (NvmlReturnCode,uint) GetPowerLimitCurrent()

@@ -940,7 +940,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
                     Resources.MsgBoxTitleDependencyDriverMissing, ButtonEnum.Ok, Icon.Error);
 
                 await box.ShowAsync();
-                Environment.Exit(1);
+                // Environment.Exit(1);
                 break;
             case 2:
                 box = MessageBoxManager.GetMessageBoxStandard(Resources.MsgBoxTitleDependencyDriverOutdated,

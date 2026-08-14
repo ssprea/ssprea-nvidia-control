@@ -1,0 +1,18 @@
+namespace GpuSSharp.Libs.AmdSmi.AmdSmiTypes;
+
+public enum AmdSmiInitFlags
+{
+    AMDSMI_INIT_ALL_PROCESSORS,
+
+    AMDSMI_INIT_AMD_CPUS,
+
+    AMDSMI_INIT_AMD_GPUS,
+
+    AMDSMI_INIT_NON_AMD_CPUS,
+
+    AMDSMI_INIT_NON_AMD_GPUS,
+
+    AMDSMI_INIT_AMD_APUS,
+
+    AMDSMI_INIT_AMD_NICS,
+}

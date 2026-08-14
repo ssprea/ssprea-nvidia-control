@@ -56,9 +56,15 @@ public class Program
     
     static GpuService? _gpuService;
     IGpu? _selectedGpu;
-    
+
     public static void Main(string[] args)
-        => CommandLineApplication.Execute<Program>(args);
+    {
+        foreach (var a in args)
+        {
+            Console.WriteLine(a);
+        }
+        CommandLineApplication.Execute<Program>(args);
+    }
 
     
     private Task? _fanCurveTask;
@@ -77,7 +83,7 @@ public class Program
         return Regex.IsMatch(address, @"^[0-9a-fA-F]{4}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}\.[0-9a-fA-F]$");
     }
 
-    private async Task OnExecute()
+    private async Task OnExecuteAsync()
     {
         
         
@@ -126,7 +132,7 @@ public class Program
         
         if (GpuPciAddress is null)
         {
-            Log.Fatal("Invalid GPU ID, Exiting...");
+            Log.Fatal("Invalid GPU ID: {gpuInputAddress}, Exiting...",GpuPciIdStr);
             Environment.Exit(-1);
         }
         
@@ -215,7 +221,9 @@ public class Program
         if (CoreOffset >= 0)
         {
 
-            var clockRes = _selectedGpu.SetCoreOffset(GpuPState.GpuPstate0, CoreOffset);
+            var tune = new GpuClockTune.Offset(CoreOffset, GpuPState.GpuPstate0);
+            
+            var clockRes = _selectedGpu.SetCoreTuning(tune);
             if (!clockRes)
                 Log.Error("Error while applying core clock offset: {coreClockOffsetApplyErrorDesc}",clockRes);
         }
@@ -223,7 +231,7 @@ public class Program
         if (MemoryOffset >= 0)
         {
             
-            var memRes = _selectedGpu.SetMemOffset( GpuPState.GpuPstate0, MemoryOffset);
+            var memRes = _selectedGpu.SetMemTuning(new GpuClockTune.Offset(MemoryOffset, GpuPState.GpuPstate0));
             if (!memRes)
                 Log.Error("Error while applying memory clock offset: {memoryClockOffsetApplyErrorDesc}",memRes);
 

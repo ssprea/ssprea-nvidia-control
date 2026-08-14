@@ -1,0 +1,68 @@
+namespace GpuSSharp.Libs.AmdSmi.AmdSmiTypes;
+
+public enum AmdsmiTemperatureMetric
+{
+    AMDSMI_TEMP_CURRENT,
+
+
+
+    AMDSMI_TEMP_FIRST = AMDSMI_TEMP_CURRENT,
+
+    AMDSMI_TEMP_MAX,
+
+
+
+    AMDSMI_TEMP_MIN,
+
+
+
+    AMDSMI_TEMP_MAX_HYST,
+
+
+
+    AMDSMI_TEMP_MIN_HYST,
+
+
+
+    AMDSMI_TEMP_CRITICAL,
+
+
+
+    AMDSMI_TEMP_CRITICAL_HYST,
+
+
+
+    AMDSMI_TEMP_EMERGENCY,
+
+
+
+    AMDSMI_TEMP_EMERGENCY_HYST,
+
+
+
+    AMDSMI_TEMP_CRIT_MIN,
+
+
+
+    AMDSMI_TEMP_CRIT_MIN_HYST,
+
+
+
+    AMDSMI_TEMP_OFFSET,
+
+
+
+    AMDSMI_TEMP_LOWEST,
+
+
+
+    AMDSMI_TEMP_HIGHEST,
+
+
+
+    AMDSMI_TEMP_SHUTDOWN,
+
+
+
+    AMDSMI_TEMP_LAST = AMDSMI_TEMP_SHUTDOWN
+}

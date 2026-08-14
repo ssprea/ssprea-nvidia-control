@@ -18,6 +18,9 @@ public interface IGpu
     public string Name { get; }
     public GpuVendor Vendor { get; }
     
+    //CAPABILITIES
+    public GpuCapabilities Capabilities { get; }
+    
     //GPU METRICS
     public GpuMetrics GetMetrics();
     
@@ -41,8 +44,8 @@ public interface IGpu
     
     //SETTERS
     
-    public bool SetCoreOffset(GpuPState pState, int clockOffsetMhz);
-    public bool SetMemOffset(GpuPState pState, int clockOffsetMhz);
+    public bool SetCoreTuning(GpuClockTune tuneSettings);
+    public bool SetMemTuning(GpuClockTune tuneSettings);
     public bool SetGpuPowerLimit(uint limitMw);
 
     public bool ApplySpeedToAllFans(uint speed);

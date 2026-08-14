@@ -29,4 +29,6 @@ public record GpuMetrics
     
     //FANS
     GpuFansMetrics FansSpeedPercent
+    
+    
 );
