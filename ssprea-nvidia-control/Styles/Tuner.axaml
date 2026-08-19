@@ -10,16 +10,16 @@
         <Setter Property="Content" Value="%"/>
     </Style>
     
-    <Style Selector="DockPanel.tunerOverdrive > NumericUpDown">
-        <Setter Property="Maximum" Value="%"/>
-    </Style>
+    <!-- <Style Selector="DockPanel.tunerOverdrive > NumericUpDown"> -->
+    <!--     <Setter Property="Maximum" Value="%"/> -->
+    <!-- </Style> -->
     
     <Style Selector="DockPanel.tunerOffset > Label">
         <Setter Property="Content" Value="MHz"/>
     </Style>
     
-    <Style Selector="DockPanel.tunerOffset > NumericUpDown">
-        <Setter Property="Content" Value="MHz"/>
-    </Style>
+    <!-- <Style Selector="DockPanel.tunerOffset > NumericUpDown"> -->
+    <!--     <Setter Property="Content" Value="MHz"/> -->
+    <!-- </Style> -->
     
 </Styles>

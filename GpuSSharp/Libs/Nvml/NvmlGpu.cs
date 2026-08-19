@@ -29,7 +29,7 @@ namespace GpuSSharp.Libs.Nvml;
         private NvmlPciInfo PciInfo { get; set; }
         public GpuVendor Vendor => GpuVendor.Nvidia;
 
-        public GpuCapabilities Capabilities { get; } = new GpuCapabilities(GpuClockTuningMode.Overdrive, GpuClockTuningMode.Overdrive, true,true);
+        public GpuCapabilities Capabilities { get; } = new GpuCapabilities(GpuClockTuningMode.Offset, GpuClockTuningMode.Offset, true,true);
 
         private void ReadFixedProperties()
         {
