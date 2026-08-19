@@ -62,8 +62,9 @@ yay -S ssprea-nvidia-control-git
 
 ### Windows:
 
-The tool should mostly work on windows without major problems, however I haven't tested it since I currently don't have a Windows machine. 
-If you encounter any problems please open an [issue](https://github.com/ssprea/ssprea-nvidia-control/issues/new)
+Windows is not currently officially supported, and I don’t provide support for Windows-specific issues.
+However, the tool should still work on Windows without any major problems, so you’re welcome to give it a try at your own risk.
+
 
 Currently these features are known to not work on Windows:
   - Startup profile
@@ -71,7 +72,6 @@ Currently these features are known to not work on Windows:
 To run it, download the source code and build manually, then add the snvctl CLI tool exe to the PATH environment variable.
 After that you can just run it as an administrator.
 
-NOTE: Windows is not the main target platform for this tool so features might be delayed and there might be many bugs.
 
 -------------------------
 
