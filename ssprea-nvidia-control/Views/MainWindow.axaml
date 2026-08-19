@@ -545,11 +545,13 @@
                                             <Border  DockPanel.Dock="Top"  Classes.flashing="{Binding FlashingAnimationRunning}" Classes="panelItem"  HorizontalAlignment="Stretch" VerticalAlignment="Center">
                                                 <DockPanel
                                                     LastChildFill="True"
+                                                    Classes.tunerOverdrive = "{Binding IsTunerCoreOverdrive}"
+                                                    Classes.tunerOffset = "{Binding IsTunerCoreOffset}"
                                                 >
                                     
                                                     <Label Classes="onlyWideMode" DockPanel.Dock="Left" VerticalAlignment="Center" Content="{x:Static lang:Resources.TunerCoreOffset}"/>
                                                     <Label Classes="onlySemiWideMode" DockPanel.Dock="Left" VerticalAlignment="Center" Content="C:"/>
-                                                    <Label DockPanel.Dock="Right" VerticalAlignment="Center" FontWeight="Bold" Content="MHz"/> 
+                                                    <Label  DockPanel.Dock="Right" VerticalAlignment="Center" FontWeight="Bold" /> 
                                                     
                                                     <NumericUpDown  DockPanel.Dock="Right" Minimum="0" Maximum="1000" FormatString="0"
                                                                     Background="Transparent" BorderBrush="Transparent" 
@@ -565,7 +567,11 @@
                                             </Border>
                                     
                                             <Border Grid.Row="1" DockPanel.Dock="Top"   Classes.flashing="{Binding FlashingAnimationRunning}" Classes="panelItem"   HorizontalAlignment="Stretch" VerticalAlignment="Center">
-                                                <DockPanel LastChildFill="True">
+                                                <DockPanel LastChildFill="True"
+                                                           
+                                                           Classes.tunerOverdrive = "{Binding IsTunerMemOverdrive}"
+                                                           Classes.tunerOffset = "{Binding IsTunerMemOffset}"
+                                                           >
                                 
                                                     <Label Classes="onlyWideMode" DockPanel.Dock="Left" VerticalAlignment="Center" Content="{x:Static lang:Resources.TunerMemoryOffset}"/>
                                                     <Label Classes="onlySemiWideMode" DockPanel.Dock="Left" VerticalAlignment="Center" Content="M:"/>
@@ -588,7 +594,9 @@
                                             </Border>
                                     
                                             <Border Grid.Row="2" DockPanel.Dock="Top"  Classes.flashing="{Binding FlashingAnimationRunning}" Classes="panelItem" HorizontalAlignment="Stretch" VerticalAlignment="Center">
-                                                <DockPanel LastChildFill="True">
+                                                <DockPanel LastChildFill="True"
+                                                           IsEnabled="{Binding SelectedGpu?.Capabilities.PowerLimit, FallbackValue=false}"
+                                                           >
                             
                                                     <Label Classes="onlyWideMode" DockPanel.Dock="Left" VerticalAlignment="Center" Content="{x:Static lang:Resources.TunerPowerLimit}"/>
                                                     <Label Classes="onlySemiWideMode" DockPanel.Dock="Left" VerticalAlignment="Center" Content="P:"/>
@@ -649,7 +657,9 @@
                                         <Label Classes="h1" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Content="{x:Static lang:Resources.FanCurveSection}"/>
                                     </Border>
                                     <!--FAN CURVE ITEMS BORDER-->
-                                    <Border Classes="section" Grid.Column="0" Grid.Row="1">
+                                    <Border Classes="section" Grid.Column="0" Grid.Row="1"
+                                            IsEnabled="{Binding SelectedGpu?.Capabilities.FanControl, FallbackValue=false}"
+                                            >
                                         <DockPanel  HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                         
                                             <Border DockPanel.Dock="Bottom" Classes="panelItem"    HorizontalAlignment="Center" VerticalAlignment="Top">

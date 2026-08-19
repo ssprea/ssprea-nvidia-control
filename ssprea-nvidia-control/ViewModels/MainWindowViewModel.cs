@@ -15,6 +15,7 @@ using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DynamicData;
+using GpuSSharp.Types;
 using LiveChartsCore;
 using LiveChartsCore.Defaults;
 using LiveChartsCore.SkiaSharpView;
@@ -90,6 +91,14 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
     private bool FanSpeedSliderVisible => _selectedFanRadioButton == 1;
     
     private readonly string _profilesServiceName = "snvctl-profile.service";
+
+    [ObservableProperty] private bool _isTunerCoreOffset;
+
+    [ObservableProperty] private bool _isTunerCoreOverdrive;
+
+    [ObservableProperty] private bool _isTunerMemOffset;
+
+    [ObservableProperty] private bool _isTunerMemOverdrive;
 
     
     //graph sync object
@@ -322,6 +331,17 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
     {
         if (value is null || value.GpuFansCount <= 0)
             return;
+        
+        //update tuner checks
+        
+        IsTunerCoreOffset = SelectedGpu?.Capabilities.CoreClockTuningMode == GpuClockTuningMode.Offset;
+        
+        IsTunerCoreOverdrive = SelectedGpu?.Capabilities.CoreClockTuningMode == GpuClockTuningMode.Overdrive;
+
+        IsTunerMemOffset = SelectedGpu?.Capabilities.MemoryClockTuningMode == GpuClockTuningMode.Offset;
+
+        IsTunerMemOverdrive = SelectedGpu?.Capabilities.MemoryClockTuningMode == GpuClockTuningMode.Overdrive;
+        
         
         
         
@@ -865,9 +885,10 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         
     }
 
-    public async Task LoadedEvent()
+    public async Task LoadedEvent(bool isDesignMode)
     {
-        await ShowDependenciesMsgbox(await CheckDependencies());
+        if (!isDesignMode)
+            await ShowDependenciesMsgbox(await CheckDependencies());
         
         //convert loaded gpus to gpuviewmodel
         
@@ -950,7 +971,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
 
                 var box = MessageBoxManager.GetMessageBoxStandard(Resources.MsgBoxTitleDependencyDriverMissing,
                     Resources.MsgBoxTitleDependencyDriverMissing, ButtonEnum.Ok, Icon.Error);
-
+                
                 await box.ShowAsync();
                 // Environment.Exit(1);
                 break;

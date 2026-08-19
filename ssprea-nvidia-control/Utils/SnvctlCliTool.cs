@@ -11,7 +11,7 @@ namespace sspreaNvidiaControl.Utils;
 
 public static class SnvctlCliTool
 {
-    public static Process? RunSudoCliCommand(string args,uint deviceIdx, string file="/usr/local/bin/snvctl", bool waitForExit = true)
+    public static Process? RunSudoCliCommand(string args,string deviceIdx, string file="/usr/local/bin/snvctl", bool waitForExit = true)
     {
         if (SudoPasswordManager.CurrentPassword is not null && SudoPasswordManager.CurrentPassword.OperationCanceled)
         {
@@ -34,7 +34,7 @@ public static class SnvctlCliTool
         psi.UseShellExecute = false;
         psi.CreateNoWindow = true;
 
-        Log.Information("Executing: "+psi.FileName+" "+psi.Arguments);
+        Log.Information("Executing: {fileName} {args}",psi.FileName,psi.Arguments);
         
         
         var process = Process.Start(psi);
@@ -48,13 +48,13 @@ public static class SnvctlCliTool
                 return null;
         }
 
-        Log.Debug("PID: "+process.Id);
+        Log.Debug("PID: {pid}",process.Id);
         //var output = process.StandardOutput.ReadToEnd();
         
         return process;
     }
 
-    public static void RunFanProcess(FanCurve fanCurve, uint deviceIdx)
+    public static void RunFanProcess(FanCurve fanCurve, string deviceIdx)
     {
         if (Program.FanCurveProcess is not null)
             Program.FanCurveProcess.Kill();

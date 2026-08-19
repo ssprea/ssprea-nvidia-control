@@ -90,7 +90,7 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
 
         Loaded += async (_, _) =>
         {
-            await ViewModel!.LoadedEvent();
+            await ViewModel!.LoadedEvent(Design.IsDesignMode);
 
 
         };
@@ -326,7 +326,7 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
 
     private void Window_OnClosed(object? sender, EventArgs e)
     {
-        Program.GpuService.Shutdown();
+        Program.GpuService?.Shutdown();
     }
 
     

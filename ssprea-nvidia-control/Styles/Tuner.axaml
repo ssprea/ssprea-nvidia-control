@@ -1,0 +1,25 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Design.PreviewWith>
+        <Border Padding="20">
+            <!-- Add Controls for Previewer Here -->
+        </Border>
+    </Design.PreviewWith>
+
+    <Style Selector="DockPanel.tunerOverdrive > Label">
+        <Setter Property="Content" Value="%"/>
+    </Style>
+    
+    <Style Selector="DockPanel.tunerOverdrive > NumericUpDown">
+        <Setter Property="Maximum" Value="%"/>
+    </Style>
+    
+    <Style Selector="DockPanel.tunerOffset > Label">
+        <Setter Property="Content" Value="MHz"/>
+    </Style>
+    
+    <Style Selector="DockPanel.tunerOffset > NumericUpDown">
+        <Setter Property="Content" Value="MHz"/>
+    </Style>
+    
+</Styles>

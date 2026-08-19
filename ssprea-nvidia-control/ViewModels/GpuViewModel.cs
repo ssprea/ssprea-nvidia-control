@@ -17,6 +17,9 @@ public partial class GpuViewModel : ViewModelBase, IDisposable
     
     [ObservableProperty] private GpuMetrics? _latestGpuMetrics;
     [ObservableProperty] private FanCurve? _appliedFanCurve;
+    
+    public GpuCapabilities Capabilities => _gpu.Capabilities;
+    
     private Task? _runningUpdateTask;
     
     public event EventHandler? GpuMetricsUpdatedEvent;
@@ -49,22 +52,22 @@ public partial class GpuViewModel : ViewModelBase, IDisposable
     #region Setters
 
     public bool SetCoreClockOffset(int clockOffsetMhz) =>
-        SnvctlCliTool.RunSudoCliCommand($"-c {clockOffsetMhz}", DeviceIndex) is not null;
+        SnvctlCliTool.RunSudoCliCommand($"-c {clockOffsetMhz}", DevicePciAddress) is not null;
     
     public bool SetMemoryClockOffset(int clockOffsetMhz) =>
-        SnvctlCliTool.RunSudoCliCommand($"-m {clockOffsetMhz}", DeviceIndex) is not null;
+        SnvctlCliTool.RunSudoCliCommand($"-m {clockOffsetMhz}", DevicePciAddress) is not null;
     
     public bool SetPowerLimit(int limitMw) =>
-        SnvctlCliTool.RunSudoCliCommand($"-p {limitMw}", DeviceIndex) is not null;
+        SnvctlCliTool.RunSudoCliCommand($"-p {limitMw}", DevicePciAddress) is not null;
     
     public bool ApplyAutoSpeedToAllFans() => 
-        SnvctlCliTool.RunSudoCliCommand($"-afs", DeviceIndex) is not null;
+        SnvctlCliTool.RunSudoCliCommand($"-afs", DevicePciAddress) is not null;
     
     public bool ApplySpeedToAllFans(uint speed) =>
-        SnvctlCliTool.RunSudoCliCommand($"-fs {speed}", DeviceIndex) is not null;
+        SnvctlCliTool.RunSudoCliCommand($"-fs {speed}", DevicePciAddress) is not null;
 
     public void ApplyFanCurve(FanCurve fanCurve) =>
-        SnvctlCliTool.RunFanProcess(fanCurve, DeviceIndex);
+        SnvctlCliTool.RunFanProcess(fanCurve, DevicePciAddress);
     
     #endregion
     
