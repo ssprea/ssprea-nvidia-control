@@ -42,11 +42,30 @@ public interface IGpu
     public uint TemperatureThresholdSlowdown {get;}
     public uint TemperatureThresholdThrottle {get;}
     
+    //CLOCK LIMITS
+    
+    public uint ClockCoreMaxMhz {get;}
+    public uint ClockCoreMinMhz {get;}
+    public uint ClockMemMaxMhz {get;}
+    public uint ClockMemMinMhz {get;}
+    
+    //VOLTAGE LIMITS
+    public int VoltageCoreMaxOffsetMv {get;}
+    public int VoltageCoreMinOffsetMv {get;}
+    
+    //DRIVER
+    
+    public string DriverVersion { get; }
+    
+    
     //SETTERS
     
     public bool SetCoreTuning(GpuClockTune tuneSettings);
     public bool SetMemTuning(GpuClockTune tuneSettings);
     public bool SetGpuPowerLimit(uint limitMw);
+    public bool SetCoreVoltageOffset(int voltageOffset);
+    public bool SetMemoryVoltageOffset(int voltageOffset);
+    
 
     public bool ApplySpeedToAllFans(uint speed);
     public bool ApplyAutoSpeedToAllFans();

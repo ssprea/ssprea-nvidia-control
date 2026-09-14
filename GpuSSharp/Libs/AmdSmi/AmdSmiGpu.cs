@@ -1,5 +1,6 @@
 using System.Runtime.InteropServices;
 using GpuSSharp.Libs.AmdSmi.AmdSmiTypes;
+using GpuSSharp.Libs.Nvml.NvmlTypes;
 using GpuSSharp.Types;
 
 namespace GpuSSharp.Libs.AmdSmi;
@@ -12,7 +13,6 @@ public class AmdSmiGpu : IGpu
     {
         _processorHandle = processorHandle;
         
-        Capabilities = new GpuCapabilities(GpuClockTuningMode.Overdrive, GpuClockTuningMode.Overdrive, true,_supportsFanSpeedControl);
         
         //get pci address
         if (AmdSmiWrapper.amdsmi_get_gpu_device_bdf(_processorHandle, out var bdfInfo) ==
@@ -36,27 +36,41 @@ public class AmdSmiGpu : IGpu
             PowerLimitMaxMw = (uint)(powerCapInfo.max_power_cap / 1000);
             PowerLimitDefaultMw = (uint)(powerCapInfo.default_power_cap / 1000);
         }
+
+        var threshShutdown = AmdSmiWrapper.amdsmi_get_temp_metric(_processorHandle,
+            AmdsmiTemperatureType.AMDSMI_TEMPERATURE_TYPE_EDGE, AmdsmiTemperatureMetric.AMDSMI_TEMP_SHUTDOWN,
+            out var tempThresh);
+            
         
         //temp thresholds
-        if (AmdSmiWrapper.amdsmi_get_temp_metric(_processorHandle, AmdsmiTemperatureType.AMDSMI_TEMPERATURE_TYPE_EDGE,AmdsmiTemperatureMetric.AMDSMI_TEMP_SHUTDOWN, out var tempThresh) ==
-            AmdsmiStatus.AMDSMI_STATUS_SUCCESS)
+        if (threshShutdown  == AmdsmiStatus.AMDSMI_STATUS_SUCCESS)
         {
             TemperatureThresholdShutdown = (uint)tempThresh;
         }
+        Console.WriteLine("shutdown "+threshShutdown);
+
+
+        var threshSlow = AmdSmiWrapper.amdsmi_get_temp_metric(_processorHandle,
+            AmdsmiTemperatureType.AMDSMI_TEMPERATURE_TYPE_EDGE, AmdsmiTemperatureMetric.AMDSMI_TEMP_CRITICAL,
+            out tempThresh);
         
-        
-        if (AmdSmiWrapper.amdsmi_get_temp_metric(_processorHandle, AmdsmiTemperatureType.AMDSMI_TEMPERATURE_TYPE_EDGE,AmdsmiTemperatureMetric.AMDSMI_TEMP_CRITICAL, out tempThresh) ==
-            AmdsmiStatus.AMDSMI_STATUS_SUCCESS)
+        if (threshSlow == AmdsmiStatus.AMDSMI_STATUS_SUCCESS)
         {
             TemperatureThresholdSlowdown = (uint)tempThresh;
+            
         }
+        Console.WriteLine("slowdown "+threshSlow);
+
+        var threshThrottle = AmdSmiWrapper.amdsmi_get_temp_metric(_processorHandle,
+            AmdsmiTemperatureType.AMDSMI_TEMPERATURE_TYPE_EDGE, AmdsmiTemperatureMetric.AMDSMI_TEMP_MAX,
+            out tempThresh);
         
-        
-        if (AmdSmiWrapper.amdsmi_get_temp_metric(_processorHandle, AmdsmiTemperatureType.AMDSMI_TEMPERATURE_TYPE_EDGE,AmdsmiTemperatureMetric.AMDSMI_TEMP_MAX, out tempThresh) ==
-            AmdsmiStatus.AMDSMI_STATUS_SUCCESS)
+        if (threshThrottle == AmdsmiStatus.AMDSMI_STATUS_SUCCESS)
         {
             TemperatureThresholdThrottle = (uint)tempThresh;
+            
         }
+        Console.WriteLine("throttle "+threshThrottle);
         
         //max fan speed
         if (AmdSmiWrapper.amdsmi_get_gpu_fan_speed_max(_processorHandle,0,out var maxSpeed) == AmdsmiStatus.AMDSMI_STATUS_SUCCESS)
@@ -66,23 +80,50 @@ public class AmdSmiGpu : IGpu
         
         
         //max and min clock values
+
+        var gpuOdVoltInfoSuccess = AmdSmiWrapper.amdsmi_get_gpu_od_volt_info(_processorHandle, out var clockBoundsInfo);
         
-        if (AmdSmiWrapper.amdsmi_get_clock_info(_processorHandle, AmdSmiClockType.AMDSMI_CLK_TYPE_GFX, out var coreClockInfo) ==  AmdsmiStatus.AMDSMI_STATUS_SUCCESS)
+        Console.WriteLine("clock od volt info: "+gpuOdVoltInfoSuccess);
+        
+        if (gpuOdVoltInfoSuccess ==  AmdsmiStatus.AMDSMI_STATUS_SUCCESS)
         {
-            _defaultCoreMaxClockMhz = coreClockInfo.max_clk;
-            _defaultCoreMinClockMhz = coreClockInfo.min_clk;
+            var coreLimits = clockBoundsInfo.sclk_freq_limits;
+            var memLimits = clockBoundsInfo.mclk_freq_limits;
+            
+            ClockCoreMaxMhz = (uint)(coreLimits.upper_bound/1000000);
+            ClockCoreMinMhz = (uint)(coreLimits.lower_bound/1000000);
+            ClockMemMaxMhz  = (uint)(memLimits.upper_bound /1000000);
+            ClockMemMinMhz  = (uint)(memLimits.lower_bound /1000000);
         }
         
-        if (AmdSmiWrapper.amdsmi_get_clock_info(_processorHandle, AmdSmiClockType.AMDSMI_CLK_TYPE_MEM, out var memClockInfo) ==  AmdsmiStatus.AMDSMI_STATUS_SUCCESS)
+        //get driver version
+        // Console.WriteLine("driver info: "+ AmdSmiWrapper.amdsmi_get_gpu_driver_info(_processorHandle, out var driverInfo));
+        DriverVersion = GetDriverVer();
+
+
+
+        if (DevicePciAddress is not null)
         {
-            _defaultMemMaxClockMhz = memClockInfo.max_clk;
-            _defaultMemMinClockMhz = memClockInfo.min_clk;
+            var voltageCapInfo = AmdSysfsWrapper.GetVoltageOffsetLimits(DevicePciAddress);
+            VoltageCoreMinOffsetMv = voltageCapInfo.Item1;
+            VoltageCoreMaxOffsetMv = voltageCapInfo.Item2;
         }
+        else
+        {
+            VoltageCoreMinOffsetMv = 0;
+            VoltageCoreMaxOffsetMv = 0;
+        }
+        Console.WriteLine($"volt of max: {VoltageCoreMaxOffsetMv} min: {VoltageCoreMinOffsetMv}");
         
-        Console.WriteLine("core max: "+_defaultCoreMaxClockMhz);
-        Console.WriteLine("core min: "+_defaultCoreMinClockMhz);
-        Console.WriteLine("mem max: "+_defaultMemMaxClockMhz);
-        Console.WriteLine("mem min: "+_defaultMemMinClockMhz);
+        Capabilities = new GpuCapabilities(GpuClockTuningMode.ClockRange, GpuClockTuningMode.ClockRange,true, false,true,true);
+        
+        // ApplyAutoSpeedToAllFans();
+        
+        
+        Console.WriteLine("core max: "+ClockCoreMaxMhz);
+        Console.WriteLine("core min: "+ClockCoreMinMhz);
+        Console.WriteLine("mem max: "+ ClockMemMaxMhz );
+        Console.WriteLine("mem min: "+ ClockMemMinMhz );
     }
     
 
@@ -104,27 +145,38 @@ public class AmdSmiGpu : IGpu
     public uint TemperatureThresholdShutdown { get; }
     public uint TemperatureThresholdSlowdown { get; }
     public uint TemperatureThresholdThrottle { get; }
-
-    private bool _supportsFanSpeedControl;
-
-    private uint _defaultCoreMaxClockMhz;
-    private uint _defaultCoreMinClockMhz;
-    private uint _defaultMemMaxClockMhz;
-    private uint _defaultMemMinClockMhz;
     
+    //clock limits
+    
+    public uint ClockCoreMaxMhz { get; }
+    public uint ClockCoreMinMhz { get; }
+    public uint ClockMemMaxMhz { get; }
+    public uint ClockMemMinMhz { get; }
+    public int VoltageCoreMaxOffsetMv { get; }
+    public int VoltageCoreMinOffsetMv { get; }
+
+    //driver
+
+    public string DriverVersion { get; }
+
+
     private UInt64 _maxFanSpeed;
     
     public GpuMetrics GetMetrics()
     {
-        Console.WriteLine ("clkinfo: "+     AmdSmiWrapper.amdsmi_get_clock_info(_processorHandle, AmdSmiClockType.AMDSMI_CLK_TYPE_GFX, out var coreClockInfo));
-        Console.WriteLine ("meminfo: "+     AmdSmiWrapper.amdsmi_get_clock_info(_processorHandle, AmdSmiClockType.AMDSMI_CLK_TYPE_MEM, out var memClockInfo));
-        Console.WriteLine ("vidclockinfo: "+AmdSmiWrapper.amdsmi_get_clock_info(_processorHandle, AmdSmiClockType.AMDSMI_CLK_TYPE_VCLK0, out var videoClockInfo));
-        Console.WriteLine ("powercapinfo: "+AmdSmiWrapper.amdsmi_get_power_cap_info(_processorHandle,0, out var powerCapInfo));
-        Console.WriteLine ("powerinfo: "+   AmdSmiWrapper.amdsmi_get_power_info(_processorHandle,out var powerInfo));
-        Console.WriteLine ("vramusage: "+   AmdSmiWrapper.amdsmi_get_gpu_vram_usage(_processorHandle,out var vramUsageInfo));
-        Console.WriteLine ("gpuactivity: "+ AmdSmiWrapper.amdsmi_get_gpu_activity(_processorHandle,out var gpuActivityInfo));
-        Console.WriteLine ("tempmetric: "+  AmdSmiWrapper.amdsmi_get_temp_metric(_processorHandle,AmdsmiTemperatureType.AMDSMI_TEMPERATURE_TYPE_HOTSPOT,AmdsmiTemperatureMetric.AMDSMI_TEMP_CURRENT,out var currentTempInfo));
-        Console.WriteLine ("fanspeed: "+    AmdSmiWrapper.amdsmi_get_gpu_fan_speed(_processorHandle,0,out var fanSpeed));
+        AmdSmiWrapper.amdsmi_get_clock_info(_processorHandle, AmdSmiClockType.AMDSMI_CLK_TYPE_GFX, out var coreClockInfo);
+        AmdSmiWrapper.amdsmi_get_clock_info(_processorHandle, AmdSmiClockType.AMDSMI_CLK_TYPE_MEM, out var memClockInfo);
+        AmdSmiWrapper.amdsmi_get_clock_info(_processorHandle, AmdSmiClockType.AMDSMI_CLK_TYPE_VCLK0, out var videoClockInfo);
+        AmdSmiWrapper.amdsmi_get_power_cap_info(_processorHandle,0, out var powerCapInfo);
+        AmdSmiWrapper.amdsmi_get_power_info(_processorHandle,out var powerInfo);
+        AmdSmiWrapper.amdsmi_get_gpu_vram_usage(_processorHandle,out var vramUsageInfo);
+        AmdSmiWrapper.amdsmi_get_gpu_activity(_processorHandle,out var gpuActivityInfo);
+        AmdSmiWrapper.amdsmi_get_temp_metric(_processorHandle,AmdsmiTemperatureType.AMDSMI_TEMPERATURE_TYPE_EDGE,AmdsmiTemperatureMetric.AMDSMI_TEMP_CURRENT,out var currentTempInfo);
+        AmdSmiWrapper.amdsmi_get_temp_metric(_processorHandle,AmdsmiTemperatureType.AMDSMI_TEMPERATURE_TYPE_HOTSPOT,AmdsmiTemperatureMetric.AMDSMI_TEMP_CURRENT,out var currentTempHotspotInfo);
+        AmdSmiWrapper.amdsmi_get_gpu_fan_speed(_processorHandle,0,out var fanSpeed);
+        var clockBounds = GetClockBounds().Item2;
+
+        var vOffset = AmdSysfsWrapper.GetCurrentVoltageOffset(DevicePciAddress);
         
         uint fanSpeedPercent = _maxFanSpeed == 0 ? 0 : (uint)(fanSpeed * 100 / _maxFanSpeed);
         
@@ -142,17 +194,47 @@ public class AmdSmiGpu : IGpu
             gpuActivityInfo.gfx_activity,
             gpuActivityInfo.umc_activity,
             currentTempInfo,
+            currentTempHotspotInfo,
             GpuPState.GpuPstateUnknown,
-            new GpuFansMetrics((fanSpeedPercent))
+            new GpuFansMetrics((fanSpeedPercent)),
+            (uint)(clockBounds.curr_sclk_range.upper_bound/1000000),
+            (uint)(clockBounds.curr_mclk_range.upper_bound/1000000),
+            (uint)(clockBounds.curr_sclk_range.lower_bound/1000000),
+            (uint)(clockBounds.curr_mclk_range.lower_bound/1000000),
+            vOffset,
+            0
 
         );
     }
+
+    private string GetDriverVer()
+    {
+        //check /sys/module/amdgpu/version
+        if (File.Exists("/sys/module/amdgpu/version"))
+            return File.ReadAllText("/sys/module/amdgpu/version");
+
+        return $"amdgpu - {File.ReadAllText("/proc/sys/kernel/osrelease")}";
+
+    }
+    
+    private (AmdsmiStatus, AmdsmiOdVoltFreqData) GetClockBounds()
+    {
+        var gpuOdVoltInfoSuccess = AmdSmiWrapper.amdsmi_get_gpu_od_volt_info(_processorHandle, out var clockBoundsInfo);
+        return (gpuOdVoltInfoSuccess, clockBoundsInfo);
+    }
+    
     
     
     public bool SetCoreTuning(GpuClockTune tuneSettings)
     {
         
+        return tuneSettings switch
+        {
+            GpuClockTune.ClockRange range =>
+                SetClockRange(range.MinMhz, range.MaxMhz, AmdSmiClockType.AMDSMI_CLK_TYPE_GFX),
         
+            _ => false
+        };
         
         // if (Capabilities.CoreClockTuningMode )
         //
@@ -165,15 +247,28 @@ public class AmdSmiGpu : IGpu
         return false;
     }
 
+    private bool SetClockRange(ulong minClock, ulong maxClock, AmdSmiClockType clockType)
+    {
+        var minResult = AmdSmiWrapper.amdsmi_set_gpu_clk_limit(_processorHandle, clockType, AmdsmiClkLimitType.CLK_LIMIT_MIN, minClock);
+        var maxResult = AmdSmiWrapper.amdsmi_set_gpu_clk_limit(_processorHandle, clockType, AmdsmiClkLimitType.CLK_LIMIT_MAX, maxClock);
+        
+        Console.WriteLine("min: "+minResult);
+        Console.WriteLine("max: "+maxResult);
+        
+        return (minResult == AmdsmiStatus.AMDSMI_STATUS_SUCCESS && maxResult == AmdsmiStatus.AMDSMI_STATUS_SUCCESS);
+    }
+    
+
     public bool SetMemTuning(GpuClockTune tuneSettings)
     {
-        // if (pState != GpuPState.GpuPstate0 || tuningMode != Capabilities.MemoryClockTuningMode)
-        //     return false;
-        //
-        // if (tuningValue <= 0)
-        //     ResetGpuPerformanceLevel();
         
-        return false;
+        return tuneSettings switch
+        {
+            GpuClockTune.ClockRange range =>
+                SetClockRange(range.MinMhz, range.MaxMhz, AmdSmiClockType.AMDSMI_CLK_TYPE_MEM),
+        
+            _ => false
+        };
     }
 
     public bool SetGpuPowerLimit(uint limitMw)
@@ -186,6 +281,22 @@ public class AmdSmiGpu : IGpu
         return AmdSmiWrapper.amdsmi_set_power_cap(_processorHandle, 0, requestedLimitUWatt) ==
                AmdsmiStatus.AMDSMI_STATUS_SUCCESS;
 
+    }
+
+    public bool SetCoreVoltageOffset(int voltageOffset)
+    {
+        if (voltageOffset < VoltageCoreMinOffsetMv)
+            voltageOffset =  VoltageCoreMinOffsetMv;
+        if (voltageOffset > VoltageCoreMaxOffsetMv)
+            voltageOffset = VoltageCoreMaxOffsetMv;
+        
+        AmdSysfsWrapper.SetVoltageOffset(DevicePciAddress,voltageOffset);
+        return true;
+    }
+
+    public bool SetMemoryVoltageOffset(int voltageOffset)
+    {
+        return false;
     }
 
     public bool ApplySpeedToAllFans(uint speed)
@@ -208,20 +319,27 @@ public class AmdSmiGpu : IGpu
 
         return true;
     }
-    
+
+    public bool ApplyFirmwareFanCurve(List<(uint Temperature, uint FanPercent)> curve)
+    {
+        AmdSysfsWrapper.SetFirmwareFanCurve(DevicePciAddress,curve);
+        return true;
+    }
 
     public bool ApplyAutoSpeedToAllFans()
     {
-        for (uint i = 0; i < FansCount; i++)
-        {
-            var status = AmdSmiWrapper.amdsmi_reset_gpu_fan(_processorHandle, i);
-
-            if (status != AmdsmiStatus.AMDSMI_STATUS_SUCCESS)
-                return false;
-        }
-
+        // for (uint i = 0; i < FansCount; i++)
+        // {
+        //     var status = AmdSmiWrapper.amdsmi_reset_gpu_fan(_processorHandle, i);
+        //
+        //     if (status != AmdsmiStatus.AMDSMI_STATUS_SUCCESS)
+        //         return false;
+        // }
+        //
+        // return true;
+        AmdSysfsWrapper.ResetFanControl(DevicePciAddress);
         return true;
-        
+
     }
 
     private bool ResetGpuPerformanceLevel()

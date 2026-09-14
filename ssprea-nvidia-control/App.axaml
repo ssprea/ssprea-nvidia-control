@@ -3,7 +3,7 @@
              x:Class="sspreaNvidiaControl.App"
              xmlns:local="using:sspreaNvidiaControl"
              xmlns:converters="clr-namespace:sspreaNvidiaControl.Converters"
-
+             xmlns:themes="using:RangeSlider.Avalonia.Themes.Fluent"
              RequestedThemeVariant="Dark">
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
@@ -32,6 +32,8 @@
          <StyleInclude Source="avares://ssprea-nvidia-control/Styles/Inputs.axaml"/>
          <StyleInclude Source="avares://ssprea-nvidia-control/Styles/Sections.axaml"/>
          <StyleInclude Source="avares://ssprea-nvidia-control/Styles/Tuner.axaml"/>
+         
+         <themes:RangeSliderTheme />
      </Application.Styles>
              
      <Application.Resources>

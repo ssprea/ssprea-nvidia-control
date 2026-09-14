@@ -115,13 +115,13 @@
             <value>nVidia Driver Version:</value>
         </data>
 
-     <data name="TunerCoreOffset" xml:space="preserve">
-            <value>Core Offset:</value>
-        </data>
+    <data name="TunerCoreOffset" xml:space="preserve">
+        <value>Core:</value>
+    </data>
 
-     <data name="TunerMemoryOffset" xml:space="preserve">
-            <value>Mem. Offset:</value>
-        </data>
+    <data name="TunerMemoryOffset" xml:space="preserve">
+        <value>Memory:</value>
+    </data>
 
      <data name="TunerPowerLimit" xml:space="preserve">
             <value>Power Limit:</value>

@@ -6,16 +6,43 @@
         </Border>
     </Design.PreviewWith>
 
-    <Style Selector="DockPanel.tunerOverdrive > Label">
-        <Setter Property="Content" Value="%"/>
-    </Style>
+    
     
     <!-- <Style Selector="DockPanel.tunerOverdrive > NumericUpDown"> -->
     <!--     <Setter Property="Maximum" Value="%"/> -->
     <!-- </Style> -->
     
-    <Style Selector="DockPanel.tunerOffset > Label">
+    <Style Selector="DockPanel.tunerOverdrive > Label.tunerLabel">
+        <Setter Property="Content" Value="%"/>
+    </Style>
+    
+    <Style Selector="DockPanel.tunerOffset > Label.tunerLabel">
         <Setter Property="Content" Value="MHz"/>
+    </Style>
+    
+    <Style Selector="DockPanel.tunerRange > Label.tunerLabel">
+        <Setter Property="Content" Value="MHz"/>
+    </Style>
+    
+    
+    <Style Selector="DockPanel.tunerOverdrive > Label.tunerSymbol">
+        <Setter Property="Content" Value="+"/>
+    </Style>
+    
+    <Style Selector="DockPanel.tunerOffset > Label.tunerSymbol">
+        <Setter Property="Content" Value="+"/>
+    </Style>
+    
+    <Style Selector="DockPanel.tunerRange > Label.tunerSymbol">
+        <Setter Property="Content" Value=""/>
+    </Style>
+    
+    
+    
+    
+    <Style Selector="TextBox.tunerStyle">
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="Background" Value="Transparent"/>
     </Style>
     
     <!-- <Style Selector="DockPanel.tunerOffset > NumericUpDown"> -->

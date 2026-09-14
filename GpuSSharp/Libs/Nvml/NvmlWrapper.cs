@@ -83,6 +83,9 @@ public static class NvmlWrapper
     public static extern NvmlReturnCode nvmlDeviceGetName(IntPtr device, [MarshalAs(UnmanagedType.LPStr)] StringBuilder name, uint length);
 
 
+    [DllImport(NVML_DLL)]
+    public static extern NvmlReturnCode nvmlSystemGetDriverVersion([MarshalAs(UnmanagedType.LPStr)] StringBuilder version, uint length);
+    
     /// <summary>
     /// Retrieves PCI attributes of this device.
     /// </summary>
@@ -116,7 +119,7 @@ public static class NvmlWrapper
     public static extern NvmlReturnCode nvmlDeviceGetHandleByIndex(uint index, out IntPtr device);
 
     /// <summary>
-    /// Queries temperature of the device
+    /// Queries temperature of the device. DEPRECATED USE nvmlDeviceGetTemperatureV INSTEAD
     /// </summary>
     /// <param name="device">device handle</param>
     /// <param name="sensorType">sensor type, api currently only supports one value here</param>
@@ -131,6 +134,23 @@ public static class NvmlWrapper
     /// </returns>
     [DllImport(NVML_DLL)]
     public static extern NvmlReturnCode nvmlDeviceGetTemperature(IntPtr device, NvmlTemperatureSensors sensorType, out uint temp);
+    
+    /// <summary>
+    /// Queries temperature of the device.
+    /// </summary>
+    /// <param name="device">device handle</param>
+    /// <param name="sensorType">sensor type, api currently only supports one value here</param>
+    /// <param name="temp">out parameter containing gpu temperature</param>
+    /// <returns>
+    /// NVML_SUCCESS if temp has been set
+    /// NVML_ERROR_UNINITIALIZED if the library has not been successfully initialized
+    /// NVML_ERROR_INVALID_ARGUMENT if device is invalid, sensorType is invalid or temp is NULL
+    /// NVML_ERROR_NOT_SUPPORTED if the device does not have the specified sensor
+    /// NVML_ERROR_GPU_IS_LOST if the target GPU has fallen off the bus or is otherwise inaccessible
+    /// NVML_ERROR_UNKNOWN on any unexpected error
+    /// </returns>
+    [DllImport(NVML_DLL)]
+    public static extern NvmlReturnCode nvmlDeviceGetTemperatureV(IntPtr device, ref NvmlTemperature temp);
 
     /// <summary>
     /// Queries device utilization information

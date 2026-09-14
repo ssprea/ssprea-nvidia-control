@@ -69,9 +69,12 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
     [ObservableProperty] private bool _isStartupProfileChecked ;
     [ObservableProperty] private string _currentNvidiaDriverVersion = "Unknown";
     [ObservableProperty] private bool _isFanCurveIncludedInProfileChecked = true;
-    [ObservableProperty] private uint _tunerCurrentCoreOffset;
-    [ObservableProperty] private uint _tunerCurrentMemoryOffset;
+    [ObservableProperty] private ulong _tunerCurrentCoreOffset;
+    [ObservableProperty] private ulong _tunerCurrentCoreMinClock;
+    [ObservableProperty] private ulong _tunerCurrentMemoryOffset;
+    [ObservableProperty] private ulong _tunerCurrentMemoryMinClock;
     [ObservableProperty] private uint _tunerCurrentPowerLimitMw;
+    [ObservableProperty] private int _tunerCurrentVoltageOffsetMv;
     [ObservableProperty] private string _tunerCurrentProfileName = "";
     [ObservableProperty] private string _currentlyLoadedGuiName = "Default";
     [ObservableProperty] private string _selectedLocalizerLang = "it";
@@ -92,13 +95,19 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
     
     private readonly string _profilesServiceName = "snvctl-profile.service";
 
+    
     [ObservableProperty] private bool _isTunerCoreOffset;
 
     [ObservableProperty] private bool _isTunerCoreOverdrive;
+    
+    [ObservableProperty] private bool _isTunerCoreRange;
 
+    
     [ObservableProperty] private bool _isTunerMemOffset;
 
     [ObservableProperty] private bool _isTunerMemOverdrive;
+    
+    [ObservableProperty] private bool _isTunerMemRange;
 
     
     //graph sync object
@@ -219,7 +228,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         ShowFanCurveEditorDialog = new Interaction<FanCurveEditorWindowViewModel, FanCurveViewModel?>();
         OpenFanCurveEditorCommand = ReactiveCommand.CreateFromTask<FanCurveViewModel?>(async (toEdit) =>
         {
-            var fanCurveEditorWindowViewModel = new FanCurveEditorWindowViewModel(toEdit?.CloneInstance());
+            var fanCurveEditorWindowViewModel = new FanCurveEditorWindowViewModel(toEdit?.CloneInstance(), SelectedGpu?.Vendor ?? GpuVendor.Nvidia);
 
             var result = await ShowFanCurveEditorDialog.Handle(fanCurveEditorWindowViewModel);
 
@@ -290,7 +299,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
             
         });
         
-        LoadOcProfileToTuner(new OcProfile("",0,0,SelectedGpu?.GpuPowerLimitMinMilliW ?? 100000, (FanCurve?)null));
+        
 
         var accentColor = SKColor.Parse("#505BE6");
         var strongAccentColor = SKColor.Parse("#9C1FE8");
@@ -322,9 +331,20 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
     {
         if (oldValue is not null)
             oldValue.StopUpdating();
-        
+
         if (newValue is not null)
+        {
             newValue.StartUpdating();
+            //should only run on first run
+            if (oldValue is null)
+            {
+                Console.WriteLine(newValue.LatestGpuMetrics is null);
+                LoadOcProfileToTuner(new OcProfile("",GetDefaultTune(newValue.Capabilities.CoreClockTuningMode,newValue.ClockCoreMinMhz,newValue.ClockCoreMaxMhz) ,GetDefaultTune(newValue.Capabilities.MemoryClockTuningMode,newValue.ClockMemMinMhz,newValue.ClockMemMaxMhz),SelectedGpu?.LatestGpuMetrics?.PowerLimitCurrentMilliW ?? 100000,0,0, (FanCurve?)null));
+            }
+                
+        }
+        
+            
     }
     
     partial void OnSelectedGpuChanged(GpuViewModel? value)
@@ -337,10 +357,14 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         IsTunerCoreOffset = SelectedGpu?.Capabilities.CoreClockTuningMode == GpuClockTuningMode.Offset;
         
         IsTunerCoreOverdrive = SelectedGpu?.Capabilities.CoreClockTuningMode == GpuClockTuningMode.Overdrive;
+        
+        IsTunerCoreRange = SelectedGpu?.Capabilities.CoreClockTuningMode == GpuClockTuningMode.ClockRange;
 
         IsTunerMemOffset = SelectedGpu?.Capabilities.MemoryClockTuningMode == GpuClockTuningMode.Offset;
 
         IsTunerMemOverdrive = SelectedGpu?.Capabilities.MemoryClockTuningMode == GpuClockTuningMode.Overdrive;
+        
+        IsTunerMemRange = SelectedGpu?.Capabilities.MemoryClockTuningMode == GpuClockTuningMode.ClockRange;
         
         
         
@@ -377,9 +401,11 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
     
     public void ResetTunerOptions()
     {
-        LoadOcProfileToTuner(new OcProfile("",0,0,SelectedGpu?.GpuPowerLimitMinMilliW ?? 100000, (FanCurve?)null));
+        if (SelectedGpu is not null)
+            LoadOcProfileToTuner(new OcProfile("",GetDefaultTune(SelectedGpu.Capabilities.CoreClockTuningMode,SelectedGpu.ClockCoreMinMhz,SelectedGpu.ClockCoreMaxMhz) ,GetDefaultTune(SelectedGpu.Capabilities.MemoryClockTuningMode,SelectedGpu.ClockMemMinMhz,SelectedGpu.ClockMemMaxMhz),SelectedGpu?.LatestGpuMetrics?.PowerLimitCurrentMilliW ?? 100000,0,0, (FanCurve?)null));
     }
-
+    
+    
     public async Task DeleteSelectedFanProfile()
     {
         if (SelectedFanCurve is null)
@@ -432,8 +458,8 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
             return;
         }
         
-        await SaveProfileAndUpdateFileAsync(new OcProfile(TunerCurrentProfileName, TunerCurrentCoreOffset,
-            TunerCurrentMemoryOffset, TunerCurrentPowerLimitMw, SelectedFanCurve?.BaseFanCurve));
+        await SaveProfileAndUpdateFileAsync(new OcProfile(TunerCurrentProfileName, TunerCoreValueToClockTune(),
+            TunerMemoryValueToClockTune(), TunerCurrentPowerLimitMw,TunerCurrentVoltageOffsetMv,0, SelectedFanCurve?.BaseFanCurve));
     }
     
     
@@ -445,9 +471,19 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
             return;
 
         
-
-        TunerCurrentCoreOffset = ocProfile.GpuClockOffset;
-        TunerCurrentMemoryOffset = ocProfile.MemClockOffset;
+        //check if profile is compatible with gpu capabilities
+        
+        if (ocProfile.GpuClockTune is GpuClockTune.ClockRange range)
+            TunerCurrentCoreOffset = range.MaxMhz;
+        if (ocProfile.GpuClockTune is GpuClockTune.Offset offset)
+            TunerCurrentCoreOffset = (ulong)offset.OffsetMhz;
+        
+        if (ocProfile.MemClockTune is GpuClockTune.ClockRange rangem)
+            TunerCurrentMemoryOffset = rangem.MaxMhz;
+        if (ocProfile.MemClockTune is GpuClockTune.Offset offsetm)
+            TunerCurrentMemoryOffset = (ulong)offsetm.OffsetMhz;
+        
+        
         TunerCurrentPowerLimitMw = ocProfile.PowerLimitMw;
         TunerCurrentProfileName = ocProfile.Name;
         
@@ -456,6 +492,9 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
 
 
     }
+
+    
+    
 
     public async Task OnLoadProfileButtonClicked()
     {
@@ -780,8 +819,54 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
 
     public async Task ApplyTempTunerSettings()
     {
-        await OcProfileParameterApplyCommand(new OcProfile(TunerCurrentProfileName, TunerCurrentCoreOffset,
-            TunerCurrentMemoryOffset, TunerCurrentPowerLimitMw, IsFanCurveIncludedInProfileChecked ? SelectedFanCurve?.BaseFanCurve : null));
+        
+        await OcProfileParameterApplyCommand(new OcProfile(TunerCurrentProfileName, TunerCoreValueToClockTune(),
+            TunerMemoryValueToClockTune(), TunerCurrentPowerLimitMw,TunerCurrentVoltageOffsetMv,0, IsFanCurveIncludedInProfileChecked ? SelectedFanCurve?.BaseFanCurve : null));
+    }
+
+
+    
+    
+    private GpuClockTune TunerCoreValueToClockTune()
+    {
+        GpuClockTune coreTune;
+        switch (SelectedGpu?.Capabilities.CoreClockTuningMode)
+        {
+            case GpuClockTuningMode.ClockRange:
+                coreTune = new GpuClockTune.ClockRange((uint)TunerCurrentCoreMinClock, (uint)TunerCurrentCoreOffset);
+                break;
+            
+            case GpuClockTuningMode.Offset:
+                coreTune = new GpuClockTune.Offset((int)TunerCurrentCoreOffset, GpuPState.GpuPstate0);
+                break;
+            
+            default:
+                throw new InvalidOperationException("Unknown clock tuning mode");
+        }
+
+        return coreTune;
+    }
+    
+    private GpuClockTune TunerMemoryValueToClockTune()
+    {
+        GpuClockTune memTune;
+
+        
+        
+        switch (SelectedGpu?.Capabilities.MemoryClockTuningMode)
+        {
+            case GpuClockTuningMode.ClockRange:
+                memTune = new GpuClockTune.ClockRange((uint)TunerCurrentMemoryMinClock, (uint)TunerCurrentMemoryOffset);
+                break;
+            
+            case GpuClockTuningMode.Offset:
+                memTune = new GpuClockTune.Offset((int)TunerCurrentMemoryOffset, GpuPState.GpuPstate0);
+                break;
+            
+            default:
+                throw new InvalidOperationException("Unknown clock tuning mode");
+        }
+        return memTune;
     }
     
     private async Task OcProfileParameterApplyCommand(OcProfile? ocProfile)
@@ -927,28 +1012,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
             return 1;
         }
         
-# if LINUX
-
-        
-        
-        
-        //check nvidia drivers version
-        var vercmd = Utils.General.RunCliCommand("nvidia-smi", "--version", true,false,true);
-        if (vercmd is null || vercmd.ExitCode != 0)
-            return 1;
-
-        var output = await vercmd.StandardOutput.ReadToEndAsync();
-        var lines = output.Split('\n');
-        CurrentNvidiaDriverVersion = lines[2].Split(':')[1].Trim();
-
-        if (CurrentNvidiaDriverVersion.StartsWith("Deprecated", StringComparison.InvariantCultureIgnoreCase))
-        {
-            CurrentNvidiaDriverVersion = lines[4].Split(':')[1].Trim();
-        }
-
-        Log.Information("Detected NVidia driver version: {CurrentNvidiaDriverVersion}",CurrentNvidiaDriverVersion);
-#endif
-        //TODO: add windows driver check
+       
         
         //check cli tool
 
@@ -987,6 +1051,21 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
 
                 await box.ShowAsync();
                 break;
+        }
+    }
+
+    private static GpuClockTune GetDefaultTune(GpuClockTuningMode tuningMode,uint clockMinMhz = 0, uint clockMaxMhz = 0)
+    {
+        switch (tuningMode)
+        {
+            case GpuClockTuningMode.ClockRange:
+                return new GpuClockTune.ClockRange(clockMinMhz, clockMaxMhz);
+            default:
+            case GpuClockTuningMode.Offset:
+                return new GpuClockTune.Offset(0, GpuPState.GpuPstate0);
+            case GpuClockTuningMode.Overdrive:
+                return new GpuClockTune.Overdrive(0);
+            
         }
     }
 

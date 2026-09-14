@@ -17,7 +17,14 @@ public static class Cli
         try
         {
             if (proc.Start())
+            {
+                if (waitForExit)
+                {
+                    if (!proc.WaitForExit(4000))
+                        return null;
+                }
                 return proc;
+            }
             
             return null;
         }

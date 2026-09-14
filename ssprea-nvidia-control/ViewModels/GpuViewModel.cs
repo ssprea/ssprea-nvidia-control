@@ -47,15 +47,36 @@ public partial class GpuViewModel : ViewModelBase, IDisposable
     public uint GpuTemperatureThresholdThrottle => _gpu.TemperatureThresholdThrottle;
     
     
+    
+    public uint ClockCoreMaxMhz => _gpu.ClockCoreMaxMhz;
+    public uint ClockCoreMinMhz => _gpu.ClockCoreMinMhz;
+    public uint ClockMemMaxMhz  => _gpu.ClockMemMaxMhz ;
+    public uint ClockMemMinMhz  => _gpu.ClockMemMinMhz ;
+
+    public int VoltageCoreMinOffsetMv => _gpu.VoltageCoreMinOffsetMv;
+    public int VoltageCoreMaxOffsetMv => _gpu.VoltageCoreMaxOffsetMv;
+    
+    //DRIVER
+
+    public string DriverVersion => _gpu.DriverVersion;
+    
+    
     #endregion
     
     #region Setters
 
-    public bool SetCoreClockOffset(int clockOffsetMhz) =>
+    private bool SetCoreClockOffset(int clockOffsetMhz) =>
         SnvctlCliTool.RunSudoCliCommand($"-c {clockOffsetMhz}", DevicePciAddress) is not null;
     
-    public bool SetMemoryClockOffset(int clockOffsetMhz) =>
+    private bool SetMemoryClockOffset(int clockOffsetMhz) =>
         SnvctlCliTool.RunSudoCliCommand($"-m {clockOffsetMhz}", DevicePciAddress) is not null;
+    
+    private bool SetCoreClockRange(int clockMinMhz, int clockMaxMhz) =>
+        SnvctlCliTool.RunSudoCliCommand($"-c {clockMinMhz}:{clockMaxMhz}", DevicePciAddress) is not null;
+    
+    private bool SetMemoryClockRange(int clockMinMhz, int clockMaxMhz) =>
+        SnvctlCliTool.RunSudoCliCommand($"-m {clockMinMhz}:{clockMaxMhz}", DevicePciAddress) is not null;
+    
     
     public bool SetPowerLimit(int limitMw) =>
         SnvctlCliTool.RunSudoCliCommand($"-p {limitMw}", DevicePciAddress) is not null;
@@ -65,6 +86,74 @@ public partial class GpuViewModel : ViewModelBase, IDisposable
     
     public bool ApplySpeedToAllFans(uint speed) =>
         SnvctlCliTool.RunSudoCliCommand($"-fs {speed}", DevicePciAddress) is not null;
+
+    public bool ApplyCoreClockTune(GpuClockTune tune)
+    {
+        if (IsTuneValid(tune, Capabilities.CoreClockTuningMode))
+        {
+            switch (tune)
+            {
+                case GpuClockTune.ClockRange range:
+                    return SetCoreClockRange((int)range.MinMhz, (int)range.MaxMhz);
+                    
+
+                case GpuClockTune.Offset offset:
+                    return SetCoreClockOffset(offset.OffsetMhz);
+                    
+                
+
+                default:
+                    throw new NotSupportedException();
+            }
+        }
+
+        return false;
+    }
+    
+    public bool ApplyMemClockTune(GpuClockTune tune)
+    {
+        if (IsTuneValid(tune, Capabilities.MemoryClockTuningMode))
+        {
+            switch (tune)
+            {
+                case GpuClockTune.ClockRange range:
+                    return SetMemoryClockRange((int)range.MinMhz, (int)range.MaxMhz);
+                    
+
+                case GpuClockTune.Offset offset:
+                    return SetMemoryClockOffset(offset.OffsetMhz);
+                    
+                
+
+                default:
+                    throw new NotSupportedException();
+            }
+        }
+
+        return false;
+    }
+    
+    private static bool IsTuneValid(
+        GpuClockTune tune,
+        GpuClockTuningMode supportedMode)
+    {
+        ArgumentNullException.ThrowIfNull(tune);
+
+        var requestedMode = tune switch
+        {
+            GpuClockTune.Offset    => GpuClockTuningMode.Offset,
+            GpuClockTune.Overdrive => GpuClockTuningMode.Overdrive,
+            GpuClockTune.ClockRange => GpuClockTuningMode.ClockRange,
+
+            _ => throw new NotSupportedException(
+                $"Tipo di tuning sconosciuto: {tune.GetType().Name}")
+        };
+
+        if (requestedMode != supportedMode)
+            return false;
+        return true;
+    }
+    
 
     public void ApplyFanCurve(FanCurve fanCurve) =>
         SnvctlCliTool.RunFanProcess(fanCurve, DevicePciAddress);
@@ -111,6 +200,8 @@ public partial class GpuViewModel : ViewModelBase, IDisposable
         }
     }
 
+    
+    
 
     public void Dispose()
     {

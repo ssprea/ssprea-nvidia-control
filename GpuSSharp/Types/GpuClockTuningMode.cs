@@ -4,5 +4,6 @@ public enum GpuClockTuningMode
 {
     None,
     Offset,
-    Overdrive
+    Overdrive,
+    ClockRange
 }

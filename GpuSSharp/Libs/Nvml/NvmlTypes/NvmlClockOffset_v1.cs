@@ -11,7 +11,7 @@ public struct NvmlClockOffset_v1
         Version = 16777240;
     }
 
-    public uint Version;
+    public readonly uint Version;
     public NvmlClockType Type;
     public NvmlPStates PState;
     public int ClockOffsetMHz;

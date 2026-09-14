@@ -20,7 +20,7 @@ namespace GpuSSharp.Libs.Nvml;
     /// </remarks>
     public class NvmlGpu : IGpu
     {
-        private const uint MAX_NAME_LENGTH = 100;
+        private const uint MaxNameLength = 100;
 
         private IntPtr _handle;
 
@@ -29,7 +29,7 @@ namespace GpuSSharp.Libs.Nvml;
         private NvmlPciInfo PciInfo { get; set; }
         public GpuVendor Vendor => GpuVendor.Nvidia;
 
-        public GpuCapabilities Capabilities { get; } = new GpuCapabilities(GpuClockTuningMode.Offset, GpuClockTuningMode.Offset, true,true);
+        public GpuCapabilities Capabilities { get; } = new GpuCapabilities(GpuClockTuningMode.Offset, GpuClockTuningMode.Offset, false,false,true,true);
 
         private void ReadFixedProperties()
         {
@@ -52,6 +52,7 @@ namespace GpuSSharp.Libs.Nvml;
             TemperatureThresholdSlowdown = GetTemperatureThreshold(NvlmTemperatureThreshold.NVML_TEMPERATURE_THRESHOLD_SLOWDOWN).Item2;
             TemperatureThresholdThrottle = GetTemperatureThreshold(NvlmTemperatureThreshold.NVML_TEMPERATURE_THRESHOLD_GPU_MAX).Item2;
 
+            
             
         }
         
@@ -78,27 +79,26 @@ namespace GpuSSharp.Libs.Nvml;
         public uint PowerLimitDefaultMw { get; private set; }
         
         public uint FansCount { get; private set; }
-        
-        
-    
-        // public ulong MemoryFree => GetMemoryUsage().Item2.Free;
-        // public ulong MemoryUsed => GetMemoryUsage().Item2.Used;
 
-        // public double MemoryTotalMB => MemoryTotal / 1000000f;
-        // public double MemoryFreeMB => MemoryFree / 1000000f;
-        // public double MemoryUsedMB => MemoryUsed / 1000000f;
-        
 
-        
-    
+        public int VoltageCoreMinOffsetMv { get; }
+        public string DriverVersion { get; }
+
+
         public uint TemperatureThresholdShutdown { get; private set; }
         public uint TemperatureThresholdSlowdown { get; private set; }
         public uint TemperatureThresholdThrottle { get; private set; }
-
         
+        //clock limits
+        public uint ClockCoreMaxMhz { get; } = 1000;
+        public uint ClockCoreMinMhz { get; } = 0;
+        public uint ClockMemMaxMhz { get; } = 3000;
+        public uint ClockMemMinMhz { get; } = 0;
+        public int VoltageCoreMaxOffsetMv { get; }
+
         #endregion
         /// <summary>
-        /// Initializes a new instance of NvGpu, using device index
+        /// Initializes a new instance of NvmlGpu, using device index
         /// to initialize handle and name for the device
         /// </summary>
         /// <param name="deviceIdx">device index</param>
@@ -113,19 +113,30 @@ namespace GpuSSharp.Libs.Nvml;
 
             
             var name = new StringBuilder();
-            r = NvmlWrapper.nvmlDeviceGetName(_handle, name, MAX_NAME_LENGTH);
+            r = NvmlWrapper.nvmlDeviceGetName(_handle, name, MaxNameLength);
             if(r != NvmlReturnCode.NVML_SUCCESS)
             {
                 throw new Exception($"Unable to get device name: {r.ToString()}");
             }
 
             Name = name.ToString();
-            // Console.WriteLine(DevicePciAddress);
             
+            
+            //80 is from nvml's NVML_SYSTEM_DRIVER_VERSION_BUFFER_SIZE
+            var driver = new StringBuilder(80);
+
+            r = NvmlWrapper.nvmlSystemGetDriverVersion(driver, (uint)driver.Capacity);
+            
+            
+            if (r == NvmlReturnCode.NVML_SUCCESS)
+                DriverVersion = driver.ToString();
+            else
+                DriverVersion = "Unknown";
             
             
             //Read fixed values
             ReadFixedProperties();
+            
         }
 
         public GpuMetrics GetMetrics()
@@ -133,6 +144,10 @@ namespace GpuSSharp.Libs.Nvml;
             var memoryInfo = GetMemoryUsage().Item2;
             
             var utilizationInfo =  GetUtilization().Item2;
+
+            var coreClockOffsets = GetClockOffsets(NvmlClockType.NVML_CLOCK_GRAPHICS, NvmlPStates.NVML_PSTATE_0).Item2;
+            var memClockOffsets = GetClockOffsets(NvmlClockType.NVML_CLOCK_MEM, NvmlPStates.NVML_PSTATE_0).Item2;
+            
             
             return new GpuMetrics(
                 GetCurrentClock(NvmlClockType.NVML_CLOCK_GRAPHICS).Item2,
@@ -150,10 +165,14 @@ namespace GpuSSharp.Libs.Nvml;
                 utilizationInfo.gpu,
                 utilizationInfo.memory,
                 
-                GetTemperature().Item2,
+                GetTemperature(NvmlTemperatureSensors.NVML_TEMPERATURE_GPU).Item2.Temperature,
+                GetTemperature(NvmlTemperatureSensors.NVML_TEMPERATURE_GPU_MAX).Item2.Temperature,
                 ConvertPState(GetPState().Item2),
                 
-                new GpuFansMetrics(GetFansSpeeds())
+                new GpuFansMetrics(GetFansSpeeds()),
+                (uint)coreClockOffsets.ClockOffsetMHz,
+                (uint)memClockOffsets.ClockOffsetMHz,
+                0,0,0,0
                 
                 );
         }
@@ -177,6 +196,13 @@ namespace GpuSSharp.Libs.Nvml;
             return (r,u);
         }
 
+        private (NvmlReturnCode, NvmlClockOffset_v1) GetClockOffsets(NvmlClockType clockType, NvmlPStates pstate)
+        {
+            var input = new NvmlClockOffset_v1() { PState = pstate, Type = clockType };
+            var r = NvmlWrapper.nvmlDeviceGetClockOffsets(_handle, ref input);
+            return (r,input);
+        }
+        
         private static GpuPState ConvertPState(NvmlPStates pstate)
         {
             return  (GpuPState)pstate;
@@ -200,6 +226,21 @@ namespace GpuSSharp.Libs.Nvml;
         public bool SetGpuPowerLimit(uint limitMw)
         {
             return SetPowerLimit(limitMw) == NvmlReturnCode.NVML_SUCCESS;
+        }
+
+        public bool SetCoreVoltageOffset(int voltageOffset)
+        {
+            return false;
+            
+            // throw new NotImplementedException("Voltage offset is currently not supported on NVidia GPUs");
+        }
+
+        public bool SetMemoryVoltageOffset(int voltageOffset)
+        {
+            return false;
+            
+            // throw new NotImplementedException("Voltage offset is currently not supported on NVidia GPUs");
+
         }
 
         public bool ApplySpeedToAllFans(uint speed)
@@ -234,7 +275,18 @@ namespace GpuSSharp.Libs.Nvml;
         /// Gets device temperature in degrees celsius
         /// </summary>
         /// <returns>device temperature and nvml return code</returns>
-        public (NvmlReturnCode,uint) GetTemperature()
+        public (NvmlReturnCode,NvmlTemperature) GetTemperature(NvmlTemperatureSensors sensor)
+        {
+            var input = new NvmlTemperature() { SensorType = sensor };
+            var r = NvmlWrapper.nvmlDeviceGetTemperatureV(_handle, ref input);
+            return (r,input);
+        }
+        
+        /// <summary>
+        /// Gets device temperature hotspot in degrees celsius
+        /// </summary>
+        /// <returns>device temperature and nvml return code</returns>
+        public (NvmlReturnCode,uint) GetTemperatureHotspot()
         {
             var r = NvmlWrapper.nvmlDeviceGetTemperature(_handle, NvmlTemperatureSensors.NVML_TEMPERATURE_GPU, out uint t);
             return (r,t);

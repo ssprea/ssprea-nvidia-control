@@ -1,11 +1,11 @@
 ﻿using System.Globalization;
 using System.Text.RegularExpressions;
 using GpuSSharp;
+using GpuSSharp.Libs.AmdSmi;
 using GpuSSharp.Types;
 using McMaster.Extensions.CommandLineUtils;
 using Newtonsoft.Json;
 using Serilog;
-using Serilog.Core;
 using sspreaNvidiaControlCli.Types;
 
 namespace sspreaNvidiaControlCli;
@@ -21,11 +21,11 @@ public class Program
     [Option(CommandOptionType.NoValue, Description = "list specified gpu info", LongName = "info", ShortName = "i")]
     public static bool ShowGpuInfo { get; set; }
     
-    [Option(CommandOptionType.SingleValue, Description = "set core offset MHz", LongName = "coreOffset", ShortName = "c")]
-    public static int CoreOffset { get; set; } = -1;
+    [Option(CommandOptionType.SingleValue, Description = "set core overclock", LongName = "coreOffset", ShortName = "c")]
+    public static string CoreOffsetStr { get; set; } = "";
         
-    [Option(CommandOptionType.SingleValue, Description = "set mem offset MHz", LongName = "memoryOffset",ShortName = "m")]
-    public static int MemoryOffset { get; set; }= -1;
+    [Option(CommandOptionType.SingleValue, Description = "set mem overclock", LongName = "memoryOffset",ShortName = "m")]
+    public static string MemoryOffsetStr { get; set; }= "";
     
     [Option(CommandOptionType.SingleValue, Description = "set power limit in mw", LongName = "powerLimit",ShortName = "p")]
     public static uint PowerLimit { get; set; }= 0;
@@ -44,6 +44,9 @@ public class Program
     
     [Option(CommandOptionType.NoValue, Description = "WARNING: this can cause problems. Skip checking if another snvctl process is already running (when applying fan profile).", LongName = "forceOpen")]
     public static bool SkipMultipleInstancesCheck { get; set; }= false;
+    
+    [Option(CommandOptionType.NoValue, Description = "Start tool as daemon",ShortName="d", LongName = "daemon")]
+    public static bool IsDaemon { get; set; }= false;
     
     // [Option(CommandOptionType.SingleValue, Description = "Set the logging level. Can be 0 = DEBUG, 1 = INFO, 2 = WARN, 3 = ERR", LongName = "logLevel",ShortName = "ll")]
     // public static int LogLevel { get; set; }= 1;
@@ -100,6 +103,9 @@ public class Program
         
         _gpuService = new GpuService();
 
+        
+        
+        
         if (DoListGpus)
         {
             foreach (var g in _gpuService.GpuList)
@@ -198,13 +204,49 @@ public class Program
                     Log.Fatal("Invalid oc profile json");
                     Environment.Exit(1);
                 }
-            
-                CoreOffset = (int)ocProfile.GpuClockOffset;
-                MemoryOffset = (int)ocProfile.MemClockOffset;
-                PowerLimit = ocProfile.PowerLimitMw;
                 
-                Log.Information("Applying settings from loaded profile: CORE OFFSET: {CoreOffset} MHz, MEM OFFSET: {MemoryOffset} MHz, POWER LIMIT: {PowerLimit} mW",CoreOffset,MemoryOffset,PowerLimit);
                 
+                var clockRes = _selectedGpu.SetCoreTuning(ocProfile.GpuClockTune);
+                var memRes =  _selectedGpu.SetMemTuning(ocProfile.MemClockTune);
+                var plRes =   _selectedGpu.SetGpuPowerLimit(PowerLimit);
+
+                if (!clockRes || !memRes || !plRes)
+                {
+                    Log.Error("Error while applying overclock profile.");
+                    return;
+                }
+                
+                Log.Information("Applying settings from loaded profile: ");
+
+                switch (ocProfile.GpuClockTune)
+                {
+                    case GpuClockTune.ClockRange range:
+                        Log.Information("Core range: Min: {minMhz}MHz Max:{maxMhz}MHz", range.MinMhz, range.MaxMhz);
+                        break;
+                    case GpuClockTune.Overdrive od:
+                        Log.Information("Core overdrive: +{odPercent}%", od.Percent);
+                        break;
+                    case GpuClockTune.Offset offset:
+                        Log.Information("Core offset: +{minMhz}MHz", offset.OffsetMhz);
+                        break;
+                }
+                
+                switch (ocProfile.MemClockTune)
+                {
+                    case GpuClockTune.ClockRange range:
+                        Log.Information("Memory range: Min: {minMhz}MHz Max:{maxMhz}MHz", range.MinMhz, range.MaxMhz);
+                        break;
+                    case GpuClockTune.Overdrive od:
+                        Log.Information("Memory overdrive: +{odPercent}%", od.Percent);
+                        break;
+                    case GpuClockTune.Offset offset:
+                        Log.Information("Memory offset: +{minMhz}MHz", offset.OffsetMhz);
+                        break;
+                }
+                
+                Log.Information("Power limit: {powerLimitW}",ocProfile.PowerLimitMw);
+                
+                return;
             }
             else
             {
@@ -214,27 +256,28 @@ public class Program
         }
         
         
-
-        
-        
-
-
-        if (CoreOffset >= 0)
+        if (!string.IsNullOrWhiteSpace(CoreOffsetStr))
         {
-
-            var tune = new GpuClockTune.Offset(CoreOffset, GpuPState.GpuPstate0);
+            Log.Information("Read Core offset: {coreOffset}", CoreOffsetStr);
+            var clockTune  = OcStringToTune(CoreOffsetStr);
+            Log.Information("Core tune: {coreOffset}", clockTune.ToString());
             
-            var clockRes = _selectedGpu.SetCoreTuning(tune);
+            
+            var clockRes = _selectedGpu.SetCoreTuning(clockTune);
             if (!clockRes)
-                Log.Error("Error while applying core clock offset: {coreClockOffsetApplyErrorDesc}",clockRes);
+                Log.Error("Error while applying core clock tune: {coreClockOffsetApplyErrorDesc}",clockRes);
         }
 
-        if (MemoryOffset >= 0)
+        if (!string.IsNullOrWhiteSpace(MemoryOffsetStr))
         {
+            Log.Information("Read Memory offset: {menOffset}", MemoryOffsetStr);
+            var memTune = OcStringToTune(MemoryOffsetStr);
+
+            Log.Information("Memory tune: {memOffset}", memTune.ToString());
             
-            var memRes = _selectedGpu.SetMemTuning(new GpuClockTune.Offset(MemoryOffset, GpuPState.GpuPstate0));
+            var memRes = _selectedGpu.SetMemTuning(memTune);
             if (!memRes)
-                Log.Error("Error while applying memory clock offset: {memoryClockOffsetApplyErrorDesc}",memRes);
+                Log.Error("Error while applying memory clock tune: {memoryClockOffsetApplyErrorDesc}",memRes);
 
         }
 
@@ -268,6 +311,7 @@ public class Program
         if (FanSpeedCurveJson != "")
         {
             //check if another instance is running
+            SkipMultipleInstancesCheck = _selectedGpu.Vendor == GpuVendor.Amd;
             if (!SkipMultipleInstancesCheck && IsAnotherInstanceRunning("snvctl","ssprea-nvidia-control-cli"))
             {
                 Log.Fatal("Another instance of this program is already running. Exiting...");
@@ -293,6 +337,30 @@ public class Program
 
     }
 
+    private static GpuClockTune OcStringToTune(string ocString)
+    {
+        if (ocString.Contains(':'))
+        {
+            var range = ocString.Split(':');
+            
+            if (uint.TryParse(range[0], out uint minClock) && uint.TryParse(range[1], out uint maxClock))
+                return new GpuClockTune.ClockRange(minClock, maxClock);
+            
+        } else if (ocString.Contains('%'))
+        {
+            var od = ocString.Split('%');
+
+            if (uint.TryParse(od[0], out uint odVal))
+                return new GpuClockTune.Overdrive(odVal);
+            
+            
+        } else if (int.TryParse(ocString, out int offset))
+        {
+            return new GpuClockTune.Offset(offset, GpuPState.GpuPstate0);
+        }
+        throw new ArgumentException("Invalid oc string "+ocString);
+    }
+    
     private uint _lastFanTemp;
     
     private async Task FanSpeedProfileThread(int updateDelayMilliseconds, FanCurve fanCurve,CancellationToken cancelToken)
@@ -303,6 +371,17 @@ public class Program
         if (_selectedGpu is null)
         {
             Log.Error("Cannot start fan curve thread: No gpu selected.");
+            return;
+        }
+
+        if (_selectedGpu.Vendor == GpuVendor.Amd)
+        {
+            Log.Information("Selected GPU is AmdGpu, fan curve thread not required.");
+            var amdGpu = (AmdSmiGpu)_selectedGpu;
+            var points = fanCurve.CurvePoints.Select(x => (x.Temperature, x.FanSpeed));
+            amdGpu.ApplyFirmwareFanCurve(points.ToList());
+            Log.Information("Succesfully loaded fan curve to GPU firmware: {fanCurveName}. Exiting.",amdGpu.Name);
+            
             return;
         }
         
@@ -378,7 +457,7 @@ public class Program
                 instanceCount--;
         
         
-        instanceCount += System.Diagnostics.Process.GetProcessesByName(System.IO.Path.GetFileNameWithoutExtension(System.Reflection.Assembly.GetEntryAssembly()?.Location)).Length;
+        instanceCount += System.Diagnostics.Process.GetProcessesByName(Path.GetFileNameWithoutExtension(System.Reflection.Assembly.GetEntryAssembly()?.Location)).Length;
         foreach (var n in names)
         {
             instanceCount += System.Diagnostics.Process.GetProcessesByName(n).Length;

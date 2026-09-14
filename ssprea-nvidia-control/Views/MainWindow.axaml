@@ -13,6 +13,7 @@
         xmlns:controls="clr-namespace:sspreaNvidiaControl.Controls"
         xmlns:sk="clr-namespace:SkiaSharp;assembly=SkiaSharp"
         xmlns:converters="clr-namespace:sspreaNvidiaControl.Converters"
+        xmlns:controls1="https://github.com/DmitryNizhebovsky/Avalonia.RangeSlider"
         x:Class="sspreaNvidiaControl.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
@@ -86,7 +87,7 @@
                             >
                         
                         
-                        <Grid Classes="liveStatsPanel" RowDefinitions="*,*,*,*,*,*,*" HorizontalAlignment="Stretch">
+                        <Grid Classes="liveStatsPanel" RowDefinitions="*,*,*,*,*,*,*,*" HorizontalAlignment="Stretch">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"></ColumnDefinition>
                               <!--   <ColumnDefinition Width="{Binding #LiveStatsGrid.Bounds.Width,  -->
@@ -180,7 +181,7 @@
                             </Border>
                             <Border Grid.Column="1" Grid.Row="4"  >
                                 <ProgressBar  VerticalAlignment="Stretch" Minimum="0" 
-                                              Maximum="{Binding SelectedGpu.GpuTemperatureThresholdShutdown,FallbackValue=100}" 
+                                              Maximum="100" 
                                               Value="{Binding SelectedGpu.LatestGpuMetrics.GpuTemperature,FallbackValue=0}"/>
                             </Border>
                             <Border Grid.Column="2" Grid.Row="4" >
@@ -190,32 +191,48 @@
                                 <Label  VerticalAlignment="Center"> °C </Label>
                             </Border>
                             
-                            <!--GPU USAGE-->
+                            <!--CORE HOTSPOT-->
                             <Border Grid.Column="0" Grid.Row="5">
-                                <Label  VerticalAlignment="Center" FontSize="12" HorizontalAlignment="Right"> GPU USAGE </Label>
+                                <Label  VerticalAlignment="Center" FontSize="12" HorizontalAlignment="Right"> HOTSPOT </Label>
                             </Border>
-                            <Border Grid.Column="1" Grid.Row="5" >
-                                <ProgressBar  Minimum="0" Maximum="100" Value="{Binding SelectedGpu.LatestGpuMetrics.UtilizationCore,FallbackValue=0}" VerticalAlignment="Stretch"/>
+                            <Border Grid.Column="1" Grid.Row="5"  >
+                                <ProgressBar  VerticalAlignment="Stretch" Minimum="0" 
+                                              Maximum="100" 
+                                              Value="{Binding SelectedGpu.LatestGpuMetrics.GpuTemperatureHotspot,FallbackValue=0}"/>
                             </Border>
                             <Border Grid.Column="2" Grid.Row="5" >
+                                <Label  VerticalAlignment="Center" HorizontalAlignment="Right" Content="{Binding SelectedGpu.LatestGpuMetrics.GpuTemperatureHotspot, FallbackValue=0000}" />
+                            </Border>
+                            <Border Grid.Column="3" Grid.Row="5">
+                                <Label  VerticalAlignment="Center"> °C </Label>
+                            </Border>
+                            
+                            <!--GPU USAGE-->
+                            <Border Grid.Column="0" Grid.Row="6">
+                                <Label  VerticalAlignment="Center" FontSize="12" HorizontalAlignment="Right"> GPU USAGE </Label>
+                            </Border>
+                            <Border Grid.Column="1" Grid.Row="6" >
+                                <ProgressBar  Minimum="0" Maximum="100" Value="{Binding SelectedGpu.LatestGpuMetrics.UtilizationCore,FallbackValue=0}" VerticalAlignment="Stretch"/>
+                            </Border>
+                            <Border Grid.Column="2" Grid.Row="6" >
                                 <Label  VerticalAlignment="Center" HorizontalAlignment="Right" Content="{Binding SelectedGpu.LatestGpuMetrics.UtilizationCore, FallbackValue=000}" />
                             </Border>
                             
-                            <Border Grid.Column="3" Grid.Row="5">
+                            <Border Grid.Column="3" Grid.Row="6">
                                 <Label  VerticalAlignment="Center"> % </Label>
                             </Border>
                             
                             <!--mem ctl USAGE-->
-                            <Border Grid.Column="0" Grid.Row="6">
+                            <Border Grid.Column="0" Grid.Row="7">
                                 <Label  VerticalAlignment="Center" FontSize="12" HorizontalAlignment="Right"> MEM CTL </Label>
                             </Border>
-                            <Border Grid.Column="1" Grid.Row="6" >
+                            <Border Grid.Column="1" Grid.Row="7" >
                                 <ProgressBar  Minimum="0" Maximum="100" Value="{Binding SelectedGpu.LatestGpuMetrics.UtilizationMemCtl,FallbackValue=0}" VerticalAlignment="Stretch"/>
                             </Border>
-                            <Border Grid.Column="2" Grid.Row="6" >
+                            <Border Grid.Column="2" Grid.Row="7" >
                                 <Label  VerticalAlignment="Center" HorizontalAlignment="Right" Content="{Binding SelectedGpu.LatestGpuMetrics.UtilizationMemCtl, FallbackValue=000}" />
                             </Border>
-                            <Border Grid.Column="3" Grid.Row="6">
+                            <Border Grid.Column="3" Grid.Row="7">
                                 <Label  VerticalAlignment="Center"> % </Label>
                             </Border>
                     
@@ -398,7 +415,7 @@
                                     <Label Classes="h1" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Content="{x:Static lang:Resources.InfoSection}"/>
                         
                                     <!--INFO ITEMS GRID-->
-                                    <Grid  Grid.Row="1" Grid.Column="0"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" RowDefinitions="*,*,*,*,*">
+                                    <Grid  Grid.Row="1" Grid.Column="0"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" RowDefinitions="*,*,*,*,*,*">
                                         
                                         <Border  
                                             Container.Name="InfosContainer" Container.Sizing="Width"
@@ -494,9 +511,35 @@
                                         
                                             >
                                 
-                                                <Label Classes="onlyWideMode" VerticalAlignment="Center" Content="{x:Static lang:Resources.TextNvidiaDriverVersion}"/>
-                                                <Label Classes="onlySemiWideMode" VerticalAlignment="Center" Content="{x:Static lang:Resources.TextNvidiaDriverVersionShort}"/>
-                                                <Label VerticalAlignment="Center" FontWeight="Bold" Content="{Binding CurrentNvidiaDriverVersion}"/> 
+                                                <Label Classes="onlyWideMode" VerticalAlignment="Center" Content="Applicato:"/>
+                                                <Label  VerticalAlignment="Center" Content="Core:"/>
+                                                <Label IsVisible="{Binding IsTunerCoreOffset}" VerticalAlignment="Center" Content="+"/>
+                                                <Label IsVisible="{Binding IsTunerCoreRange}" VerticalAlignment="Center" Content="{Binding SelectedGpu.LatestGpuMetrics.AppliedCoreMinClockMhz, FallbackValue=0}"/>
+                                                <Label IsVisible="{Binding IsTunerCoreRange}" VerticalAlignment="Center" Content="-"/>
+                                                <Label VerticalAlignment="Center" Foreground="LightGreen" FontWeight="Bold" 
+                                                       Content="{Binding SelectedGpu.LatestGpuMetrics.AppliedCoreOverclockMhz, FallbackValue=0}"/> 
+                                                <Label  VerticalAlignment="Center" Content="Mem:"/>
+                                                <Label IsVisible="{Binding IsTunerCoreOffset}" VerticalAlignment="Center" Content="+"/>
+                                                <Label IsVisible="{Binding IsTunerCoreRange}" VerticalAlignment="Center" Content="{Binding SelectedGpu.LatestGpuMetrics.AppliedMemoryMinClockMhz, FallbackValue=0}"/>
+                                                <Label IsVisible="{Binding IsTunerCoreRange}" VerticalAlignment="Center" Content="-"/>
+                                                
+                                                <Label VerticalAlignment="Center" Foreground="LightGreen" FontWeight="Bold" 
+                                                       Content="{Binding SelectedGpu.LatestGpuMetrics.AppliedMemoryOverclockMhz, FallbackValue=0}"/> 
+                                
+                                            </StackPanel>
+                                        </Border>
+                                        
+                                        <Border 
+                                            Container.Name="InfosContainer" Container.Sizing="Width"
+                                            Grid.Row="5" DockPanel.Dock="Top" Classes="panelItem" Padding="2" Margin="10"   HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <StackPanel 
+                                                Orientation="Horizontal" 
+                                                HorizontalAlignment="Center"
+                                        
+                                            >
+                                
+                                                <Label VerticalAlignment="Center" Content="{x:Static lang:Resources.TextNvidiaDriverVersionShort}"/>
+                                                <Label VerticalAlignment="Center" FontWeight="Bold" Content="{Binding SelectedGpu.DriverVersion, FallbackValue=Unknown}"/> 
 
                                 
                                             </StackPanel>
@@ -533,7 +576,7 @@
                                 
                                         <!--TUNER ITEMS STACK PANEL-->
                                         <!-- <StackPanel Spacing="20" Grid.Row="1" Grid.Column="0"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"> -->
-                                        <Grid Container.Name="InfosContainer" Container.Sizing="Width" RowDefinitions="*,*,*,*" Grid.Row="1" Grid.Column="0"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                        <Grid Container.Name="InfosContainer" Container.Sizing="Width" RowDefinitions="*,*,*,*,*" Grid.Row="1" Grid.Column="0"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                         <!-- <DockPanel  Grid.Row="1" Grid.Column="0"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"> -->
                                         
                                             <Grid.Styles>
@@ -547,22 +590,34 @@
                                                     LastChildFill="True"
                                                     Classes.tunerOverdrive = "{Binding IsTunerCoreOverdrive}"
                                                     Classes.tunerOffset = "{Binding IsTunerCoreOffset}"
+                                                    Classes.tunerRange = "{Binding IsTunerCoreRange}"
                                                 >
                                     
                                                     <Label Classes="onlyWideMode" DockPanel.Dock="Left" VerticalAlignment="Center" Content="{x:Static lang:Resources.TunerCoreOffset}"/>
                                                     <Label Classes="onlySemiWideMode" DockPanel.Dock="Left" VerticalAlignment="Center" Content="C:"/>
-                                                    <Label  DockPanel.Dock="Right" VerticalAlignment="Center" FontWeight="Bold" /> 
+                                                    <Label Classes="tunerSymbol" DockPanel.Dock="Left" VerticalAlignment="Center" FontWeight="Bold" /> 
+                                                    <TextBox Classes="tunerStyle" IsVisible="{Binding IsTunerCoreRange}" DockPanel.Dock="Left" VerticalAlignment="Center" FontWeight="Bold" Text="{Binding TunerCurrentCoreMinClock}" /> 
+                                                    <Label Classes="tunerLabel" DockPanel.Dock="Right" VerticalAlignment="Center" FontWeight="Bold" /> 
                                                     
-                                                    <NumericUpDown  DockPanel.Dock="Right" Minimum="0" Maximum="1000" FormatString="0"
+                                                    <NumericUpDown  DockPanel.Dock="Right" Minimum="{Binding SelectedGpu.ClockCoreMinMhz}" Maximum="{Binding SelectedGpu.ClockCoreMaxMhz}" FormatString="0"
                                                                     Background="Transparent" BorderBrush="Transparent" 
                                                                     TextAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Value="{Binding TunerCurrentCoreOffset,FallbackValue=0000}"/> 
                                                     
-                                                    <Slider DockPanel.Dock="Right" Height="35" VerticalAlignment="Top" HorizontalAlignment="Stretch" 
-                                                            Minimum="0"
-                                                            Maximum="1000"
-                                                            Value="{Binding TunerCurrentCoreOffset}"
-                                                    />
-                                    
+                                                    <Panel>
+                                                        <Slider IsVisible="{Binding IsTunerCoreOffset}" DockPanel.Dock="Right" Height="35" VerticalAlignment="Top" HorizontalAlignment="Stretch" 
+                                                                Minimum="{Binding SelectedGpu.ClockCoreMinMhz}"
+                                                                Maximum="{Binding SelectedGpu.ClockCoreMaxMhz}"
+                                                                Value="{Binding TunerCurrentCoreOffset}"
+                                                                
+                                                                
+                                                        />
+                                        
+                                                        <controls1:RangeSlider IsVisible="{Binding IsTunerCoreRange}"
+                                                                                Minimum="{Binding SelectedGpu.ClockCoreMinMhz}" Maximum="{Binding SelectedGpu.ClockCoreMaxMhz}"
+                                                                               LowerSelectedValue="{Binding TunerCurrentCoreMinClock}" UpperSelectedValue="{Binding TunerCurrentCoreOffset}" 
+                                                                               IsThumbOverlap="False"/>
+                                                    </Panel>
+                                                    
                                                 </DockPanel>
                                             </Border>
                                     
@@ -571,25 +626,35 @@
                                                            
                                                            Classes.tunerOverdrive = "{Binding IsTunerMemOverdrive}"
                                                            Classes.tunerOffset = "{Binding IsTunerMemOffset}"
+                                                           Classes.tunerRange = "{Binding IsTunerMemRange}"
                                                            >
                                 
                                                     <Label Classes="onlyWideMode" DockPanel.Dock="Left" VerticalAlignment="Center" Content="{x:Static lang:Resources.TunerMemoryOffset}"/>
                                                     <Label Classes="onlySemiWideMode" DockPanel.Dock="Left" VerticalAlignment="Center" Content="M:"/>
+                                                    <Label Classes="tunerSymbol" DockPanel.Dock="Left" VerticalAlignment="Center" FontWeight="Bold" /> 
+                                                    <TextBox Classes="tunerStyle" IsVisible="{Binding IsTunerCoreRange}" DockPanel.Dock="Left" VerticalAlignment="Center" FontWeight="Bold" Text="{Binding TunerCurrentMemoryMinClock}" /> 
                                                     
-                                                    <Label DockPanel.Dock="Right" VerticalAlignment="Center" FontWeight="Bold" Content="MHz"/> 
+                                                    <Label Classes="tunerLabel" DockPanel.Dock="Right" VerticalAlignment="Center" FontWeight="Bold" />
                                                     
-                                                    <NumericUpDown DockPanel.Dock="Right" Minimum="0" Maximum="3000"
+                                                    
+                                                    <NumericUpDown DockPanel.Dock="Right" Minimum="{Binding SelectedGpu.ClockMemMinMhz, FallbackValue=0}" Maximum="{Binding SelectedGpu.ClockCoreMaxMhz, FallbackValue=3000}"
                                                                    FormatString="0" Background="Transparent" BorderBrush="Transparent" 
                                                                    
                                                                    TextAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Value="{Binding TunerCurrentMemoryOffset,FallbackValue=0000}"/> 
                                                     
-                                                    
-                                                    <Slider DockPanel.Dock="Right"  Height="35" VerticalAlignment="Top" HorizontalAlignment="Stretch"
-                                                            Minimum="0"
-                                                            Maximum="3000"
-                                                            Value="{Binding TunerCurrentMemoryOffset}"
-                                                            
-                                                    />
+                                                    <Panel>
+                                                        <Slider IsVisible="{Binding IsTunerMemOffset}" DockPanel.Dock="Right"  Height="35" VerticalAlignment="Top" HorizontalAlignment="Stretch"
+                                                                Minimum="{Binding SelectedGpu.ClockMemMinMhz, FallbackValue=0}"
+                                                                Maximum="{Binding SelectedGpu.ClockMemMaxMhz, FallbackValue=3000}"
+                                                                Value="{Binding TunerCurrentMemoryOffset}"
+                                                                
+                                                        />
+                                                        
+                                                        <controls1:RangeSlider IsVisible="{Binding IsTunerMemRange}"
+                                                                               Minimum="{Binding SelectedGpu.ClockMemMinMhz}" Maximum="{Binding SelectedGpu.ClockMemMaxMhz}"
+                                                                               LowerSelectedValue="{Binding TunerCurrentMemoryMinClock}" UpperSelectedValue="{Binding TunerCurrentMemoryOffset}" 
+                                                                               IsThumbOverlap="False"/>
+                                                    </Panel>
                                                 </DockPanel>
                                             </Border>
                                     
@@ -620,8 +685,36 @@
                                                     
                                                 </DockPanel>
                                             </Border>
+                                        
+                                        <Border Grid.Row="3" DockPanel.Dock="Top"   
+                                                Classes.flashing="{Binding FlashingAnimationRunning}" Classes="panelItem"  IsEnabled="{Binding SelectedGpu.Capabilities.GpuVoltageOffset, FallbackValue=false}"
+                                                HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                                                <DockPanel LastChildFill="True"
+                                                           >
+                                
+                                                    <Label Classes="onlyWideMode" DockPanel.Dock="Left" VerticalAlignment="Center" Content="V offset:"/>
+                                                    <Label Classes="onlySemiWideMode" DockPanel.Dock="Left" VerticalAlignment="Center" Content="V:"/>
+                                                    <!-- <Label DockPanel.Dock="Left" VerticalAlignment="Center" FontWeight="Bold" Content="+"/>  -->
+                                                    
+                                                    <Label Classes="tunerLabel" DockPanel.Dock="Right" VerticalAlignment="Center" FontWeight="Bold" Content="mV" />
+                                                    
+                                                    
+                                                    <NumericUpDown DockPanel.Dock="Right" Minimum="{Binding SelectedGpu.VoltageCoreMinOffsetMv, FallbackValue=0}" 
+                                                                   Maximum="{Binding SelectedGpu.VoltageCoreMaxOffsetMv, FallbackValue=3000}"
+                                                                   FormatString="0" Background="Transparent" BorderBrush="Transparent" 
+                                                                   
+                                                                   TextAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Value="{Binding TunerCurrentVoltageOffsetMv,FallbackValue=0000}"/> 
+                                                    
+                                                    <Slider  DockPanel.Dock="Right"  Height="35" VerticalAlignment="Top" HorizontalAlignment="Stretch"
+                                                            Minimum="{Binding SelectedGpu.VoltageCoreMinOffsetMv, FallbackValue=0}"
+                                                            Maximum="{Binding SelectedGpu.VoltageCoreMaxOffsetMv, FallbackValue=0}"
+                                                            Value="{Binding TunerCurrentVoltageOffsetMv}"
+                                                                
+                                                    />
+                                                </DockPanel>
+                                            </Border>
                                     
-                                            <Border Classes="panelItem" Grid.Row="3" DockPanel.Dock="Top" Margin="5" Padding="4" HorizontalAlignment="Center" VerticalAlignment="Bottom">
+                                            <Border Classes="panelItem" Grid.Row="4" DockPanel.Dock="Top" Margin="5" Padding="4" HorizontalAlignment="Center" VerticalAlignment="Bottom">
                                                 <StackPanel 
                                                     Orientation="Horizontal" 
                                                     Spacing="20">

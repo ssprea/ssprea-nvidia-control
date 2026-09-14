@@ -84,7 +84,7 @@
             </Border>  
 
             <DockPanel DockPanel.Dock="Bottom">
-                <Button  VerticalAlignment="Bottom" DockPanel.Dock="Right" Command="{Binding SaveCurveCommand}" Content="{x:Static lang:Resources.ButtonSave}" />
+                <Button  VerticalAlignment="Bottom" DockPanel.Dock="Right" Command="{Binding SaveButtonClicked}" Content="{x:Static lang:Resources.ButtonSave}" />
                 <Button   VerticalAlignment="Bottom" DockPanel.Dock="Left" Command="{Binding CancelCommand}" Content="{x:Static lang:Resources.ButtonCancel}"/>
             </DockPanel>
             

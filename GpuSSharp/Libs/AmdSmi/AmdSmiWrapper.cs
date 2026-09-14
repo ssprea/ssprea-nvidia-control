@@ -177,6 +177,10 @@ public static class AmdSmiWrapper
     /// <returns> Operation result status </returns>
     [DllImport(AMDSMI_DLL)]
     public static extern AmdsmiStatus amdsmi_get_gpu_fan_speed_max(IntPtr processorHandle,UInt32 sensorInd, out UInt64 maxSpeed);
+
+
+    [DllImport(AMDSMI_DLL)]
+    public static extern AmdsmiStatus amdsmi_get_gpu_od_volt_info(IntPtr processorHandle, out AmdsmiOdVoltFreqData freqData);
     
     #endregion
     
@@ -243,4 +247,7 @@ public static class AmdSmiWrapper
     
     
     #endregion
+    
+    [DllImport(AMDSMI_DLL)]
+    public static extern AmdsmiStatus amdsmi_get_gpu_driver_info(IntPtr processorHandle, out AmdsmiDriverInfo info);
 }

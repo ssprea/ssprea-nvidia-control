@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
+using GpuSSharp.Types;
 using Newtonsoft.Json;
 using Serilog;
 using sspreaNvidiaControl.Models.Exceptions;
@@ -11,29 +12,31 @@ namespace sspreaNvidiaControl.Models;
 
 public partial class OcProfile : ObservableObject
 {
-    public OcProfile(string name,uint gpuClockOffset, uint memClockOffset, uint powerLimitMw, FanCurve? fanCurve)
+    public OcProfile(string name,GpuClockTune gpuClockTune, GpuClockTune memClockTune, uint powerLimitMw, int coreVoltageOffsetMv,int memVoltageOffsetMv, FanCurve? fanCurve)
     {
         Name = name;
-        GpuClockOffset = gpuClockOffset;
-        MemClockOffset = memClockOffset;
+        GpuClockTune = gpuClockTune;
+        MemClockTune = memClockTune;
         PowerLimitMw = powerLimitMw;
         _fanCurveName = fanCurve != null ? fanCurve.Name : "";
     }
 
     [JsonConstructor]
-    public OcProfile(string name,uint gpuClockOffset, uint memClockOffset, uint powerLimitMw, string fanCurveName)
+    public OcProfile(string name,GpuClockTune gpuClockTune, GpuClockTune memClockTune, uint powerLimitMw,int coreVoltageOffsetMv,int memVoltageOffsetMv, string fanCurveName)
     {
         Name = name;
-        GpuClockOffset = gpuClockOffset;
-        MemClockOffset = memClockOffset;
+        GpuClockTune = gpuClockTune;
+        MemClockTune = memClockTune;
         PowerLimitMw = powerLimitMw;
         _fanCurveName = fanCurveName;
     }
 
     [ObservableProperty] private string _name;
-    [ObservableProperty] private uint _gpuClockOffset;
+    [ObservableProperty] private GpuClockTune _gpuClockTune;
 
-    [ObservableProperty] private uint _memClockOffset;
+    [ObservableProperty] private GpuClockTune _memClockTune;
+    [ObservableProperty] private int _coreVoltageOffsetMv;
+    [ObservableProperty] private int _memVoltageOffsetMv;
     //public uint SmClockOffset { get; set; }  = 0;
     [ObservableProperty] private uint _powerLimitMw;
     // [ObservableProperty] private double _powerLimitW = 0;
@@ -62,14 +65,14 @@ public partial class OcProfile : ObservableObject
         {
             bool success = true;
             
-            if (GpuClockOffset > 0)
-                success &= targetGpu.SetCoreClockOffset((int)GpuClockOffset);
             
-            if (MemClockOffset > 0)
-                success &= targetGpu.SetMemoryClockOffset((int)GpuClockOffset);
+            success &= targetGpu.ApplyCoreClockTune(GpuClockTune);
+            
+            
+            success &= targetGpu.ApplyMemClockTune(MemClockTune);
 
-            if (PowerLimitMw > 0)
-                success &= targetGpu.SetPowerLimit((int)PowerLimitMw);
+            
+            success &= targetGpu.SetPowerLimit((int)PowerLimitMw);
                     
 
             if (FanCurve != null)

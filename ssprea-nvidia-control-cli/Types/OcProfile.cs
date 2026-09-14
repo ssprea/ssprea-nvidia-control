@@ -1,32 +1,34 @@
 using System;
 using System.Linq;
+using GpuSSharp.Types;
 using Newtonsoft.Json;
+using sspreaNvidiaControl.JsonConverters;
 
 namespace sspreaNvidiaControlCli.Types;
 
 public class OcProfile
 {
-    public OcProfile(string name,uint gpuClockOffset, uint memClockOffset, uint powerLimitMw, FanCurve? fanCurve)
+    public OcProfile(string name,GpuClockTune gpuClockTune, GpuClockTune memClockTune, uint powerLimitMw, FanCurve? fanCurve)
     {
         Name = name;
-        GpuClockOffset = gpuClockOffset;
-        MemClockOffset = memClockOffset;
+        GpuClockTune = gpuClockTune;
+        MemClockTune = memClockTune;
         PowerLimitMw = powerLimitMw;
         _fanCurveName = fanCurve != null ? fanCurve.Name : "";
     }
 
     [JsonConstructor]
-    public OcProfile(string name,uint gpuClockOffset, uint memClockOffset, uint powerLimitMw, string fanCurveName)
+    public OcProfile(string name,GpuClockTune gpuClockTune, GpuClockTune memClockTune, uint powerLimitMw, string fanCurveName)
     {
         Name = name;
-        GpuClockOffset = gpuClockOffset;
-        MemClockOffset = memClockOffset;
+        GpuClockTune = gpuClockTune;
+        MemClockTune = memClockTune;
         PowerLimitMw = powerLimitMw;
         _fanCurveName = fanCurveName;
     }
     public string Name { get; set; }
-    public uint GpuClockOffset { get; set; }
-    public uint MemClockOffset { get; set; }
+    public GpuClockTune GpuClockTune { get; set; }
+    public GpuClockTune MemClockTune { get; set; }
     //public uint SmClockOffset { get; set; }  = 0;
     public uint PowerLimitMw { get; set; }
     
@@ -68,6 +70,6 @@ public class OcProfile
 
     public static OcProfile? FromJson(string json)
     {
-        return JsonConvert.DeserializeObject<OcProfile>(json);
+        return JsonConvert.DeserializeObject<OcProfile>(json,new JsonSerializerSettings(){Converters = [new GpuClockTuneConverter()]});
     }
 }

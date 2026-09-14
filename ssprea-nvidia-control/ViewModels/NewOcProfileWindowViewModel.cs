@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Reactive;
 using CommunityToolkit.Mvvm.ComponentModel;
+using GpuSSharp.Types;
 using ReactiveUI;
 using sspreaNvidiaControl.Models;
 
@@ -25,8 +26,34 @@ public partial class NewOcProfileWindowViewModel : ViewModelBase
     {
 
         SelectedGpu = targetGpu;
+
+        GpuClockTune coreTune;
+        GpuClockTune memTune;
         
-        CreateProfileCommand = ReactiveCommand.Create(() => new OcProfile(Name ?? "New Profile",GpuClockOffsetSliderValue,MemClockOffsetSliderValue,PowerLimitSliderValue,SelectedFanCurve?.BaseFanCurve));
+        switch (SelectedGpu.Capabilities.CoreClockTuningMode)
+        {
+            case GpuClockTuningMode.ClockRange:
+                coreTune = new GpuClockTune.ClockRange(SelectedGpu.ClockCoreMinMhz,GpuClockOffsetSliderValue);
+                break;
+            
+            default:
+            case GpuClockTuningMode.Offset:
+                coreTune = new GpuClockTune.Offset((int)GpuClockOffsetSliderValue, GpuPState.GpuPstate0);
+                break;
+        }
+        
+        switch (SelectedGpu.Capabilities.MemoryClockTuningMode)
+        {
+            case GpuClockTuningMode.ClockRange:
+                memTune = new GpuClockTune.ClockRange(SelectedGpu.ClockMemMinMhz,MemClockOffsetSliderValue);
+                break;
+            default:
+            case GpuClockTuningMode.Offset:
+                memTune = new GpuClockTune.Offset((int)MemClockOffsetSliderValue, GpuPState.GpuPstate0);
+                break;
+        }
+        
+        CreateProfileCommand = ReactiveCommand.Create(() => new OcProfile(Name ?? "New Profile",coreTune,memTune,PowerLimitSliderValue,0,0,SelectedFanCurve?.BaseFanCurve));
         
     }
     
