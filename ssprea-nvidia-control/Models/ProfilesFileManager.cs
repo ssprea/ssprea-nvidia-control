@@ -46,7 +46,7 @@ public class ProfilesFileManager
                 // ReSharper restore ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
             {
                 Log.Warning("Old Profiles file version detected, starting migration.");
-                //TODO: migration
+                
 
                 var backupPath = Path.GetDirectoryName(_path) + "/profiles.old";
                 
