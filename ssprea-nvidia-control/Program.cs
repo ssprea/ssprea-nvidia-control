@@ -58,7 +58,7 @@ sealed class Program
 
         try
         {
-            DaemonSession = new DaemonSession("/tmp/slimit-grpc-demo.sock");
+            DaemonSession = new DaemonSession("/run/slimit-grpc-demo.sock");
         }
         catch (Exception ex)
         {
