@@ -1,0 +1,91 @@
+syntax = "proto3";
+
+package slimit.v1;
+
+option csharp_namespace = "SLimit.Contracts";
+
+service GpuControl {
+    rpc GpuApplyCoreTune (ClockSetRequest) returns (DaemonStatusReply);
+    rpc GpuApplyMemoryTune (ClockSetRequest) returns (DaemonStatusReply);
+    rpc GpuApplyPowerLimit (PowerLimitSetRequest) returns (DaemonStatusReply);
+    rpc GpuApplyVoltageOffset (VoltageOffsetSetRequest) returns (DaemonStatusReply);
+    rpc GpuApplyFanCurve (FancurveSetRequest) returns (DaemonStatusReply);
+    rpc GpuApplyFanSpeedFixed (FanFixedSetRequest) returns (DaemonStatusReply);
+    rpc GpuResetFan (FanResetRequest) returns (DaemonStatusReply);
+    rpc GpuStopFanThread (FanResetRequest) returns (DaemonStatusReply);
+    rpc GpuApplyOcProfile (OcProfileApplyRequest) returns (DaemonStatusReply);
+    rpc SystemSaveStartupProfile (OcProfileApplyRequest) returns (DaemonStatusReply);
+    rpc SystemToggleStartupProfile (OcProfileApplyRequest) returns (DaemonStatusReply);
+}
+
+message StartupProfileToggleMessage {
+    string gpu_id = 1;
+    bool enable = 2;
+}
+
+message OcProfileApplyRequest {
+    string gpu_id = 1;
+    string profile_json = 2;
+}
+
+message DaemonStatusReply {
+    int32 status_code = 1;
+    string message = 2;
+}
+
+
+message OffsetTune {
+    sint32 offset_mhz = 1;
+    int32 p_state = 2;
+}
+
+message OverdriveTune {
+    uint32 percent = 1;
+}
+
+message ClockRangeTune {
+    uint32 min_mhz = 1;
+    uint32 max_mhz = 2;
+}
+
+message ClockTuneMessage {
+    oneof value {
+        OffsetTune offset = 1;
+        OverdriveTune overdrive = 2;
+        ClockRangeTune clock_range = 3;
+    }
+}
+
+message ClockSetRequest {
+    string gpu_id = 1;
+    ClockTuneMessage tune = 2;
+}
+
+
+message PowerLimitSetRequest {
+    string gpu_id = 1;
+    uint32 power_limit_mw = 2;
+}
+
+message VoltageOffsetSetRequest {
+    string gpu_id = 1;
+    int32 volt_offset_mv = 2;
+}
+
+message FancurveSetRequest {
+    string gpu_id = 1;
+    string curve_json = 2;
+}
+
+message FancurveStopThreadRequest {
+    string gpu_id = 1;
+}
+
+message FanFixedSetRequest {
+    string gpu_id = 1;
+    uint32 fixed_speed = 2;
+}
+
+message FanResetRequest {
+    string gpu_id = 1;
+}

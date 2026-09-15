@@ -668,8 +668,8 @@
                                                     
                                                     
                                                     <Label  DockPanel.Dock="Right"  VerticalAlignment="Center" FontWeight="Bold" Content="W"/> 
-                                                    <NumericUpDown DockPanel.Dock="Right"  FormatString="0" Minimum="{Binding SelectedGpu.GpuPowerLimitMinMilliW, FallbackValue=0}" 
-                                                                   Maximum="{Binding SelectedGpu.GpuPowerLimitMaxMilliW, FallbackValue=400}" 
+                                                    <NumericUpDown DockPanel.Dock="Right"  FormatString="0" Minimum="{Binding SelectedGpu.GpuPowerLimitMinMilliW,Converter={StaticResource WattsConverter}, FallbackValue=0}" 
+                                                                   Maximum="{Binding SelectedGpu.GpuPowerLimitMaxMilliW,Converter={StaticResource WattsConverter}, FallbackValue=400}" 
                                                                    Background="Transparent" BorderBrush="Transparent" TextAlignment="Center" VerticalAlignment="Center"
                                                                    FontWeight="Bold" Value="{Binding TunerCurrentPowerLimitW,FallbackValue=000,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/> 
 

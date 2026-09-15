@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Grpc.AspNetCore" Version="2.83.0" />
+    <PackageReference Include="Serilog" Version="4.4.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="6.1.1" />
+    <PackageReference Include="Serilog.Sinks.File" Version="8.0.0-nblumhardt-02322" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GpuSSharp\GpuSSharp.csproj" />
+    <ProjectReference Include="..\SLimit.Contracts\SLimit.Contracts.csproj" />
+  </ItemGroup>
+
+</Project>

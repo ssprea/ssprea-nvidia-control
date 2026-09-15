@@ -1,11 +1,14 @@
 ﻿using System.Globalization;
+using System.Net.Sockets;
 using System.Text.RegularExpressions;
 using GpuSSharp;
 using GpuSSharp.Libs.AmdSmi;
 using GpuSSharp.Types;
+using Grpc.Net.Client;
 using McMaster.Extensions.CommandLineUtils;
 using Newtonsoft.Json;
 using Serilog;
+using SLimit.Contracts;
 using sspreaNvidiaControlCli.Types;
 
 namespace sspreaNvidiaControlCli;
@@ -42,11 +45,6 @@ public class Program
     [Option(CommandOptionType.SingleValue, Description = "load a oc profile json from the specified path. fan curve must be loaded separately", LongName = "ocProfile",ShortName = "op")]
     public static string OcProfileJson { get; set; }= "";
     
-    [Option(CommandOptionType.NoValue, Description = "WARNING: this can cause problems. Skip checking if another snvctl process is already running (when applying fan profile).", LongName = "forceOpen")]
-    public static bool SkipMultipleInstancesCheck { get; set; }= false;
-    
-    [Option(CommandOptionType.NoValue, Description = "Start tool as daemon",ShortName="d", LongName = "daemon")]
-    public static bool IsDaemon { get; set; }= false;
     
     // [Option(CommandOptionType.SingleValue, Description = "Set the logging level. Can be 0 = DEBUG, 1 = INFO, 2 = WARN, 3 = ERR", LongName = "logLevel",ShortName = "ll")]
     // public static int LogLevel { get; set; }= 1;
@@ -102,7 +100,6 @@ public class Program
         
         
         _gpuService = new GpuService();
-
         
         
         
@@ -191,60 +188,95 @@ public class Program
             Console.WriteLine("\t");
                 // \t DRMID: {((AmdSysfsGpu)_selectedGpu).DrmId} 
         }
+
+        const string socketPath = "/tmp/slimit-grpc-demo.sock";
+        using var daemonHandler = new SocketsHttpHandler
+        {
+            UseProxy = false,
+
+            ConnectCallback = async (_, cancellationToken) =>
+            {
+                var socket = new Socket(
+                    AddressFamily.Unix,
+                    SocketType.Stream,
+                    ProtocolType.Unspecified);
+
+                try
+                {
+                    await socket.ConnectAsync(
+                        new UnixDomainSocketEndPoint(socketPath),
+                        cancellationToken);
+
+                    return new NetworkStream(socket, ownsSocket: true);
+                }
+                catch
+                {
+                    socket.Dispose();
+                    throw;
+                }
+            }
+        };
+
+        using var daemonChannel = GrpcChannel.ForAddress(
+            "http://localhost",
+            new GrpcChannelOptions
+            {
+                HttpHandler = daemonHandler
+            });
+
+
+        var daemonClient = new GpuControl.GpuControlClient(daemonChannel);
+        
         
         
         if (OcProfileJson != string.Empty)
         {
             if (File.Exists(OcProfileJson))
             {
-                var ocProfile = OcProfile.FromJson(await File.ReadAllTextAsync(OcProfileJson));
 
-                if (ocProfile is null)
+                var json = await File.ReadAllTextAsync(OcProfileJson);
+                
+                var voffResp = daemonClient.GpuApplyOcProfile(new OcProfileApplyRequest()
                 {
-                    Log.Fatal("Invalid oc profile json");
-                    Environment.Exit(1);
-                }
-                
-                
-                var clockRes = _selectedGpu.SetCoreTuning(ocProfile.GpuClockTune);
-                var memRes =  _selectedGpu.SetMemTuning(ocProfile.MemClockTune);
-                var plRes =   _selectedGpu.SetGpuPowerLimit(PowerLimit);
+                    GpuId = _selectedGpu.DevicePciAddress,
+                    ProfileJson = json
+                });
 
-                if (!clockRes || !memRes || !plRes)
+                if (voffResp.StatusCode != 0)
                 {
-                    Log.Error("Error while applying overclock profile.");
-                    return;
+                    Log.Error("Error response from daemon while applying overclock profile: {msg}", voffResp.Message);
                 }
-                
-                Log.Information("Applying settings from loaded profile: ");
 
-                switch (ocProfile.GpuClockTune)
-                {
-                    case GpuClockTune.ClockRange range:
-                        Log.Information("Core range: Min: {minMhz}MHz Max:{maxMhz}MHz", range.MinMhz, range.MaxMhz);
-                        break;
-                    case GpuClockTune.Overdrive od:
-                        Log.Information("Core overdrive: +{odPercent}%", od.Percent);
-                        break;
-                    case GpuClockTune.Offset offset:
-                        Log.Information("Core offset: +{minMhz}MHz", offset.OffsetMhz);
-                        break;
-                }
+                return;
+                // Log.Information("Applying settings from loaded profile: ");
+                //
+                // switch (ocProfile.GpuClockTune)
+                // {
+                //     case GpuClockTune.ClockRange range:
+                //         Log.Information("Core range: Min: {minMhz}MHz Max:{maxMhz}MHz", range.MinMhz, range.MaxMhz);
+                //         break;
+                //     case GpuClockTune.Overdrive od:
+                //         Log.Information("Core overdrive: +{odPercent}%", od.Percent);
+                //         break;
+                //     case GpuClockTune.Offset offset:
+                //         Log.Information("Core offset: +{minMhz}MHz", offset.OffsetMhz);
+                //         break;
+                // }
                 
-                switch (ocProfile.MemClockTune)
-                {
-                    case GpuClockTune.ClockRange range:
-                        Log.Information("Memory range: Min: {minMhz}MHz Max:{maxMhz}MHz", range.MinMhz, range.MaxMhz);
-                        break;
-                    case GpuClockTune.Overdrive od:
-                        Log.Information("Memory overdrive: +{odPercent}%", od.Percent);
-                        break;
-                    case GpuClockTune.Offset offset:
-                        Log.Information("Memory offset: +{minMhz}MHz", offset.OffsetMhz);
-                        break;
-                }
-                
-                Log.Information("Power limit: {powerLimitW}",ocProfile.PowerLimitMw);
+                // switch (ocProfile.MemClockTune)
+                // {
+                //     case GpuClockTune.ClockRange range:
+                //         Log.Information("Memory range: Min: {minMhz}MHz Max:{maxMhz}MHz", range.MinMhz, range.MaxMhz);
+                //         break;
+                //     case GpuClockTune.Overdrive od:
+                //         Log.Information("Memory overdrive: +{odPercent}%", od.Percent);
+                //         break;
+                //     case GpuClockTune.Offset offset:
+                //         Log.Information("Memory offset: +{minMhz}MHz", offset.OffsetMhz);
+                //         break;
+                // }
+                //
+                // Log.Information("Power limit: {powerLimitW}",ocProfile.PowerLimitMw);
                 
                 return;
             }
@@ -263,9 +295,15 @@ public class Program
             Log.Information("Core tune: {coreOffset}", clockTune.ToString());
             
             
-            var clockRes = _selectedGpu.SetCoreTuning(clockTune);
-            if (!clockRes)
-                Log.Error("Error while applying core clock tune: {coreClockOffsetApplyErrorDesc}",clockRes);
+            var clockResp = daemonClient.GpuApplyCoreTune(new ClockSetRequest()
+            {
+                GpuId = _selectedGpu.DevicePciAddress,
+                Tune = ToProto(clockTune)
+            });
+            
+            
+            if (clockResp.StatusCode != 0)
+                Log.Error("Error response from daemon while applying core clock tune: {msg}",clockResp.Message);
         }
 
         if (!string.IsNullOrWhiteSpace(MemoryOffsetStr))
@@ -275,17 +313,29 @@ public class Program
 
             Log.Information("Memory tune: {memOffset}", memTune.ToString());
             
-            var memRes = _selectedGpu.SetMemTuning(memTune);
-            if (!memRes)
-                Log.Error("Error while applying memory clock tune: {memoryClockOffsetApplyErrorDesc}",memRes);
+            var clockResp = daemonClient.GpuApplyMemoryTune(new ClockSetRequest()
+            {
+                GpuId = _selectedGpu.DevicePciAddress,
+                Tune = ToProto(memTune)
+            });
+            
+            
+            if (clockResp.StatusCode != 0)
+                Log.Error("Error response from daemon while applying memory clock tune: {msg}",clockResp.Message);
 
         }
 
         if (PowerLimit > 0)
         {
-            var plRes = _selectedGpu.SetGpuPowerLimit(PowerLimit);
-            if (!plRes)
-                Log.Error("Error while applying power limit: {powerLimitApplyErrorDesc}",plRes);
+            var plResp = daemonClient.GpuApplyPowerLimit(new PowerLimitSetRequest()
+            {
+                GpuId = _selectedGpu.DevicePciAddress,
+                PowerLimitMw = PowerLimit
+            });
+            
+            
+            if (plResp.StatusCode != 0)
+                Log.Error("Error response from daemon while applying power limit: {msg}",plResp.Message);
                 
         }
 
@@ -298,10 +348,16 @@ public class Program
         }
 
         if (AutoFanSpeed)
-            if (!_selectedGpu.ApplyAutoSpeedToAllFans())
-                Log.Error("Error while applying auto fan speed.");
-            else
-                Log.Information("Successfully applied auto fan speed");
+        {
+            var plResp = daemonClient.GpuResetFan(new FanResetRequest()
+            {
+                GpuId = _selectedGpu.DevicePciAddress,
+            });
+            
+            
+            if (plResp.StatusCode != 0)
+                Log.Error("Error response from daemon while resetting fan: {msg}",plResp.Message);
+        }
             
 
 
@@ -311,23 +367,32 @@ public class Program
         if (FanSpeedCurveJson != "")
         {
             //check if another instance is running
-            SkipMultipleInstancesCheck = _selectedGpu.Vendor == GpuVendor.Amd;
-            if (!SkipMultipleInstancesCheck && IsAnotherInstanceRunning("snvctl","ssprea-nvidia-control-cli"))
-            {
-                Log.Fatal("Another instance of this program is already running. Exiting...");
-                Environment.Exit(1);
-            }
+            // SkipMultipleInstancesCheck = _selectedGpu.Vendor == GpuVendor.Amd;
+            // if (!SkipMultipleInstancesCheck && IsAnotherInstanceRunning("snvctl","ssprea-nvidia-control-cli"))
+            // {
+            //     Log.Fatal("Another instance of this program is already running. Exiting...");
+            //     Environment.Exit(1);
+            // }
 
+            
+            
             if (File.Exists(FanSpeedCurveJson))
             {
-                var curve = JsonConvert.DeserializeObject<FanCurve>(await File.ReadAllTextAsync(FanSpeedCurveJson));
-                if (curve is null)
+                
+                var json = await File.ReadAllTextAsync(FanSpeedCurveJson);
+                
+                var curveResp = daemonClient.GpuApplyFanCurve(new FancurveSetRequest()
                 {
-                    Log.Error("Fan curve not valid.");
-                    return;
+                    GpuId = _selectedGpu.DevicePciAddress,
+                    CurveJson = json
+                });
+
+                if (curveResp.StatusCode != 0)
+                {
+                    Log.Error("Error response from daemon while applying fan curve: {msg}",curveResp.Message);
                 }
-                _fanCurveTask = Task.Run(async () => await FanSpeedProfileThread(500,curve,cancelTokenSource.Token),cancelTokenSource.Token);
-                await _fanCurveTask;
+                
+                
             }
             else
             {
@@ -363,110 +428,142 @@ public class Program
     
     private uint _lastFanTemp;
     
-    private async Task FanSpeedProfileThread(int updateDelayMilliseconds, FanCurve fanCurve,CancellationToken cancelToken)
-    {
-        int errorCounter = 0;
-        int errorQuitThreshold = 50;
+    // private async Task FanSpeedProfileThread(int updateDelayMilliseconds, FanCurve fanCurve,CancellationToken cancelToken)
+    // {
+    //     int errorCounter = 0;
+    //     int errorQuitThreshold = 50;
+    //
+    //     if (_selectedGpu is null)
+    //     {
+    //         Log.Error("Cannot start fan curve thread: No gpu selected.");
+    //         return;
+    //     }
+    //
+    //     if (_selectedGpu.Vendor == GpuVendor.Amd)
+    //     {
+    //         Log.Information("Selected GPU is AmdGpu, fan curve thread not required.");
+    //         var amdGpu = (AmdSmiGpu)_selectedGpu;
+    //         var points = fanCurve.CurvePoints.Select(x => (x.Temperature, x.FanSpeed));
+    //         amdGpu.ApplyFirmwareFanCurve(points.ToList());
+    //         Log.Information("Succesfully loaded fan curve to GPU firmware: {fanCurveName}. Exiting.",amdGpu.Name);
+    //         
+    //         return;
+    //     }
+    //     
+    //     Log.Information("Starting fan curve thread for GPU: {gpuName}, update delay: {pollDelay}ms",_selectedGpu.Name,updateDelayMilliseconds);
+    //     using var timer = new PeriodicTimer(
+    //         TimeSpan.FromMilliseconds(updateDelayMilliseconds));
+    //     
+    //     while (await timer.WaitForNextTickAsync(cancelToken))
+    //     {
+    //         //get metrics reading
+    //         if (_selectedGpu is null)
+    //         {
+    //             Log.Fatal("Fan curve thread interrupted: selected gpu became invalid.");
+    //             return;
+    //         }
+    //
+    //         try
+    //         {
+    //
+    //
+    //             var latestMetrics = _selectedGpu.GetMetrics();
+    //             var currentTemp = (uint)latestMetrics.GpuTemperature;
+    //
+    //             //get gpu temperature
+    //             if (_selectedGpu is null || currentTemp == _lastFanTemp)
+    //             {
+    //                 Log.Debug("No temp change since last update. skipping");
+    //                 continue;
+    //             }
+    //
+    //
+    //
+    //             Log.Debug("Gpu temp: {gpuTemp}, Fan Speed: {fanSpeed}", currentTemp,
+    //                 fanCurve.GpuTempToFanSpeedMap[currentTemp]);
+    //             if (!_selectedGpu.ApplySpeedToAllFans(fanCurve.GpuTempToFanSpeedMap[currentTemp]))
+    //             {
+    //                 errorCounter++;
+    //                 Log.Error("({errorCount}) Error while applying fan speed.", errorCounter);
+    //             }
+    //             else
+    //                 errorCounter = 0;
+    //
+    //
+    //             if (errorCounter > errorQuitThreshold)
+    //             {
+    //                 Log.Fatal("More than {quitThreshold} errors when applying fan curve. Quitting program.",
+    //                     errorQuitThreshold);
+    //                 Environment.Exit(-1);
+    //             }
+    //
+    //             _lastFanTemp = (uint)latestMetrics.GpuTemperature;
+    //         }
+    //         catch (Exception ex)
+    //         {
+    //             Console.WriteLine(ex);
+    //         }
+    //     }
+    // }
+    //
+    // private bool IsAnotherInstanceRunning(params string[] names)
+    // {
+    //     //check if service is running (this requires service to use --forceOpen switch)
+    //     if (Utils.Systemd.IsSystemdServiceRunning(_serviceName))
+    //         return true;
+    //     
+    //     
+    //     var instanceCount = 0;
+    //     
+    //     
+    //     
+    //     foreach(var n in names)
+    //         if (n == Path.GetFileNameWithoutExtension(System.Reflection.Assembly.GetEntryAssembly()?.Location))
+    //             instanceCount--;
+    //     
+    //     
+    //     instanceCount += System.Diagnostics.Process.GetProcessesByName(Path.GetFileNameWithoutExtension(System.Reflection.Assembly.GetEntryAssembly()?.Location)).Length;
+    //     foreach (var n in names)
+    //     {
+    //         instanceCount += System.Diagnostics.Process.GetProcessesByName(n).Length;
+    //     }
+    //     // Console.WriteLine("instancecount: "+instanceCount);
+    //     return instanceCount > 1;
+    //
+    //     
+    // }
 
-        if (_selectedGpu is null)
+    private static ClockTuneMessage ToProto(GpuClockTune tune) =>
+        tune switch
         {
-            Log.Error("Cannot start fan curve thread: No gpu selected.");
-            return;
-        }
-
-        if (_selectedGpu.Vendor == GpuVendor.Amd)
-        {
-            Log.Information("Selected GPU is AmdGpu, fan curve thread not required.");
-            var amdGpu = (AmdSmiGpu)_selectedGpu;
-            var points = fanCurve.CurvePoints.Select(x => (x.Temperature, x.FanSpeed));
-            amdGpu.ApplyFirmwareFanCurve(points.ToList());
-            Log.Information("Succesfully loaded fan curve to GPU firmware: {fanCurveName}. Exiting.",amdGpu.Name);
-            
-            return;
-        }
-        
-        Log.Information("Starting fan curve thread for GPU: {gpuName}, update delay: {pollDelay}ms",_selectedGpu.Name,updateDelayMilliseconds);
-        using var timer = new PeriodicTimer(
-            TimeSpan.FromMilliseconds(updateDelayMilliseconds));
-        
-        while (await timer.WaitForNextTickAsync(cancelToken))
-        {
-            //get metrics reading
-            if (_selectedGpu is null)
+            GpuClockTune.Offset x => new ClockTuneMessage
             {
-                Log.Fatal("Fan curve thread interrupted: selected gpu became invalid.");
-                return;
-            }
+                Offset = new OffsetTune
+                {
+                    OffsetMhz = x.OffsetMhz,
+                    PState = (int)x.PState
+                }
+            },
 
-            try
+            GpuClockTune.Overdrive x => new ClockTuneMessage
             {
-
-
-                var latestMetrics = _selectedGpu.GetMetrics();
-                var currentTemp = (uint)latestMetrics.GpuTemperature;
-
-                //get gpu temperature
-                if (_selectedGpu is null || currentTemp == _lastFanTemp)
+                Overdrive = new OverdriveTune
                 {
-                    Log.Debug("No temp change since last update. skipping");
-                    continue;
+                    Percent = x.Percent
                 }
+            },
 
-
-
-                Log.Debug("Gpu temp: {gpuTemp}, Fan Speed: {fanSpeed}", currentTemp,
-                    fanCurve.GpuTempToFanSpeedMap[currentTemp]);
-                if (!_selectedGpu.ApplySpeedToAllFans(fanCurve.GpuTempToFanSpeedMap[currentTemp]))
-                {
-                    errorCounter++;
-                    Log.Error("({errorCount}) Error while applying fan speed.", errorCounter);
-                }
-                else
-                    errorCounter = 0;
-
-
-                if (errorCounter > errorQuitThreshold)
-                {
-                    Log.Fatal("More than {quitThreshold} errors when applying fan curve. Quitting program.",
-                        errorQuitThreshold);
-                    Environment.Exit(-1);
-                }
-
-                _lastFanTemp = (uint)latestMetrics.GpuTemperature;
-            }
-            catch (Exception ex)
+            GpuClockTune.ClockRange x => new ClockTuneMessage
             {
-                Console.WriteLine(ex);
-            }
-        }
-    }
+                ClockRange = new ClockRangeTune
+                {
+                    MinMhz = x.MinMhz,
+                    MaxMhz = x.MaxMhz
+                }
+            },
 
-    private bool IsAnotherInstanceRunning(params string[] names)
-    {
-        //check if service is running (this requires service to use --forceOpen switch)
-        if (Utils.Systemd.IsSystemdServiceRunning(_serviceName))
-            return true;
-        
-        
-        var instanceCount = 0;
-        
-        
-        
-        foreach(var n in names)
-            if (n == Path.GetFileNameWithoutExtension(System.Reflection.Assembly.GetEntryAssembly()?.Location))
-                instanceCount--;
-        
-        
-        instanceCount += System.Diagnostics.Process.GetProcessesByName(Path.GetFileNameWithoutExtension(System.Reflection.Assembly.GetEntryAssembly()?.Location)).Length;
-        foreach (var n in names)
-        {
-            instanceCount += System.Diagnostics.Process.GetProcessesByName(n).Length;
-        }
-        // Console.WriteLine("instancecount: "+instanceCount);
-        return instanceCount > 1;
-
-        
-    }
-
+            _ => throw new ArgumentException(
+                "Unknown tuning type", nameof(tune))
+        };
    
 }

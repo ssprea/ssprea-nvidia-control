@@ -27,7 +27,10 @@
     
     
     <ItemGroup>
+      <PackageReference Include="Grpc.Net.Client" Version="2.83.0" />
+      <PackageReference Include="Grpc.Net.Common" Version="2.83.0" />
       <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="5.1.0" />
+      <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="11.0.0-rc.1.26425.128" />
       <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
       <PackageReference Include="Serilog" Version="4.4.0" />
       <PackageReference Include="Serilog.Sinks.Console" Version="6.1.1" />
@@ -36,6 +39,13 @@
 
     <ItemGroup>
       <ProjectReference Include="..\GpuSSharp\GpuSSharp.csproj" />
+      <ProjectReference Include="..\SLimit.Contracts\SLimit.Contracts.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="Grpc.Net.Client">
+        <HintPath>..\..\..\..\..\..\..\..\..\home\giono\.nuget\packages\grpc.net.client\2.83.0\lib\net10.0\Grpc.Net.Client.dll</HintPath>
+      </Reference>
     </ItemGroup>
 
 </Project>

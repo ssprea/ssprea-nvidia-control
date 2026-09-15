@@ -26,6 +26,18 @@ public class GpuService
         Shutdown();
     }
 
+    public IGpu? GetGpuByPcieId(string pcieId)
+    {
+        try
+        {
+            return GpuList.First(x => x.DevicePciAddress == pcieId);
+        }
+        catch
+        {
+            return null;
+        }
+    }
+    
     // public bool InitAmdRocm()
     // {
     //

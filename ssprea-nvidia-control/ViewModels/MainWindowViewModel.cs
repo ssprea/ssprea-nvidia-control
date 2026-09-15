@@ -878,50 +878,50 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         }
 
         //check sudo password
-        if (!await RequestSudoPasswordDialogIfNeededAsync())
-            return;
+        // if (!await RequestSudoPasswordDialogIfNeededAsync())
+        //     return;
         
-        KillFanCurveProcessCommand();
+        // KillFanCurveProcessCommand();
 
-        if (Utils.Systemd.IsSystemdServiceRunning(_profilesServiceName))
-        {
-            var box = MessageBoxManager.GetMessageBoxCustom(
-                new MessageBoxCustomParams()
-                {
-                    ButtonDefinitions = new List<ButtonDefinition>
-                    {
-                        new ButtonDefinition { Name = "Cancel", IsDefault = true },
-                        new ButtonDefinition { Name = "Apply and keep old fan profile" },
-                        new ButtonDefinition { Name = "Stop service",  },
-                    },
-                    
-                    ContentTitle = $"{_profilesServiceName} detected!",
-                    ContentMessage = $"{_profilesServiceName} {Resources.MsgBoxBodyServiceConflict} 'sudo systemctl enable {_profilesServiceName}'",
-                    Topmost = true,
-                    CanResize = false,
-                    Icon = Icon.Warning,
-                    ShowInCenter = true,
-                    WindowDecorations = WindowDecorations.BorderOnly
-                }
-            );
-
-            var result = await box.ShowAsync();
-
-            switch (result)
-            {
-                case "Stop service":
-                    Utils.Systemd.StopSystemdService(_profilesServiceName);
-                    IsStartupProfileChecked = false;
-                    break;
-                
-                case "Apply and keep old fan profile":
-                    break;
-                
-                default:
-                    return;
-
-            }
-        }
+        // if (Utils.Systemd.IsSystemdServiceRunning(_profilesServiceName))
+        // {
+        //     var box = MessageBoxManager.GetMessageBoxCustom(
+        //         new MessageBoxCustomParams()
+        //         {
+        //             ButtonDefinitions = new List<ButtonDefinition>
+        //             {
+        //                 new ButtonDefinition { Name = "Cancel", IsDefault = true },
+        //                 new ButtonDefinition { Name = "Apply and keep old fan profile" },
+        //                 new ButtonDefinition { Name = "Stop service",  },
+        //             },
+        //             
+        //             ContentTitle = $"{_profilesServiceName} detected!",
+        //             ContentMessage = $"{_profilesServiceName} {Resources.MsgBoxBodyServiceConflict} 'sudo systemctl enable {_profilesServiceName}'",
+        //             Topmost = true,
+        //             CanResize = false,
+        //             Icon = Icon.Warning,
+        //             ShowInCenter = true,
+        //             WindowDecorations = WindowDecorations.BorderOnly
+        //         }
+        //     );
+        //
+        //     var result = await box.ShowAsync();
+        //
+        //     switch (result)
+        //     {
+        //         case "Stop service":
+        //             Utils.Systemd.StopSystemdService(_profilesServiceName);
+        //             IsStartupProfileChecked = false;
+        //             break;
+        //         
+        //         case "Apply and keep old fan profile":
+        //             break;
+        //         
+        //         default:
+        //             return;
+        //
+        //     }
+        // }
         
         ocProfile?.Apply(SelectedGpu);
         _autoApplyProfileLoaded = true;

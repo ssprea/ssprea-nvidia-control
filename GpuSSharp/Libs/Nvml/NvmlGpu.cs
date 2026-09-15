@@ -225,6 +225,9 @@ namespace GpuSSharp.Libs.Nvml;
 
         public bool SetGpuPowerLimit(uint limitMw)
         {
+            if (limitMw > PowerLimitMaxMw || limitMw < PowerLimitMinMw)
+                return false;
+            
             return SetPowerLimit(limitMw) == NvmlReturnCode.NVML_SUCCESS;
         }
 

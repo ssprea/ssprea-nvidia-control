@@ -32,6 +32,7 @@ sealed class Program
     public static Settings LoadedSettings = Settings.Default();
     
     public static GpuService? GpuService;
+    public static DaemonSession? DaemonSession;
     
     // Initialization code. Don't use any Avalonia, third-party APIs or any
     // SynchronizationContext-reliant code before AppMain is called: things aren't initialized
@@ -54,7 +55,15 @@ sealed class Program
         {
             Log.Error("Error while initializing GpuService: {exMsg}", ex.Message);
         }
-        
+
+        try
+        {
+            DaemonSession = new DaemonSession("/tmp/slimit-grpc-demo.sock");
+        }
+        catch (Exception ex)
+        {
+            Log.Error("Error while initializing Daemon Session: {exMsg}", ex.Message);
+        }
         
         
         //remove the default profile

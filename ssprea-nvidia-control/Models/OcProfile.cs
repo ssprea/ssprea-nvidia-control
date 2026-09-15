@@ -73,6 +73,9 @@ public partial class OcProfile : ObservableObject
 
             
             success &= targetGpu.SetPowerLimit((int)PowerLimitMw);
+            
+            if (targetGpu.Capabilities.GpuVoltageOffset)
+                success &= targetGpu.SetCoreVoltageOffset(CoreVoltageOffsetMv);
                     
 
             if (FanCurve != null)

@@ -2,9 +2,15 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ssprea-nvidia-control", "ssprea-nvidia-control\ssprea-nvidia-control.csproj", "{C1FFA3CE-0DCD-4E23-8DBE-8B77C29527FE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ssprea-nvidia-control-cli", "ssprea-nvidia-control-cli\ssprea-nvidia-control-cli.csproj", "{ADD93DEA-6763-48DC-A18F-D422DE7B427D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SLimit.Cli", "SLimit.Cli\SLimit.Cli.csproj", "{ADD93DEA-6763-48DC-A18F-D422DE7B427D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GpuSSharp", "GpuSSharp\GpuSSharp.csproj", "{AC1729D4-D765-4B50-BF42-809B3729921C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SLimit.Contracts", "SLimit.Contracts\SLimit.Contracts.csproj", "{57AD3FA2-25EE-4A85-97DB-D633A634BCBB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SLimit.Daemon", "SLimit.Daemon\SLimit.Daemon.csproj", "{F8B8E4C7-42D0-48AA-9513-81E3C4C394E6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SLimit.ClientTest", "SLimit.ClientTest\SLimit.ClientTest.csproj", "{3384DD1E-9AE4-4668-BD22-F6B314A42A28}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,5 +30,17 @@ Global
 		{AC1729D4-D765-4B50-BF42-809B3729921C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AC1729D4-D765-4B50-BF42-809B3729921C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AC1729D4-D765-4B50-BF42-809B3729921C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{57AD3FA2-25EE-4A85-97DB-D633A634BCBB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{57AD3FA2-25EE-4A85-97DB-D633A634BCBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{57AD3FA2-25EE-4A85-97DB-D633A634BCBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{57AD3FA2-25EE-4A85-97DB-D633A634BCBB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8B8E4C7-42D0-48AA-9513-81E3C4C394E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8B8E4C7-42D0-48AA-9513-81E3C4C394E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8B8E4C7-42D0-48AA-9513-81E3C4C394E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8B8E4C7-42D0-48AA-9513-81E3C4C394E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3384DD1E-9AE4-4668-BD22-F6B314A42A28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3384DD1E-9AE4-4668-BD22-F6B314A42A28}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3384DD1E-9AE4-4668-BD22-F6B314A42A28}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3384DD1E-9AE4-4668-BD22-F6B314A42A28}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

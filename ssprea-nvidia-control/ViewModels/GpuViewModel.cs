@@ -5,6 +5,7 @@ using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using GpuSSharp.Types;
 using Serilog;
+using SLimit.Contracts;
 using sspreaNvidiaControl.Models;
 using sspreaNvidiaControl.Utils;
 
@@ -65,46 +66,65 @@ public partial class GpuViewModel : ViewModelBase, IDisposable
     
     #region Setters
 
-    private bool SetCoreClockOffset(int clockOffsetMhz) =>
-        SnvctlCliTool.RunSudoCliCommand($"-c {clockOffsetMhz}", DevicePciAddress) is not null;
-    
-    private bool SetMemoryClockOffset(int clockOffsetMhz) =>
-        SnvctlCliTool.RunSudoCliCommand($"-m {clockOffsetMhz}", DevicePciAddress) is not null;
-    
-    private bool SetCoreClockRange(int clockMinMhz, int clockMaxMhz) =>
-        SnvctlCliTool.RunSudoCliCommand($"-c {clockMinMhz}:{clockMaxMhz}", DevicePciAddress) is not null;
-    
-    private bool SetMemoryClockRange(int clockMinMhz, int clockMaxMhz) =>
-        SnvctlCliTool.RunSudoCliCommand($"-m {clockMinMhz}:{clockMaxMhz}", DevicePciAddress) is not null;
+    // private bool SetCoreClockOffset(int clockOffsetMhz) =>
+    //     SnvctlCliTool.RunSudoCliCommand($"-c {clockOffsetMhz}", DevicePciAddress) is not null;
     
     
-    public bool SetPowerLimit(int limitMw) =>
-        SnvctlCliTool.RunSudoCliCommand($"-p {limitMw}", DevicePciAddress) is not null;
     
-    public bool ApplyAutoSpeedToAllFans() => 
-        SnvctlCliTool.RunSudoCliCommand($"-afs", DevicePciAddress) is not null;
+    public bool SetPowerLimit(int limitMw)
+    {
+        if (Program.DaemonSession is null)
+            return false;
+        
+        return Program.DaemonSession.Client.GpuApplyPowerLimit(new PowerLimitSetRequest()
+        {
+            GpuId = DevicePciAddress,
+            PowerLimitMw = (uint)limitMw
+        }).StatusCode == 0;
+        // SnvctlCliTool.RunSudoCliCommand($"-p {limitMw}", DevicePciAddress) is not null;
+    }
+    
+    public bool SetCoreVoltageOffset(int offsetMv)
+    {
+        if (Program.DaemonSession is null)
+            return false;
+        
+        Console.WriteLine("VOFF"+offsetMv);
+        
+        return Program.DaemonSession.Client.GpuApplyVoltageOffset(new VoltageOffsetSetRequest()
+        {
+            GpuId = DevicePciAddress,
+            VoltOffsetMv = offsetMv
+        }).StatusCode == 0;
+        // SnvctlCliTool.RunSudoCliCommand($"-p {limitMw}", DevicePciAddress) is not null;
+    }
+
+    public bool ApplyAutoSpeedToAllFans()
+    {
+        if (Program.DaemonSession is null)
+            return false;
+        
+        return Program.DaemonSession.Client.GpuResetFan(new FanResetRequest()
+        {
+            GpuId = DevicePciAddress,
+        }).StatusCode == 0;
+    }
     
     public bool ApplySpeedToAllFans(uint speed) =>
         SnvctlCliTool.RunSudoCliCommand($"-fs {speed}", DevicePciAddress) is not null;
 
     public bool ApplyCoreClockTune(GpuClockTune tune)
     {
+        if (Program.DaemonSession is null)
+            return false;
+        
         if (IsTuneValid(tune, Capabilities.CoreClockTuningMode))
         {
-            switch (tune)
+            return Program.DaemonSession.Client.GpuApplyCoreTune(new ClockSetRequest()
             {
-                case GpuClockTune.ClockRange range:
-                    return SetCoreClockRange((int)range.MinMhz, (int)range.MaxMhz);
-                    
-
-                case GpuClockTune.Offset offset:
-                    return SetCoreClockOffset(offset.OffsetMhz);
-                    
-                
-
-                default:
-                    throw new NotSupportedException();
-            }
+                GpuId = DevicePciAddress,
+                Tune = ToProto(tune)
+            }).StatusCode == 0;
         }
 
         return false;
@@ -112,22 +132,16 @@ public partial class GpuViewModel : ViewModelBase, IDisposable
     
     public bool ApplyMemClockTune(GpuClockTune tune)
     {
+        if (Program.DaemonSession is null)
+            return false;
+        
         if (IsTuneValid(tune, Capabilities.MemoryClockTuningMode))
         {
-            switch (tune)
+            return Program.DaemonSession.Client.GpuApplyMemoryTune(new ClockSetRequest()
             {
-                case GpuClockTune.ClockRange range:
-                    return SetMemoryClockRange((int)range.MinMhz, (int)range.MaxMhz);
-                    
-
-                case GpuClockTune.Offset offset:
-                    return SetMemoryClockOffset(offset.OffsetMhz);
-                    
-                
-
-                default:
-                    throw new NotSupportedException();
-            }
+                GpuId = DevicePciAddress,
+                Tune = ToProto(tune)
+            }).StatusCode==0;
         }
 
         return false;
@@ -153,10 +167,20 @@ public partial class GpuViewModel : ViewModelBase, IDisposable
             return false;
         return true;
     }
-    
 
-    public void ApplyFanCurve(FanCurve fanCurve) =>
-        SnvctlCliTool.RunFanProcess(fanCurve, DevicePciAddress);
+
+    public void ApplyFanCurve(FanCurve fanCurve)
+    {
+        if (Program.DaemonSession is null)
+            return;
+        
+        Program.DaemonSession.Client.GpuApplyFanCurve(new FancurveSetRequest()
+        {
+            GpuId = DevicePciAddress,
+            CurveJson = fanCurve.ToJson()
+        });
+        
+    }
     
     #endregion
     
@@ -200,7 +224,38 @@ public partial class GpuViewModel : ViewModelBase, IDisposable
         }
     }
 
-    
+    private static ClockTuneMessage ToProto(GpuClockTune tune) =>
+        tune switch
+        {
+            GpuClockTune.Offset x => new ClockTuneMessage
+            {
+                Offset = new OffsetTune
+                {
+                    OffsetMhz = x.OffsetMhz,
+                    PState = (int)x.PState
+                }
+            },
+
+            GpuClockTune.Overdrive x => new ClockTuneMessage
+            {
+                Overdrive = new OverdriveTune
+                {
+                    Percent = x.Percent
+                }
+            },
+
+            GpuClockTune.ClockRange x => new ClockTuneMessage
+            {
+                ClockRange = new ClockRangeTune
+                {
+                    MinMhz = x.MinMhz,
+                    MaxMhz = x.MaxMhz
+                }
+            },
+
+            _ => throw new ArgumentException(
+                "Unknown tuning type", nameof(tune))
+        };
     
 
     public void Dispose()
