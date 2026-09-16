@@ -29,6 +29,9 @@ public partial class OcProfile : ObservableObject
         MemClockTune = memClockTune;
         PowerLimitMw = powerLimitMw;
         _fanCurveName = fanCurveName;
+        CoreVoltageOffsetMv = coreVoltageOffsetMv;
+        MemVoltageOffsetMv = memVoltageOffsetMv;
+        
     }
 
     [ObservableProperty] private string _name;

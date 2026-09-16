@@ -483,6 +483,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         if (ocProfile.MemClockTune is GpuClockTune.Offset offsetm)
             TunerCurrentMemoryOffset = (ulong)offsetm.OffsetMhz;
         
+        TunerCurrentVoltageOffsetMv = ocProfile.CoreVoltageOffsetMv;
         
         TunerCurrentPowerLimitMw = ocProfile.PowerLimitMw;
         TunerCurrentProfileName = ocProfile.Name;
