@@ -26,7 +26,10 @@ deb: publish
 
 install:
 	mkdir -p $(DESTDIR)/usr/local/bin/
+	mkdir -p $(DESTDIR)/usr/lib/systemd/system/
 	cp bin/Release/net10.0/linux-x64/publish/SLimit.Daemon $(DESTDIR)/usr/local/bin/slimitd
+
+	cp SystemdServices/slimitd.service $(DESTDIR)/usr/lib/systemd/system/slimitd.service
 		
 uninstall:
 	rm /usr/local/bin/slimitd

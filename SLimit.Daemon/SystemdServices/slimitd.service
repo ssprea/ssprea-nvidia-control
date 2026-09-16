@@ -1,0 +1,9 @@
+[Unit]
+Description=Starts SLimit Daemon
+
+[Service]
+Type=exec
+ExecStart=/usr/local/bin/slimitd
+
+[Install]
+WantedBy=multi-user.target

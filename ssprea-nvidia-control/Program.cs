@@ -58,7 +58,8 @@ sealed class Program
 
         try
         {
-            DaemonSession = new DaemonSession("/run/slimit-grpc-demo.sock");
+            DaemonSession = new DaemonSession("/run/slimit-grpc.sock");
+            Log.Information("Connected to daemon! ");
         }
         catch (Exception ex)
         {

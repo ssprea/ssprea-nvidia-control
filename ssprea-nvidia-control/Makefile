@@ -23,7 +23,7 @@ deb: publish
 	mkdir -p bin/Release/deb/ssprea-nvidia-control_$(VERSION)-$(PKGN)_amd64/DEBIAN
 	echo -e 'Package: ssprea-nvidia-control\nVersion: $(VERSION)-$(PKGN)\nDepends: \nArchitecture: amd64\nMaintainer: ssprea <ssprea@proton.me>\nDescription: A GUI tool to manage NVidia GPUs overclock, fans and power limit. Supports both Wayland and X11' > bin/Release/deb/ssprea-nvidia-control_$(VERSION)-$(PKGN)_amd64/DEBIAN/control
 	
-	cp bin/Release/net10.0/linux-x64/publish/ssprea-nvidia-control bin/Release/deb/ssprea-nvidia-control_$(VERSION)-$(PKGN)_amd64/usr/local/bin/snvctl-gui
+	cp bin/Release/net10.0/linux-x64/publish/ssprea-nvidia-control bin/Release/deb/ssprea-nvidia-control_$(VERSION)-$(PKGN)_amd64/usr/local/bin/slimit-gui
 	cp Assets/ssprea-nvidia-control.desktop bin/Release/deb/ssprea-nvidia-control_$(VERSION)-$(PKGN)_amd64/usr/share/applications/ssprea-nvidia-control.desktop
 
 	dpkg-deb --build --root-owner-group bin/Release/deb/ssprea-nvidia-control_$(VERSION)-$(PKGN)_amd64
@@ -40,7 +40,7 @@ install:
 
 
 
-	cp bin/Release/net10.0/linux-x64/publish/ssprea-nvidia-control $(DESTDIR)/usr/local/bin/snvctl-gui
+	cp bin/Release/net10.0/linux-x64/publish/ssprea-nvidia-control $(DESTDIR)/usr/local/bin/slimit-gui
 	cp Assets/ssprea-nvidia-control.desktop $(DESTDIR)/usr/share/applications/ssprea-nvidia-control.desktop
 
 	cp SystemdServices/snvctl-gui.service $(DESTDIR)/usr/lib/systemd/user/snvctl-gui.service
@@ -51,4 +51,4 @@ install:
 uninstall:
 	rm -r /usr/share/ssprea-nvidia-control
 	rm /usr/share/applications/ssprea-nvidia-control.desktop
-	rm /usr/local/bin/snvctl-gui
+	rm /usr/local/bin/slimit-gui

@@ -4,7 +4,7 @@ After=graphical-session.target
 
 [Service]
 Type=simple
-ExecStart=/usr/local/bin/snvctl-gui
+ExecStart=/usr/local/bin/slimit-gui
 Restart=on-failure
 RestartSec=5
 

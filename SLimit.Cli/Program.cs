@@ -189,7 +189,7 @@ public class Program
                 // \t DRMID: {((AmdSysfsGpu)_selectedGpu).DrmId} 
         }
 
-        const string socketPath = "/run/slimit-grpc-demo.sock";
+        const string socketPath = "/run/slimit-grpc.sock";
         using var daemonHandler = new SocketsHttpHandler
         {
             UseProxy = false,

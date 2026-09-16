@@ -1027,7 +1027,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
     public static async Task ShowDependenciesMsgbox(ushort errCode)
     {
        
-        
+        //TODO: show if daemon service is not running
         switch (errCode)
         {
             case 0:
