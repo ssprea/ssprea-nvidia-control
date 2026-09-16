@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Runtime.InteropServices;
 using GpuSSharp;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Serilog;
@@ -9,15 +10,10 @@ namespace SLimit.Daemon;
 
 public class Program
 {
-    public static GpuService? GpuService { get; set; }
+    public static GpuService? GpuService { get; private set; }
     
     public static async Task Main(string[] args)
     {
-        if (GpuService is null)
-            GpuService = new GpuService();
-        
-        
-        
         const string socketPath = "/run/slimit-grpc.sock";
 
         await using var log = new LoggerConfiguration() 
@@ -26,6 +22,20 @@ public class Program
             .CreateLogger();
 
         Log.Logger = log;
+        
+        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+        {
+            Log.Fatal("Only Linux is supported currently.");
+            return;
+        }
+        
+        Log.Information("[{dateTime}] Starting SLimit Daemon...", DateTime.Now);
+        
+        if (GpuService is null)
+            GpuService = new GpuService();
+
+       
+        
         
         
         var builder = WebApplication.CreateBuilder(args);
@@ -49,6 +59,8 @@ public class Program
 
         await app.StartAsync();
 
+        Log.Information("[{dateTime}] Daemon started successfully, ready for clients.", DateTime.Now);
+        
         try
         {
             

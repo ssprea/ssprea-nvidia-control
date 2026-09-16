@@ -10,6 +10,44 @@ public static class FanCurves
 {
     public static readonly ConcurrentDictionary<string,Task> RunningFanProfilesTasks = new();
     public static readonly ConcurrentDictionary<string,CancellationTokenSource> RunningFanProfilesCancelTokens = new();
+
+    public static bool StartNewFanThread(int updateDelayMilliseconds,IGpu targetGpu, FanCurve fanCurve)
+    {
+        if (RunningFanProfilesCancelTokens.ContainsKey(targetGpu.DevicePciAddress))
+            StopFanThread(targetGpu.DevicePciAddress);
+        
+        var cts = new CancellationTokenSource();
+        
+        var task = Task.Run(async () => await FanCurves.FanSpeedProfileThread(updateDelayMilliseconds,targetGpu,fanCurve,cts.Token),  cts.Token);
+
+        var success = true;
+        
+        success &= RunningFanProfilesTasks.TryAdd(targetGpu.DevicePciAddress, task);
+        success &= RunningFanProfilesCancelTokens.TryAdd(targetGpu.DevicePciAddress, cts);
+
+        if (success)
+            Log.Information("Successfully started fan thread for GPU: {gpuId}", targetGpu.DevicePciAddress);
+        else
+        {
+            Log.Error("Error while starting fan thread for GPU: {gpuId}",targetGpu.DevicePciAddress);
+        }
+        
+        return success;
+    }
+
+    public static bool StopFanThread(string gpuId)
+    {
+        if (RunningFanProfilesCancelTokens.TryGetValue(gpuId, out var cts))
+        {
+            cts.Cancel();
+            RunningFanProfilesCancelTokens.TryRemove(gpuId, out _);
+            RunningFanProfilesTasks.TryRemove(gpuId, out _);
+            Log.Information("Fan curve thread stopped for gpu {gpuId}.", gpuId);
+            return true;
+        }
+        Log.Error("Cannot stop fan curve thread for gpu {gpuId}. Is it running?", gpuId);
+        return false;
+    }
     
     public static async Task FanSpeedProfileThread(int updateDelayMilliseconds,IGpu targetGpu, FanCurve fanCurve,CancellationToken cancelToken)
     {

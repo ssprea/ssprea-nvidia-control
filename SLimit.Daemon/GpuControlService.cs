@@ -1,10 +1,11 @@
-using GpuSSharp.Libs.Nvml;
 using GpuSSharp.Types;
 using Grpc.Core;
 using Newtonsoft.Json;
 using Serilog;
 using SLimit.Contracts;
+using SLimit.Daemon.Types;
 using SLimit.Daemon.Types.Converters;
+using FanCurve = GpuSSharp.Libs.Nvml.FanCurve;
 
 namespace SLimit.Daemon;
 
@@ -40,20 +41,14 @@ public class GpuControlService : GpuControl.GpuControlBase
                 Message = $"Error while reading requested fan curve."
             });
         }
-        
-        var cts = new CancellationTokenSource();
-        
-        var task = Task.Run(async () => await FanCurves.FanSpeedProfileThread(500,gpu,fanCurve,cts.Token),  cts.Token);
 
-        var success = true;
+        var success = FanCurves.StartNewFanThread(500, gpu, fanCurve);
         
-        success &= FanCurves.RunningFanProfilesTasks.TryAdd(request.GpuId, task);
-        success &= FanCurves.RunningFanProfilesCancelTokens.TryAdd(request.GpuId, cts);
         
         return Task.FromResult(new DaemonStatusReply
         {
             StatusCode = success ? 0 : 2,
-            Message = success ? $"Power limit successfully set" : "Error while applying power limit"
+            Message = success ? $"Fan curve successfully set" : "Error while applying fan curve"
         });
     }
     
@@ -87,6 +82,95 @@ public class GpuControlService : GpuControl.GpuControlBase
             
             StatusCode = success ? 0 : 2,
             Message = success ? $"Power limit successfully set" : "Error while applying power limit"
+        });
+    }
+
+    public override Task<StartupProfileStatusReply> SystemGetStartupProfileInfo(GpuIdMessage request,
+        ServerCallContext context)
+    {
+        Log.Information("Received Get Startup Profile Info Request for GPU: {gpuId}", request.GpuId);
+
+        var profile = StartupProfiles.GetStartupProfileById(request.GpuId);
+
+        if (profile is null)
+        {
+            Log.Error("Could not find startup profile with GPU ID {gpuId}", request.GpuId);
+            return Task.FromResult(new StartupProfileStatusReply
+            {
+                Status = new DaemonStatusReply() {StatusCode = 1, Message = "Startup profile not found"},
+                Exists = false,
+                GpuId = "",
+                ProfileName = ""
+            });
+        }
+        
+        Log.Information("Found startup profile with GPU ID {gpuId}", request.GpuId);
+        return Task.FromResult(new StartupProfileStatusReply
+        {
+            Status = new DaemonStatusReply() {StatusCode = 0, Message = "Startup profile found"},
+            Exists = true,
+            GpuId = request.GpuId,
+            ProfileName = profile.Name
+        });
+    }
+    
+    public override Task<DaemonStatusReply> SystemDeleteStartupProfile(GpuIdMessage request, ServerCallContext context)
+    {
+        Log.Information("Received Remove Startup Profile Request for GPU: {gpuId}", request.GpuId);
+        
+        StartupProfiles.DeleteStartupProfile(request.GpuId);
+        
+        return Task.FromResult(new DaemonStatusReply
+        {
+            
+            StatusCode = 0,
+            Message = "Startup profile successfully removed"
+        });
+    }
+
+    public override Task<DaemonStatusReply> SystemSaveStartupProfile(StartupProfileSaveMessage request, ServerCallContext context)
+    {
+        Log.Information("Received Save Startup Profile Request for GPU: {gpuId}", request.GpuId);
+        
+        var gpu = Program.GpuService?.GetGpuByPcieId(request.GpuId);
+
+        if (gpu is null)
+        {
+            Log.Error("Could not find GPU with ID {gpuId}", request.GpuId);
+            return Task.FromResult(new DaemonStatusReply
+            {
+                StatusCode = 1,
+                Message = $"Requested GPU ID {request.GpuId} does not exist."
+            });
+        }
+        
+        
+        
+
+        
+        if (string.IsNullOrEmpty(request.ProfileJson))
+        {
+            Log.Error("Invalid json profile in startup profile save request for GPU {gpuId}", request.GpuId);
+        
+            return Task.FromResult(new DaemonStatusReply
+            {
+                StatusCode = 2,
+                Message = $"Invalid request profile json."
+            });
+        }
+        
+        
+        
+        
+        
+        var success = StartupProfiles.SaveStartupProfile(gpu.DevicePciAddress,request.ProfileJson,request.CurveJson == "" ? null : request.CurveJson );
+            
+        
+        return Task.FromResult(new DaemonStatusReply
+        {
+            
+            StatusCode = success ? 0 : 2,
+            Message = success ? $"Startup profile successfully saved" : "Error while saving startup profile"
         });
     }
     

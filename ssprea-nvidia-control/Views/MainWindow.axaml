@@ -599,21 +599,21 @@
                                                     <TextBox Classes="tunerStyle" IsVisible="{Binding IsTunerCoreRange}" DockPanel.Dock="Left" VerticalAlignment="Center" FontWeight="Bold" Text="{Binding TunerCurrentCoreMinClock}" /> 
                                                     <Label Classes="tunerLabel" DockPanel.Dock="Right" VerticalAlignment="Center" FontWeight="Bold" /> 
                                                     
-                                                    <NumericUpDown  DockPanel.Dock="Right" Minimum="{Binding SelectedGpu.ClockCoreMinMhz}" Maximum="{Binding SelectedGpu.ClockCoreMaxMhz}" FormatString="0"
+                                                    <NumericUpDown  DockPanel.Dock="Right" Minimum="{Binding SelectedGpu.ClockCoreMinMhz, FallbackValue=0}" Maximum="{Binding SelectedGpu.ClockCoreMaxMhz, FallbackValue=10000}" FormatString="0"
                                                                     Background="Transparent" BorderBrush="Transparent" 
                                                                     TextAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Value="{Binding TunerCurrentCoreOffset,FallbackValue=0000}"/> 
                                                     
                                                     <Panel>
                                                         <Slider IsVisible="{Binding IsTunerCoreOffset}" DockPanel.Dock="Right" Height="35" VerticalAlignment="Top" HorizontalAlignment="Stretch" 
-                                                                Minimum="{Binding SelectedGpu.ClockCoreMinMhz}"
-                                                                Maximum="{Binding SelectedGpu.ClockCoreMaxMhz}"
+                                                                Minimum="{Binding SelectedGpu.ClockCoreMinMhz, FallbackValue=0}"
+                                                                Maximum="{Binding SelectedGpu.ClockCoreMaxMhz, FallbackValue=10000}"
                                                                 Value="{Binding TunerCurrentCoreOffset}"
                                                                 
                                                                 
                                                         />
                                         
                                                         <controls1:RangeSlider IsVisible="{Binding IsTunerCoreRange}"
-                                                                                Minimum="{Binding SelectedGpu.ClockCoreMinMhz}" Maximum="{Binding SelectedGpu.ClockCoreMaxMhz}"
+                                                                                Minimum="{Binding SelectedGpu.ClockCoreMinMhz, FallbackValue=0}" Maximum="{Binding SelectedGpu.ClockCoreMaxMhz, FallbackValue=10000}"
                                                                                LowerSelectedValue="{Binding TunerCurrentCoreMinClock}" UpperSelectedValue="{Binding TunerCurrentCoreOffset}" 
                                                                                IsThumbOverlap="False"/>
                                                     </Panel>
@@ -637,7 +637,7 @@
                                                     <Label Classes="tunerLabel" DockPanel.Dock="Right" VerticalAlignment="Center" FontWeight="Bold" />
                                                     
                                                     
-                                                    <NumericUpDown DockPanel.Dock="Right" Minimum="{Binding SelectedGpu.ClockMemMinMhz, FallbackValue=0}" Maximum="{Binding SelectedGpu.ClockCoreMaxMhz, FallbackValue=3000}"
+                                                    <NumericUpDown DockPanel.Dock="Right" Minimum="{Binding SelectedGpu.ClockMemMinMhz, FallbackValue=0}" Maximum="{Binding SelectedGpu.ClockCoreMaxMhz, FallbackValue=10000}"
                                                                    FormatString="0" Background="Transparent" BorderBrush="Transparent" 
                                                                    
                                                                    TextAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Value="{Binding TunerCurrentMemoryOffset,FallbackValue=0000}"/> 
@@ -645,13 +645,13 @@
                                                     <Panel>
                                                         <Slider IsVisible="{Binding IsTunerMemOffset}" DockPanel.Dock="Right"  Height="35" VerticalAlignment="Top" HorizontalAlignment="Stretch"
                                                                 Minimum="{Binding SelectedGpu.ClockMemMinMhz, FallbackValue=0}"
-                                                                Maximum="{Binding SelectedGpu.ClockMemMaxMhz, FallbackValue=3000}"
+                                                                Maximum="{Binding SelectedGpu.ClockMemMaxMhz, FallbackValue=10000}"
                                                                 Value="{Binding TunerCurrentMemoryOffset}"
                                                                 
                                                         />
                                                         
                                                         <controls1:RangeSlider IsVisible="{Binding IsTunerMemRange}"
-                                                                               Minimum="{Binding SelectedGpu.ClockMemMinMhz}" Maximum="{Binding SelectedGpu.ClockMemMaxMhz}"
+                                                                               Minimum="{Binding SelectedGpu.ClockMemMinMhz, FallbackValue=0}" Maximum="{Binding SelectedGpu.ClockMemMaxMhz, FallbackValue=10000}"
                                                                                LowerSelectedValue="{Binding TunerCurrentMemoryMinClock}" UpperSelectedValue="{Binding TunerCurrentMemoryOffset}" 
                                                                                IsThumbOverlap="False"/>
                                                     </Panel>
@@ -677,7 +677,7 @@
                                                         
                                                         <Slider  Height="35" VerticalAlignment="Top" HorizontalAlignment="Stretch"
                                                                 Minimum="{Binding SelectedGpu.GpuPowerLimitMinMilliW, FallbackValue=0}"
-                                                                Maximum="{Binding SelectedGpu.GpuPowerLimitMaxMilliW, FallbackValue=600}"
+                                                                Maximum="{Binding SelectedGpu.GpuPowerLimitMaxMilliW, FallbackValue=10000000}"
                                                                 Value="{Binding TunerCurrentPowerLimitMw}"
                                                                 
                                                         />
@@ -699,15 +699,15 @@
                                                     <Label Classes="tunerLabel" DockPanel.Dock="Right" VerticalAlignment="Center" FontWeight="Bold" Content="mV" />
                                                     
                                                     
-                                                    <NumericUpDown DockPanel.Dock="Right" Minimum="{Binding SelectedGpu.VoltageCoreMinOffsetMv, FallbackValue=0}" 
+                                                    <NumericUpDown DockPanel.Dock="Right" Minimum="{Binding SelectedGpu.VoltageCoreMinOffsetMv, FallbackValue=-100000}" 
                                                                    Maximum="{Binding SelectedGpu.VoltageCoreMaxOffsetMv, FallbackValue=3000}"
                                                                    FormatString="0" Background="Transparent" BorderBrush="Transparent" 
                                                                    
                                                                    TextAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Value="{Binding TunerCurrentVoltageOffsetMv,FallbackValue=0000}"/> 
                                                     
                                                     <Slider  DockPanel.Dock="Right"  Height="35" VerticalAlignment="Top" HorizontalAlignment="Stretch"
-                                                            Minimum="{Binding SelectedGpu.VoltageCoreMinOffsetMv, FallbackValue=0}"
-                                                            Maximum="{Binding SelectedGpu.VoltageCoreMaxOffsetMv, FallbackValue=0}"
+                                                            Minimum="{Binding SelectedGpu.VoltageCoreMinOffsetMv, FallbackValue=-10000}"
+                                                            Maximum="{Binding SelectedGpu.VoltageCoreMaxOffsetMv, FallbackValue=10000}"
                                                             Value="{Binding TunerCurrentVoltageOffsetMv}"
                                                                 
                                                     />

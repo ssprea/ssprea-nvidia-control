@@ -52,7 +52,7 @@ public class Program
     // [Option(CommandOptionType.MultipleValue, Description = "select fan id", LongName = "fanId",ShortName = "fi")]
     // public static int[] FanIds { get; set; }
     
-    private readonly string _serviceName = "snvctl-profile.service";
+    
 
     
     static GpuService? _gpuService;
@@ -68,7 +68,7 @@ public class Program
     }
 
     
-    private Task? _fanCurveTask;
+    
     
     // public static void Main(string[] args)
     // {
@@ -278,7 +278,7 @@ public class Program
                 //
                 // Log.Information("Power limit: {powerLimitW}",ocProfile.PowerLimitMw);
                 
-                return;
+                
             }
             else
             {
@@ -426,7 +426,7 @@ public class Program
         throw new ArgumentException("Invalid oc string "+ocString);
     }
     
-    private uint _lastFanTemp;
+   
     
     // private async Task FanSpeedProfileThread(int updateDelayMilliseconds, FanCurve fanCurve,CancellationToken cancelToken)
     // {

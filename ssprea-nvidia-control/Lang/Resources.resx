@@ -318,11 +318,11 @@
     <data name="MsgBoxBodyDependencyDriverOutdated" xml:space="preserve">
         <value>An older version of the Nvidia driver was detected, but to apply settings version 555+ is required.</value>
     </data>
-    <data name="MsgBoxTitleDependencyCliMissing" xml:space="preserve">
-        <value>snvctl cli tool not detected!</value>
+    <data name="MsgBoxTitleDependencyDaemonMissingOrNotRunning" xml:space="preserve">
+        <value>Daemon not running or not installed!</value>
     </data>
-    <data name="MsgBoxBodyDependencyCliMissing" xml:space="preserve">
-        <value>Please make sure you installed the CLI tool otherwise you won't be able to apply settings.</value>
+    <data name="MsgBoxBodyDependencyDaemonMissingOrNotRunning" xml:space="preserve">
+        <value>The SLimit Daemon was not found. Make sure it's installed and start it by running 'sudo systemctl enable --now slimitd'</value>
     </data>
     <data name="GraphsTooltipSecondsAgo" xml:space="preserve">
         <value>s ago</value>
@@ -353,5 +353,11 @@
     </data>
     <data name="ButtonCancel" xml:space="preserve">
         <value>Cancel</value>
+    </data>
+    <data name="MsgBoxTitleDependencyNoGpusFound" xml:space="preserve">
+        <value>No supported GPUs found!</value>
+    </data>
+    <data name="MsgBoxBodyDependencyNoGpusFound" xml:space="preserve">
+        <value>No supported GPUs detected! Currently this tool only supports AMD and NVidia.</value>
     </data>
 </root>

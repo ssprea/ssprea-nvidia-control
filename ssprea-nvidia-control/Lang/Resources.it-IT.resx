@@ -273,8 +273,8 @@
         <value>(profilo avvio pc) è attualmente attivo, applicare un profilo delle ventole con un'altra istanza già in esecuzione può causare problemi.
             ATTENZIONE: se decidi di spegnere il servizio dovrai riabilitare l'opzione del profilo avvio pc o eseguire: </value>
     </data>
-    <data name="MsgBoxTitleDependencyDriverMissing" xml:space="preserve">
-        <value>Driver Nvidia non trovato!</value>
+    <data name="MsgBoxTitleDependencyDaemonMissingOrNotRunning" xml:space="preserve">
+        <value>Daemon spento o non installato!</value>
     </data>
     <data name="MsgBoxBodyDependencyDriverMissing" xml:space="preserve">
         <value>Verifica di aver installato il driver Nvidia ufficiale versione 555+</value>
@@ -320,5 +320,14 @@
     </data>
     <data name="ButtonCancel" xml:space="preserve">
         <value>Annulla</value>
+    </data>
+    <data name="MsgBoxBodyDependencyDaemonMissingOrNotRunning" xml:space="preserve">
+        <value>Il daemon di SLimit non è stato trovato. Assicurati di averlo installato e avvialo con 'sudo systemctl enable --now slimitd'</value>
+    </data>
+    <data name="MsgBoxTitleDependencyNoGpusFound" xml:space="preserve">
+        <value>Nessuna GPU rilevata!</value>
+    </data>
+    <data name="MsgBoxBodyDependencyNoGpusFound" xml:space="preserve">
+        <value>Nessuna GPU rilevata! Attualmente questo strumento supporta solo AMD e NVidia.</value>
     </data>
 </root>

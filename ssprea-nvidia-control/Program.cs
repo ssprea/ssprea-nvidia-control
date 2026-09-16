@@ -58,13 +58,19 @@ sealed class Program
 
         try
         {
-            DaemonSession = new DaemonSession("/run/slimit-grpc.sock");
-            Log.Information("Connected to daemon! ");
+            if (File.Exists("/run/slimit-grpc.sock"))
+                DaemonSession = new DaemonSession("/run/slimit-grpc.sock");
         }
         catch (Exception ex)
         {
             Log.Error("Error while initializing Daemon Session: {exMsg}", ex.Message);
         }
+        finally
+        {
+            Log.Information("Connected to daemon! ");
+            
+        }
+        
         
         
         //remove the default profile

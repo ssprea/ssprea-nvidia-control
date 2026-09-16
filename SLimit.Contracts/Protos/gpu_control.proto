@@ -14,14 +14,25 @@ service GpuControl {
     rpc GpuResetFan (FanResetRequest) returns (DaemonStatusReply);
     rpc GpuStopFanThread (FanResetRequest) returns (DaemonStatusReply);
     rpc GpuApplyOcProfile (OcProfileApplyRequest) returns (DaemonStatusReply);
-    rpc SystemSaveStartupProfile (OcProfileApplyRequest) returns (DaemonStatusReply);
-    rpc SystemToggleStartupProfile (OcProfileApplyRequest) returns (DaemonStatusReply);
+    rpc SystemSaveStartupProfile (StartupProfileSaveMessage) returns (DaemonStatusReply);
+    rpc SystemDeleteStartupProfile (GpuIdMessage) returns (DaemonStatusReply);
+    rpc SystemGetStartupProfileInfo (GpuIdMessage) returns (StartupProfileStatusReply);
 }
 
-message StartupProfileToggleMessage {
-    string gpu_id = 1;
-    bool enable = 2;
+message StartupProfileStatusReply {
+    DaemonStatusReply status = 1;
+    string gpu_id = 2;
+    string profile_name = 3;
+    bool exists = 4;
 }
+
+
+message StartupProfileSaveMessage {
+    string gpu_id = 1;
+    string profile_json = 2;
+    string curve_json = 3;
+}
+
 
 message OcProfileApplyRequest {
     string gpu_id = 1;
@@ -87,5 +98,9 @@ message FanFixedSetRequest {
 }
 
 message FanResetRequest {
+    string gpu_id = 1;
+}
+
+message GpuIdMessage {
     string gpu_id = 1;
 }

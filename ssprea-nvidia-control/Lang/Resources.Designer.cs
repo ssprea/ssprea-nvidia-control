@@ -531,15 +531,15 @@ namespace sspreaNvidiaControl.Lang {
             }
         }
         
-        public static string MsgBoxTitleDependencyCliMissing {
+        public static string MsgBoxTitleDependencyDaemonMissingOrNotRunning {
             get {
-                return ResourceManager.GetString("MsgBoxTitleDependencyCliMissing", resourceCulture);
+                return ResourceManager.GetString("MsgBoxTitleDependencyDaemonMissingOrNotRunning", resourceCulture);
             }
         }
         
-        public static string MsgBoxBodyDependencyCliMissing {
+        public static string MsgBoxBodyDependencyDaemonMissingOrNotRunning {
             get {
-                return ResourceManager.GetString("MsgBoxBodyDependencyCliMissing", resourceCulture);
+                return ResourceManager.GetString("MsgBoxBodyDependencyDaemonMissingOrNotRunning", resourceCulture);
             }
         }
         
@@ -600,6 +600,18 @@ namespace sspreaNvidiaControl.Lang {
         public static string ButtonCancel {
             get {
                 return ResourceManager.GetString("ButtonCancel", resourceCulture);
+            }
+        }
+        
+        public static string MsgBoxTitleDependencyNoGpusFound {
+            get {
+                return ResourceManager.GetString("MsgBoxTitleDependencyNoGpusFound", resourceCulture);
+            }
+        }
+        
+        public static string MsgBoxBodyDependencyNoGpusFound {
+            get {
+                return ResourceManager.GetString("MsgBoxBodyDependencyNoGpusFound", resourceCulture);
             }
         }
     }

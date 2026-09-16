@@ -8,7 +8,9 @@ restore:
 build: clean restore
 	dotnet build --configuration Release
 
-publish: build
+.PHONY: publish
+
+publish: 
 	dotnet publish --configuration Release -r linux-x64 -p:PublishSingleFile=true -p:SelfContained=true -p:IncludeAllContentForSelfExtract=true
 
 	

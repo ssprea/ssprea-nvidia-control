@@ -8,7 +8,9 @@ restore:
 build: clean restore
 	dotnet build --configuration Release
 
-publish: build
+.PHONY: publish
+
+publish: 
 	dotnet publish --configuration Release -r linux-x64 -p:PublishSingleFile=true -p:SelfContained=true -p:IncludeAllContentForSelfExtract=true
       
       
@@ -44,7 +46,6 @@ install:
 	cp Assets/ssprea-nvidia-control.desktop $(DESTDIR)/usr/share/applications/ssprea-nvidia-control.desktop
 
 	cp SystemdServices/snvctl-gui.service $(DESTDIR)/usr/lib/systemd/user/snvctl-gui.service
-	cp SystemdServices/snvctl-profile.service $(DESTDIR)/usr/lib/systemd/system/snvctl-profile.service
 
 
 		

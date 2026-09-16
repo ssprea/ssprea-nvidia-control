@@ -29,6 +29,7 @@ using Newtonsoft.Json.Linq;
 using ReactiveUI;
 using Serilog;
 using SkiaSharp;
+using SLimit.Contracts;
 using sspreaNvidiaControl.Lang;
 using sspreaNvidiaControl.Models;
 using sspreaNvidiaControl.Utils;
@@ -178,6 +179,13 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
     {
         OnPropertyChanged(nameof(TunerCurrentPowerLimitW));
     }
+
+    partial void OnTunerCurrentCoreOffsetChanged(ulong oldValue, ulong newValue)
+    {
+        Console.WriteLine(oldValue +"   " + newValue);
+        Console.WriteLine(Environment.StackTrace);
+    }
+    
 
     private const string DEFAULT_SERVICE_DATA_PATH = "/etc/snvctl";
 
@@ -335,11 +343,16 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         if (newValue is not null)
         {
             newValue.StartUpdating();
+            //update to gpu's startup profile
+            CheckAndLoadStartupProfile(newValue).Wait();
             //should only run on first run
             if (oldValue is null)
             {
                 Console.WriteLine(newValue.LatestGpuMetrics is null);
-                LoadOcProfileToTuner(new OcProfile("",GetDefaultTune(newValue.Capabilities.CoreClockTuningMode,newValue.ClockCoreMinMhz,newValue.ClockCoreMaxMhz) ,GetDefaultTune(newValue.Capabilities.MemoryClockTuningMode,newValue.ClockMemMinMhz,newValue.ClockMemMaxMhz),SelectedGpu?.LatestGpuMetrics?.PowerLimitCurrentMilliW ?? 100000,0,0, (FanCurve?)null));
+                if (!IsStartupProfileChecked)
+                    LoadOcProfileToTuner(new OcProfile("",GetDefaultTune(newValue.Capabilities.CoreClockTuningMode,newValue.ClockCoreMinMhz,newValue.ClockCoreMaxMhz) ,GetDefaultTune(newValue.Capabilities.MemoryClockTuningMode,newValue.ClockMemMinMhz,newValue.ClockMemMaxMhz),SelectedGpu?.LatestGpuMetrics?.PowerLimitCurrentMilliW ?? 100000,0,0, (FanCurve?)null));
+                Console.WriteLine("default loaded");
+                
             }
                 
         }
@@ -365,6 +378,8 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         IsTunerMemOverdrive = SelectedGpu?.Capabilities.MemoryClockTuningMode == GpuClockTuningMode.Overdrive;
         
         IsTunerMemRange = SelectedGpu?.Capabilities.MemoryClockTuningMode == GpuClockTuningMode.ClockRange;
+        
+        
         
         
         
@@ -527,19 +542,28 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
     
     
     
-    private async Task CheckAndLoadStartupProfile()
+    private async Task CheckAndLoadStartupProfile(GpuViewModel gpu)
     {
-        
+        if (Program.DaemonSession is null)
+            return;
         
         //check startup profile
-        IsStartupProfileChecked = Utils.Systemd.IsSystemdServiceEnabled(_profilesServiceName);
-        if (IsStartupProfileChecked && File.Exists(DEFAULT_SERVICE_DATA_PATH+"/profile.json"))
+
+        var resp = Program.DaemonSession.Client.SystemGetStartupProfileInfo(new GpuIdMessage()
+            { GpuId = gpu.DevicePciAddress });
+
+        if (resp is null)
+            return;
+        
+        IsStartupProfileChecked = resp.Exists;
+        if (IsStartupProfileChecked)
         {
-            var startupProfileName = OcProfile.FromJson(await File.ReadAllTextAsync(DEFAULT_SERVICE_DATA_PATH+"/profile.json"))?.Name;
+            var startupProfileName = resp.ProfileName;
             
             SelectedStartupProfile = OcProfilesList.FirstOrDefault(x => x.Name == startupProfileName);
             SelectedOcProfile = SelectedStartupProfile;
             await LoadSelectedOcProfileToTuner();
+            Console.WriteLine("startup loaded");
         }
         
         
@@ -683,32 +707,13 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
             return;
 
         }
-        
-        
-        //check sudo password
-        if (!await RequestSudoPasswordDialogIfNeededAsync())
+
+        if (Program.DaemonSession is null)
             return;
         
-        //check if profile service exists
-        if (!Systemd.DoesSystemdServiceExist(_profilesServiceName))
-        {
-            await MessageBoxManager.GetMessageBoxStandard(Resources.MsgBoxTitleError,
-                $"{_profilesServiceName} {Resources.MsgBoxBodyProfileServiceMissing}", ButtonEnum.Ok,
-                Icon.Error).ShowAsync();
-            IsStartupProfileChecked = false;
-            return;
-        }
         
-        //if the checkbox is disabled, stop the service
-        if (!IsStartupProfileChecked)
-        {
-            Systemd.StopSystemdService(_profilesServiceName);
-            Systemd.DisableSystemdService(_profilesServiceName);
-            
-            Log.Information("No startup profile selected, stopped {serviceName}.", _profilesServiceName);
-            SelectedStartupProfile = null;
-            return;
-        }
+        
+        
 
         if (profile is null)
         {
@@ -725,38 +730,59 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
             
             return;
         }
-        
-        
-        //check if directory exists
-        if (!Directory.Exists(DEFAULT_SERVICE_DATA_PATH ))
-            Files.MakeDirectorySudo(DEFAULT_SERVICE_DATA_PATH);
-
-        
-        //save profile and copy to service data path
-        await File.WriteAllTextAsync(Program.DefaultDataPath + "/temp/deviceidx.txt", SelectedGpu.DeviceIndex.ToString(CultureInfo.InvariantCulture));
-        Files.CopySudo(Program.DefaultDataPath + "/temp/deviceidx.txt", DEFAULT_SERVICE_DATA_PATH+"/deviceidx.txt");
-        
-        await File.WriteAllTextAsync(Program.DefaultDataPath + "/temp/profile.json", profile.ToJson());
-        Files.CopySudo(Program.DefaultDataPath + "/temp/profile.json", DEFAULT_SERVICE_DATA_PATH+"/profile.json");
-
-
-        if (profile.FanCurve is not null)
+        //if the checkbox is disabled, stop the service
+        if (!IsStartupProfileChecked)
         {
-            //save fan curve and copy to service data path
-            await File.WriteAllTextAsync(Program.DefaultDataPath + "/temp/curve.json", profile.FanCurve.ToJson());
-            Files.CopySudo(Program.DefaultDataPath + "/temp/curve.json", DEFAULT_SERVICE_DATA_PATH+"/curve.json");
-
+            await Program.DaemonSession.Client.SystemDeleteStartupProfileAsync(new GpuIdMessage() { GpuId = SelectedGpu.DevicePciAddress });
+            
+            Log.Information("No startup profile selected, stopped {serviceName}.", _profilesServiceName);
+            SelectedStartupProfile = null;
+            return;
         }
         
         
-        //enable service
-        Systemd.EnableSystemdService(_profilesServiceName);
-        if (Systemd.StartSystemdService(_profilesServiceName))
-        {
-            SelectedStartupProfile = SelectedOcProfile;
-            //kill gui fan curve process if running
-            Program.KillFanCurveProcess();
-        }
+        var resp = await Program.DaemonSession.Client.SystemSaveStartupProfileAsync(
+            new StartupProfileSaveMessage()
+                {
+                    GpuId = SelectedGpu.DevicePciAddress,
+                    ProfileJson = profile.ToJson(),
+                    CurveJson = profile.FanCurve is not null ? profile.FanCurve.ToJson() : ""
+                });
+        
+        Log.Information("Sent save startup request to daemon. Response: {msg}",resp.Message);
+        
+        
+        
+        // //check if directory exists
+        // if (!Directory.Exists(DEFAULT_SERVICE_DATA_PATH ))
+        //     Files.MakeDirectorySudo(DEFAULT_SERVICE_DATA_PATH);
+        //
+        //
+        // //save profile and copy to service data path
+        // await File.WriteAllTextAsync(Program.DefaultDataPath + "/temp/deviceidx.txt", SelectedGpu.DeviceIndex.ToString(CultureInfo.InvariantCulture));
+        // Files.CopySudo(Program.DefaultDataPath + "/temp/deviceidx.txt", DEFAULT_SERVICE_DATA_PATH+"/deviceidx.txt");
+        //
+        // await File.WriteAllTextAsync(Program.DefaultDataPath + "/temp/profile.json", profile.ToJson());
+        // Files.CopySudo(Program.DefaultDataPath + "/temp/profile.json", DEFAULT_SERVICE_DATA_PATH+"/profile.json");
+        //
+        //
+        // if (profile.FanCurve is not null)
+        // {
+        //     //save fan curve and copy to service data path
+        //     await File.WriteAllTextAsync(Program.DefaultDataPath + "/temp/curve.json", profile.FanCurve.ToJson());
+        //     Files.CopySudo(Program.DefaultDataPath + "/temp/curve.json", DEFAULT_SERVICE_DATA_PATH+"/curve.json");
+        //
+        // }
+        //
+        //
+        // //enable service
+        // Systemd.EnableSystemdService(_profilesServiceName);
+        // if (Systemd.StartSystemdService(_profilesServiceName))
+        // {
+        //     SelectedStartupProfile = SelectedOcProfile;
+        //     //kill gui fan curve process if running
+        //     Program.KillFanCurveProcess();
+        // }
     }
     
     //private readonly FanCurvesFileManager _fanCurvesFileManager = new("fan_curves.json");
@@ -983,7 +1009,6 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         if (SelectedGpu is null && AvailableGpus.Any())
             SelectedGpu = AvailableGpus.First();
         
-        await CheckAndLoadStartupProfile();
         await CheckAndApplyAutoApplyProfile();
     }
 
@@ -1003,7 +1028,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
     /// <summary>
     /// Check nvidia drivers and cli tool
     /// </summary>
-    /// <returns>0: success, 1: no compatible gpus found, 2: nvidia driver version less than 555, 3: cli tool not installed </returns>
+    /// <returns>0: success, 1: no compatible gpus found, 2: nvidia driver version less than 555, 3: daemon not running </returns>
     private async Task<ushort> CheckDependencies()
     {
         //check compatible gpus
@@ -1012,30 +1037,26 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         {
             return 1;
         }
-        
-       
-        
+
+
         //check cli tool
-
-        var clicmd = Utils.General.RunCliCommand("snvctl", "-d", true,false,true);
-        if (clicmd is null || clicmd.ExitCode != 0)
-            return 3;
-
-        return 0;
+        // var clicmd = Utils.General.RunCliCommand("snvctl", "-d", true,false,true);
+        // if (clicmd is null || clicmd.ExitCode != 0)
+        //     return 3;
+        return !File.Exists("/run/slimit-grpc.sock") ? (ushort)3 : (ushort)0;
     }
 
     public static async Task ShowDependenciesMsgbox(ushort errCode)
     {
-       
-        //TODO: show if daemon service is not running
+        
         switch (errCode)
         {
             case 0:
                 return;
             case 1:
 
-                var box = MessageBoxManager.GetMessageBoxStandard(Resources.MsgBoxTitleDependencyDriverMissing,
-                    Resources.MsgBoxTitleDependencyDriverMissing, ButtonEnum.Ok, Icon.Error);
+                var box = MessageBoxManager.GetMessageBoxStandard(Resources.MsgBoxTitleDependencyNoGpusFound,
+                    Resources.MsgBoxBodyDependencyNoGpusFound, ButtonEnum.Ok, Icon.Error);
                 
                 await box.ShowAsync();
                 // Environment.Exit(1);
@@ -1047,10 +1068,11 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
                 await box.ShowAsync();
                 break;
             case 3:
-                box = MessageBoxManager.GetMessageBoxStandard(Resources.MsgBoxTitleDependencyCliMissing,
-                    Resources.MsgBoxBodyDependencyCliMissing, ButtonEnum.Ok, Icon.Warning);
+                box = MessageBoxManager.GetMessageBoxStandard(Resources.MsgBoxTitleDependencyDaemonMissingOrNotRunning,
+                    Resources.MsgBoxBodyDependencyDaemonMissingOrNotRunning, ButtonEnum.Ok, Icon.Warning);
 
                 await box.ShowAsync();
+                Environment.Exit(1);
                 break;
         }
     }
