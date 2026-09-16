@@ -1,9 +1,9 @@
 [Desktop Entry]
-Version=1.0
-Name=ssprea NVidia Control
-GenericName=NVidia GPU Manager
-Comment=NVidia GPU Manager
-Exec=/usr/local/bin/snvctl-gui
+Version=2.0.0
+Name=sLimit
+GenericName=Unified GPU Manager
+Comment=Unified GPU Manager
+Exec=/usr/local/bin/slimit-gui
 StartupNotify=true
 Terminal=false
 Icon=ssprea-nvidia-control

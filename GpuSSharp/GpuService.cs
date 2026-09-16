@@ -135,7 +135,7 @@ public class GpuService
         Console.WriteLine("get sockets 2: "+AmdSmiWrapper.amdsmi_get_socket_handles(ref socketCount, socketHandlesBuffer));
         
 
-        Console.WriteLine("sockets count: " +socketHandlesBuffer.Length);
+        // Console.WriteLine("sockets count: " +socketHandlesBuffer.Length);
         //get processors
         
         foreach (var handle in socketHandlesBuffer)
@@ -155,7 +155,7 @@ public class GpuService
         }
         
         
-        Console.WriteLine("DONE loaded "+GpuList.Count+" gpus!");
+        Console.WriteLine("DONE loaded "+GpuList.Count+" AMDgpus!");
         
         return true;
     }

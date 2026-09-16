@@ -180,11 +180,11 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(TunerCurrentPowerLimitW));
     }
 
-    partial void OnTunerCurrentCoreOffsetChanged(ulong oldValue, ulong newValue)
-    {
-        Console.WriteLine(oldValue +"   " + newValue);
-        Console.WriteLine(Environment.StackTrace);
-    }
+    // partial void OnTunerCurrentCoreOffsetChanged(ulong oldValue, ulong newValue)
+    // {
+    //     Console.WriteLine(oldValue +"   " + newValue);
+    //     Console.WriteLine(Environment.StackTrace);
+    // }
     
 
     private const string DEFAULT_SERVICE_DATA_PATH = "/etc/snvctl";
@@ -348,10 +348,9 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
             //should only run on first run
             if (oldValue is null)
             {
-                Console.WriteLine(newValue.LatestGpuMetrics is null);
                 if (!IsStartupProfileChecked)
                     LoadOcProfileToTuner(new OcProfile("",GetDefaultTune(newValue.Capabilities.CoreClockTuningMode,newValue.ClockCoreMinMhz,newValue.ClockCoreMaxMhz) ,GetDefaultTune(newValue.Capabilities.MemoryClockTuningMode,newValue.ClockMemMinMhz,newValue.ClockMemMaxMhz),SelectedGpu?.LatestGpuMetrics?.PowerLimitCurrentMilliW ?? 100000,0,0, (FanCurve?)null));
-                Console.WriteLine("default loaded");
+                ;
                 
             }
                 
@@ -563,7 +562,6 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
             SelectedStartupProfile = OcProfilesList.FirstOrDefault(x => x.Name == startupProfileName);
             SelectedOcProfile = SelectedStartupProfile;
             await LoadSelectedOcProfileToTuner();
-            Console.WriteLine("startup loaded");
         }
         
         

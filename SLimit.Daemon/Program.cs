@@ -28,11 +28,19 @@ public class Program
             Log.Fatal("Only Linux is supported currently.");
             return;
         }
+
+        if (Environment.UserName != "root")
+        {
+            Log.Fatal("Run the program as root.");
+            return;
+        }
+        
+        if (File.Exists(socketPath))
+            File.Delete(socketPath);
         
         Log.Information("[{dateTime}] Starting SLimit Daemon...", DateTime.Now);
         
-        if (GpuService is null)
-            GpuService = new GpuService();
+        GpuService ??= new GpuService();
 
        
         
@@ -57,24 +65,26 @@ public class Program
         
 
 
-        await app.StartAsync();
 
         Log.Information("[{dateTime}] Daemon started successfully, ready for clients.", DateTime.Now);
-        
+
         try
         {
-            
+            await app.StartAsync();
+
             File.SetUnixFileMode(
                 socketPath,
                 UnixFileMode.OtherRead | UnixFileMode.OtherWrite);
 
             await app.WaitForShutdownAsync();
         }
-        finally
+        catch (Exception ex)
         {
-            await app.StopAsync();
-            File.Delete(socketPath);
+            Log.Fatal("Failed to start SLimit Daemon: {exMsg}",ex);
         }
+        
+        await app.StopAsync();
+        File.Delete(socketPath);
     }
 }
 

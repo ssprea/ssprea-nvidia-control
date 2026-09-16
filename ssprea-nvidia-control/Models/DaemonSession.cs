@@ -1,6 +1,8 @@
 using System.Net.Http;
 using System.Net.Sockets;
+using System.Threading.Tasks;
 using Grpc.Net.Client;
+using Serilog;
 using SLimit.Contracts;
 
 namespace sspreaNvidiaControl.Models;
@@ -9,11 +11,17 @@ public class DaemonSession
 {
     private string _socketPath;
 
-    public GpuControl.GpuControlClient Client { get; }
+    public GpuControl.GpuControlClient? Client { get; private set; }
+    public bool IsConnected = false;
     
     public DaemonSession(string socketPath)
     {
         _socketPath = socketPath;
+        
+    }
+
+    public async Task ConnectAsync()
+    {
         var handler = new SocketsHttpHandler
         {
             UseProxy = false,
@@ -28,7 +36,7 @@ public class DaemonSession
                 try
                 {
                     await socket.ConnectAsync(
-                        new UnixDomainSocketEndPoint(socketPath),
+                        new UnixDomainSocketEndPoint(_socketPath),
                         cancellationToken);
 
                     return new NetworkStream(socket, ownsSocket: true);
@@ -50,5 +58,7 @@ public class DaemonSession
 
 
         Client = new GpuControl.GpuControlClient(channel);
+        IsConnected = true;
+        Log.Information("Connected to daemon! ");
     }
 }

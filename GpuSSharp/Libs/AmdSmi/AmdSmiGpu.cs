@@ -20,12 +20,20 @@ public class AmdSmiGpu : IGpu
         {
             DevicePciAddress = bdfInfo.ToString();
         }
+        else
+        {
+            throw new  Exception("Unable to get gpu board info");
+        }
         
         //get name
         if (AmdSmiWrapper.amdsmi_get_gpu_board_info(_processorHandle, out var boardInfo) ==
             AmdsmiStatus.AMDSMI_STATUS_SUCCESS)
         {
             Name = boardInfo.product_name;
+        }
+        else
+        {
+            throw new  Exception("Unable to get gpu board info");
         }
         
         //power cap info
@@ -47,7 +55,7 @@ public class AmdSmiGpu : IGpu
         {
             TemperatureThresholdShutdown = (uint)tempThresh;
         }
-        Console.WriteLine("shutdown "+threshShutdown);
+        // Console.WriteLine("shutdown "+threshShutdown);
 
 
         var threshSlow = AmdSmiWrapper.amdsmi_get_temp_metric(_processorHandle,
@@ -59,7 +67,7 @@ public class AmdSmiGpu : IGpu
             TemperatureThresholdSlowdown = (uint)tempThresh;
             
         }
-        Console.WriteLine("slowdown "+threshSlow);
+        // Console.WriteLine("slowdown "+threshSlow);
 
         var threshThrottle = AmdSmiWrapper.amdsmi_get_temp_metric(_processorHandle,
             AmdsmiTemperatureType.AMDSMI_TEMPERATURE_TYPE_EDGE, AmdsmiTemperatureMetric.AMDSMI_TEMP_MAX,
@@ -70,7 +78,7 @@ public class AmdSmiGpu : IGpu
             TemperatureThresholdThrottle = (uint)tempThresh;
             
         }
-        Console.WriteLine("throttle "+threshThrottle);
+        // Console.WriteLine("throttle "+threshThrottle);
         
         //max fan speed
         if (AmdSmiWrapper.amdsmi_get_gpu_fan_speed_max(_processorHandle,0,out var maxSpeed) == AmdsmiStatus.AMDSMI_STATUS_SUCCESS)
@@ -83,7 +91,7 @@ public class AmdSmiGpu : IGpu
 
         var gpuOdVoltInfoSuccess = AmdSmiWrapper.amdsmi_get_gpu_od_volt_info(_processorHandle, out var clockBoundsInfo);
         
-        Console.WriteLine("clock od volt info: "+gpuOdVoltInfoSuccess);
+        // Console.WriteLine("clock od volt info: "+gpuOdVoltInfoSuccess);
         
         if (gpuOdVoltInfoSuccess ==  AmdsmiStatus.AMDSMI_STATUS_SUCCESS)
         {
@@ -113,22 +121,22 @@ public class AmdSmiGpu : IGpu
             VoltageCoreMinOffsetMv = 0;
             VoltageCoreMaxOffsetMv = 0;
         }
-        Console.WriteLine($"volt of max: {VoltageCoreMaxOffsetMv} min: {VoltageCoreMinOffsetMv}");
+        // Console.WriteLine($"volt of max: {VoltageCoreMaxOffsetMv} min: {VoltageCoreMinOffsetMv}");
         
         Capabilities = new GpuCapabilities(GpuClockTuningMode.ClockRange, GpuClockTuningMode.ClockRange,true, false,true,true);
         
         // ApplyAutoSpeedToAllFans();
         
         
-        Console.WriteLine("core max: "+ClockCoreMaxMhz);
-        Console.WriteLine("core min: "+ClockCoreMinMhz);
-        Console.WriteLine("mem max: "+ ClockMemMaxMhz );
-        Console.WriteLine("mem min: "+ ClockMemMinMhz );
+        // Console.WriteLine("core max: "+ClockCoreMaxMhz);
+        // Console.WriteLine("core min: "+ClockCoreMinMhz);
+        // Console.WriteLine("mem max: "+ ClockMemMaxMhz );
+        // Console.WriteLine("mem min: "+ ClockMemMinMhz );
     }
     
 
     public uint DeviceIndex { get; }
-    public string DevicePciAddress { get; }
+    public string DevicePciAddress { get; } = null!;
     public string Name { get; }
     public GpuVendor Vendor => GpuVendor.Amd;
         

@@ -39,9 +39,9 @@ sealed class Program
     // yet and stuff might break.
     // 
     [STAThread]
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
-        using var log = new LoggerConfiguration()
+        await using var log = new LoggerConfiguration()
             .WriteTo.Console(formatProvider: CultureInfo.CurrentCulture)
             .CreateLogger();
 
@@ -59,7 +59,11 @@ sealed class Program
         try
         {
             if (File.Exists("/run/slimit-grpc.sock"))
+            {
                 DaemonSession = new DaemonSession("/run/slimit-grpc.sock");
+                await DaemonSession.ConnectAsync();
+
+            }
         }
         catch (Exception ex)
         {
@@ -67,7 +71,7 @@ sealed class Program
         }
         finally
         {
-            Log.Information("Connected to daemon! ");
+            
             
         }
         
@@ -89,7 +93,7 @@ sealed class Program
         }
         
         
-        Task.Run(async Task?() =>
+        _ = Task.Run(async Task?() =>
         {
             while (true)
             {
