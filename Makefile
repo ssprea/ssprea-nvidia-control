@@ -1,15 +1,21 @@
-VERSION=1.1.10
+VERSION=2.0.0
 PKGN=1
 
 installcli:
 	make -C ssprea-nvidia-control-cli install DESTDIR=$(DESTDIR)
 
+installdaemon:
+	make -C SLimit.Daemon install DESTDIR=$(DESTDIR)
 
 installgui:
-	make -C ssprea-nvidia-control install DESTDIR=$(DESTDIR)
+	make -C SLimit.Cli install DESTDIR=$(DESTDIR)
 
 uninstallcli:
-	make -C ssprea-nvidia-control-cli uninstall
+	make -C SLimit.Cli uninstall
+
+
+uninstalldaemon:
+	make -C SLimit.Daemon uninstall
 
 uninstallgui:
 	make -C ssprea-nvidia-control uninstall
@@ -23,14 +29,15 @@ publishgui:
 
 publish: publishcli publishgui
 
-installall: installcli installgui
+installall: installcli installgui installdaemon
 
-uninstallall: uninstallgui uninstallcli
+uninstallall: uninstallgui uninstallcli uninstalldaemon
 
 reinstallall: uninstallcli installgui
 
 deb:
-	make -C ssprea-nvidia-control-cli deb VERSION=$(VERSION) PKGN=$(PKGN)
+	make -C SLimit.Cli deb VERSION=$(VERSION) PKGN=$(PKGN)
+	make -C SLimit.Daemon deb VERSION=$(VERSION) PKGN=$(PKGN)
 	make -C ssprea-nvidia-control deb VERSION=$(VERSION) PKGN=$(PKGN)
 
 appimage: OUTDIR ?= packages/AppImage/AppDir
