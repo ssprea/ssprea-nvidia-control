@@ -11,6 +11,7 @@ build: clean restore
 .PHONY: publish
 
 publish: 
+	dotnet clean
 	dotnet publish --configuration Release -r linux-x64 -p:PublishSingleFile=true -p:SelfContained=true -p:IncludeAllContentForSelfExtract=true
       
       

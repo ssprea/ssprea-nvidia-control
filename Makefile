@@ -30,6 +30,7 @@ publishdaemon:
 publishgui:
 	make -C ssprea-nvidia-control publish
 
+.NOTPARALLEL:
 publish: publishcli publishgui publishdaemon
 
 installall: installcli installgui installdaemon
