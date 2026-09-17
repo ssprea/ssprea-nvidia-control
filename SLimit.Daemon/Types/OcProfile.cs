@@ -31,8 +31,8 @@ public class OcProfile
     public GpuClockTune MemClockTune { get; set; }
     //public uint SmClockOffset { get; set; }  = 0;
     public uint PowerLimitMw { get; set; }
-    public int CoreVoltageOffsetMv;
-    public int MemVoltageOffsetMv;
+    public int CoreVoltageOffsetMv { get; set; }
+    public int MemVoltageOffsetMv  { get; set; }
     
     // [JsonIgnore]
     // public FanCurve? FanCurve => String.IsNullOrEmpty(_fanCurveName) ? null : MainWindowViewModel.FanCurvesList.First(x => x.Name == _fanCurveName).BaseFanCurve;

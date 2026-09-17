@@ -4,7 +4,6 @@ using System.Runtime.InteropServices;
 using GpuSSharp;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Serilog;
-using SLimit.Daemon;
 
 
 namespace SLimit.Daemon;
@@ -54,13 +53,19 @@ public class Program
         
         
         
-        var builder = WebApplication.CreateBuilder(new WebApplicationOptions()
+        var builder = WebApplication.CreateEmptyBuilder(new WebApplicationOptions()
         {
             Args = args,
+            ContentRootPath = AppContext.BaseDirectory
         });
 
         Log.Information("[{dateTime}] [{swElapsedMs}] Builder created", DateTime.Now,sw.ElapsedMilliseconds);
+
+        builder.Services.AddSerilog(log, dispose: false);
         
+        builder.Host.UseConsoleLifetime();
+        
+        builder.WebHost.UseKestrelCore();
         
         builder.WebHost.ConfigureKestrel(options =>
         {
@@ -73,6 +78,7 @@ public class Program
         Log.Information("[{dateTime}] [{swElapsedMs}] Kestrel created", DateTime.Now,sw.ElapsedMilliseconds);
         
         
+        builder.Services.AddRouting();
         builder.Services.AddGrpc();
         
         Log.Information("[{dateTime}] [{swElapsedMs}] Grpc added", DateTime.Now,sw.ElapsedMilliseconds);
