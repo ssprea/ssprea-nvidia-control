@@ -113,6 +113,10 @@ public class Program
             Log.Information(" [{swElapsedMs}] Socket configured", sw.ElapsedMilliseconds);
             
 
+            Log.Information(" [{swElapsedMs}] Applying startup profiles.",  sw.ElapsedMilliseconds);
+            
+            StartupProfiles.ApplyAllStartupProfiles();
+            
             Log.Information(" [{swElapsedMs}] Daemon started successfully, ready for clients.",  sw.ElapsedMilliseconds);
             
             sw.Stop();
