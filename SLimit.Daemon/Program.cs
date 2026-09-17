@@ -20,6 +20,8 @@ public class Program
             .WriteTo.Console(formatProvider: CultureInfo.CurrentCulture)
             .MinimumLevel.Debug()
             .CreateLogger();
+        
+        
 
         Log.Logger = log;
         
@@ -39,7 +41,7 @@ public class Program
             File.Delete(socketPath);
 
         var sw = Stopwatch.StartNew();
-        Log.Information("[{dateTime}] [{swElapsedMs}] Starting SSLimit Daemon...", DateTime.Now,sw.ElapsedMilliseconds);
+        Log.Information(" [{swElapsedMs}] Starting sLimit Daemon...", sw.ElapsedMilliseconds);
         
         GpuService ??= new GpuService();
 
@@ -48,7 +50,7 @@ public class Program
             Log.Fatal("No supported GPUs found! Quitting.");
             return;
         }
-        Log.Information("[{dateTime}] [{swElapsedMs}] GPU service started successfully", DateTime.Now,sw.ElapsedMilliseconds);
+        Log.Information(" [{swElapsedMs}] GPU service started successfully", sw.ElapsedMilliseconds);
        
         
         
@@ -59,7 +61,7 @@ public class Program
             ContentRootPath = AppContext.BaseDirectory
         });
 
-        Log.Information("[{dateTime}] [{swElapsedMs}] Builder created", DateTime.Now,sw.ElapsedMilliseconds);
+        Log.Debug("[{swElapsedMs}] Builder created", sw.ElapsedMilliseconds);
 
         builder.Services.AddSerilog(log, dispose: false);
         
@@ -75,23 +77,23 @@ public class Program
             });
         });
 
-        Log.Information("[{dateTime}] [{swElapsedMs}] Kestrel created", DateTime.Now,sw.ElapsedMilliseconds);
+        Log.Debug(" [{swElapsedMs}] Kestrel created", sw.ElapsedMilliseconds);
         
         
         builder.Services.AddRouting();
         builder.Services.AddGrpc();
         
-        Log.Information("[{dateTime}] [{swElapsedMs}] Grpc added", DateTime.Now,sw.ElapsedMilliseconds);
+        Log.Debug(" [{swElapsedMs}] Grpc added", sw.ElapsedMilliseconds);
         
 
         await using var app = builder.Build();
         
-        Log.Information("[{dateTime}] [{swElapsedMs}] App built", DateTime.Now,sw.ElapsedMilliseconds);
+        Log.Debug(" [{swElapsedMs}] App built", sw.ElapsedMilliseconds);
         
 
         app.MapGrpcService<GpuControlService>();
         
-        Log.Information("[{dateTime}] [{swElapsedMs}] Service mapped", DateTime.Now,sw.ElapsedMilliseconds);
+        Log.Debug(" [{swElapsedMs}] Service mapped", DateTime.Now,sw.ElapsedMilliseconds);
         
 
 
@@ -101,17 +103,17 @@ public class Program
         {
             await app.StartAsync();
 
-            Log.Information("[{dateTime}] [{swElapsedMs}] App started", DateTime.Now,sw.ElapsedMilliseconds);
+            Log.Information(" [{swElapsedMs}] App started", sw.ElapsedMilliseconds);
             
             
             File.SetUnixFileMode(
                 socketPath,
                 UnixFileMode.OtherRead | UnixFileMode.OtherWrite);
             
-            Log.Information("[{dateTime}] [{swElapsedMs}] Socket configured", DateTime.Now,sw.ElapsedMilliseconds);
+            Log.Information(" [{swElapsedMs}] Socket configured", sw.ElapsedMilliseconds);
             
 
-            Log.Information("[{dateTime}] [{swElapsedMs}] Daemon started successfully, ready for clients.", DateTime.Now, sw.ElapsedMilliseconds);
+            Log.Information(" [{swElapsedMs}] Daemon started successfully, ready for clients.",  sw.ElapsedMilliseconds);
             
             sw.Stop();
             
