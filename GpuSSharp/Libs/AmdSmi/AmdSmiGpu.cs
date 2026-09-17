@@ -251,8 +251,6 @@ public class AmdSmiGpu : IGpu
         //
         // if (tuningValue <= 0)
         //     ResetGpuPerformanceLevel();
-
-        return false;
     }
 
     private bool SetClockRange(ulong minClock, ulong maxClock, AmdSmiClockType clockType)
