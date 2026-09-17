@@ -76,14 +76,14 @@ public partial class GpuViewModel : ViewModelBase, IDisposable
         if (Program.DaemonSession is null)
             return false;
         
-        var reply = Program.DaemonSession.Client.GpuApplyPowerLimit(new PowerLimitSetRequest()
+        var reply = Program.DaemonSession.Client?.GpuApplyPowerLimit(new PowerLimitSetRequest()
         {
             GpuId = DevicePciAddress,
             PowerLimitMw = (uint)limitMw
         });
         
         Log.Information("Sent power limit request to daemon: GPU: {gpuId} PL: {powerLimitMw}",DevicePciAddress,limitMw);
-        if (reply.StatusCode != 0)
+        if (reply is not null && reply.StatusCode != 0)
         {
             Log.Error("Error reply from daemon! : {replyMsg}",reply.Message);
             return false;
@@ -98,9 +98,9 @@ public partial class GpuViewModel : ViewModelBase, IDisposable
         if (Program.DaemonSession is null)
             return false;
         
-        Console.WriteLine("VOFF"+offsetMv);
+        // Console.WriteLine("VOFF"+offsetMv);
         
-        var reply = Program.DaemonSession.Client.GpuApplyVoltageOffset(new VoltageOffsetSetRequest()
+        var reply = Program.DaemonSession.Client?.GpuApplyVoltageOffset(new VoltageOffsetSetRequest()
         {
             GpuId = DevicePciAddress,
             VoltOffsetMv = offsetMv
@@ -108,7 +108,7 @@ public partial class GpuViewModel : ViewModelBase, IDisposable
         
         
         Log.Information("Sent voltage offset request to daemon: GPU: {gpuId} mV: {vOffmV}",DevicePciAddress,offsetMv);
-        if (reply.StatusCode != 0)
+        if (reply is not null && reply.StatusCode != 0)
         {
             Log.Error("Error reply from daemon! : {replyMsg}",reply.Message);
             return false;
@@ -123,13 +123,13 @@ public partial class GpuViewModel : ViewModelBase, IDisposable
         if (Program.DaemonSession is null)
             return false;
         
-        var reply = Program.DaemonSession.Client.GpuResetFan(new FanResetRequest()
+        var reply = Program.DaemonSession.Client?.GpuResetFan(new FanResetRequest()
         {
             GpuId = DevicePciAddress,
         });
         
         Log.Information("Sent fan reset request to daemon: GPU: {gpuId}",DevicePciAddress);
-        if (reply.StatusCode != 0)
+        if (reply is not null && reply.StatusCode != 0)
         {
             Log.Error("Error reply from daemon! : {replyMsg}",reply.Message);
             return false;
@@ -148,14 +148,14 @@ public partial class GpuViewModel : ViewModelBase, IDisposable
         
         if (IsTuneValid(tune, Capabilities.CoreClockTuningMode))
         {
-            var reply = Program.DaemonSession.Client.GpuApplyCoreTune(new ClockSetRequest()
+            var reply = Program.DaemonSession.Client?.GpuApplyCoreTune(new ClockSetRequest()
             {
                 GpuId = DevicePciAddress,
                 Tune = ToProto(tune)
             });
             
             Log.Information("Sent core tune request to daemon: GPU: {gpuId} Tune: {tuneInfo}",DevicePciAddress,tune);
-            if (reply.StatusCode != 0)
+            if (reply is not null && reply.StatusCode != 0)
             {
                 Log.Error("Error reply from daemon! : {replyMsg}",reply.Message);
                 return false;
@@ -174,14 +174,14 @@ public partial class GpuViewModel : ViewModelBase, IDisposable
         
         if (IsTuneValid(tune, Capabilities.MemoryClockTuningMode))
         {
-            var reply = Program.DaemonSession.Client.GpuApplyMemoryTune(new ClockSetRequest()
+            var reply = Program.DaemonSession.Client?.GpuApplyMemoryTune(new ClockSetRequest()
             {
                 GpuId = DevicePciAddress,
                 Tune = ToProto(tune)
             });
             
             Log.Information("Sent memory tune request to daemon: GPU: {gpuId} Tune: {tuneInfo}",DevicePciAddress,tune);
-            if (reply.StatusCode != 0)
+            if (reply is not null && reply.StatusCode != 0)
             {
                 Log.Error("Error reply from daemon! : {replyMsg}",reply.Message);
                 return false;
@@ -227,7 +227,7 @@ public partial class GpuViewModel : ViewModelBase, IDisposable
         });
         
         Log.Information("Sent fan curve apply request to daemon: GPU: {gpuId}",DevicePciAddress);
-        if (reply.StatusCode != 0)
+        if (reply is not null && reply.StatusCode != 0)
             Log.Error("Error reply from daemon! : {replyMsg}",reply.Message);
             
         

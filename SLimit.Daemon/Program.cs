@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.InteropServices;
 using GpuSSharp;
@@ -37,17 +38,30 @@ public class Program
         
         if (File.Exists(socketPath))
             File.Delete(socketPath);
-        
-        Log.Information("[{dateTime}] Starting SLimit Daemon...", DateTime.Now);
+
+        var sw = Stopwatch.StartNew();
+        Log.Information("[{dateTime}] [{swElapsedMs}] Starting SSLimit Daemon...", DateTime.Now,sw.ElapsedMilliseconds);
         
         GpuService ??= new GpuService();
 
+        if (GpuService.GpuList.Count == 0)
+        {
+            Log.Fatal("No supported GPUs found! Quitting.");
+            return;
+        }
+        Log.Information("[{dateTime}] [{swElapsedMs}] GPU service started successfully", DateTime.Now,sw.ElapsedMilliseconds);
        
         
         
         
-        var builder = WebApplication.CreateBuilder(args);
+        var builder = WebApplication.CreateBuilder(new WebApplicationOptions()
+        {
+            Args = args,
+        });
 
+        Log.Information("[{dateTime}] [{swElapsedMs}] Builder created", DateTime.Now,sw.ElapsedMilliseconds);
+        
+        
         builder.WebHost.ConfigureKestrel(options =>
         {
             options.ListenUnixSocket(socketPath, endpoint =>
@@ -56,26 +70,45 @@ public class Program
             });
         });
 
+        Log.Information("[{dateTime}] [{swElapsedMs}] Kestrel created", DateTime.Now,sw.ElapsedMilliseconds);
+        
+        
         builder.Services.AddGrpc();
+        
+        Log.Information("[{dateTime}] [{swElapsedMs}] Grpc added", DateTime.Now,sw.ElapsedMilliseconds);
+        
 
         await using var app = builder.Build();
+        
+        Log.Information("[{dateTime}] [{swElapsedMs}] App built", DateTime.Now,sw.ElapsedMilliseconds);
+        
 
         app.MapGrpcService<GpuControlService>();
         
+        Log.Information("[{dateTime}] [{swElapsedMs}] Service mapped", DateTime.Now,sw.ElapsedMilliseconds);
         
 
 
 
-        Log.Information("[{dateTime}] Daemon started successfully, ready for clients.", DateTime.Now);
 
         try
         {
             await app.StartAsync();
 
+            Log.Information("[{dateTime}] [{swElapsedMs}] App started", DateTime.Now,sw.ElapsedMilliseconds);
+            
+            
             File.SetUnixFileMode(
                 socketPath,
                 UnixFileMode.OtherRead | UnixFileMode.OtherWrite);
+            
+            Log.Information("[{dateTime}] [{swElapsedMs}] Socket configured", DateTime.Now,sw.ElapsedMilliseconds);
+            
 
+            Log.Information("[{dateTime}] [{swElapsedMs}] Daemon started successfully, ready for clients.", DateTime.Now, sw.ElapsedMilliseconds);
+            
+            sw.Stop();
+            
             await app.WaitForShutdownAsync();
         }
         catch (Exception ex)
