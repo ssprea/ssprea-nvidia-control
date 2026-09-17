@@ -1,7 +1,8 @@
-# ssprea-nvidia-control
+# sLimit
+## Formerly known as ssprea-nvidia-control
 
 
-Inspired by MSI Afterburner, ssprea-nvidia-control is a highly customizable GUI overclocking tool for NVidia GPUs that supports Wayland, X11 and Windows.
+Inspired by MSI Afterburner, sLimit is a highly customizable GUI overclocking tool for NVidia GPUs that supports Wayland and X11.
 
 ## Features
 
@@ -63,7 +64,7 @@ yay -S ssprea-nvidia-control-git
 ### Windows:
 
 Windows is not currently officially supported, and I don’t provide support for Windows-specific issues.
-However, the tool should still work on Windows without any major problems, so you’re welcome to give it a try at your own risk.
+Currently the latest version that should work on Windows without major problems is 1.1.10, so you’re welcome to give it a try at your own risk.
 
 
 Currently these features are known to not work on Windows:
@@ -80,20 +81,12 @@ After that you can just run it as an administrator.
 To build this tool you need to install Make and .NET SDK 9.0
 
 
-Build and install GUI & CLI:
+Build and install GUI , Daemon and CLI:
 ```bash
   git clone https://github.com/ssprea/ssprea-nvidia-control.git
   cd ssprea-nvidia-control
   make publish
   sudo make installall
-```
-
-Build and install CLI only:
-```bash
-  git clone https://github.com/ssprea/ssprea-nvidia-control.git
-  cd ssprea-nvidia-control
-  make publish
-  sudo make installcli
 ```
 
 Build deb packages to install with dpkg:
@@ -106,12 +99,3 @@ The packages will be located in `ssprea-nvidia-control/ssprea-nvidia-control/bin
 
 You can install them using `sudo dpkg -i <package_path>`
 
-
-Without make:
-
-```bash
-  git clone https://github.com/ssprea/ssprea-nvidia-control.git
-  cd ssprea-nvidia-control
-  dotnet run --configuration Release
-```
-If you run the tool like this the CLI tool won't be found in the path so you will not be able to apply settings.
