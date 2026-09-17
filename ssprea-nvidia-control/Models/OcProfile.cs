@@ -19,6 +19,8 @@ public partial class OcProfile : ObservableObject
         MemClockTune = memClockTune;
         PowerLimitMw = powerLimitMw;
         _fanCurveName = fanCurve != null ? fanCurve.Name : "";
+        CoreVoltageOffsetMv = coreVoltageOffsetMv;
+        MemVoltageOffsetMv = memVoltageOffsetMv;
     }
 
     [JsonConstructor]
