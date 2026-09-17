@@ -3,6 +3,9 @@ Description=Starts SLimit Daemon
 
 [Service]
 Type=exec
+Environment=ASPNET_CAPTURESTARTUPERRORS=1
+Environment=ASPNET_DETAILEDERRORS=1
+Environment=ASPNETCORE_hostBuilder__reloadConfigOnChange=false
 ExecStart=/usr/local/bin/slimitd
 Restart=always
 
