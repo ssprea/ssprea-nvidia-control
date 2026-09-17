@@ -18,7 +18,7 @@ public class Program
 
         await using var log = new LoggerConfiguration() 
             .WriteTo.Console(formatProvider: CultureInfo.CurrentCulture)
-            .MinimumLevel.Debug()
+            .MinimumLevel.Information()
             .CreateLogger();
         
         
