@@ -614,5 +614,11 @@ namespace sspreaNvidiaControl.Lang {
                 return ResourceManager.GetString("MsgBoxBodyDependencyNoGpusFound", resourceCulture);
             }
         }
+        
+        public static string MsgBoxBodyIncompatibleProfile {
+            get {
+                return ResourceManager.GetString("MsgBoxBodyIncompatibleProfile", resourceCulture);
+            }
+        }
     }
 }
