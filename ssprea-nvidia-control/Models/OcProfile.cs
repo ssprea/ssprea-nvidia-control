@@ -10,7 +10,7 @@ using sspreaNvidiaControl.ViewModels;
 namespace sspreaNvidiaControl.Models;
 
 
-public partial class OcProfile : ObservableObject
+public partial class OcProfile : ObservableObject, ICloneable
 {
     public OcProfile(string name,GpuClockTune gpuClockTune, GpuClockTune memClockTune, uint powerLimitMw, int coreVoltageOffsetMv,int memVoltageOffsetMv, FanCurve? fanCurve)
     {
@@ -104,5 +104,10 @@ public partial class OcProfile : ObservableObject
     public static OcProfile? FromJson(string json)
     {
         return JsonConvert.DeserializeObject<OcProfile>(json);
+    }
+
+    public object Clone()
+    {
+        return new OcProfile(Name,GpuClockTune,MemClockTune,PowerLimitMw,CoreVoltageOffsetMv,MemVoltageOffsetMv,FanCurveName);
     }
 }
