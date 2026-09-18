@@ -50,15 +50,36 @@
              <converters:BytesConverter x:Key="BytesConverter"/>
              <converters:WattsConverter x:Key="WattsConverter"/>
              
+             <SolidColorBrush x:Key="SuccessBrush" Color="{DynamicResource SuccessColor}" />
+             <SolidColorBrush x:Key="WarningBrush" Color="{DynamicResource WarningColor}" />
+             <SolidColorBrush x:Key="DangerHoverBrush" Color="{DynamicResource DangerHoverColor}" />
+             <SolidColorBrush x:Key="DangerBrush" Color="{DynamicResource DangerColor}" />
+             <SolidColorBrush x:Key="InfoBrush" Color="{DynamicResource AccentColor}" />
+                    
+             <SolidColorBrush x:Key='BackgroundBrush' Color="{DynamicResource BackgroundColor}"/>
+             <SolidColorBrush x:Key='BackgroundBrushOpaque' Color="{DynamicResource BackgroundColorOpaque}"/>
+             <SolidColorBrush x:Key='BorderBrush' Color="{DynamicResource BorderColor}"/>
+             <SolidColorBrush x:Key='ForegroundBrush' Color="{DynamicResource ForegroundColor}"/>
+             <SolidColorBrush x:Key='SmallSectionBackgroundBrushLight' Color="{DynamicResource SmallSectionBackgroundColorLight}"/>
+             <SolidColorBrush x:Key='SmallSectionBackgroundBrushDark' Color="{DynamicResource SmallSectionBackgroundColorDark}"/>
+             <SolidColorBrush x:Key='SmallSectionBorderBrush' Color="{DynamicResource SmallSectionBorderColor}"/>
+             <SolidColorBrush x:Key='SectionBackgroundBrushDark' Color="{DynamicResource SectionBackgroundColorDark}"/>
+             <SolidColorBrush x:Key='SectionBackgroundBrushLight' Color="{DynamicResource SectionBackgroundColorLight}"/>
+             <SolidColorBrush x:Key='InfoBarsBorderBrush' Color="{DynamicResource InfoBarsBorderColor}"/>
+             <SolidColorBrush x:Key='AccentBrush' Color="{DynamicResource AccentColor}"/>
+             <SolidColorBrush x:Key='StrongAccentBrush' Color="{DynamicResource StrongAccentColor}"/>
+             <SolidColorBrush x:Key='TextBrush' Color="{DynamicResource TextColor}"/>
+             
+             
              <ResourceDictionary.ThemeDictionaries>
                 
                 <ResourceDictionary x:Key='Light'>
-                    <SolidColorBrush x:Key='BackgroundBrush'>GhostWhite</SolidColorBrush>
-                    <SolidColorBrush x:Key='BorderBrush'>DimGray</SolidColorBrush>
-                    <SolidColorBrush x:Key='ForegroundBrush'>Black</SolidColorBrush>
-                    <SolidColorBrush x:Key='SectionBackgroundBrush'>LightGray</SolidColorBrush>
-                    <SolidColorBrush x:Key='SelectionColor'>#C191FF</SolidColorBrush>
-                    <SolidColorBrush x:Key='TextColor'>Black</SolidColorBrush>
+                    <Color x:Key='BackgroundColor'>GhostWhite</Color>
+                    <Color x:Key='BorderColor'>DimGray</Color>
+                    <Color x:Key='ForegroundColor'>Black</Color>
+                    <Color x:Key='SectionBackgroundColor'>LightGray</Color>
+                    <Color x:Key='SelectionColor'>#C191FF</Color>
+                    <Color x:Key='TextColor'>Black</Color>
                 </ResourceDictionary>
         
             <!-- <ResourceDictionary x:Key=''> -->
@@ -87,29 +108,21 @@
                     <Color x:Key="WarningColor">#E5A84B</Color>
                     <Color x:Key="DangerHoverColor">DarkRed</Color>
                     <Color x:Key="DangerColor">#40E85F68</Color>
-                    
                     <Color x:Key="AccentColor">#505BE6</Color>
                     <Color x:Key="StrongAccentColor">#9C1FE8</Color>
+                    <Color x:Key="BackgroundColor">#DD121D30</Color>
+                    <Color x:Key="BackgroundColorOpaque">#FF121D30</Color>
+                    <Color x:Key="BorderColor">#66224D75</Color>
+                    <Color x:Key="ForegroundColor">#E6FFFFFF</Color>
+                    <Color x:Key="SmallSectionBackgroundColorLight">#33224D75</Color>
+                    <Color x:Key="SmallSectionBackgroundColorDark">#22121D30</Color>
+                    <Color x:Key="SmallSectionBorderColor">#66224D75</Color>
+                    <Color x:Key="SectionBackgroundColorDark">#11121D30</Color>
+                    <Color x:Key="SectionBackgroundColorLight">#22224D75</Color>
+                    <Color x:Key="InfoBarsBorderColor">Black</Color>
+                    <Color x:Key="TextColor">#F1F0F5</Color>
 
-                    <SolidColorBrush x:Key="SuccessBrush" Color="{StaticResource SuccessColor}" />
-                    <SolidColorBrush x:Key="WarningBrush" Color="{StaticResource WarningColor}" />
-                    <SolidColorBrush x:Key="DangerHoverBrush" Color="{StaticResource DangerHoverColor}" />
-                    <SolidColorBrush x:Key="DangerBrush" Color="{StaticResource DangerColor}" />
-                    <SolidColorBrush x:Key="InfoBrush" Color="{StaticResource AccentColor}" />
                     
-                    <SolidColorBrush x:Key='BackgroundBrush'>#DD121D30</SolidColorBrush>
-                    <SolidColorBrush x:Key='BackgroundBrushOpaque'>#FF121D30</SolidColorBrush>
-                    <SolidColorBrush x:Key='BorderBrush'>#66224D75</SolidColorBrush>
-                    <SolidColorBrush x:Key='ForegroundBrush'>#E6FFFFFF</SolidColorBrush>
-                    <SolidColorBrush x:Key='SmallSectionBackgroundBrushLight'>#33224D75</SolidColorBrush>
-                    <SolidColorBrush x:Key='SmallSectionBackgroundBrushDark'>#22121D30</SolidColorBrush>
-                    <SolidColorBrush x:Key='SmallSectionBorderBrush'>#66224D75</SolidColorBrush>
-                    <SolidColorBrush x:Key='SectionBackgroundBrushDark'>#11121D30</SolidColorBrush>
-                    <SolidColorBrush x:Key='SectionBackgroundBrushLight'>#22224D75</SolidColorBrush>
-                    <SolidColorBrush x:Key='InfoBarsBorderBrush'>Black</SolidColorBrush>
-                    <SolidColorBrush x:Key='AccentBrush' Color="{StaticResource AccentColor}"/>
-                    <SolidColorBrush x:Key='StrongAccentBrush' Color="{StaticResource StrongAccentColor}"/>
-                    <SolidColorBrush x:Key='TextColor'>#F1F0F5</SolidColorBrush>
                     
                     <!--Slider thumb override-->
                     <!-- <SolidColorBrush x:Key="SliderThumbBackground">#505BE6</SolidColorBrush> -->
@@ -119,7 +132,6 @@
                     <!-- <SolidColorBrush x:Key="SliderTrackValueFillPointerOver" Color="{StaticResource AccentColor}"/> -->
                     <!-- <SolidColorBrush x:Key="SliderTrackValueFillPressed" Color="{StaticResource StrongAccentColor}"/> -->
                 </ResourceDictionary>
-        <!-- <ResourceDictionary x:Key="Dark"></ResourceDictionary> -->
             </ResourceDictionary.ThemeDictionaries>
         </ResourceDictionary>
              
