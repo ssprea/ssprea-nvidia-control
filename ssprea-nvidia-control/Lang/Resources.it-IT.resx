@@ -330,4 +330,7 @@
     <data name="MsgBoxBodyDependencyNoGpusFound" xml:space="preserve">
         <value>Nessuna GPU rilevata! Attualmente questo strumento supporta solo AMD e NVidia.</value>
     </data>
+    <data name="MsgBoxBodyIncompatibleProfile" xml:space="preserve">
+        <value>Il profilo non è compatibile con la GPU attualmente selezionata.</value>
+    </data>
 </root>
