@@ -93,7 +93,7 @@ public class Program
 
         app.MapGrpcService<GpuControlService>();
         
-        Log.Debug(" [{swElapsedMs}] Service mapped", DateTime.Now,sw.ElapsedMilliseconds);
+        Log.Debug(" [{swElapsedMs}] Service mapped", sw.ElapsedMilliseconds);
         
 
 
