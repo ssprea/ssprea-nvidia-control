@@ -200,6 +200,8 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         Program.ThemesService ??= new ThemeService();
         Program.ThemesService.LoadUserThemesFromJson();
         
+        Program.ThemesService.Apply(Program.LoadedSettings.SelectedTheme);
+        
         InitGpus();
         
         

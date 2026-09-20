@@ -82,6 +82,8 @@ public class ThemeService
             
             palette.Add(userColor.Key,userColor.Value);
         }
+
+        _currentApplication.Resources.ThemeDictionaries.Remove(theme.IsDark ? CustomDark : CustomLight);
         
         if (!_currentApplication.Resources.ThemeDictionaries.ContainsKey(theme.IsDark ?  CustomDark : CustomLight))
             _currentApplication.Resources.ThemeDictionaries.Add(theme.IsDark ?  CustomDark : CustomLight, palette);
