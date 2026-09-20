@@ -33,6 +33,7 @@ sealed class Program
     
     public static GpuService? GpuService;
     public static DaemonSession? DaemonSession;
+    public static ThemeService? ThemesService;
     
     // Initialization code. Don't use any Avalonia, third-party APIs or any
     // SynchronizationContext-reliant code before AppMain is called: things aren't initialized

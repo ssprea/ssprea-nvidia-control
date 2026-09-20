@@ -7,6 +7,7 @@ public class Settings
 {
     public string SelectedGui { get; set; } =  "Default";
     public string SelectedLocale { get; set; } =  "System";
+    public string SelectedTheme { get; set; } =  "Dark";
     public double SelectedUpdateTimeoutSeconds { get; set; } = 0.5;
 
     [JsonProperty(PropertyName = "Behaviour_StartGuiAtBoot")]
@@ -53,6 +54,7 @@ public class Settings
         {
             SelectedGui = "Default",
             SelectedLocale = "System",
+            SelectedTheme = "Dark",
             SelectedUpdateTimeoutSeconds = 0.5,
             BehaviourStartGuiAtBoot = false,
             BehaviourStartGuiInTray =  false,

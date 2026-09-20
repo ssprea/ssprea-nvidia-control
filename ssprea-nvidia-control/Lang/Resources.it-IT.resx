@@ -333,4 +333,10 @@
     <data name="MsgBoxBodyIncompatibleProfile" xml:space="preserve">
         <value>Il profilo non è compatibile con la GPU attualmente selezionata.</value>
     </data>
+    <data name="SettingsSelectedTheme" xml:space="preserve">
+        <value>Seleziona tema:</value>
+    </data>
+    <data name="SettingsCustomThemes" xml:space="preserve">
+        <value>Crea tema personalizzato:</value>
+    </data>
 </root>

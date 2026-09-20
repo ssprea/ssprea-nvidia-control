@@ -34,6 +34,7 @@
          <StyleInclude Source="avares://ssprea-nvidia-control/Styles/Tuner.axaml"/>
          
          <themes:RangeSliderTheme />
+         <StyleInclude Source="avares://Avalonia.Controls.ColorPicker/Themes/Fluent/Fluent.xaml" />
      </Application.Styles>
              
      <Application.Resources>

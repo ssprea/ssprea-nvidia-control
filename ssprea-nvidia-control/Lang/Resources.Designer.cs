@@ -620,5 +620,17 @@ namespace sspreaNvidiaControl.Lang {
                 return ResourceManager.GetString("MsgBoxBodyIncompatibleProfile", resourceCulture);
             }
         }
+        
+        public static string SettingsSelectedTheme {
+            get {
+                return ResourceManager.GetString("SettingsSelectedTheme", resourceCulture);
+            }
+        }
+        
+        public static string SettingsCustomThemes {
+            get {
+                return ResourceManager.GetString("SettingsCustomThemes", resourceCulture);
+            }
+        }
     }
 }

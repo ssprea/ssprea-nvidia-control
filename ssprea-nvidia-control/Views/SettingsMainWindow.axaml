@@ -6,7 +6,7 @@
         xmlns:system="clr-namespace:System;assembly=System.Runtime"
         xmlns:lang="clr-namespace:sspreaNvidiaControl.Lang"
         mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="450"
-        Width="430" Height="450"
+        Width="590" Height="650"
         x:Class="sspreaNvidiaControl.Views.SettingsMainWindow"
         x:DataType="vm:SettingsMainWindowViewModel"
         Background="{DynamicResource BackgroundBrushOpaque}"
@@ -25,6 +25,7 @@
             
                 <ListBox Grid.Row="1" Grid.Column="0" SelectedIndex="{Binding SelectedSettingCategoryIndex}">
                     <ListBoxItem Content="GUIs"/>
+                    <ListBoxItem Content="Theme"/>
                     <ListBoxItem Content="Monitoring"/>
                     <ListBoxItem Content="Behaviour"/>
                     

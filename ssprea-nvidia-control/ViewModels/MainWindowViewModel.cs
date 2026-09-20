@@ -18,6 +18,7 @@ using LiveChartsCore.Defaults;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using LiveChartsCore.SkiaSharpView.Painting.Effects;
+using LiveChartsCore.Themes;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
 using Newtonsoft.Json.Linq;
@@ -195,6 +196,9 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
     public MainWindowViewModel()
     {
         Lockfile.CheckAndUpdateLockfile();
+        
+        Program.ThemesService ??= new ThemeService();
+        Program.ThemesService.LoadUserThemesFromJson();
         
         InitGpus();
         
