@@ -66,7 +66,11 @@ public partial class UserTheme : ObservableObject
     /// </summary>
     public UserTheme() : this("New Theme", true) { }
 
-    
+    public void UpdateTheme(UserTheme newTheme)
+    {
+        IsDark = newTheme.IsDark;
+        Colors = newTheme.Colors;
+    }
     
     
 }

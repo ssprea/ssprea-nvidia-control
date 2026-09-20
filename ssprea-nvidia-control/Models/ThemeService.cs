@@ -119,6 +119,7 @@ public class ThemeService
         {
             Log.Warning("Could not find UserThemes file at {filePath}, it will be created when you save a new theme. Skipping loading.", _themesFilePath);
             LoadedUserThemes = new ObservableCollection<UserTheme>();
+            LoadedUserThemes.Insert(0,new UserTheme() { Name = "Dark", IsDark = true, Colors = new() });
             return;
         }
 
@@ -129,9 +130,11 @@ public class ThemeService
         {
             Log.Warning("Couldn't load file {filePath}, file is corrupt", _themesFilePath);
             LoadedUserThemes = new ObservableCollection<UserTheme>();
+            LoadedUserThemes.Insert(0,new UserTheme() { Name = "Dark", IsDark = true, Colors = new() });
             return;
         }
-        
+
+        parsed.Insert(0,new UserTheme() { Name = "Dark", IsDark = true, Colors = new() });
         LoadedUserThemes = parsed;
     }
 
@@ -162,10 +165,12 @@ public class ThemeService
         if (LoadedUserThemes.FirstOrDefault(x => x.Name == newTheme.Name) is UserTheme existingTheme)
         {
             Log.Warning("Theme {name} already exists! Overwriting.", newTheme.Name);
-            Console.WriteLine(LoadedUserThemes.Remove(existingTheme));
+            // Console.WriteLine(LoadedUserThemes.Remove(existingTheme));
+            existingTheme.UpdateTheme(newTheme);
         }
+        else
+            LoadedUserThemes.Add(newTheme);
         
-        LoadedUserThemes.Add(newTheme);
         await SaveUserThemesFileAsync();
     }
 
@@ -176,7 +181,16 @@ public class ThemeService
     
     private async Task SaveUserThemesFileAsync()
     {
-        await File.WriteAllTextAsync(_themesFilePath, JsonConvert.SerializeObject(LoadedUserThemes, Formatting.Indented));
+        
+        var listToSave = new ObservableCollection<UserTheme>();
+        foreach (var userTheme in LoadedUserThemes)
+        {
+            if (userTheme.Name is "Dark" or "Light" or "System")
+                continue;
+            listToSave.Add(userTheme);
+        }
+        
+        await File.WriteAllTextAsync(_themesFilePath, JsonConvert.SerializeObject(listToSave, Formatting.Indented));
     }
     
 }

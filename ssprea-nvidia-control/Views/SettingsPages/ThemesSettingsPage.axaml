@@ -12,8 +12,15 @@
         <Border Classes="panelItem">
             <StackPanel>
                 <Label  HorizontalAlignment="Left" VerticalAlignment="Bottom" FontSize="10" Content="{x:Static lang:Resources.SettingsSelectedTheme}"/>
-                <ComboBox  SelectedItem="{Binding CurrentEditingSettings.SelectedTheme}" SelectedIndex="{Binding ThemeSelectorIndex}"
-                           HorizontalAlignment="Stretch" ItemsSource="{Binding AvailableThemes}"></ComboBox>
+                <ComboBox  SelectedItem="{Binding CurrentSelectedUserTheme}" SelectedIndex="{Binding ThemeSelectorIndex}"
+                           HorizontalAlignment="Stretch" ItemsSource="{Binding AvailableThemes}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Name}"/>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                    
+                </ComboBox>
                 
                 <DockPanel LastChildFill="False">
                     <Button DockPanel.Dock="Left" IsEnabled="{Binding SelectedThemeIsCustom}" Command="{Binding EditSelectedTheme}"

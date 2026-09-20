@@ -26,13 +26,18 @@ public partial class SettingsMainWindowViewModel : ViewModelBase
 
     public ObservableCollection<string> AvailableGuiSettings { get; private set; }
     public static ObservableCollection<string> AvailableLocales => new(["it-IT", "en-US", "System"]);
-    [ObservableProperty] private ObservableCollection<string> _availableThemes = new(["Dark"]);
+    
+    
+    // [ObservableProperty] private ObservableCollection<string> _availableThemes = new(["Dark"]);
+    
+    public ObservableCollection<UserTheme> AvailableThemes => Program.ThemesService?.LoadedUserThemes is null ? new() : Program.ThemesService.LoadedUserThemes;
     
     // [ObservableProperty] public string selectedSettingCategory;
     [ObservableProperty] private int _selectedSettingCategoryIndex = 0;
     [ObservableProperty] private Control _currentSettingCategoryContent;
     [ObservableProperty] private Settings _currentEditingSettings;
     [ObservableProperty] private UserTheme _currentEditingUserTheme;
+    [ObservableProperty] private UserTheme _currentSelectedUserTheme;
 
     [ObservableProperty] private int _themeSelectorIndex;
     [ObservableProperty] private bool _selectedThemeIsCustom;
@@ -49,6 +54,7 @@ public partial class SettingsMainWindowViewModel : ViewModelBase
         
         CloseSettingsCommand = ReactiveCommand.Create((() => new object()));
 
+        CurrentSelectedUserTheme = Program.ThemesService?.GetUserTheme(CurrentEditingSettings.SelectedTheme) ??  new UserTheme();
         
         AvailableGuiSettings = new ObservableCollection<string>();
 
@@ -61,8 +67,8 @@ public partial class SettingsMainWindowViewModel : ViewModelBase
         AvailableGuiSettings.Add(AvaloniaAssetsUtils.GetAvailableEmbeddedAssetsGuis());
         
         //read available custom themes
-        if (Program.ThemesService is not null)
-            AvailableThemes.AddRange(Program.ThemesService.LoadedUserThemes.Select(theme => theme.Name));
+        // if (Program.ThemesService is not null)
+        //     AvailableThemes.AddRange(Program.ThemesService.LoadedUserThemes.Select(theme => theme.Name));
         
         UpdateCustomThemeCheck(CurrentEditingSettings.SelectedTheme);
         
@@ -71,6 +77,7 @@ public partial class SettingsMainWindowViewModel : ViewModelBase
 
     public async Task SaveSettingsAsync()
     {
+        CurrentEditingSettings.SelectedTheme = CurrentSelectedUserTheme.Name;
         Program.LoadedSettings = CurrentEditingSettings;
         await File.WriteAllTextAsync(Program.SettingsFilePath,Program.LoadedSettings.ToJson());
         Lang.Resources.Culture = new CultureInfo(Program.LoadedSettings.SelectedLocale);
@@ -85,23 +92,24 @@ public partial class SettingsMainWindowViewModel : ViewModelBase
         }
         
         //apply theme
+        
         Program.ThemesService?.Apply(Program.LoadedSettings.SelectedTheme);
 
     }
 
-    private void UpdateLocalThemeList()
-    {
-        var selectedBefore = ThemeSelectorIndex;
-        AvailableThemes.Clear();
-        AvailableThemes.AddRange(["Dark"]);
-
-        if (Program.ThemesService is null)
-            return;
-        
-        AvailableThemes.AddRange(Program.ThemesService.LoadedUserThemes.Select(theme => theme.Name));
-        
-        ThemeSelectorIndex = selectedBefore;
-    }
+    // private void UpdateLocalThemeList()
+    // {
+    //     var selectedBefore = ThemeSelectorIndex;
+    //     AvailableThemes.Clear();
+    //     AvailableThemes.AddRange(["Dark"]);
+    //
+    //     if (Program.ThemesService is null)
+    //         return;
+    //     
+    //     AvailableThemes.AddRange(Program.ThemesService.LoadedUserThemes.Select(theme => theme.Name));
+    //     
+    //     ThemeSelectorIndex = selectedBefore;
+    // }
     
     partial void OnSelectedSettingCategoryIndexChanged(int value)
     {
@@ -132,8 +140,7 @@ public partial class SettingsMainWindowViewModel : ViewModelBase
     {
         
         var theme = AvailableThemes[value];
-        UpdateCustomThemeCheck(theme);
-        
+        UpdateCustomThemeCheck(theme.Name);
     }
 
     private void UpdateCustomThemeCheck(string theme)
@@ -161,7 +168,7 @@ public partial class SettingsMainWindowViewModel : ViewModelBase
             return;
 
         await Program.ThemesService.DeleteUserThemesAndSaveToFileAsync(CurrentEditingUserTheme.Name);
-        UpdateLocalThemeList();
+        // UpdateLocalThemeList();
     }
     
     public async Task SaveNewUserThemeAsync()
@@ -178,7 +185,9 @@ public partial class SettingsMainWindowViewModel : ViewModelBase
         CurrentEditingUserTheme.Name = CurrentEditingUserTheme.Name.Trim();
         
         await Program.ThemesService.AddNewUserThemeAndSaveToFileAsync(CurrentEditingUserTheme);
-        UpdateLocalThemeList();
+        if (CurrentSelectedUserTheme.Name == CurrentEditingUserTheme.Name)
+            Program.ThemesService.Apply(CurrentEditingUserTheme.Name);
+        // UpdateLocalThemeList();
         
     }
 
@@ -187,16 +196,16 @@ public partial class SettingsMainWindowViewModel : ViewModelBase
         if (Program.ThemesService is null)
             return;
 
-        var theme = Program.ThemesService.GetUserTheme(CurrentEditingSettings.SelectedTheme);
+        var theme = CurrentSelectedUserTheme;
 
-        if (theme is null)
-        {
-            Log.Error("Could not find theme {themeName}", theme.Name);
-            return;
-        }
+        // if (theme is null)
+        // {
+        //     Log.Error("Could not find theme {themeName}", CurrentEditingSettings.SelectedTheme);
+        //     return;
+        // }
         
         CurrentEditingUserTheme = theme;
-        
+        Console.WriteLine(theme.Colors.Count);
     }
     // partial void OnCurrentEditingUserThemeChanged(UserTheme value)
     // {
