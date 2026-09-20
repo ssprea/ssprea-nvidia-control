@@ -34,11 +34,12 @@
                     
                     
                     <DockPanel Dock="Top">
-                        <CheckBox IsEnabled="False" DockPanel.Dock="Right" IsChecked="{Binding CurrentEditingUserTheme.IsDark}" Content="Dark"/>
+                        <!-- <CheckBox IsEnabled="False" DockPanel.Dock="Right" IsChecked="{Binding CurrentEditingUserTheme.IsDark}" Content="Dark"/> -->
+                        <Button Content="{x:Static lang:Resources.ButtonSave}" Command="{Binding SaveNewUserThemeAsync}" DockPanel.Dock="Right" />
+                        
                         <TextBox DockPanel.Dock="Left" Text="{Binding CurrentEditingUserTheme.Name}"  HorizontalAlignment="Stretch"/>
                     </DockPanel>
             
-                    <Button Content="{x:Static lang:Resources.ButtonSave}" Command="{Binding SaveNewUserThemeAsync}" DockPanel.Dock="Bottom" />
                     
                     <DataGrid DockPanel.Dock="Top" ItemsSource="{Binding CurrentEditingUserTheme.Colors}" 
                               IsReadOnly="False" 

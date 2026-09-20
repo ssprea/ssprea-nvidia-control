@@ -10,6 +10,8 @@ using Avalonia.Controls;
 using Avalonia.Platform;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DynamicData;
+using MsBox.Avalonia;
+using MsBox.Avalonia.Enums;
 using ReactiveUI;
 using Serilog;
 using sspreaNvidiaControl.Models;
@@ -167,6 +169,14 @@ public partial class SettingsMainWindowViewModel : ViewModelBase
         if (Program.ThemesService is null)
             return;
 
+        if (string.IsNullOrEmpty(CurrentEditingUserTheme.Name.Trim()))
+        {
+            await MessageBoxManager.GetMessageBoxStandard("Error", "Invalid theme name",icon: Icon.Error).ShowAsync();
+            return;
+        }
+
+        CurrentEditingUserTheme.Name = CurrentEditingUserTheme.Name.Trim();
+        
         await Program.ThemesService.AddNewUserThemeAndSaveToFileAsync(CurrentEditingUserTheme);
         UpdateLocalThemeList();
         
