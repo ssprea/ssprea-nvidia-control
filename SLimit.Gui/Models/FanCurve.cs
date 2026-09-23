@@ -1,12 +1,17 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.Linq;
+using System.Reactive.Linq;
+using DynamicData;
 using Newtonsoft.Json;
 
-namespace SLimit.Cli.Types;
+namespace SLimit.Gui.Models;
 
 public class FanCurve
 {
-    public string Name { get; set; }
+    public string Name { get; set; } = "New Curve";
     public ObservableCollection<FanCurvePoint> CurvePoints { get; set; }
     
     [JsonIgnore]
@@ -14,9 +19,15 @@ public class FanCurve
 
     [JsonIgnore]
     public bool NeedsUpdate { get; private set; } = false;
-    
-    public FanCurve(params FanCurvePoint[] curvePoints) : this("New Curve", curvePoints)
+
+    public FanCurve CloneInstance()
     {
+        return new FanCurve(Name, CurvePoints.ToArray());
+    }
+    
+    public FanCurve(params FanCurvePoint[] curvePoints)
+    {
+        CurvePoints = new(curvePoints);
     } 
 
     [JsonConstructor]
@@ -24,15 +35,39 @@ public class FanCurve
     {
         Name = name;
         CurvePoints = new(curvePoints);
-        GenerateGpuTempToFanSpeedMap();
-    }
+        // CurvePoints.CollectionChanged += CurvePoints_CollectionChanged;
 
+        SanitizePoints();
+
+        // GenerateGpuTempToFanSpeedMap();
+        
+        
+    }
+    
+
+    public void SanitizePoints()
+    {
+        for (int i = 0; i < CurvePoints.Count; i++)
+        {
+            if (CurvePoints[i].FanSpeed > 100)
+                CurvePoints[i].FanSpeed = 100;
+        }
+
+        var ordered = CurvePoints.OrderBy(x => x.Temperature).DistinctBy(x => x.Temperature).ToList();
+        CurvePoints.Clear();
+        CurvePoints.AddRange(ordered);
+    }
+    
     public void GenerateGpuTempToFanSpeedMap()
     {
         for (int i = 0; i < CurvePoints.Count-1; i++) //per ogni punto
         {
-            for (uint j = CurvePoints[i].Temperature; j <= CurvePoints[i+1].Temperature; j++) //per ogni temperatura j tra i due punti
+            
+            for (uint j = CurvePoints[i].Temperature; j < CurvePoints[i+1].Temperature; j++) //per ogni temperatura j tra i due punti
             {
+                if (CurvePoints[i].Temperature == j)
+                    GpuTempToFanSpeedMap[j] = CurvePoints[i].FanSpeed;
+                
                 GpuTempToFanSpeedMap[j] = MapGpuTempToFanPercent(CurvePoints[i].Temperature, CurvePoints[i + 1].Temperature,CurvePoints[i].FanSpeed,CurvePoints[i+1].FanSpeed,j);
             }
         }
@@ -69,7 +104,7 @@ public class FanCurve
             },
             new FanCurvePoint()
             {
-                Temperature = 100,
+                Temperature = 90,
                 FanSpeed = 100
             });
     }
@@ -103,21 +138,9 @@ public class FanCurve
     {
         return perc1 + (intemp-temp1)*(perc2-perc1)/(temp2-temp1);
     }
-
-    public override string ToString()
-    {
-        var final = "";
-
-        for (int i = 0; i < GpuTempToFanSpeedMap.Length; i++)
-        {
-            final += $"GpuTemp: {i}, FanSpeed: {GpuTempToFanSpeedMap[i]}\n";
-        }
-
-        return final;
-    }
     
-    // public string ToJson()
-    // {
-    //     return JsonSerializer.Serialize(this);
-    // }
+    public string ToJson()
+    {
+        return JsonConvert.SerializeObject(this);
+    }
 }

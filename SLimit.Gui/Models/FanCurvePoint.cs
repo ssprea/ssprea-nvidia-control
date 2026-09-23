@@ -1,4 +1,4 @@
-namespace SLimit.Cli.Types;
+namespace SLimit.Gui.Models;
 
 public class FanCurvePoint(uint temperature, uint fanSpeed)
 {

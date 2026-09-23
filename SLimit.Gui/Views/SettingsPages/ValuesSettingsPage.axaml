@@ -1,0 +1,22 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:SLimit.Gui.ViewModels"
+             xmlns:lang="clr-namespace:SLimit.Gui.Lang"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="SLimit.Gui.Views.SettingsPages.ValuesSettingsPage"
+             x:DataType="vm:SettingsMainWindowViewModel">
+    <StackPanel x:Name="ValuesSettingsContent">
+                    
+        <Border Classes="panelItem">
+            <StackPanel>
+                <Label  HorizontalAlignment="Left" VerticalAlignment="Bottom" FontSize="10" Content="{x:Static lang:Resources.SettingUpdateTimeDescription}" />
+                <NumericUpDown Value="{Binding CurrentEditingSettings.SelectedUpdateTimeoutSeconds}" Minimum="0.01" Increment="0.5" />
+            </StackPanel>
+        </Border>
+                        
+                        
+                        
+    </StackPanel>
+</UserControl>

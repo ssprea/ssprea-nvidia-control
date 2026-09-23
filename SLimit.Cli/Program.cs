@@ -9,9 +9,9 @@ using McMaster.Extensions.CommandLineUtils;
 using Newtonsoft.Json;
 using Serilog;
 using SLimit.Contracts;
-using sspreaNvidiaControlCli.Types;
+using SLimit.Cli.Types;
 
-namespace sspreaNvidiaControlCli;
+namespace SLimit.Cli;
 
 public class Program
 {
@@ -368,7 +368,7 @@ public class Program
         {
             //check if another instance is running
             // SkipMultipleInstancesCheck = _selectedGpu.Vendor == GpuVendor.Amd;
-            // if (!SkipMultipleInstancesCheck && IsAnotherInstanceRunning("snvctl","ssprea-nvidia-control-cli"))
+            // if (!SkipMultipleInstancesCheck && IsAnotherInstanceRunning("snvctl","SLimit.Gui-cli"))
             // {
             //     Log.Fatal("Another instance of this program is already running. Exiting...");
             //     Environment.Exit(1);

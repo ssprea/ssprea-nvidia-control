@@ -1,0 +1,1175 @@
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Linq;
+using System.Reactive;
+using System.Reactive.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using DynamicData;
+using GpuSSharp.Types;
+using LiveChartsCore;
+using LiveChartsCore.Defaults;
+using LiveChartsCore.SkiaSharpView;
+using LiveChartsCore.SkiaSharpView.Painting;
+using LiveChartsCore.SkiaSharpView.Painting.Effects;
+using LiveChartsCore.Themes;
+using MsBox.Avalonia;
+using MsBox.Avalonia.Enums;
+using Newtonsoft.Json.Linq;
+using ReactiveUI;
+using Serilog;
+using SkiaSharp;
+using SLimit.Contracts;
+using SLimit.Gui.Lang;
+using SLimit.Gui.Models;
+using SLimit.Gui.Utils;
+
+
+
+namespace SLimit.Gui.ViewModels;
+
+public partial class MainWindowViewModel : ViewModelBase, IDisposable
+
+{
+    #region Interaction Definitions
+    public Interaction<NewOcProfileWindowViewModel, OcProfile?> ShowOcProfileDialog { get; }
+    public Interaction<FanCurveEditorWindowViewModel, FanCurveViewModel?> ShowFanCurveEditorDialog { get; }
+    public Interaction<SudoPasswordRequestWindowViewModel, SudoPassword?> ShowSudoPasswordRequestDialog { get; }
+    public Interaction<SettingsMainWindowViewModel, object?> ShowSettingsDialog { get; }
+    public Interaction<UsageGraphsWindowViewModel, object?> ShowUsageGraphsDialog { get; }
+    #endregion
+    
+    
+    #region ICommand definitions
+    public ICommand OpenNewProfileWindowCommand { get; private set; }
+    public ReactiveCommand<FanCurveViewModel?,Unit> OpenFanCurveEditorCommand { get; private set; }
+    public ICommand OpenSudoPasswordPromptCommand { get; private set; }
+    public ICommand OpenSettingsWindowCommand { get; private set; }
+    public ICommand OpenUsageGraphsWindowCommand { get; private set; }
+
+    #endregion
+    
+    #region Observable Properties
+    [ObservableProperty] private GpuViewModel? _selectedGpu;
+    // [ObservableProperty] private NvmlGpuFan? _selectedGpuFan;
+    [ObservableProperty] private OcProfile? _selectedOcProfile;
+    [ObservableProperty] private OcProfile? _selectedAutoApplyOcProfile;
+    [ObservableProperty] private FanCurveViewModel? _selectedFanCurve;
+    [ObservableProperty] private bool _isAutoApplyProfileChecked ;
+    [ObservableProperty] private OcProfile? _selectedStartupProfile;
+    [ObservableProperty] private bool _isStartupProfileChecked ;
+    [ObservableProperty] private string _currentNvidiaDriverVersion = "Unknown";
+    [ObservableProperty] private bool _isFanCurveIncludedInProfileChecked = true;
+    // [ObservableProperty] private OcProfile? _tunerCurrentEditingProfile;
+    [ObservableProperty] private ulong _tunerCurrentCoreOffset;
+    [ObservableProperty] private ulong _tunerCurrentCoreMinClock;
+    [ObservableProperty] private ulong _tunerCurrentMemoryOffset;
+    [ObservableProperty] private ulong _tunerCurrentMemoryMinClock;
+    [ObservableProperty] private uint _tunerCurrentPowerLimitMw;
+    [ObservableProperty] private int _tunerCurrentVoltageOffsetMv;
+    [ObservableProperty] private string _tunerCurrentProfileName = "";
+    [ObservableProperty] private string _currentlyLoadedGuiName = "Default";
+    [ObservableProperty] private string _selectedLocalizerLang = "it";
+    [ObservableProperty] private ObservableCollection<string> _localizerLangs = new (["it","en"]);
+    [ObservableProperty] private ObservableCollection<ObservablePoint> _selectedFanCurveGraphPoints = new();
+    [ObservableProperty] private MaxSizeObservableCollection<ObservablePoint> _currentFanSpeedGraphPoints = new(1);
+    [ObservableProperty] private bool _flashingAnimationRunning;
+    
+    //graph series
+    [ObservableProperty] private ObservableCollection<ISeries> _fanCurveGraphSeries = new();
+    
+    #endregion
+    
+    public ObservableCollection<GpuViewModel> AvailableGpus { get; private set; } = new();
+    
+    private uint _selectedFanRadioButton;
+    private bool FanSpeedSliderVisible => _selectedFanRadioButton == 1;
+    
+
+
+    
+    [ObservableProperty] private bool _isTunerCoreOffset;
+
+    [ObservableProperty] private bool _isTunerCoreOverdrive;
+    
+    [ObservableProperty] private bool _isTunerCoreRange;
+
+    
+    [ObservableProperty] private bool _isTunerMemOffset;
+
+    [ObservableProperty] private bool _isTunerMemOverdrive;
+    
+    [ObservableProperty] private bool _isTunerMemRange;
+
+    
+    //graph sync object
+    public object GraphSyncObject { get; } = new object();
+    
+    //Axes styles for fan curve graph graph
+    // [ObservableProperty] private SolidColorPaint _graphTooltipTextPaint = new SolidColorPaint(SKColors.Black) {SKTypeface = _fanCurveGraphTypeface};
+    // private static readonly SKTypeface _fanCurveGraphTypeface = SKTypeface.FromFamilyName("Noto Sans Mono",SKFontStyleWeight.Normal,SKFontStyleWidth.Normal,SKFontStyleSlant.Upright);
+    // private static readonly SKTypeface _fanCurveGraphTypeface =
+    //     SKTypeface.FromStream(AssetLoader.Open(new Uri("avares://SLimit.Gui/Assets/Fonts/NotoSans/NotoSans-Light.ttf")));
+
+    private static readonly SKColor ThemeTextColor = SKColor.Parse("#F1F0F5");
+    
+    public Axis[] FanCurveGraphXAxes { get; set; } =
+        [
+            new Axis
+            {
+                Name = "Temperature (°C)",
+                NamePaint = new SolidColorPaint(ThemeTextColor) , 
+                NameTextSize = 10,
+
+                LabelsPaint = new SolidColorPaint(ThemeTextColor), 
+                TextSize = 10,
+                
+
+                SeparatorsPaint = new SolidColorPaint(SKColors.LightSlateGray.WithAlpha(60)) { StrokeThickness = 2 }  
+            }
+        ];
+
+    
+    
+    public Axis[] FanCurveGraphYAxes { get; set; } =
+        [
+            new Axis
+                {
+                    Name = "Fan Speed (%)",
+                    NamePaint = new SolidColorPaint(ThemeTextColor) , 
+                    NameTextSize = 10,
+
+                    LabelsPaint = new SolidColorPaint(ThemeTextColor)  , 
+                    TextSize = 10,
+
+                    SeparatorsPaint = new SolidColorPaint(SKColors.LightSlateGray.WithAlpha(60)) 
+                    { 
+                        StrokeThickness = 2, 
+                        PathEffect = new DashEffect([ 3, 3 ]) 
+                    } 
+                }
+        ];
+    
+    
+    
+    
+    
+    public uint TunerCurrentPowerLimitW {
+        get => TunerCurrentPowerLimitMw / 1000;
+        set
+        {
+            TunerCurrentPowerLimitMw = (uint)(value * 1000);
+
+        }
+            
+    }
+
+    
+
+    partial void OnTunerCurrentPowerLimitMwChanged(uint oldValue, uint newValue)
+    {
+        OnPropertyChanged(nameof(TunerCurrentPowerLimitW));
+    }
+
+    // partial void OnTunerCurrentCoreOffsetChanged(ulong oldValue, ulong newValue)
+    // {
+    //     Console.WriteLine(oldValue +"   " + newValue);
+    //     Console.WriteLine(Environment.StackTrace);
+    // }
+    
+
+
+
+    //private ObservableCollection<ISeries> _fanCurveGraphSeries = new();
+
+    private AutoResetEvent _sudoPasswordDialogClosed = new(false);
+
+    
+    private bool _autoApplyProfileLoaded;
+
+    public MainWindowViewModel()
+    {
+        Lockfile.CheckAndUpdateLockfile();
+        
+        Program.ThemesService ??= new ThemeService();
+        Program.ThemesService.LoadUserThemesFromJson();
+        
+        Program.ThemesService.Apply(Program.LoadedSettings.SelectedTheme);
+        
+        InitGpus();
+        
+        
+        if (!Directory.Exists(Program.DefaultDataPath))
+            Directory.CreateDirectory(Program.DefaultDataPath);
+        
+        if (!Directory.Exists(Program.DefaultDataPath+"/temp"))
+            Directory.CreateDirectory(Program.DefaultDataPath+"/temp");
+        
+        foreach(var f in Directory.GetFiles(Program.DefaultDataPath+"/temp"))
+            File.Delete(f);
+        
+        LoadFanCurvesFromFile();
+        
+        
+            
+        
+        ShowOcProfileDialog = new Interaction<NewOcProfileWindowViewModel, OcProfile?>();
+        OpenNewProfileWindowCommand = ReactiveCommand.CreateFromTask(async () =>
+        {
+            if (SelectedGpu is null) return;
+            
+            var ocProfileWindowViewModel = new NewOcProfileWindowViewModel(SelectedGpu);
+
+            var result = await ShowOcProfileDialog.Handle(ocProfileWindowViewModel);
+            
+            if (result !=null)
+                OcProfilesList.Add(result);
+
+            await _profilesFileManager.UpdateProfilesFileAsync();
+        });
+        
+        
+        ShowFanCurveEditorDialog = new Interaction<FanCurveEditorWindowViewModel, FanCurveViewModel?>();
+        OpenFanCurveEditorCommand = ReactiveCommand.CreateFromTask<FanCurveViewModel?>(async (toEdit) =>
+        {
+            var fanCurveEditorWindowViewModel = new FanCurveEditorWindowViewModel(toEdit?.CloneInstance(), SelectedGpu?.Vendor ?? GpuVendor.Nvidia);
+
+            var result = await ShowFanCurveEditorDialog.Handle(fanCurveEditorWindowViewModel);
+
+            if (result == null)
+                return;
+            
+            if (FanCurvesList.Any(x => x.Name == result.Name))
+            {
+                //c'è già una curve con lo stesso nome, aggiorna quella
+                FanCurveViewModel existingCurve = FanCurvesList.First(x => x.Name == result.Name);
+                existingCurve.BaseFanCurve.CurvePoints = result.BaseFanCurve.CurvePoints;
+            }
+            else
+            {
+                //sennò aggiungila
+                FanCurvesList.Add(result);
+            }
+
+            SelectedFanCurve = FanCurvesList.First(x => x.Name == result.Name);
+            UpdateFanCurveGraphSeriesValues(SelectedFanCurve);
+            SelectedFanCurve?.UpdateSeries();
+            
+            // OnPropertyChanged(nameof(SelectedFanCurve));
+            await FanCurvesFileManager.SaveFanCurvesAsync(Program.DefaultDataPath+"/fan_curves.json", FanCurvesList.Select(x => x.BaseFanCurve));
+
+            
+            
+            //UpdateProfilesFile("profiles.json");
+        });
+        
+        ShowSudoPasswordRequestDialog = new Interaction<SudoPasswordRequestWindowViewModel, SudoPassword?>();
+        OpenSudoPasswordPromptCommand = ReactiveCommand.CreateFromTask(async () =>
+        {
+            var sudoPasswordRequestWindowViewModel = new SudoPasswordRequestWindowViewModel();
+
+            var result = await ShowSudoPasswordRequestDialog.Handle(sudoPasswordRequestWindowViewModel);
+
+
+
+            if (result != null)
+            {
+                SudoPasswordManager.CurrentPassword = result;
+            }
+            _sudoPasswordDialogClosed.Set();
+
+        });
+        
+        
+        
+        ShowSettingsDialog = new Interaction<SettingsMainWindowViewModel, object?>();
+        OpenSettingsWindowCommand = ReactiveCommand.CreateFromTask(async () =>
+        {
+            var settingsWindowViewModel = new SettingsMainWindowViewModel();
+
+            var result = await ShowSettingsDialog.Handle(settingsWindowViewModel);
+            
+            
+            
+        });
+        
+        ShowUsageGraphsDialog = new Interaction<UsageGraphsWindowViewModel, object?>();
+        OpenUsageGraphsWindowCommand = ReactiveCommand.CreateFromTask<GpuViewModel>(async (targetGpu) =>
+        {
+            var usageGraphsViewModel = new UsageGraphsWindowViewModel(targetGpu);
+
+            var result = await ShowUsageGraphsDialog.Handle(usageGraphsViewModel);
+            
+            
+        });
+        
+        
+
+        var accentColor = SKColor.Parse("#505BE6");
+        var strongAccentColor = SKColor.Parse("#9C1FE8");
+        
+        FanCurveGraphSeries.Add(new LineSeries<ObservablePoint>()
+        {
+            Values=SelectedFanCurveGraphPoints,
+            GeometryStroke=new SolidColorPaint(accentColor) {StrokeThickness = 3},
+            Stroke= new SolidColorPaint(accentColor) {StrokeThickness = 3},
+            Fill = new SolidColorPaint(accentColor.WithAlpha(50)),
+            YToolTipLabelFormatter = point => $"{point.Model?.Y}%",
+            XToolTipLabelFormatter = point => $"Temp: {point.Model?.X}°C",
+            LineSmoothness = 0
+        });
+        
+        FanCurveGraphSeries.Add(new LineSeries<ObservablePoint>(CurrentFanSpeedGraphPoints)
+        {
+            GeometryStroke=new SolidColorPaint(strongAccentColor) {StrokeThickness = 3},
+            Stroke= new SolidColorPaint(strongAccentColor) {StrokeThickness = 3},
+            YToolTipLabelFormatter = point => $"{point.Model?.Y}%",
+            XToolTipLabelFormatter = point => $"{Lang.Resources.TextCurrentTemp} {point.Model?.X}°C",
+            LineSmoothness = 0
+        });
+        
+        
+    }
+
+    partial void OnSelectedGpuChanging(GpuViewModel? oldValue, GpuViewModel? newValue)
+    {
+        if (oldValue is not null)
+            oldValue.StopUpdating();
+
+        if (newValue is not null)
+        {
+            newValue.StartUpdating();
+            //update to gpu's startup profile
+            CheckAndLoadStartupProfile(newValue).Wait();
+            //should only run on first run
+            if (oldValue is null)
+            {
+                if (!IsStartupProfileChecked)
+                    LoadOcProfileToTuner(new OcProfile("",GetDefaultTune(newValue.Capabilities.CoreClockTuningMode,newValue.ClockCoreMinMhz,newValue.ClockCoreMaxMhz) ,GetDefaultTune(newValue.Capabilities.MemoryClockTuningMode,newValue.ClockMemMinMhz,newValue.ClockMemMaxMhz),SelectedGpu?.LatestGpuMetrics?.PowerLimitCurrentMilliW ?? 100000,0,0, (FanCurve?)null));
+                ;
+                
+            }
+                
+        }
+        
+            
+    }
+    
+    partial void OnSelectedGpuChanged(GpuViewModel? value)
+    {
+        if (value is null || value.GpuFansCount <= 0)
+            return;
+        
+        //update tuner checks
+        
+        IsTunerCoreOffset = SelectedGpu?.Capabilities.CoreClockTuningMode == GpuClockTuningMode.Offset;
+        
+        IsTunerCoreOverdrive = SelectedGpu?.Capabilities.CoreClockTuningMode == GpuClockTuningMode.Overdrive;
+        
+        IsTunerCoreRange = SelectedGpu?.Capabilities.CoreClockTuningMode == GpuClockTuningMode.ClockRange;
+
+        IsTunerMemOffset = SelectedGpu?.Capabilities.MemoryClockTuningMode == GpuClockTuningMode.Offset;
+
+        IsTunerMemOverdrive = SelectedGpu?.Capabilities.MemoryClockTuningMode == GpuClockTuningMode.Overdrive;
+        
+        IsTunerMemRange = SelectedGpu?.Capabilities.MemoryClockTuningMode == GpuClockTuningMode.ClockRange;
+        
+        
+        
+        
+        
+        
+        value.GpuMetricsUpdatedEvent += (s, args) =>
+        {
+            if (args is not GpuMetricsUpdatedEventArgs gpuMetricsArgs) return;
+
+            var gpuMetrics = gpuMetricsArgs.NewMetrics;
+            
+            
+            
+            lock (GraphSyncObject)
+            {
+                
+                if (SelectedFanCurve?.CurrentFanSpeedPoints.Count > 0 &&
+                    ((int?)SelectedFanCurve?.CurrentFanSpeedPoints.First().X ?? 0) == (int)gpuMetrics.GpuTemperature &&
+                    ((int?)SelectedFanCurve?.CurrentFanSpeedPoints.First().Y ?? 0) == (int)gpuMetrics.FansSpeedPercent.Fan0Speed)
+                    return;
+                    
+                CurrentFanSpeedGraphPoints.Add(new ObservablePoint((int)gpuMetrics.GpuTemperature,(int)gpuMetrics.FansSpeedPercent.Fan0Speed));
+            
+            }
+            
+        };
+    }
+    
+    
+    [RelayCommand]
+    public static async Task ShowComingSoonPopupAsync(string featureName)
+    {
+        await MessageBoxManager.GetMessageBoxStandard("Coming soon!", $"{featureName}: Coming Soon!",ButtonEnum.Ok,Icon.Forbidden).ShowAsync();
+    }
+    
+    public void ResetTunerOptions()
+    {
+        if (SelectedGpu is not null)
+            LoadOcProfileToTuner(new OcProfile("",GetDefaultTune(SelectedGpu.Capabilities.CoreClockTuningMode,SelectedGpu.ClockCoreMinMhz,SelectedGpu.ClockCoreMaxMhz) ,GetDefaultTune(SelectedGpu.Capabilities.MemoryClockTuningMode,SelectedGpu.ClockMemMinMhz,SelectedGpu.ClockMemMaxMhz),SelectedGpu?.LatestGpuMetrics?.PowerLimitCurrentMilliW ?? 100000,0,0, (FanCurve?)null));
+    }
+    
+    
+    public async Task DeleteSelectedFanProfile()
+    {
+        if (SelectedFanCurve is null)
+        {
+            await MessageBoxManager.GetMessageBoxStandard(Resources.MsgBoxTitleError,Resources.MsgBoxBodyNoFancurveSelected,ButtonEnum.Ok,Icon.Warning).ShowAsync();
+            return;
+        }
+
+        var boxResult = await MessageBoxManager.GetMessageBoxStandard(Resources.MsgBoxTitleAreYouSure,
+            $"{Resources.MsgBoxBodyAreYouSureDelete} \"{SelectedFanCurve.Name}\"?", ButtonEnum.YesNo,
+            Icon.Question).ShowAsync();
+
+        if (boxResult == ButtonResult.Yes)
+        {
+            FanCurvesList.Remove(SelectedFanCurve);
+            if (FanCurvesList.Any())
+                SelectedFanCurve = FanCurvesList.First();
+            await FanCurvesFileManager.SaveFanCurvesAsync(Program.DefaultDataPath+"/fan_curves.json", FanCurvesList.Select(x => x.BaseFanCurve));
+            
+        }
+        
+        
+    }
+
+    public async Task SaveProfileAndUpdateFileAsync(OcProfile? profile)
+    {
+        if (profile != null)
+        {
+            if (!IsFanCurveIncludedInProfileChecked)
+                profile.FanCurveName = "";
+            if (OcProfilesList.Any(x => x.Name == profile.Name))
+            {
+                OcProfilesList.Remove(OcProfilesList.First(x => x.Name == profile.Name));
+            }
+            
+            OcProfilesList.Add(profile);
+        }
+            
+        
+        await _profilesFileManager.UpdateProfilesFileAsync();
+    }
+
+    
+    
+    public async Task SaveTempTunerSettingsToProfileAndUpdateFileAsync()
+    {
+        if (string.IsNullOrEmpty(TunerCurrentProfileName) || string.IsNullOrWhiteSpace(TunerCurrentProfileName))
+        {
+            await MessageBoxManager.GetMessageBoxStandard(Resources.MsgBoxTitleWarning,Resources.MsgBoxBodyNewProfileMissingName,ButtonEnum.Ok,Icon.Warning).ShowAsync();
+            return;
+        }
+        
+        await SaveProfileAndUpdateFileAsync(new OcProfile(TunerCurrentProfileName, TunerCoreValueToClockTune(),
+            TunerMemoryValueToClockTune(), TunerCurrentPowerLimitMw,TunerCurrentVoltageOffsetMv,0, SelectedFanCurve?.BaseFanCurve));
+    }
+    
+    
+    
+    private void LoadOcProfileToTuner(OcProfile? ocProfile)
+    {
+        
+        if (ocProfile is null)
+            return;
+
+        if (ocProfile.Clone() is not OcProfile tunerCurrentEditingProfile)
+            return;
+        
+        
+        if (tunerCurrentEditingProfile.GpuClockTune is GpuClockTune.ClockRange range)
+            TunerCurrentCoreOffset = range.MaxMhz;
+        if (tunerCurrentEditingProfile.GpuClockTune is GpuClockTune.Offset offset)
+            TunerCurrentCoreOffset = (ulong)offset.OffsetMhz;
+        
+        if (tunerCurrentEditingProfile.MemClockTune is GpuClockTune.ClockRange rangem)
+            TunerCurrentMemoryOffset = rangem.MaxMhz;
+        if (tunerCurrentEditingProfile.MemClockTune is GpuClockTune.Offset offsetm)
+            TunerCurrentMemoryOffset = (ulong)offsetm.OffsetMhz;
+        
+        TunerCurrentVoltageOffsetMv = tunerCurrentEditingProfile.CoreVoltageOffsetMv;
+        
+        TunerCurrentPowerLimitMw = tunerCurrentEditingProfile.PowerLimitMw;
+        TunerCurrentProfileName = tunerCurrentEditingProfile.Name;
+        
+        
+        if (FanCurvesList.Any(x => x.Name == tunerCurrentEditingProfile.FanCurveName))
+            SelectedFanCurve = FanCurvesList.First(x => x.Name == tunerCurrentEditingProfile.FanCurveName);
+
+
+    }
+
+
+    // private async Task TunerSaveAsButtonClicked()
+    // {
+    //     
+    // }
+    
+    // partial void OnTunerCurrentCoreOffsetChanged(ulong value)
+    // {
+    //     Console.WriteLine(value);
+    //     
+    //     var off = TunerCurrentEditingProfile?.GpuClockTune as  GpuClockTune.Offset;
+    //     
+    //     Console.WriteLine(off?.ToString() ?? "null");
+    // }
+
+    private static bool IsOcProfileCompatibleWithGpu(OcProfile profile, GpuViewModel gpu)
+    {
+        
+        
+        switch (profile.GpuClockTune)
+        {
+            case GpuClockTune.ClockRange:
+                if (gpu.Capabilities.CoreClockTuningMode != GpuClockTuningMode.ClockRange)
+                    return false;
+                break;
+                
+            case GpuClockTune.Offset:
+                if (gpu.Capabilities.CoreClockTuningMode != GpuClockTuningMode.Offset)
+                    return false;
+                break;
+            
+            case GpuClockTune.Overdrive:
+                if (gpu.Capabilities.CoreClockTuningMode != GpuClockTuningMode.Overdrive)
+                    return false;
+                break;
+        }
+        
+        switch (profile.MemClockTune)
+        {
+            case GpuClockTune.ClockRange:
+                if (gpu.Capabilities.MemoryClockTuningMode != GpuClockTuningMode.ClockRange)
+                    return false;
+                break;
+                
+            case GpuClockTune.Offset:
+                if (gpu.Capabilities.MemoryClockTuningMode != GpuClockTuningMode.Offset)
+                    return false;
+                break;
+            
+            case GpuClockTune.Overdrive:
+                if (gpu.Capabilities.MemoryClockTuningMode != GpuClockTuningMode.Overdrive)
+                    return false;
+                break;
+        }
+
+        return true;
+    }
+    
+
+    public async Task OnLoadProfileButtonClicked()
+    {
+        if (SelectedGpu is null)
+            return;
+        
+        await LoadSelectedOcProfileToTuner(SelectedGpu);
+        await RunFlashingAnimationForSeconds(2);
+    }
+    
+    private async Task RunFlashingAnimationForSeconds(int seconds)
+    {
+        FlashingAnimationRunning = true;
+        await Task.Delay(seconds * 1000);
+        FlashingAnimationRunning = false;
+    }
+    
+    public async Task LoadSelectedOcProfileToTuner(GpuViewModel gpu)
+    {
+        if (SelectedOcProfile is null)
+        {
+            await MessageBoxManager.GetMessageBoxStandard(Resources.MsgBoxTitleError,Resources.MsgBoxBodyNoProfileSelected,ButtonEnum.Ok,Icon.Warning).ShowAsync();
+            return;
+        }
+        
+        
+        if (!IsOcProfileCompatibleWithGpu(SelectedOcProfile,gpu))
+        {
+            _= MessageBoxManager.GetMessageBoxStandard(Resources.MsgBoxTitleError,Resources.MsgBoxBodyIncompatibleProfile,ButtonEnum.Ok,Icon.Error).ShowAsync();
+            return;
+        }
+        
+        LoadOcProfileToTuner(SelectedOcProfile);
+
+
+    }
+
+    
+    
+    
+    
+    private async Task CheckAndLoadStartupProfile(GpuViewModel gpu)
+    {
+        if (Program.DaemonSession is null || Program.DaemonSession.Client is null)
+            return;
+        
+        //check startup profile
+
+        var resp = Program.DaemonSession.Client.SystemGetStartupProfileInfo(new GpuIdMessage()
+            { GpuId = gpu.DevicePciAddress });
+
+        if (resp is null)
+            return;
+        
+        IsStartupProfileChecked = resp.Exists;
+        if (IsStartupProfileChecked)
+        {
+            var startupProfileName = resp.ProfileName;
+            
+            SelectedStartupProfile = OcProfilesList.FirstOrDefault(x => x.Name == startupProfileName);
+            SelectedOcProfile = SelectedStartupProfile;
+            await LoadSelectedOcProfileToTuner(gpu);
+        }
+        
+        
+    }
+
+    
+//     private async Task<bool> RequestSudoPasswordDialogIfNeededAsync()
+//     {
+// #if WINDOWS
+//         return true;
+// #else
+//         if (SudoPasswordManager.CurrentPassword is null)
+//         {
+//             OpenSudoPasswordPromptCommand.Execute(null);
+//             await Task.Run(() => _sudoPasswordDialogClosed.WaitOne());
+//         }
+//         return SudoPasswordManager.CurrentPassword is not null;
+// #endif
+//     }
+    
+    
+    [SuppressMessage("ReSharper", "ConvertTypeCheckPatternToNullCheck")]
+    public async Task CheckAndApplyAutoApplyProfile()
+    {
+        //check default profile
+        if (!_autoApplyProfileLoaded && File.Exists(Program.DefaultDataPath + "/AutoApplyProfile.json"))
+        {
+            var jobj = JObject.Parse(await File.ReadAllTextAsync(Program.DefaultDataPath + "/AutoApplyProfile.json"));
+            
+
+            if (jobj["gpu"]?.Value<uint?>() is not uint gpuid || jobj["profile"]?.Value<string>() is not string profile)
+            {
+                return;
+            }
+            
+                
+            
+                
+            //apply profile
+            SelectedGpu = AvailableGpus.FirstOrDefault(x => x.DeviceIndex == gpuid);
+            SelectedOcProfile = OcProfilesList.FirstOrDefault(x => x.Name == profile);
+            SelectedAutoApplyOcProfile = SelectedOcProfile;
+            IsAutoApplyProfileChecked = true;
+            
+            await OcProfileApplyCommand();
+            
+            
+        }  
+    }
+    
+    partial void OnSelectedFanCurveChanged(FanCurveViewModel? value)
+    {
+        if (value is null)
+            return;
+
+        UpdateFanCurveGraphSeriesValues(value);
+    }
+
+    private void UpdateFanCurveGraphSeriesValues(FanCurveViewModel value)
+    {
+        lock (GraphSyncObject)
+        {
+            SelectedFanCurveGraphPoints.Clear();
+            SelectedFanCurveGraphPoints.AddRange(value.BaseFanCurve.CurvePoints.Select(x => new ObservablePoint(x.Temperature, x.FanSpeed)).ToArray());
+            
+        }
+    }
+
+    [RelayCommand]
+    public async Task SaveAutoApplyProfile(OcProfile? profile)
+    {
+        //File.WriteAllText(Program.DefaultDataPath + "/AutoApplyProfile.json", JsonSerializer.Serialize(GpuProfilePairString));
+
+        
+        
+        
+        //show warning before applying
+
+        var warnMsgResp = await MessageBoxManager.GetMessageBoxStandard("Warning!",
+            "The default profile will be applied every time the GUI app is opened, NOT when the PC boots! Do not enable both together as it will cause a conflict. \n" +
+            "If you use the startup profile, your profile will be loaded in the GUI automatically anyways, this option is for some special use cases.\n\n" +
+            "If you are unsure, press \"No\" and enable the Startup profile instead of this.\n\n" +
+            "Do you really want to save the default profile?",
+            ButtonEnum.YesNo,Icon.Warning).ShowAsync();
+
+        if (warnMsgResp == ButtonResult.No)
+        {
+            IsAutoApplyProfileChecked = false;
+            return;
+        }
+
+        if (IsStartupProfileChecked)
+        {
+            await MessageBoxManager.GetMessageBoxStandard("Warning!",
+                "You are already using the startup profile, if it works you don't need this option. \n" +
+                "If you want to enable this, disable the startup profile first.",
+                ButtonEnum.Ok,Icon.Warning).ShowAsync();
+            
+            IsAutoApplyProfileChecked = false;
+            return;
+        }
+        
+        if (!IsAutoApplyProfileChecked)
+        {
+            File.Delete(Program.DefaultDataPath + "/AutoApplyProfile.json");
+            Log.Information("No default profile selected, disabled auto apply.");
+            return;
+        }
+        
+        if (profile is null)
+        {
+            MessageBoxManager.GetMessageBoxStandard("Warning", "No profile selected!", ButtonEnum.Ok, Icon.Warning);
+            return;
+        }
+        
+        if (SelectedGpu == null)
+        {
+            MessageBoxManager.GetMessageBoxStandard("Warning", "No gpu selected!", ButtonEnum.Ok, Icon.Warning);
+            return;
+        }
+        
+        await File.WriteAllTextAsync(Program.DefaultDataPath + "/AutoApplyProfile.json", $"{{\"profile\":\"{profile.Name}\",\"gpu\":\"{SelectedGpu.DeviceIndex}\"}}");
+    }
+    
+    
+    
+    [RelayCommand]
+    public async Task SaveStartupProfile(OcProfile? profile)
+    {
+        
+        if (IsAutoApplyProfileChecked)
+        {
+            await MessageBoxManager.GetMessageBoxStandard(Resources.MsgBoxTitleWarning,
+                Resources.MsgBoxBodyDefaultProfileEnabled,
+                ButtonEnum.Ok,Icon.Warning).ShowAsync();
+            IsStartupProfileChecked = false;
+            return;
+
+        }
+
+        if (Program.DaemonSession is null || Program.DaemonSession.Client is null)
+            return;
+        
+        
+        
+        
+
+        if (profile is null)
+        {
+            MessageBoxManager.GetMessageBoxStandard(Resources.MsgBoxTitleWarning, Resources.MsgBoxBodyNoProfileSelected, ButtonEnum.Ok, Icon.Warning);
+            IsStartupProfileChecked = false;
+            
+            return;
+        }
+        
+        
+        
+        if (SelectedGpu == null)
+        {
+            MessageBoxManager.GetMessageBoxStandard(Resources.MsgBoxTitleWarning, Resources.MsgBoxBodyNoGpuSelected, ButtonEnum.Ok, Icon.Warning);
+            IsStartupProfileChecked = false;
+            
+            return;
+        }
+        
+        if (!IsOcProfileCompatibleWithGpu(profile, SelectedGpu))
+        {
+            await MessageBoxManager.GetMessageBoxStandard(Resources.MsgBoxTitleWarning,Resources.MsgBoxBodyIncompatibleProfile,ButtonEnum.Ok,Icon.Error).ShowAsync();
+            return;
+        }
+        
+        //if the checkbox is disabled, disable startup profile
+        if (!IsStartupProfileChecked)
+        {
+            await Program.DaemonSession.Client.SystemDeleteStartupProfileAsync(new GpuIdMessage() { GpuId = SelectedGpu.DevicePciAddress });
+            
+            // Log.Information("No startup profile selected, stopped {serviceName}.", _profilesServiceName);
+            SelectedStartupProfile = null;
+            return;
+        }
+        
+        
+        var resp = await Program.DaemonSession.Client.SystemSaveStartupProfileAsync(
+            new StartupProfileSaveMessage()
+                {
+                    GpuId = SelectedGpu.DevicePciAddress,
+                    ProfileJson = profile.ToJson(),
+                    CurveJson = profile.FanCurve is not null ? profile.FanCurve.ToJson() : ""
+                });
+        
+        Log.Information("Sent save startup request to daemon. Response: {msg}",resp.Message);
+        
+        
+        
+        // //check if directory exists
+        // if (!Directory.Exists(DEFAULT_SERVICE_DATA_PATH ))
+        //     Files.MakeDirectorySudo(DEFAULT_SERVICE_DATA_PATH);
+        //
+        //
+        // //save profile and copy to service data path
+        // await File.WriteAllTextAsync(Program.DefaultDataPath + "/temp/deviceidx.txt", SelectedGpu.DeviceIndex.ToString(CultureInfo.InvariantCulture));
+        // Files.CopySudo(Program.DefaultDataPath + "/temp/deviceidx.txt", DEFAULT_SERVICE_DATA_PATH+"/deviceidx.txt");
+        //
+        // await File.WriteAllTextAsync(Program.DefaultDataPath + "/temp/profile.json", profile.ToJson());
+        // Files.CopySudo(Program.DefaultDataPath + "/temp/profile.json", DEFAULT_SERVICE_DATA_PATH+"/profile.json");
+        //
+        //
+        // if (profile.FanCurve is not null)
+        // {
+        //     //save fan curve and copy to service data path
+        //     await File.WriteAllTextAsync(Program.DefaultDataPath + "/temp/curve.json", profile.FanCurve.ToJson());
+        //     Files.CopySudo(Program.DefaultDataPath + "/temp/curve.json", DEFAULT_SERVICE_DATA_PATH+"/curve.json");
+        //
+        // }
+        //
+        //
+        // //enable service
+        // Systemd.EnableSystemdService(_profilesServiceName);
+        // if (Systemd.StartSystemdService(_profilesServiceName))
+        // {
+        //     SelectedStartupProfile = SelectedOcProfile;
+        //     //kill gui fan curve process if running
+        //     Program.KillFanCurveProcess();
+        // }
+    }
+    
+    //private readonly FanCurvesFileManager _fanCurvesFileManager = new("fan_curves.json");
+    private readonly ProfilesFileManager _profilesFileManager=new(Program.DefaultDataPath+"/profiles.json");
+
+    public ObservableCollection<OcProfile> OcProfilesList => _profilesFileManager.LoadedProfiles;
+
+
+    public static ObservableCollection<FanCurveViewModel> FanCurvesList { get; private set; } = new();
+
+
+    private static void LoadFanCurvesFromFile()
+    {
+        foreach (var fanCurve in FanCurvesFileManager.GetFanCurves(Program.DefaultDataPath+"/fan_curves.json"))
+        {
+            FanCurvesList.Add(new FanCurveViewModel(fanCurve));
+        }
+    }
+
+    public static void KillFanCurveProcessCommand( )
+    {
+        Program.KillFanCurveProcess();
+    }
+
+    
+    [RelayCommand]
+    public static void OpenDefaultBrowserToUrl(string destUrl)
+    {
+#if LINUX
+        Process.Start(new ProcessStartInfo("xdg-open", destUrl));
+#else
+        Process.Start(destUrl);
+#endif
+    }
+    
+
+    public async Task DeleteOcProfile()
+    {
+        if (SelectedOcProfile is null)
+        {
+            await MessageBoxManager.GetMessageBoxStandard(Resources.MsgBoxTitleError, Resources.MsgBoxBodyNoProfileSelected, ButtonEnum.Ok, Icon.Warning).ShowAsync();
+            return;
+        }
+        
+        var boxResult = await MessageBoxManager.GetMessageBoxStandard(Resources.MsgBoxTitleAreYouSure, $"{Resources.MsgBoxBodyAreYouSureDelete} \"{SelectedOcProfile.Name}\"?", ButtonEnum.YesNo, Icon.Question).ShowAsync();
+
+        if (boxResult == ButtonResult.Yes)
+        {
+            OcProfilesList.Remove(SelectedOcProfile);
+            await _profilesFileManager.UpdateProfilesFileAsync();
+        }
+        
+    }
+
+    
+    
+    public async Task OcProfileApplyCommand()
+    {
+        await OcProfileParameterApplyCommand(SelectedOcProfile);
+    }
+
+    public async Task ApplyTempTunerSettings()
+    {
+        
+        await OcProfileParameterApplyCommand(new OcProfile(TunerCurrentProfileName, TunerCoreValueToClockTune(),
+            TunerMemoryValueToClockTune(), TunerCurrentPowerLimitMw,TunerCurrentVoltageOffsetMv,0, IsFanCurveIncludedInProfileChecked ? SelectedFanCurve?.BaseFanCurve : null));
+    }
+
+
+    
+    
+    private GpuClockTune TunerCoreValueToClockTune()
+    {
+        GpuClockTune coreTune;
+        switch (SelectedGpu?.Capabilities.CoreClockTuningMode)
+        {
+            case GpuClockTuningMode.ClockRange:
+                coreTune = new GpuClockTune.ClockRange((uint)TunerCurrentCoreMinClock, (uint)TunerCurrentCoreOffset);
+                break;
+            
+            case GpuClockTuningMode.Offset:
+                coreTune = new GpuClockTune.Offset((int)TunerCurrentCoreOffset, GpuPState.GpuPstate0);
+                break;
+            
+            default:
+                throw new InvalidOperationException("Unknown clock tuning mode");
+        }
+
+        return coreTune;
+    }
+    
+    private GpuClockTune TunerMemoryValueToClockTune()
+    {
+        GpuClockTune memTune;
+
+        
+        
+        switch (SelectedGpu?.Capabilities.MemoryClockTuningMode)
+        {
+            case GpuClockTuningMode.ClockRange:
+                memTune = new GpuClockTune.ClockRange((uint)TunerCurrentMemoryMinClock, (uint)TunerCurrentMemoryOffset);
+                break;
+            
+            case GpuClockTuningMode.Offset:
+                memTune = new GpuClockTune.Offset((int)TunerCurrentMemoryOffset, GpuPState.GpuPstate0);
+                break;
+            
+            default:
+                throw new InvalidOperationException("Unknown clock tuning mode");
+        }
+        return memTune;
+    }
+    
+    private async Task OcProfileParameterApplyCommand(OcProfile? ocProfile)
+    {
+        if (SelectedGpu is null)
+        {
+            Log.Warning("No gpu selected!");
+            return;
+        }
+
+        //check sudo password
+        // if (!await RequestSudoPasswordDialogIfNeededAsync())
+        //     return;
+        
+        // KillFanCurveProcessCommand();
+
+        // if (Utils.Systemd.IsSystemdServiceRunning(_profilesServiceName))
+        // {
+        //     var box = MessageBoxManager.GetMessageBoxCustom(
+        //         new MessageBoxCustomParams()
+        //         {
+        //             ButtonDefinitions = new List<ButtonDefinition>
+        //             {
+        //                 new ButtonDefinition { Name = "Cancel", IsDefault = true },
+        //                 new ButtonDefinition { Name = "Apply and keep old fan profile" },
+        //                 new ButtonDefinition { Name = "Stop service",  },
+        //             },
+        //             
+        //             ContentTitle = $"{_profilesServiceName} detected!",
+        //             ContentMessage = $"{_profilesServiceName} {Resources.MsgBoxBodyServiceConflict} 'sudo systemctl enable {_profilesServiceName}'",
+        //             Topmost = true,
+        //             CanResize = false,
+        //             Icon = Icon.Warning,
+        //             ShowInCenter = true,
+        //             WindowDecorations = WindowDecorations.BorderOnly
+        //         }
+        //     );
+        //
+        //     var result = await box.ShowAsync();
+        //
+        //     switch (result)
+        //     {
+        //         case "Stop service":
+        //             Utils.Systemd.StopSystemdService(_profilesServiceName);
+        //             IsStartupProfileChecked = false;
+        //             break;
+        //         
+        //         case "Apply and keep old fan profile":
+        //             break;
+        //         
+        //         default:
+        //             return;
+        //
+        //     }
+        // }
+        
+        ocProfile?.Apply(SelectedGpu);
+        _autoApplyProfileLoaded = true;
+        
+    }
+
+    
+
+    bool CanOcProfileApplyCommand()
+    {
+        return SelectedGpu != null;
+    }
+    
+    public static async Task<bool> FanApplyButtonClick(uint speed)
+    {
+        // if (SelectedGpuFan is null || SelectedGpu is null) return false;
+        //
+        // //check sudo password
+        // if (!await RequestSudoPasswordDialogIfNeededAsync())
+        //     return false;
+        //
+        //
+        // switch (_selectedFanRadioButton)
+        // {
+        //     case 0:
+        //         return SelectedGpu.ApplyAutoSpeedToAllFans();
+        //     case 1:
+        //         return SelectedGpu.ApplySpeedToAllFans(speed);
+        //     default:
+        //         return false;
+        // }
+        return true;
+
+    }
+
+    public void FanRadioButtonClicked(uint id)
+    {
+        //0: auto, 1: manual, 2:curve
+
+        _selectedFanRadioButton = id;
+        
+    }
+    
+    public static void SelectGpu(uint id)
+    {
+        
+    }
+
+    public async Task LoadedEvent(bool isDesignMode)
+    {
+        if (!isDesignMode)
+            await ShowDependenciesMsgbox(await CheckDependencies());
+        
+        //convert loaded gpus to gpuviewmodel
+        
+        
+        
+        if (SelectedGpu is null && AvailableGpus.Any())
+            SelectedGpu = AvailableGpus.First();
+        
+        await CheckAndApplyAutoApplyProfile();
+    }
+
+    private void InitGpus()
+    {
+        if (Program.GpuService?.GpuList is null)
+            return;
+        
+        foreach (var gpu in Program.GpuService.GpuList)
+        {
+            AvailableGpus.Add(new GpuViewModel(gpu));
+        }
+    }
+    
+
+
+    /// <summary>
+    /// Check nvidia drivers and cli tool
+    /// </summary>
+    /// <returns>0: success, 1: no compatible gpus found, 2: nvidia driver version less than 555, 3: daemon not running </returns>
+    private async Task<ushort> CheckDependencies()
+    {
+        //check compatible gpus
+
+        if (Program.GpuService is null || AvailableGpus.Count == 0)
+        {
+            return 1;
+        }
+
+
+        //check cli tool
+        // var clicmd = Utils.General.RunCliCommand("snvctl", "-d", true,false,true);
+        // if (clicmd is null || clicmd.ExitCode != 0)
+        //     return 3;
+        return !File.Exists("/run/slimit-grpc.sock") ? (ushort)3 : (ushort)0;
+    }
+
+    public static async Task ShowDependenciesMsgbox(ushort errCode)
+    {
+        
+        switch (errCode)
+        {
+            case 0:
+                return;
+            case 1:
+
+                var box = MessageBoxManager.GetMessageBoxStandard(Resources.MsgBoxTitleDependencyNoGpusFound,
+                    Resources.MsgBoxBodyDependencyNoGpusFound, ButtonEnum.Ok, Icon.Error);
+                
+                await box.ShowAsync();
+                // Environment.Exit(1);
+                break;
+            case 2:
+                box = MessageBoxManager.GetMessageBoxStandard(Resources.MsgBoxTitleDependencyDriverOutdated,
+                    Resources.MsgBoxBodyDependencyDriverOutdated, ButtonEnum.Ok, Icon.Warning);
+
+                await box.ShowAsync();
+                break;
+            case 3:
+                box = MessageBoxManager.GetMessageBoxStandard(Resources.MsgBoxTitleDependencyDaemonMissingOrNotRunning,
+                    Resources.MsgBoxBodyDependencyDaemonMissingOrNotRunning, ButtonEnum.Ok, Icon.Warning);
+
+                await box.ShowAsync();
+                Environment.Exit(1);
+                break;
+        }
+    }
+
+    private static GpuClockTune GetDefaultTune(GpuClockTuningMode tuningMode,uint clockMinMhz = 0, uint clockMaxMhz = 0)
+    {
+        switch (tuningMode)
+        {
+            case GpuClockTuningMode.ClockRange:
+                return new GpuClockTune.ClockRange(clockMinMhz, clockMaxMhz);
+            default:
+            case GpuClockTuningMode.Offset:
+                return new GpuClockTune.Offset(0, GpuPState.GpuPstate0);
+            case GpuClockTuningMode.Overdrive:
+                return new GpuClockTune.Overdrive(0);
+            
+        }
+    }
+
+    public void Dispose()
+    {
+        SelectedGpu?.Dispose();
+        _sudoPasswordDialogClosed.Dispose();
+        OpenFanCurveEditorCommand.Dispose();
+        GC.SuppressFinalize(this);
+    }
+}

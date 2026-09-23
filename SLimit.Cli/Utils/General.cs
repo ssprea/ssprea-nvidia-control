@@ -1,7 +1,7 @@
 using System;
 using System.Diagnostics;
 
-namespace sspreaNvidiaControlCli.Utils;
+namespace SLimit.Cli.Utils;
 
 public static class General
 {

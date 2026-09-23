@@ -1,0 +1,91 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:SLimit.Gui.ViewModels"
+             xmlns:lang="clr-namespace:SLimit.Gui.Lang"
+             mc:Ignorable="d" d:DesignWidth="590" d:DesignHeight="620"
+             x:Class="SLimit.Gui.Views.SettingsPages.ThemesSettingsPage"
+             x:DataType="vm:SettingsMainWindowViewModel">
+    <StackPanel x:Name="GuiSettingsContent">
+                 
+        <Border Classes="panelItem">
+            <StackPanel>
+                <Label  HorizontalAlignment="Left" VerticalAlignment="Bottom" FontSize="10" Content="{x:Static lang:Resources.SettingsSelectedTheme}"/>
+                <ComboBox  SelectedItem="{Binding CurrentSelectedUserTheme}" SelectedIndex="{Binding ThemeSelectorIndex}"
+                           HorizontalAlignment="Stretch" ItemsSource="{Binding AvailableThemes}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Name}"/>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                    
+                </ComboBox>
+                
+                <DockPanel LastChildFill="False">
+                    <Button DockPanel.Dock="Left" IsEnabled="{Binding SelectedThemeIsCustom}" Command="{Binding EditSelectedTheme}"
+                            HorizontalAlignment="Left" Content="Edit"/>
+                    
+                    <Button DockPanel.Dock="Right" Classes="danger" IsEnabled="{Binding SelectedThemeIsCustom}" 
+                            Command="{Binding DeleteSelectedUserTheme}" HorizontalAlignment="Right" Content="Delete"/>
+                </DockPanel>
+            </StackPanel>
+        </Border>
+        
+        <Label/>
+        
+        <Border Classes="panelItem">
+            <ScrollViewer>
+                <DockPanel>
+                    <Label DockPanel.Dock="Top" HorizontalAlignment="Left" Classes="h1" VerticalAlignment="Bottom" Content="{x:Static lang:Resources.SettingsCustomThemes}"/>
+                    
+                    
+                    <DockPanel Dock="Top">
+                        <!-- <CheckBox IsEnabled="False" DockPanel.Dock="Right" IsChecked="{Binding CurrentEditingUserTheme.IsDark}" Content="Dark"/> -->
+                        <Button Content="{x:Static lang:Resources.ButtonSave}" Command="{Binding SaveNewUserThemeAsync}" DockPanel.Dock="Right" />
+                        
+                        <TextBox DockPanel.Dock="Left" Text="{Binding CurrentEditingUserTheme.Name}"  HorizontalAlignment="Stretch"/>
+                    </DockPanel>
+            
+                    
+                    <DataGrid DockPanel.Dock="Top" ItemsSource="{Binding CurrentEditingUserTheme.Colors}" 
+                              IsReadOnly="False" 
+                              GridLinesVisibility="All"
+                              CanUserReorderColumns="True"
+                              CanUserResizeColumns="True"
+                              CanUserSortColumns="False"
+                              HorizontalAlignment="Stretch"
+                              VerticalAlignment="Stretch"
+                              BorderThickness="3" 
+                              MaxHeight="280"
+                              BorderBrush="{DynamicResource BorderBrush}"
+                              
+                    >
+                              
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Key"
+                                                Width="3*"
+                                                IsReadOnly="True"
+                                                Binding="{Binding Key}"/>
+
+                            <DataGridTemplateColumn Header="Color" Width="*">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <ColorPicker
+                                            IsAlphaEnabled="True"
+                                            Color="{Binding Value,Mode=TwoWay}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                        
+                    </DataGrid>
+                    
+                </DockPanel>
+            </ScrollViewer>
+            
+        </Border>      
+                        
+                        
+    </StackPanel>
+</UserControl>

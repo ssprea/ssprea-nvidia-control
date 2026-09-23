@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ssprea-nvidia-control", "ssprea-nvidia-control\ssprea-nvidia-control.csproj", "{C1FFA3CE-0DCD-4E23-8DBE-8B77C29527FE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SLimit.Gui", "SLimit.Gui\SLimit.Gui.csproj", "{C1FFA3CE-0DCD-4E23-8DBE-8B77C29527FE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SLimit.Cli", "SLimit.Cli\SLimit.Cli.csproj", "{ADD93DEA-6763-48DC-A18F-D422DE7B427D}"
 EndProject

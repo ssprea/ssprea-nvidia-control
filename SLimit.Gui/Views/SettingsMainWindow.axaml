@@ -1,0 +1,44 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:vm="using:SLimit.Gui.ViewModels"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:system="clr-namespace:System;assembly=System.Runtime"
+        xmlns:lang="clr-namespace:SLimit.Gui.Lang"
+        mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="450"
+        Width="590" Height="650"
+        x:Class="SLimit.Gui.Views.SettingsMainWindow"
+        x:DataType="vm:SettingsMainWindowViewModel"
+        Background="{DynamicResource BackgroundBrushOpaque}"
+        Title="{x:Static lang:Resources.SettingsTitle}">
+    
+        
+        
+
+        <Grid Margin="10"
+              RowDefinitions="*,10*,*"
+              ColumnDefinitions="*,3*"
+              
+              >
+            
+                <Label Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Top" Content="{x:Static lang:Resources.SettingsSubtitle}"/>
+            
+                <ListBox Grid.Row="1" Grid.Column="0" SelectedIndex="{Binding SelectedSettingCategoryIndex}">
+                    <ListBoxItem Content="GUIs"/>
+                    <ListBoxItem Content="Theme"/>
+                    <ListBoxItem Content="Monitoring"/>
+                    <ListBoxItem Content="Behaviour"/>
+                    
+                    
+                </ListBox>
+            
+            <Border Classes="section lightSection" Grid.Row="1" Grid.Column="1" BorderBrush="Transparent" Margin="10" CornerRadius="10" >
+                <ContentControl Content="{Binding CurrentSettingCategoryContent}"/>
+            </Border>
+            
+            <Button Grid.Row="2" Grid.Column="1" HorizontalAlignment="Right" Command="{Binding SaveSettingsAsync}" Content="{x:Static lang:Resources.ButtonSave}"/>
+        </Grid>
+        
+        
+        
+</Window>

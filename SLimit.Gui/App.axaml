@@ -1,0 +1,158 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="SLimit.Gui.App"
+             xmlns:local="using:sspreaNvidiaControl"
+             xmlns:converters="clr-namespace:SLimit.Gui.Converters"
+             xmlns:themes="using:RangeSlider.Avalonia.Themes.Fluent"
+             xmlns:converters1="clr-namespace:SLimit.Gui.Converters"
+             RequestedThemeVariant="Dark">
+             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
+
+    <Application.DataTemplates>
+        <local:ViewLocator/>
+    </Application.DataTemplates>
+  
+     <Application.Styles>
+         <FluentTheme >
+             <FluentTheme.Palettes>
+
+                 <ColorPaletteResources
+                     x:Key="Light"
+                     Accent="{DynamicResource AccentColor}" />
+
+                 <ColorPaletteResources
+                     x:Key="Dark"
+                     Accent="{DynamicResource AccentColor}" />
+
+             </FluentTheme.Palettes>
+         </FluentTheme>
+         <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
+         <StyleInclude Source="avares://SLimit.Gui/Controls/ResponsiveGridCarousel.axaml" />
+         
+         <StyleInclude Source="avares://SLimit.Gui/Styles/General.axaml"/>
+         <StyleInclude Source="avares://SLimit.Gui/Styles/Inputs.axaml"/>
+         <StyleInclude Source="avares://SLimit.Gui/Styles/Sections.axaml"/>
+         <StyleInclude Source="avares://SLimit.Gui/Styles/Tuner.axaml"/>
+         
+         <themes:RangeSliderTheme />
+         <StyleInclude Source="avares://Avalonia.Controls.ColorPicker/Themes/Fluent/Fluent.xaml" />
+     </Application.Styles>
+             
+     <Application.Resources>
+         
+         
+         <ResourceDictionary>
+             
+             <FontFamily x:Key="NotoSansFont">avares://SLimit.Gui/Assets/Fonts/NotoSans/NotoSans-VariableFont.ttf</FontFamily>
+             <FontFamily x:Key="NotoSansMonoFont">avares://SLimit.Gui/Assets/Fonts/NotoSansMono/NotoSansMono-VariableFont.ttf</FontFamily>
+             <FontFamily x:Key="RobotoMonoFont">avares://SLimit.Gui/Assets/Fonts/Roboto/RobotoMono-VariableFont.ttf</FontFamily>
+         
+             <converters:LiveStatsGridResponsiveColumnConverter x:Key="LiveStatsGridResponsiveColumnConverter"/>
+             <converters:PStateFriendlyNameConverter x:Key="PStateFriendlyNameConverter"/>
+             <converters1:BytesConverter x:Key="BytesConverter"/>
+             <converters:WattsConverter x:Key="WattsConverter"/>
+             
+             <SolidColorBrush x:Key="SuccessBrush" Color="{DynamicResource SuccessColor}" />
+             <SolidColorBrush x:Key="WarningBrush" Color="{DynamicResource WarningColor}" />
+             <SolidColorBrush x:Key="DangerHoverBrush" Color="{DynamicResource DangerHoverColor}" />
+             <SolidColorBrush x:Key="DangerBrush" Color="{DynamicResource DangerColor}" />
+             <SolidColorBrush x:Key="InfoBrush" Color="{DynamicResource AccentColor}" />
+                    
+             <SolidColorBrush x:Key='BackgroundBrush' Color="{DynamicResource BackgroundColor}"/>
+             <SolidColorBrush x:Key='BackgroundBrushOpaque' Color="{DynamicResource BackgroundColorOpaque}"/>
+             <SolidColorBrush x:Key='BorderBrush' Color="{DynamicResource BorderColor}"/>
+             <SolidColorBrush x:Key='ForegroundBrush' Color="{DynamicResource ForegroundColor}"/>
+             <SolidColorBrush x:Key='SmallSectionBackgroundBrushLight' Color="{DynamicResource SmallSectionBackgroundColorLight}"/>
+             <SolidColorBrush x:Key='SmallSectionBackgroundBrushDark' Color="{DynamicResource SmallSectionBackgroundColorDark}"/>
+             <SolidColorBrush x:Key='SmallSectionBorderBrush' Color="{DynamicResource SmallSectionBorderColor}"/>
+             <SolidColorBrush x:Key='SectionBackgroundBrushDark' Color="{DynamicResource SectionBackgroundColorDark}"/>
+             <SolidColorBrush x:Key='SectionBackgroundBrushLight' Color="{DynamicResource SectionBackgroundColorLight}"/>
+             <SolidColorBrush x:Key='InfoBarsBorderBrush' Color="{DynamicResource InfoBarsBorderColor}"/>
+             <SolidColorBrush x:Key='AccentBrush' Color="{DynamicResource AccentColor}"/>
+             <SolidColorBrush x:Key='StrongAccentBrush' Color="{DynamicResource StrongAccentColor}"/>
+             <SolidColorBrush x:Key='TextBrush' Color="{DynamicResource TextColor}"/>
+             
+             
+             <ResourceDictionary.ThemeDictionaries>
+                
+                <ResourceDictionary x:Key='Light'>
+                    <Color x:Key='BackgroundColor'>GhostWhite</Color>
+                    <Color x:Key='BorderColor'>DimGray</Color>
+                    <Color x:Key='ForegroundColor'>Black</Color>
+                    <Color x:Key='SectionBackgroundColor'>LightGray</Color>
+                    <Color x:Key='SelectionColor'>#C191FF</Color>
+                    <Color x:Key='TextColor'>Black</Color>
+                </ResourceDictionary>
+        
+            <!-- <ResourceDictionary x:Key=''> -->
+            <!-- <SolidColorBrush x:Key='BackgroundBrush'>#AA262626</SolidColorBrush> -->
+            <!-- <SolidColorBrush x:Key='BorderBrush'>#1e1f22</SolidColorBrush> -->
+            <!-- <SolidColorBrush x:Key='ForegroundBrush'>#8b8d92</SolidColorBrush> -->
+            <!-- <SolidColorBrush x:Key='SmallSectionBackgroundBrushLight'>#DD606060</SolidColorBrush> -->
+            <!-- <SolidColorBrush x:Key='SmallSectionBackgroundBrushDark'>#DD404848</SolidColorBrush> -->
+            <!-- <SolidColorBrush x:Key='SmallSectionBorderBrush'>Gray</SolidColorBrush> -->
+            <!-- <SolidColorBrush x:Key='SectionBackgroundBrushLight'>#AA606060</SolidColorBrush> -->
+            <!-- <SolidColorBrush x:Key='SectionBackgroundBrushDark'>#AA404848</SolidColorBrush> -->
+            <!-- <SolidColorBrush x:Key='InfoBarsBorderBrush'>Black</SolidColorBrush> -->
+            <!-- <SolidColorBrush x:Key='HighlightColor'>DodgerBlue</SolidColorBrush> -->
+            <!-- ~1~ <LinearGradientBrush x:Key='ProgressBarGradient' StartPoint="0%,0%" EndPoint="100%,0%"> @1@ -->
+            <!-- ~1~     <GradientStop Color="#904ECDC4" Offset="0.0"/> @1@ -->
+            <!-- ~1~     <GradientStop Color="#90FF6B6B" Offset="1.0"/> @1@ -->
+            <!-- ~1~ </LinearGradientBrush> @1@ -->
+            <!-- <Color x:Key='SectionBackgroundColorLight'>#AA606060</Color> -->
+            <!-- <Color x:Key='SectionBackgroundColorDark'>#AA404848</Color> -->
+            <!-- <SolidColorBrush x:Key='SelectionColor'>#C191FF</SolidColorBrush> -->
+            <!-- <SolidColorBrush x:Key='TextColor'>#BDBDBD</SolidColorBrush> -->
+            <!-- </ResourceDictionary> -->
+                <ResourceDictionary x:Key="Dark">
+                
+                    <Color x:Key="SuccessColor">#18A88F</Color>
+                    <Color x:Key="WarningColor">#E5A84B</Color>
+                    <Color x:Key="DangerHoverColor">DarkRed</Color>
+                    <Color x:Key="DangerColor">#40E85F68</Color>
+                    <Color x:Key="AccentColor">#505BE6</Color>
+                    <Color x:Key="StrongAccentColor">#9C1FE8</Color>
+                    <Color x:Key="BackgroundColor">#DD121D30</Color>
+                    <Color x:Key="BackgroundColorOpaque">#FF121D30</Color>
+                    <Color x:Key="BorderColor">#66224D75</Color>
+                    <Color x:Key="ForegroundColor">#E6FFFFFF</Color>
+                    <Color x:Key="SmallSectionBackgroundColorLight">#33224D75</Color>
+                    <Color x:Key="SmallSectionBackgroundColorDark">#22121D30</Color>
+                    <Color x:Key="SmallSectionBorderColor">#66224D75</Color>
+                    <Color x:Key="SectionBackgroundColorDark">#11121D30</Color>
+                    <Color x:Key="SectionBackgroundColorLight">#22224D75</Color>
+                    <Color x:Key="InfoBarsBorderColor">Black</Color>
+                    <Color x:Key="TextColor">#F1F0F5</Color>
+
+                    
+                    
+                    <!--Slider thumb override-->
+                    <!-- <SolidColorBrush x:Key="SliderThumbBackground">#505BE6</SolidColorBrush> -->
+                    <!-- <SolidColorBrush x:Key="SliderThumbBackgroundPointerOver">#4F229E</SolidColorBrush> -->
+                    <!-- <SolidColorBrush x:Key="SliderThumbBackgroundPressed">#9C1FE8</SolidColorBrush> -->
+                    <!-- <SolidColorBrush x:Key="SliderThumbBackgroundDisabled">#66505BE6</SolidColorBrush> -->
+                    <!-- <SolidColorBrush x:Key="SliderTrackValueFillPointerOver" Color="{StaticResource AccentColor}"/> -->
+                    <!-- <SolidColorBrush x:Key="SliderTrackValueFillPressed" Color="{StaticResource StrongAccentColor}"/> -->
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
+             
+         
+     </Application.Resources>
+             
+     <TrayIcon.Icons>
+         <TrayIcons>
+             <TrayIcon Icon="/Assets/slimit-small-logo.ico" 
+                       ToolTipText="ssprea NVidia Control"
+                       Clicked="TrayIcon_OnClicked"
+                       >
+                 <TrayIcon.Menu>
+                     <NativeMenu>
+                         <NativeMenuItem Header="Close" Click="NativeMenuItem_OnClick"/>
+                         <NativeMenuItem Header="Open" Click="TrayIcon_OnClicked"/>
+                     </NativeMenu>
+                 </TrayIcon.Menu>
+             </TrayIcon>
+         </TrayIcons>
+     </TrayIcon.Icons>
+</Application>

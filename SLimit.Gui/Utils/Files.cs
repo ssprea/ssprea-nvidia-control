@@ -1,4 +1,4 @@
-namespace SLimit.Cli.Utils;
+namespace SLimit.Gui.Utils;
 
 public static class Files
 {

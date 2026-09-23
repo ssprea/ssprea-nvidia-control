@@ -1,4 +1,4 @@
-namespace sspreaNvidiaControlCli.Utils;
+namespace SLimit.Cli.Utils;
 
 public static class Systemd
 {
