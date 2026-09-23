@@ -40,11 +40,14 @@ install:
 
 	mkdir -p $(DESTDIR)/usr/lib/systemd/user
 	mkdir -p $(DESTDIR)/usr/lib/systemd/system
-
+	mkdir -p $(DESTDIR)/usr/share/icons/hicolor/256x256/apps
 
 
 	cp bin/Release/net10.0/linux-x64/publish/SLimit.Gui $(DESTDIR)/usr/local/bin/slimit-gui
 	cp Assets/SLimit.desktop $(DESTDIR)/usr/share/applications/SLimit.desktop
+	cp Assets/slimit-small-512.png $(DESTDIR)/usr/share/icons/hicolor/256x256/apps/slimit.png
+
+
 
 	cp SystemdServices/snvctl-gui.service $(DESTDIR)/usr/lib/systemd/user/snvctl-gui.service
 

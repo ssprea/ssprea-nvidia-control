@@ -16,7 +16,7 @@
         xmlns:controls1="https://github.com/DmitryNizhebovsky/Avalonia.RangeSlider"
         x:Class="SLimit.Gui.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
-        Icon="/Assets/slimit-small-logo.ico"
+        Icon="/Assets/slimit-small-512.ico"
         Title="sLimit"
         Name="MainOcWindow"
         Closed="Window_OnClosed"

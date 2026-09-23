@@ -142,7 +142,7 @@
              
      <TrayIcon.Icons>
          <TrayIcons>
-             <TrayIcon Icon="/Assets/slimit-small-logo.ico" 
+             <TrayIcon Icon="/Assets/slimit-small-512.ico" 
                        ToolTipText="ssprea NVidia Control"
                        Clicked="TrayIcon_OnClicked"
                        >
