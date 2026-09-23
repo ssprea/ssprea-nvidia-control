@@ -6,6 +6,6 @@ Comment=Unified GPU Manager
 Exec=/usr/local/bin/slimit-gui
 StartupNotify=true
 Terminal=false
-Icon=ssprea-nvidia-control
+Icon=slimit
 Type=Application
 Categories=Settings;System;
