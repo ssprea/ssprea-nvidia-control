@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:models="clr-namespace:SLimit.Gui.Models"
         mc:Ignorable="d" d:DesignWidth="1514" d:DesignHeight="825"
-        Width="1514" Height="825"
+        Width="1255" Height="660"
         xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
         xmlns:liveChartsCore="clr-namespace:LiveChartsCore;assembly=LiveChartsCore"
         xmlns:skiaSharpView="clr-namespace:LiveChartsCore.SkiaSharpView;assembly=LiveChartsCore.SkiaSharpView"
@@ -419,7 +419,7 @@
                                         
                                         <Border  
                                             Container.Name="InfosContainer" Container.Sizing="Width"
-                                            Grid.Row="0" DockPanel.Dock="Top" Classes="panelItem" Padding="2" Margin="10"  HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            Grid.Row="0" DockPanel.Dock="Top" Classes="panelItem" Padding="2" Margin="0"  HorizontalAlignment="Center" VerticalAlignment="Center">
                                             <StackPanel 
                                                 Orientation="Horizontal" 
                                                 HorizontalAlignment="Center"
@@ -434,7 +434,7 @@
                                 
                                         <Border 
                                             Container.Name="InfosContainer" Container.Sizing="Width"
-                                            Grid.Row="1" DockPanel.Dock="Top" Classes="panelItem" Padding="2" Margin="10"  HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            Grid.Row="1" DockPanel.Dock="Top" Classes="panelItem" Padding="2"   HorizontalAlignment="Center" VerticalAlignment="Center">
                                             <StackPanel 
                                                 Orientation="Horizontal" 
                                                 HorizontalAlignment="Center"
@@ -457,7 +457,7 @@
                                         
                                         <Border 
                                             Container.Name="InfosContainer" Container.Sizing="Width"
-                                            Grid.Row="2" DockPanel.Dock="Top" Classes="panelItem" Padding="2" Margin="10"  HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            Grid.Row="2" DockPanel.Dock="Top" Classes="panelItem" Padding="2"   HorizontalAlignment="Center" VerticalAlignment="Center">
                                             <StackPanel 
                                                 Orientation="Horizontal" 
                                                 HorizontalAlignment="Center"
@@ -481,7 +481,7 @@
                                         
                                         <Border 
                                             Container.Name="InfosContainer" Container.Sizing="Width"
-                                            Grid.Row="3" DockPanel.Dock="Top" Classes="panelItem" Padding="2" Margin="10"   HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            Grid.Row="3" DockPanel.Dock="Top" Classes="panelItem" Padding="2"   HorizontalAlignment="Center" VerticalAlignment="Center">
                                             <StackPanel 
                                                 Orientation="Horizontal" 
                                                 HorizontalAlignment="Center"
@@ -504,7 +504,7 @@
                                         
                                         <Border 
                                             Container.Name="InfosContainer" Container.Sizing="Width"
-                                            Grid.Row="4" DockPanel.Dock="Top" Classes="panelItem" Padding="2" Margin="10"   HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            Grid.Row="4" DockPanel.Dock="Top" Classes="panelItem" Padding="2"   HorizontalAlignment="Center" VerticalAlignment="Center">
                                             <StackPanel 
                                                 Orientation="Horizontal" 
                                                 HorizontalAlignment="Center"
@@ -531,7 +531,7 @@
                                         
                                         <Border 
                                             Container.Name="InfosContainer" Container.Sizing="Width"
-                                            Grid.Row="5" DockPanel.Dock="Top" Classes="panelItem" Padding="2" Margin="10"   HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            Grid.Row="5" DockPanel.Dock="Top" Classes="panelItem" Padding="2"    HorizontalAlignment="Center" VerticalAlignment="Center">
                                             <StackPanel 
                                                 Orientation="Horizontal" 
                                                 HorizontalAlignment="Center"
@@ -615,7 +615,7 @@
                                                         <controls1:RangeSlider IsVisible="{Binding IsTunerCoreRange}"
                                                                                 Minimum="{Binding SelectedGpu.ClockCoreMinMhz, FallbackValue=0}" Maximum="{Binding SelectedGpu.ClockCoreMaxMhz, FallbackValue=10000}"
                                                                                LowerSelectedValue="{Binding TunerCurrentCoreMinClock}" UpperSelectedValue="{Binding TunerCurrentCoreOffset}" 
-                                                                               IsThumbOverlap="False"/>
+                                                                               IsThumbOverlap="False" Height="35"/>
                                                     </Panel>
                                                     
                                                 </DockPanel>
@@ -653,7 +653,7 @@
                                                         <controls1:RangeSlider IsVisible="{Binding IsTunerMemRange}"
                                                                                Minimum="{Binding SelectedGpu.ClockMemMinMhz, FallbackValue=0}" Maximum="{Binding SelectedGpu.ClockMemMaxMhz, FallbackValue=10000}"
                                                                                LowerSelectedValue="{Binding TunerCurrentMemoryMinClock}" UpperSelectedValue="{Binding TunerCurrentMemoryOffset}" 
-                                                                               IsThumbOverlap="False"/>
+                                                                               IsThumbOverlap="False" Height="35"/>
                                                     </Panel>
                                                 </DockPanel>
                                             </Border>
@@ -714,7 +714,7 @@
                                                 </DockPanel>
                                             </Border>
                                     
-                                            <Border Classes="panelItem" Grid.Row="4" DockPanel.Dock="Top" Margin="5" Padding="4" HorizontalAlignment="Stretch" VerticalAlignment="Bottom">
+                                            <Border Classes="panelItem" Grid.Row="4" DockPanel.Dock="Top"   Padding="4" HorizontalAlignment="Stretch" VerticalAlignment="Center">
                                                 <DockPanel HorizontalAlignment="Stretch">
                                 
                                                     <Button DockPanel.Dock="Left" CornerRadius="10" Content="{x:Static lang:Resources.ButtonApply}" Command="{Binding ApplyTempTunerSettings}"/>
