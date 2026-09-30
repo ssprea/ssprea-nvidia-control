@@ -196,9 +196,9 @@ public class AmdSmiGpu : IGpu
             (uint)(powerCapInfo.power_cap / 1000),
             (uint)(powerInfo.socket_power * 1000),
             
-            (vramUsageInfo.vram_total - vramUsageInfo.vram_used) * 1000 * 1000,
-            vramUsageInfo.vram_used * 1000 * 1000,
-            vramUsageInfo.vram_total * 1000 * 1000,
+            (vramUsageInfo.vram_total - vramUsageInfo.vram_used) * 1000UL * 1000UL,
+            vramUsageInfo.vram_used * 1000UL * 1000UL,
+            vramUsageInfo.vram_total * 1000UL * 1000UL,
             gpuActivityInfo.gfx_activity,
             gpuActivityInfo.umc_activity,
             currentTempInfo,
