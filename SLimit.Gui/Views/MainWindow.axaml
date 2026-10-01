@@ -6,6 +6,7 @@
         xmlns:models="clr-namespace:SLimit.Gui.Models"
         mc:Ignorable="d" d:DesignWidth="1514" d:DesignHeight="825"
         Width="1255" Height="660"
+        MinWidth="1255" MinHeight="660"
         xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
         xmlns:liveChartsCore="clr-namespace:LiveChartsCore;assembly=LiveChartsCore"
         xmlns:skiaSharpView="clr-namespace:LiveChartsCore.SkiaSharpView;assembly=LiveChartsCore.SkiaSharpView"
@@ -36,7 +37,7 @@
 
     <Grid x:Name="MainGrid"
               ColumnDefinitions="*,20*,*"
-              RowDefinitions="2*,14*,12*,*"
+              RowDefinitions="3*,14*,12*,*"
               x:DataType="vm:MainWindowViewModel"
               Background="{DynamicResource BackgroundBrush}"
               
