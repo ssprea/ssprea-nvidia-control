@@ -257,6 +257,11 @@
                                     <!-- <Setter Property="Padding" Value="0,10,0,10"/> -->
                                     <Setter Property="Margin" Value="0,10,0,10"/>
                                 </Style>
+                                
+                                <Style Selector="Border.panelItem">
+                                    <!-- <Setter Property="Padding" Value="0,10,0,10"/> -->
+                                    <Setter Property="Margin" Value="5,10,5,10"/>
+                                </Style>
                             </DockPanel.Styles>
                             
                             <Label DockPanel.Dock="Top" Classes="h1" VerticalAlignment="Stretch" HorizontalAlignment="Center" Content="{x:Static lang:Resources.ProfilesSection}"/>
@@ -419,7 +424,7 @@
                                         
                                         <Border  
                                             Container.Name="InfosContainer" Container.Sizing="Width"
-                                            Grid.Row="0" DockPanel.Dock="Top" Classes="panelItem" Padding="2" Margin="0"  HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            Grid.Row="0" DockPanel.Dock="Top" Classes="panelItem" Padding="2"  HorizontalAlignment="Center" VerticalAlignment="Center">
                                             <StackPanel 
                                                 Orientation="Horizontal" 
                                                 HorizontalAlignment="Center"
