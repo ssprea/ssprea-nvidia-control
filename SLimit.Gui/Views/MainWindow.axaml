@@ -6,7 +6,7 @@
         xmlns:models="clr-namespace:SLimit.Gui.Models"
         mc:Ignorable="d" d:DesignWidth="1514" d:DesignHeight="825"
         Width="1255" Height="660"
-        MinWidth="1255" MinHeight="660"
+        MinHeight="660"
         xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
         xmlns:liveChartsCore="clr-namespace:LiveChartsCore;assembly=LiveChartsCore"
         xmlns:skiaSharpView="clr-namespace:LiveChartsCore.SkiaSharpView;assembly=LiveChartsCore.SkiaSharpView"
@@ -69,7 +69,7 @@
                 
                     <!--lasciare qualcosa tipo *.20*,* di colonne e fare una singola responsivecarouselgrid-->
                 
-                <Grid  RowDefinitions="*,*,*,*,*,*,*" Name="TopGrid"
+                <Grid  RowDefinitions="1*,2*,2*,2*,2*,2*,2*" Name="TopGrid"
                   
                   >
                 
@@ -242,7 +242,7 @@
                     </Border>
                 
                     <!--PROFILES-->
-                    <Border Grid.Column="3" Grid.RowSpan="5" Grid.Row="1"
+                    <Border Grid.Column="3" Grid.RowSpan="3" Grid.Row="1"
                             BorderBrush="Transparent"
                             Background="{DynamicResource SectionBackgroundBrushLight}"
                             BorderThickness="0"
@@ -279,21 +279,21 @@
                                 </StackPanel>
                             </Border> 
                             
-                            <Border  DockPanel.Dock="Top" Classes="panelItem">
-                                <StackPanel  Spacing="3" Orientation="Horizontal">
-                                    
-                                    <CheckBox IsEnabled="False" VerticalAlignment="Center" FontSize="12" HorizontalAlignment="Stretch" Command="{Binding SaveAutoApplyProfileCommand}" CommandParameter="{Binding #CurrentSelectedProfileCombobox.SelectedItem}" IsChecked="{Binding IsAutoApplyProfileChecked}" Content="{x:Static lang:Resources.CheckboxDefaultProfile}">
-                                        <ToolTip.Tip>
-                                            <TextBlock Text="{x:Static lang:Resources.TooltipSaveAutoApplyProfile}"/>
-                                        </ToolTip.Tip>
-                                        
-                                    </CheckBox>
-                                        
-                                    <Label VerticalAlignment="Center" FontSize="12" HorizontalAlignment="Stretch" Content="{Binding SelectedAutoApplyOcProfile.Name, FallbackValue={x:Static lang:Resources.TextDisabled}}"/>
-
-                                    
-                                </StackPanel>
-                            </Border> 
+                            <!-- <Border  DockPanel.Dock="Top" Classes="panelItem"> -->
+                            <!--     <StackPanel  Spacing="3" Orientation="Horizontal"> -->
+                            <!--          -->
+                            <!--         <CheckBox IsEnabled="False" VerticalAlignment="Center" FontSize="12" HorizontalAlignment="Stretch" Command="{Binding SaveAutoApplyProfileCommand}" CommandParameter="{Binding #CurrentSelectedProfileCombobox.SelectedItem}" IsChecked="{Binding IsAutoApplyProfileChecked}" Content="{x:Static lang:Resources.CheckboxDefaultProfile}"> -->
+                            <!--             <ToolTip.Tip> -->
+                            <!--                 <TextBlock Text="{x:Static lang:Resources.TooltipSaveAutoApplyProfile}"/> -->
+                            <!--             </ToolTip.Tip> -->
+                            <!--              -->
+                            <!--         </CheckBox> -->
+                            <!--              -->
+                            <!--         <Label VerticalAlignment="Center" FontSize="12" HorizontalAlignment="Stretch" Content="{Binding SelectedAutoApplyOcProfile.Name, FallbackValue={x:Static lang:Resources.TextDisabled}}"/> -->
+                            <!-- -->
+                            <!--          -->
+                            <!--     </StackPanel> -->
+                            <!-- </Border>  -->
                             
                             <!-- <Border  DockPanel.Dock="Bottom" Classes="panelItem"> -->
                             <!--     <DockPanel Grid.Row="5" Grid.ColumnSpan="2"  > -->
@@ -310,7 +310,7 @@
                             <!--     </DockPanel> -->
                             <!-- </Border> -->
                             
-                            <Border Padding="10,0,10,20" DockPanel.Dock="Bottom" >
+                            <Border Padding="10,0,10,0" DockPanel.Dock="Bottom" >
                                 <DockPanel DockPanel.Dock="Top">
                                     <Button Grid.Row="4" Grid.Column="0" DockPanel.Dock="Left" Content="{x:Static lang:Resources.ButtonLoadToTuner}" Command="{Binding OnLoadProfileButtonClicked}" HorizontalAlignment="Left"/>
                                     <Button Grid.Row="4" Grid.Column="1" Classes="danger" DockPanel.Dock="Right" Content="{x:Static lang:Resources.ButtonDeleteProfile}" Command="{Binding DeleteOcProfile}"  HorizontalAlignment="Right"/>
@@ -339,7 +339,72 @@
                         </DockPanel>
                     </Border>
                         
+                    <!--OC STATUS-->
+                    <Border Grid.Column="3" Grid.RowSpan="3" Grid.Row="4"
+                            BorderBrush="Transparent"
+                            Background="{DynamicResource SectionBackgroundBrushLight}"
+                            BorderThickness="0"
+                            CornerRadius="20"
+                            Margin="0,5,0,5"
+                            DockPanel.Dock="Top"
+                    >
+                    
+                        <!--OC STATUS MAIN STACKPANEL-->
+                        <DockPanel LastChildFill="False">
                         
+                            <DockPanel.Styles>
+                                <Style Selector="ComboBox /template/ Border">
+                                    <!-- <Setter Property="Padding" Value="0,10,0,10"/> -->
+                                    <Setter Property="Margin" Value="0,10,0,10"/>
+                                </Style>
+                                
+                                <Style Selector="Border.panelItem">
+                                    <!-- <Setter Property="Padding" Value="0,10,0,10"/> -->
+                                    <Setter Property="Margin" Value="5,2,5,0"/>
+                                </Style>
+                            </DockPanel.Styles>
+                            
+                            <Label DockPanel.Dock="Top" Classes="h1" VerticalAlignment="Stretch" HorizontalAlignment="Center" Content="{x:Static lang:Resources.AppliedOcsSectionTitle}"/>
+                            
+                            <Border DockPanel.Dock="Top"  VerticalAlignment="Top"  Classes="panelItem" >
+                                <StackPanel HorizontalAlignment="Stretch" DockPanel.Dock="Bottom" Orientation="Horizontal">
+                                    <Label  VerticalAlignment="Center" Content="{x:Static lang:Resources.TunerCoreOffset}"/>
+                                    <Label IsVisible="{Binding IsTunerCoreOffset}" VerticalAlignment="Center" Content="+"/>
+                                    <Label IsVisible="{Binding IsTunerCoreRange}" VerticalAlignment="Center" Content="{Binding SelectedGpu.LatestGpuMetrics.AppliedCoreMinClockMhz, FallbackValue=0}"/>
+                                    <Label IsVisible="{Binding IsTunerCoreRange}" VerticalAlignment="Center" Content="-"/>
+                                    <Label VerticalAlignment="Center" Foreground="LightGreen" FontWeight="Bold" 
+                                           Content="{Binding SelectedGpu.LatestGpuMetrics.AppliedCoreOverclockMhz, FallbackValue=0}"/> 
+                                    
+                                                        
+                                </StackPanel>
+                            </Border> 
+                            
+                            <Border DockPanel.Dock="Top"  VerticalAlignment="Top"  Classes="panelItem" >
+                                <StackPanel HorizontalAlignment="Stretch" DockPanel.Dock="Bottom" Orientation="Horizontal">
+                                    <Label  VerticalAlignment="Center" Content="{x:Static lang:Resources.TunerMemoryOffset}"/>
+                                    <Label IsVisible="{Binding IsTunerCoreOffset}" VerticalAlignment="Center" Content="+"/>
+                                    <Label IsVisible="{Binding IsTunerCoreRange}" VerticalAlignment="Center" Content="{Binding SelectedGpu.LatestGpuMetrics.AppliedMemoryMinClockMhz, FallbackValue=0}"/>
+                                    <Label IsVisible="{Binding IsTunerCoreRange}" VerticalAlignment="Center" Content="-"/>
+                                                
+                                    <Label VerticalAlignment="Center" Foreground="LightGreen" FontWeight="Bold" 
+                                           Content="{Binding SelectedGpu.LatestGpuMetrics.AppliedMemoryOverclockMhz, FallbackValue=0}"/> 
+                                                        
+                                </StackPanel>
+                            </Border> 
+                            
+                            <Border DockPanel.Dock="Top"  VerticalAlignment="Top"  Classes="panelItem" >
+                                <StackPanel HorizontalAlignment="Stretch" DockPanel.Dock="Bottom" Orientation="Horizontal">
+                                    <Label  VerticalAlignment="Center" Content="V Offset:"/>
+                                    <Label  VerticalAlignment="Center" Foreground="LightGreen" FontWeight="Bold" 
+                                            Content="{Binding SelectedGpu.LatestGpuMetrics.AppliedCoreVoltageOffsetMv, FallbackValue=0}"/>
+                                                        
+                                </StackPanel>
+                            </Border> 
+                            
+                            
+                            
+                        </DockPanel>
+                    </Border>
                     
                    
                     
@@ -421,7 +486,7 @@
                                     <Label Classes="h1" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Content="{x:Static lang:Resources.InfoSection}"/>
                         
                                     <!--INFO ITEMS GRID-->
-                                    <Grid  Grid.Row="1" Grid.Column="0"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" RowDefinitions="*,*,*,*,*,*">
+                                    <Grid  Grid.Row="1" Grid.Column="0"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" RowDefinitions="*,*,*,*,*">
                                         
                                         <Border  
                                             Container.Name="InfosContainer" Container.Sizing="Width"
@@ -508,36 +573,36 @@
                                             </StackPanel>
                                         </Border>
                                         
+                                        <!-- <Border  -->
+                                        <!--     Container.Name="InfosContainer" Container.Sizing="Width" -->
+                                        <!--     Grid.Row="4" DockPanel.Dock="Top" Classes="panelItem" Padding="2"   HorizontalAlignment="Center" VerticalAlignment="Center"> -->
+                                        <!--     <StackPanel  -->
+                                        <!--         Orientation="Horizontal"  -->
+                                        <!--         HorizontalAlignment="Center" -->
+                                        <!-- -->
+                                        <!--     > -->
+                                        <!-- -->
+                                        <!--         <Label Classes="onlyWideMode" VerticalAlignment="Center" Content="Applicato:"/> -->
+                                        <!--         <Label  VerticalAlignment="Center" Content="Core:"/> -->
+                                        <!--         <Label IsVisible="{Binding IsTunerCoreOffset}" VerticalAlignment="Center" Content="+"/> -->
+                                        <!--         <Label IsVisible="{Binding IsTunerCoreRange}" VerticalAlignment="Center" Content="{Binding SelectedGpu.LatestGpuMetrics.AppliedCoreMinClockMhz, FallbackValue=0}"/> -->
+                                        <!--         <Label IsVisible="{Binding IsTunerCoreRange}" VerticalAlignment="Center" Content="-"/> -->
+                                        <!--         <Label VerticalAlignment="Center" Foreground="LightGreen" FontWeight="Bold"  -->
+                                        <!--                Content="{Binding SelectedGpu.LatestGpuMetrics.AppliedCoreOverclockMhz, FallbackValue=0}"/>  -->
+                                        <!--         <Label  VerticalAlignment="Center" Content="Mem:"/> -->
+                                        <!--         <Label IsVisible="{Binding IsTunerCoreOffset}" VerticalAlignment="Center" Content="+"/> -->
+                                        <!--         <Label IsVisible="{Binding IsTunerCoreRange}" VerticalAlignment="Center" Content="{Binding SelectedGpu.LatestGpuMetrics.AppliedMemoryMinClockMhz, FallbackValue=0}"/> -->
+                                        <!--         <Label IsVisible="{Binding IsTunerCoreRange}" VerticalAlignment="Center" Content="-"/> -->
+                                        <!--          -->
+                                        <!--         <Label VerticalAlignment="Center" Foreground="LightGreen" FontWeight="Bold"  -->
+                                        <!--                Content="{Binding SelectedGpu.LatestGpuMetrics.AppliedMemoryOverclockMhz, FallbackValue=0}"/>  -->
+                                        <!-- -->
+                                        <!--     </StackPanel> -->
+                                        <!-- </Border> -->
+                                        
                                         <Border 
                                             Container.Name="InfosContainer" Container.Sizing="Width"
-                                            Grid.Row="4" DockPanel.Dock="Top" Classes="panelItem" Padding="2"   HorizontalAlignment="Center" VerticalAlignment="Center">
-                                            <StackPanel 
-                                                Orientation="Horizontal" 
-                                                HorizontalAlignment="Center"
-                                        
-                                            >
-                                
-                                                <Label Classes="onlyWideMode" VerticalAlignment="Center" Content="Applicato:"/>
-                                                <Label  VerticalAlignment="Center" Content="Core:"/>
-                                                <Label IsVisible="{Binding IsTunerCoreOffset}" VerticalAlignment="Center" Content="+"/>
-                                                <Label IsVisible="{Binding IsTunerCoreRange}" VerticalAlignment="Center" Content="{Binding SelectedGpu.LatestGpuMetrics.AppliedCoreMinClockMhz, FallbackValue=0}"/>
-                                                <Label IsVisible="{Binding IsTunerCoreRange}" VerticalAlignment="Center" Content="-"/>
-                                                <Label VerticalAlignment="Center" Foreground="LightGreen" FontWeight="Bold" 
-                                                       Content="{Binding SelectedGpu.LatestGpuMetrics.AppliedCoreOverclockMhz, FallbackValue=0}"/> 
-                                                <Label  VerticalAlignment="Center" Content="Mem:"/>
-                                                <Label IsVisible="{Binding IsTunerCoreOffset}" VerticalAlignment="Center" Content="+"/>
-                                                <Label IsVisible="{Binding IsTunerCoreRange}" VerticalAlignment="Center" Content="{Binding SelectedGpu.LatestGpuMetrics.AppliedMemoryMinClockMhz, FallbackValue=0}"/>
-                                                <Label IsVisible="{Binding IsTunerCoreRange}" VerticalAlignment="Center" Content="-"/>
-                                                
-                                                <Label VerticalAlignment="Center" Foreground="LightGreen" FontWeight="Bold" 
-                                                       Content="{Binding SelectedGpu.LatestGpuMetrics.AppliedMemoryOverclockMhz, FallbackValue=0}"/> 
-                                
-                                            </StackPanel>
-                                        </Border>
-                                        
-                                        <Border 
-                                            Container.Name="InfosContainer" Container.Sizing="Width"
-                                            Grid.Row="5" DockPanel.Dock="Top" Classes="panelItem" Padding="2"    HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            Grid.Row="4" DockPanel.Dock="Top" Classes="panelItem" Padding="2"    HorizontalAlignment="Center" VerticalAlignment="Center">
                                             <StackPanel 
                                                 Orientation="Horizontal" 
                                                 HorizontalAlignment="Center"
@@ -599,7 +664,7 @@
                                                     Classes.tunerRange = "{Binding IsTunerCoreRange}"
                                                 >
                                     
-                                                    <Label Classes="onlyWideMode" DockPanel.Dock="Left" VerticalAlignment="Center" Content="{x:Static lang:Resources.TunerCoreOffset}"/>
+                                                    <Label Background="Blue" Classes="onlyWideMode" DockPanel.Dock="Left" VerticalAlignment="Center" Content="{x:Static lang:Resources.TunerCoreOffset}"/>
                                                     <Label Classes="onlySemiWideMode" DockPanel.Dock="Left" VerticalAlignment="Center" Content="C:"/>
                                                     <Label Classes="tunerSymbol" DockPanel.Dock="Left" VerticalAlignment="Center" FontWeight="Bold" /> 
                                                     <TextBox Classes="tunerStyle" IsVisible="{Binding IsTunerCoreRange}" DockPanel.Dock="Left" VerticalAlignment="Center" FontWeight="Bold" Text="{Binding TunerCurrentCoreMinClock}" /> 
@@ -608,6 +673,9 @@
                                                     <NumericUpDown  DockPanel.Dock="Right" Minimum="{Binding SelectedGpu.ClockCoreMinMhz, FallbackValue=0}" Maximum="{Binding SelectedGpu.ClockCoreMaxMhz, FallbackValue=10000}" FormatString="0"
                                                                     Background="Transparent" BorderBrush="Transparent" 
                                                                     TextAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Value="{Binding TunerCurrentCoreOffset,FallbackValue=0000}"/> 
+                                                    
+                                                    <Label />
+                                                    
                                                     
                                                     <Panel>
                                                         <Slider IsVisible="{Binding IsTunerCoreOffset}" DockPanel.Dock="Right" Height="35" VerticalAlignment="Top" HorizontalAlignment="Stretch" 

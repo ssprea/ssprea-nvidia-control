@@ -369,4 +369,7 @@
     <data name="SettingsCustomThemes" xml:space="preserve">
         <value>Create new custom theme:</value>
     </data>
+    <data name="AppliedOcsSectionTitle" xml:space="preserve">
+        <value>APPLIED</value>
+    </data>
 </root>

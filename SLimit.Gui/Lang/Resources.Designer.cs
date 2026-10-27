@@ -632,5 +632,11 @@ namespace SLimit.Gui.Lang {
                 return ResourceManager.GetString("SettingsCustomThemes", resourceCulture);
             }
         }
+        
+        public static string AppliedOcsSectionTitle {
+            get {
+                return ResourceManager.GetString("AppliedOcsSectionTitle", resourceCulture);
+            }
+        }
     }
 }

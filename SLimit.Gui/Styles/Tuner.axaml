@@ -37,7 +37,9 @@
         <Setter Property="Content" Value=""/>
     </Style>
     
-    
+    <Style Selector="Label.tunerAppliedLabel">
+        <Setter Property="FontSize" Value="10"/>
+    </Style>
     
     
     <Style Selector="TextBox.tunerStyle">
