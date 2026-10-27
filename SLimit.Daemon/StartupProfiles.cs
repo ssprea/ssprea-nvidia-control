@@ -1,3 +1,4 @@
+using GpuSSharp.Types;
 using Newtonsoft.Json;
 using Serilog;
 using SLimit.Daemon.Types;
@@ -91,7 +92,9 @@ public static class StartupProfiles
             success &= gpu.SetCoreTuning(profile.GpuClockTune);
             success &= gpu.SetMemTuning(profile.MemClockTune);
             success &= gpu.SetGpuPowerLimit(profile.PowerLimitMw);
-            success &= gpu.SetCoreVoltageOffset(profile.CoreVoltageOffsetMv);
+            
+            if (gpu.Vendor == GpuVendor.Amd)
+                success &= gpu.SetCoreVoltageOffset(profile.CoreVoltageOffsetMv);
             
             if (success)
                 Log.Information("Successfully applied startup profile to GPU: {gpuId}. \n Core: {coreTune} \n Memory: {memTune} \n PowerLimit mW: {plmw} \n Voltage offset mV: {vOff}",gpuId,profile.GpuClockTune,profile.MemClockTune,profile.PowerLimitMw,profile.CoreVoltageOffsetMv);
