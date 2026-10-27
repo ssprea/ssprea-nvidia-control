@@ -800,6 +800,8 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         if (!IsOcProfileCompatibleWithGpu(profile, SelectedGpu))
         {
             await MessageBoxManager.GetMessageBoxStandard(Resources.MsgBoxTitleWarning,Resources.MsgBoxBodyIncompatibleProfile,ButtonEnum.Ok,Icon.Error).ShowAsync();
+            IsStartupProfileChecked = false;
+            
             return;
         }
         
@@ -822,10 +824,17 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
                     CurveJson = profile.FanCurve is not null ? profile.FanCurve.ToJson() : ""
                 });
         
-        Log.Information("Sent save startup request to daemon. Response: {msg}",resp.Message);
+        if (resp.StatusCode < 0)
+        {
+            Log.Error("Error response from daemon while saving startup profile: {msg}", resp.Message);
+            SelectedStartupProfile = null;
+            return;
+        }
         
         
-        
+        Log.Information("Sent save startup request to daemon successful. Response: {msg}",resp.Message);
+        SelectedStartupProfile = profile;
+
         // //check if directory exists
         // if (!Directory.Exists(DEFAULT_SERVICE_DATA_PATH ))
         //     Files.MakeDirectorySudo(DEFAULT_SERVICE_DATA_PATH);
