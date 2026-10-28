@@ -664,7 +664,7 @@
                                                     Classes.tunerRange = "{Binding IsTunerCoreRange}"
                                                 >
                                     
-                                                    <Label Background="Blue" Classes="onlyWideMode" DockPanel.Dock="Left" VerticalAlignment="Center" Content="{x:Static lang:Resources.TunerCoreOffset}"/>
+                                                    <Label Classes="onlyWideMode" DockPanel.Dock="Left" VerticalAlignment="Center" Content="{x:Static lang:Resources.TunerCoreOffset}"/>
                                                     <Label Classes="onlySemiWideMode" DockPanel.Dock="Left" VerticalAlignment="Center" Content="C:"/>
                                                     <Label Classes="tunerSymbol" DockPanel.Dock="Left" VerticalAlignment="Center" FontWeight="Bold" /> 
                                                     <TextBox Classes="tunerStyle" IsVisible="{Binding IsTunerCoreRange}" DockPanel.Dock="Left" VerticalAlignment="Center" FontWeight="Bold" Text="{Binding TunerCurrentCoreMinClock}" /> 
