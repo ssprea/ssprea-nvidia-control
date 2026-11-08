@@ -26,7 +26,7 @@ public static class FanCurvesFileManager
     {
         if (!File.Exists(path))
         {
-            Log.Warning("Fan curves file not found at: " + path + ", it will be created when you save a new curve.");
+            Log.Warning("Fan curves file not found at: {path}, it will be created when you save a new curve.",path);
             return [];
         }
         
@@ -36,21 +36,20 @@ public static class FanCurvesFileManager
             var deserialized = JsonConvert.DeserializeObject<List<FanCurve>>(File.ReadAllText(path));
             if (deserialized == null)
             {
-                Log.Warning("Error loading file " + path);
+                Log.Warning("Error loading file {path}",path);
                 return [];
             }
             
-            Log.Information("Successfully loaded "+path);
+            Log.Information("Successfully loaded {path}",path);
             return deserialized;
         }
         catch (ArgumentNullException ex)
         {
-            Log.Warning("Error loading file " + path + ":\n" + ex);
+            Log.Warning("Error loading file {path}: \n{exception}",path,ex);
         }
         catch (JsonException ex)
         {
-            Log.Warning("Invalid "+ path + " file:\n" + ex);
-            
+            Log.Warning("Invalid {path} file:\n {exception}",path, ex);
         }
 
         return [];
