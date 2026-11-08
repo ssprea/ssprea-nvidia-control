@@ -163,14 +163,14 @@ public class GpuControlService : GpuControl.GpuControlBase
         
         
         
-        var success = StartupProfiles.SaveStartupProfile(gpu.DevicePciAddress,request.ProfileJson,request.CurveJson == "" ? null : request.CurveJson );
+        var success = StartupProfiles.SaveStartupProfile(gpu.DevicePciAddress,request.ProfileJson,request.CurveJson == "" ? null : request.CurveJson, out var profileOverwritten );
             
         
         return Task.FromResult(new DaemonStatusReply
         {
             
             StatusCode = success ? 0 : 2,
-            Message = success ? $"Startup profile successfully saved" : "Error while saving startup profile"
+            Message = success ? (profileOverwritten ? "Startup profile already exists, profile was updated." : $"Startup profile successfully saved") : "Error while saving startup profile"
         });
     }
     

@@ -36,12 +36,17 @@ public static class StartupProfiles
         return ocProfile;
     }
     
-    public static bool SaveStartupProfile(string gpuId, string ocProfileJson, string? fanCurveJson)
+    public static bool SaveStartupProfile(string gpuId, string ocProfileJson, string? fanCurveJson, out bool overwritten)
     {
         var currentGpuFolder = Path.Combine(ProfilesFolderPath, gpuId);
         Directory.CreateDirectory(currentGpuFolder);
-        
-        File.WriteAllText(Path.Combine(currentGpuFolder, "profile.json"), ocProfileJson);
+
+        var profilePath = Path.Combine(currentGpuFolder, "profile.json");
+
+        overwritten = File.Exists(profilePath);
+            
+            
+        File.WriteAllText(profilePath, ocProfileJson);
         
         if (fanCurveJson != null)
             File.WriteAllText(Path.Combine(currentGpuFolder, "curve.json"), fanCurveJson);
