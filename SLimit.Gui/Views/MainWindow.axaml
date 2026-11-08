@@ -6,7 +6,7 @@
         xmlns:models="clr-namespace:SLimit.Gui.Models"
         mc:Ignorable="d" d:DesignWidth="1514" d:DesignHeight="825"
         Width="1255" Height="660"
-        MinHeight="660"
+        MinHeight="660" MinWidth="400"
         xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
         xmlns:liveChartsCore="clr-namespace:LiveChartsCore;assembly=LiveChartsCore"
         xmlns:skiaSharpView="clr-namespace:LiveChartsCore.SkiaSharpView;assembly=LiveChartsCore.SkiaSharpView"
