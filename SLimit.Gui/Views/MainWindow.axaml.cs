@@ -90,9 +90,16 @@ public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
 
         Loaded += async (_, _) =>
         {
-            await ViewModel!.LoadedEvent(Design.IsDesignMode);
-
-
+            if (ViewModel is null)
+                return;
+            await  ViewModel.LoadedEvent(Design.IsDesignMode);
+        };
+        
+        SizeChanged += async (_, e) =>
+        {
+            if (ViewModel is null)
+                return;
+            await ViewModel.OnWindowSizeChanged(e.NewSize);
         };
         
         WindowsManager.AllWindows.Add(this);

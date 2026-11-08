@@ -31,12 +31,14 @@
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="CornerRadius" Value="20"/>
             <Setter Property="VerticalAlignment" Value="Bottom"/>
-            <Setter Property="Margin" Value="40,20,0,0"/>
+            <Setter Property="Margin" Value="0,20,0,0"/>
             
         </Style>
     
         <Style Selector="Border.panelBar Button">
             <Setter Property="CornerRadius" Value="20"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="5"/>
             <!-- <Setter Property="Margin" Value="40,0,40,0"/> -->
             <Setter Property="HorizontalAlignment" Value="Center"/>
                 

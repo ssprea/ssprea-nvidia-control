@@ -54,7 +54,6 @@
              
              <SolidColorBrush x:Key="SuccessBrush" Color="{DynamicResource SuccessColor}" />
              <SolidColorBrush x:Key="WarningBrush" Color="{DynamicResource WarningColor}" />
-             <SolidColorBrush x:Key="DangerHoverBrush" Color="{DynamicResource DangerHoverColor}" />
              <SolidColorBrush x:Key="DangerBrush" Color="{DynamicResource DangerColor}" />
              <SolidColorBrush x:Key="InfoBrush" Color="{DynamicResource AccentColor}" />
                     
@@ -71,6 +70,12 @@
              <SolidColorBrush x:Key='AccentBrush' Color="{DynamicResource AccentColor}"/>
              <SolidColorBrush x:Key='StrongAccentBrush' Color="{DynamicResource StrongAccentColor}"/>
              <SolidColorBrush x:Key='TextBrush' Color="{DynamicResource TextColor}"/>
+             
+             <SolidColorBrush x:Key='ButtonNormalBackgroundBrush' Color="{DynamicResource ButtonNormalBackgroundColor}"/>
+             <SolidColorBrush x:Key='ButtonNormalHoverBackgroundBrush' Color="{DynamicResource ButtonNormalHoverBackgroundColor}"/>
+             <SolidColorBrush x:Key='ButtonNormalPressedBackgroundBrush' Color="{DynamicResource ButtonNormalPressedBackgroundColor}"/>
+             <SolidColorBrush x:Key='ButtonPrimaryBackgroundBrush' Color="{DynamicResource ButtonPrimaryBackgroundColor}"/>
+             <SolidColorBrush x:Key="DangerHoverBrush" Color="{DynamicResource DangerHoverColor}" />
              
              
              <ResourceDictionary.ThemeDictionaries>
@@ -108,21 +113,27 @@
                 
                     <Color x:Key="SuccessColor">#18A88F</Color>
                     <Color x:Key="WarningColor">#E5A84B</Color>
-                    <Color x:Key="DangerHoverColor">DarkRed</Color>
                     <Color x:Key="DangerColor">#40E85F68</Color>
                     <Color x:Key="AccentColor">#505BE6</Color>
                     <Color x:Key="StrongAccentColor">#9C1FE8</Color>
                     <Color x:Key="BackgroundColor">#DD121D30</Color>
                     <Color x:Key="BackgroundColorOpaque">#FF121D30</Color>
                     <Color x:Key="BorderColor">#66224D75</Color>
-                    <Color x:Key="ForegroundColor">#E6FFFFFF</Color>
+                    <Color x:Key="ForegroundColor">#D6DDEC</Color>
                     <Color x:Key="SmallSectionBackgroundColorLight">#33224D75</Color>
                     <Color x:Key="SmallSectionBackgroundColorDark">#22121D30</Color>
                     <Color x:Key="SmallSectionBorderColor">#66224D75</Color>
                     <Color x:Key="SectionBackgroundColorDark">#11121D30</Color>
                     <Color x:Key="SectionBackgroundColorLight">#22224D75</Color>
+                    
+                    <Color x:Key="DangerHoverColor">DarkRed</Color>
+                    <Color x:Key="ButtonNormalBackgroundColor">#293D59</Color>
+                    <Color x:Key="ButtonNormalHoverBackgroundColor">#354D6D</Color>
+                    <Color x:Key="ButtonNormalPressedBackgroundColor">#1F3049</Color>
+                    <Color x:Key="ButtonPrimaryBackgroundColor">#5059E8</Color>
+                    
                     <Color x:Key="InfoBarsBorderColor">Black</Color>
-                    <Color x:Key="TextColor">#F1F0F5</Color>
+                    <Color x:Key="TextColor">#B8C3D6</Color>
 
                     
                     

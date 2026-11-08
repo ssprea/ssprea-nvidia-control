@@ -9,6 +9,7 @@ using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Avalonia;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DynamicData;
@@ -37,6 +38,8 @@ namespace SLimit.Gui.ViewModels;
 public partial class MainWindowViewModel : ViewModelBase, IDisposable
 
 {
+    private const int gpuSelectorCompactModeBreakpointPx = 730;
+    
     #region Interaction Definitions
     public Interaction<NewOcProfileWindowViewModel, OcProfile?> ShowOcProfileDialog { get; }
     public Interaction<FanCurveEditorWindowViewModel, FanCurveViewModel?> ShowFanCurveEditorDialog { get; }
@@ -90,8 +93,8 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
     
     private uint _selectedFanRadioButton;
     private bool FanSpeedSliderVisible => _selectedFanRadioButton == 1;
-    
 
+    
 
     
     [ObservableProperty] private bool _isTunerCoreOffset;
@@ -184,7 +187,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
     // }
     
 
-
+    
 
     //private ObservableCollection<ISeries> _fanCurveGraphSeries = new();
 
@@ -473,9 +476,19 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
             await MessageBoxManager.GetMessageBoxStandard(Resources.MsgBoxTitleWarning,Resources.MsgBoxBodyNewProfileMissingName,ButtonEnum.Ok,Icon.Warning).ShowAsync();
             return;
         }
+
+        var newProfile = new OcProfile(TunerCurrentProfileName, TunerCoreValueToClockTune(),
+            TunerMemoryValueToClockTune(), TunerCurrentPowerLimitMw, TunerCurrentVoltageOffsetMv, 0,
+            SelectedFanCurve?.BaseFanCurve);
         
-        await SaveProfileAndUpdateFileAsync(new OcProfile(TunerCurrentProfileName, TunerCoreValueToClockTune(),
-            TunerMemoryValueToClockTune(), TunerCurrentPowerLimitMw,TunerCurrentVoltageOffsetMv,0, SelectedFanCurve?.BaseFanCurve));
+        await SaveProfileAndUpdateFileAsync(newProfile);
+        
+        
+        //if saved profile is the same as startup profile, update profile on daemon too
+        if (newProfile.Name == SelectedStartupProfile?.Name)
+        {
+            await SaveStartupProfile(newProfile);
+        }
     }
     
     
@@ -1180,5 +1193,17 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         _sudoPasswordDialogClosed.Dispose();
         OpenFanCurveEditorCommand.Dispose();
         GC.SuppressFinalize(this);
+    }
+
+    public async Task OnWindowSizeChanged(Size newSize)
+    {
+        if (SelectedGpu is null)
+            return;
+        
+        if (!SelectedGpu.ShortDisplayNameMode && newSize.Width <= gpuSelectorCompactModeBreakpointPx)
+            SelectedGpu.SetShortDisplayNameMode();
+        
+        if (SelectedGpu.ShortDisplayNameMode && newSize.Width > gpuSelectorCompactModeBreakpointPx)
+            SelectedGpu.SetLongDisplayNameMode();
     }
 }

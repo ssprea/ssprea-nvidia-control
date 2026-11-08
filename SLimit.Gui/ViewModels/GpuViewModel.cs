@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Avalonia.Media;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using GpuSSharp.Types;
@@ -18,6 +19,11 @@ public partial class GpuViewModel : ViewModelBase, IDisposable
     
     [ObservableProperty] private GpuMetrics? _latestGpuMetrics;
     [ObservableProperty] private FanCurve? _appliedFanCurve;
+    [ObservableProperty] private string _displayName;
+    [ObservableProperty] private bool _shortDisplayNameMode;
+    [ObservableProperty] private SolidColorBrush _vendorColor;
+    
+    
     
     public GpuCapabilities Capabilities => _gpu.Capabilities;
     
@@ -242,8 +248,55 @@ public partial class GpuViewModel : ViewModelBase, IDisposable
     public GpuViewModel(IGpu nvmlGpu)
     {
         _gpu = nvmlGpu;
+        _displayName = nvmlGpu.Name;
+        switch (Vendor)
+        {
+            case GpuVendor.Nvidia:
+                _vendorColor = SolidColorBrush.Parse("Green");
+                break;
+            case GpuVendor.Amd:
+                _vendorColor = SolidColorBrush.Parse("DarkRed");
+                break;
+            case GpuVendor.Intel:
+                _vendorColor = SolidColorBrush.Parse("DarkBlue");
+                break;
+            
+            default:
+                _vendorColor = SolidColorBrush.Parse("White");
+                break;
+        }
     }
 
+    public void SetShortDisplayNameMode()
+    {
+        DisplayName = GetShortName();
+        ShortDisplayNameMode = true;
+    }
+    
+    public void SetLongDisplayNameMode()
+    {
+        ShortDisplayNameMode = false;
+        DisplayName = Name;
+    }
+
+    private string GetShortName()
+    {
+        switch (Vendor)
+        {
+            case GpuVendor.Nvidia:
+                return Name.Replace("NVIDIA",String.Empty).Replace("GeForce",String.Empty).Replace("RTX",String.Empty).Replace("GTX",String.Empty).Trim();
+            
+            case GpuVendor.Amd:
+                break;
+            
+            case GpuVendor.Intel:
+                break;
+        }
+
+        return Name;
+    }
+    
+    
     public void StartUpdating()
     {
         _updateCts = new CancellationTokenSource();

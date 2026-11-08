@@ -74,7 +74,6 @@
                   >
                 
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"></ColumnDefinition>
                         <ColumnDefinition Width="{Binding #TopGrid.Bounds.Width, Converter={StaticResource LiveStatsGridResponsiveColumnConverter}}"></ColumnDefinition>
                         <!--   <ColumnDefinition Width="{Binding #LiveStatsGrid.Bounds.Width,  -->
                         <!-- Converter={StaticResource LiveStatsGridResponsiveColumnConverter}}"></ColumnDefinition> -->
@@ -83,7 +82,7 @@
                     </Grid.ColumnDefinitions>
                     
                     <!--live stats-->
-                    <Border Grid.Column="1" Grid.RowSpan="5"
+                    <Border Grid.Column="0" Grid.RowSpan="5"
                             Grid.Row="1"  BorderThickness="2" Padding="8" CornerRadius="10" Background="{DynamicResource SectionBackgroundBrushDark}"
                             >
                         
@@ -242,7 +241,7 @@
                     </Border>
                 
                     <!--PROFILES-->
-                    <Border Grid.Column="3" Grid.RowSpan="3" Grid.Row="1"
+                    <Border Grid.Column="2" Grid.RowSpan="3" Grid.Row="1"
                             BorderBrush="Transparent"
                             Background="{DynamicResource SectionBackgroundBrushLight}"
                             BorderThickness="0"
@@ -251,9 +250,9 @@
                     >
                     
                             <!--PROFILES MAIN STACKPANEL-->
-                        <DockPanel LastChildFill="False">
+                        <UniformGrid Columns="1" >
                         
-                            <DockPanel.Styles>
+                            <UniformGrid.Styles>
                                 <Style Selector="ComboBox /template/ Border">
                                     <!-- <Setter Property="Padding" Value="0,10,0,10"/> -->
                                     <Setter Property="Margin" Value="0,10,0,10"/>
@@ -261,9 +260,9 @@
                                 
                                 <Style Selector="Border.panelItem">
                                     <!-- <Setter Property="Padding" Value="0,10,0,10"/> -->
-                                    <Setter Property="Margin" Value="5,10,5,10"/>
+                                    <Setter Property="Margin" Value="10,0,10,0"/>
                                 </Style>
-                            </DockPanel.Styles>
+                            </UniformGrid.Styles>
                             
                             <Label DockPanel.Dock="Top" Classes="h1" VerticalAlignment="Stretch" HorizontalAlignment="Center" Content="{x:Static lang:Resources.ProfilesSection}"/>
                             
@@ -279,43 +278,8 @@
                                 </StackPanel>
                             </Border> 
                             
-                            <!-- <Border  DockPanel.Dock="Top" Classes="panelItem"> -->
-                            <!--     <StackPanel  Spacing="3" Orientation="Horizontal"> -->
-                            <!--          -->
-                            <!--         <CheckBox IsEnabled="False" VerticalAlignment="Center" FontSize="12" HorizontalAlignment="Stretch" Command="{Binding SaveAutoApplyProfileCommand}" CommandParameter="{Binding #CurrentSelectedProfileCombobox.SelectedItem}" IsChecked="{Binding IsAutoApplyProfileChecked}" Content="{x:Static lang:Resources.CheckboxDefaultProfile}"> -->
-                            <!--             <ToolTip.Tip> -->
-                            <!--                 <TextBlock Text="{x:Static lang:Resources.TooltipSaveAutoApplyProfile}"/> -->
-                            <!--             </ToolTip.Tip> -->
-                            <!--              -->
-                            <!--         </CheckBox> -->
-                            <!--              -->
-                            <!--         <Label VerticalAlignment="Center" FontSize="12" HorizontalAlignment="Stretch" Content="{Binding SelectedAutoApplyOcProfile.Name, FallbackValue={x:Static lang:Resources.TextDisabled}}"/> -->
-                            <!-- -->
-                            <!--          -->
-                            <!--     </StackPanel> -->
-                            <!-- </Border>  -->
                             
-                            <!-- <Border  DockPanel.Dock="Bottom" Classes="panelItem"> -->
-                            <!--     <DockPanel Grid.Row="5" Grid.ColumnSpan="2"  > -->
-                            <!--          -->
-                            <!--         ~1~ <Button DockPanel.Dock="Right" CornerRadius="10" Content="{x:Static lang:Resources.ButtonSave}" Command="{Binding SaveTempTunerSettingsToProfileAndUpdateFileAsync}"> @1@ -->
-                            <!--         ~1~     <ToolTip.Tip> @1@ -->
-                            <!--         ~1~         <StackPanel> @1@ -->
-                            <!--         ~1~             <TextBlock Text="{x:Static lang:Resources.TooltipSaveAsProfile}" /> @1@ -->
-                            <!--         ~1~         </StackPanel> @1@ -->
-                            <!--         ~1~     </ToolTip.Tip> @1@ -->
-                            <!--         ~1~ </Button> @1@ -->
-                            <!--         ~1~ <TextBox  MinHeight="30" CornerRadius="10" VerticalAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" PlaceholderText="{x:Static lang:Resources.WatermarkNewProfileName}" UseFloatingPlaceholder="False" BorderThickness="0" Text="{Binding TunerCurrentProfileName,FallbackValue=''}"></TextBox> @1@ -->
-                            <!-- -->
-                            <!--     </DockPanel> -->
-                            <!-- </Border> -->
                             
-                            <Border Padding="10,0,10,0" DockPanel.Dock="Bottom" >
-                                <DockPanel DockPanel.Dock="Top">
-                                    <Button Grid.Row="4" Grid.Column="0" DockPanel.Dock="Left" Content="{x:Static lang:Resources.ButtonLoadToTuner}" Command="{Binding OnLoadProfileButtonClicked}" HorizontalAlignment="Left"/>
-                                    <Button Grid.Row="4" Grid.Column="1" Classes="danger" DockPanel.Dock="Right" Content="{x:Static lang:Resources.ButtonDeleteProfile}" Command="{Binding DeleteOcProfile}"  HorizontalAlignment="Right"/>
-                                </DockPanel>
-                            </Border>
                             
                             <Border Classes="panelItem" Background="Transparent" DockPanel.Dock="Bottom">
                                 <ComboBox DockPanel.Dock="Top" SelectedItem="{Binding SelectedOcProfile}"
@@ -336,11 +300,19 @@
                                 </ComboBox>
                             </Border>
                             
-                        </DockPanel>
+                            
+                            <Border Padding="10,0,10,0" DockPanel.Dock="Bottom" >
+                                <DockPanel DockPanel.Dock="Top">
+                                    <Button Grid.Row="4" Grid.Column="0" DockPanel.Dock="Left" Content="{x:Static lang:Resources.ButtonLoadToTuner}" Command="{Binding OnLoadProfileButtonClicked}" HorizontalAlignment="Left"/>
+                                    <Button Grid.Row="4" Grid.Column="1" Classes="danger" DockPanel.Dock="Right" Content="{x:Static lang:Resources.ButtonDeleteProfile}" Command="{Binding DeleteOcProfile}"  HorizontalAlignment="Right"/>
+                                </DockPanel>
+                            </Border>
+                            
+                        </UniformGrid>
                     </Border>
                         
                     <!--OC STATUS-->
-                    <Border Grid.Column="3" Grid.RowSpan="3" Grid.Row="4"
+                    <Border Grid.Column="2" Grid.RowSpan="3" Grid.Row="4"
                             BorderBrush="Transparent"
                             Background="{DynamicResource SectionBackgroundBrushLight}"
                             BorderThickness="0"
@@ -350,9 +322,9 @@
                     >
                     
                         <!--OC STATUS MAIN STACKPANEL-->
-                        <DockPanel LastChildFill="False">
+                        <UniformGrid Rows="4" Columns="1" >
                         
-                            <DockPanel.Styles>
+                            <UniformGrid.Styles>
                                 <Style Selector="ComboBox /template/ Border">
                                     <!-- <Setter Property="Padding" Value="0,10,0,10"/> -->
                                     <Setter Property="Margin" Value="0,10,0,10"/>
@@ -362,9 +334,10 @@
                                     <!-- <Setter Property="Padding" Value="0,10,0,10"/> -->
                                     <Setter Property="Margin" Value="5,2,5,0"/>
                                 </Style>
-                            </DockPanel.Styles>
+                            </UniformGrid.Styles>
                             
                             <Label DockPanel.Dock="Top" Classes="h1" VerticalAlignment="Stretch" HorizontalAlignment="Center" Content="{x:Static lang:Resources.AppliedOcsSectionTitle}"/>
+                            
                             
                             <Border DockPanel.Dock="Top"  VerticalAlignment="Top"  Classes="panelItem" >
                                 <StackPanel HorizontalAlignment="Stretch" DockPanel.Dock="Bottom" Orientation="Horizontal">
@@ -403,26 +376,42 @@
                             
                             
                             
-                        </DockPanel>
+                        </UniformGrid>
                     </Border>
                     
                    
                     
                     <!--gpu select-->
-                    <Border   Grid.Column="1" Grid.Row="6" 
+                    <Border   Grid.Column="0" Grid.Row="6" 
                               Classes="panelItem" HorizontalAlignment="Left" VerticalAlignment="Top"
                     >
-                        <DockPanel >
+                        <Border.Styles>
+                            <ContainerQuery Name="GpuSelectContainer" Query="max-width:320">
+                                <Style Selector="Label.onlyWideMode">
+                                    <Setter Property="IsVisible" Value="False"/>
+                                </Style>
+                            </ContainerQuery>
+                                
+                            <ContainerQuery Name="GpuSelectContainer" Query="min-width:320">
+                                <Style Selector="Label.onlySemiWideMode">
+                                    <Setter Property="IsVisible" Value="False"/>
+                                </Style>
+                            </ContainerQuery>
+                        </Border.Styles>
                         
-                            <Label DockPanel.Dock="Left" VerticalAlignment="Center" Content="{x:Static lang:Resources.SelectGpu}"/>
+                        
+                        <DockPanel Container.Name="GpuSelectContainer" Container.Sizing="Width">
+                            
+                            <Label Classes="onlyWideMode" DockPanel.Dock="Left" VerticalAlignment="Center" Content="{x:Static lang:Resources.SelectGpu}"/>
+                            <Label Classes="onlySemiWideMode" DockPanel.Dock="Left" VerticalAlignment="Center" Content="{x:Static lang:Resources.SelectGpuShort}"/>
                             <ComboBox SelectedItem="{Binding SelectedGpu}"
                                       ItemsSource="{Binding AvailableGpus}" 
-                                      SelectedIndex="1" VerticalAlignment="Center" HorizontalAlignment="Stretch"
+                                      SelectedIndex="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
                                       DockPanel.Dock="Right"  CornerRadius="10"
                             >
                                 <ComboBox.ItemTemplate>
                                     <DataTemplate>
-                                        <Label Content="{Binding Name} " />
+                                        <Label Content="{Binding DisplayName}" FontWeight="Bold" Foreground="{Binding VendorColor}" />
                                     </DataTemplate>
                                 </ComboBox.ItemTemplate>
                             </ComboBox>
@@ -496,7 +485,7 @@
                                                 HorizontalAlignment="Center"
                                             >
                                                 
-                                                <Label Classes="onlyWideMode" VerticalAlignment="Center" Content="{x:Static lang:Resources.CurrentPstate}"/>
+                                                <Label  VerticalAlignment="Center" Content="{x:Static lang:Resources.CurrentPstate}"/>
                                                 <Label  VerticalAlignment="Center" FontWeight="Bold" Content="{Binding SelectedGpu.LatestGpuMetrics.GpuPState,Converter={StaticResource PStateFriendlyNameConverter}, FallbackValue=0000}"/>
 
                                 

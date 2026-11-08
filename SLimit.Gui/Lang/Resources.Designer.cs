@@ -638,5 +638,11 @@ namespace SLimit.Gui.Lang {
                 return ResourceManager.GetString("AppliedOcsSectionTitle", resourceCulture);
             }
         }
+        
+        public static string SelectGpuShort {
+            get {
+                return ResourceManager.GetString("SelectGpuShort", resourceCulture);
+            }
+        }
     }
 }

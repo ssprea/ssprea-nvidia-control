@@ -49,8 +49,10 @@
         <Setter Property="CornerRadius" Value="12" />
         <Setter Property="FontFamily" Value="{DynamicResource NotoSansMonoFont}"/> 
         <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/> 
-        <Setter Property="Background" Value="#33BBBBBB"/> 
+        <Setter Property="Background" Value="{DynamicResource ButtonNormalBackgroundBrush}"/> 
     </Style>
+    
+    
         
     <Style Selector="Button.danger">
         <Setter Property="Background" Value="{DynamicResource DangerBrush}"/>
@@ -60,7 +62,11 @@
         <Setter Property="Background" Value="{DynamicResource DangerHoverBrush}"/>
     </Style>
     
-    <Style Selector="Button:pointerover">
-        <Setter Property="Background" Value="{DynamicResource StrongAccentBrush}"/>
+    <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource ButtonNormalHoverBackgroundBrush}"/>
+    </Style>
+    
+    <Style Selector="Button:pressed /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource ButtonNormalPressedBackgroundBrush}"/>
     </Style>
 </Styles>

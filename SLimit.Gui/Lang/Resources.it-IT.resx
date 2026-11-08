@@ -24,16 +24,16 @@
     </data>
 
     <data name="CheckboxStartupProfile" xml:space="preserve">
-        <value>Profilo avvio PC:</value>
+        <value>Profilo avvio:</value>
     </data>
 
     <data name="CheckboxDefaultProfile" xml:space="preserve">
         <value>Profilo default:</value>
     </data>
 
-     <data name="ButtonLoadToTuner" xml:space="preserve">
-            <value>Manda al tuner</value>
-        </data>
+    <data name="ButtonLoadToTuner" xml:space="preserve">
+        <value>Carica</value>
+    </data>
 
     <data name="ButtonDeleteProfile" xml:space="preserve">
         <value>Elimina </value>
@@ -79,9 +79,9 @@
             <value>CURVA VENTOLE</value>
         </data>
 
-     <data name="CurrentPstate" xml:space="preserve">
-            <value>PSTATE corrente:</value>
-        </data>
+    <data name="CurrentPstate" xml:space="preserve">
+        <value>PSTATE:</value>
+    </data>
 
      <data name="TextPowerLimit" xml:space="preserve">
             <value>Power Limit (W):</value>
@@ -341,5 +341,8 @@
     </data>
     <data name="AppliedOcsSectionTitle" xml:space="preserve">
         <value>APPLICATO</value>
+    </data>
+    <data name="SelectGpuShort" xml:space="preserve">
+        <value>GPU:</value>
     </data>
 </root>

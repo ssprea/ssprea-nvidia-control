@@ -47,9 +47,9 @@
         <value>Default profile:</value>
     </data>
 
-     <data name="ButtonLoadToTuner" xml:space="preserve">
-            <value>Load to tuner</value>
-        </data>
+    <data name="ButtonLoadToTuner" xml:space="preserve">
+        <value>Load</value>
+    </data>
 
     <data name="ButtonDeleteProfile" xml:space="preserve">
         <value>Delete</value>
@@ -95,9 +95,9 @@
             <value>FAN CURVE</value>
         </data>
 
-     <data name="CurrentPstate" xml:space="preserve">
-            <value>Current PSTATE:</value>
-        </data>
+    <data name="CurrentPstate" xml:space="preserve">
+        <value>PSTATE:</value>
+    </data>
 
      <data name="CurrentPowerLimit" xml:space="preserve">
             <value>Power Limit (W):</value>
@@ -371,5 +371,8 @@
     </data>
     <data name="AppliedOcsSectionTitle" xml:space="preserve">
         <value>APPLIED</value>
+    </data>
+    <data name="SelectGpuShort" xml:space="preserve">
+        <value>GPU:</value>
     </data>
 </root>
