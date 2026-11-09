@@ -64,6 +64,17 @@ public partial class OcProfile : ObservableObject, ICloneable
     [JsonIgnore]
     private string _fanCurveName;
 
+    public void UpdateProfile(OcProfile newProfile)
+    {
+        GpuClockTune = newProfile.GpuClockTune;
+        MemClockTune = newProfile.MemClockTune;
+        CoreVoltageOffsetMv = newProfile.CoreVoltageOffsetMv;
+        MemVoltageOffsetMv = newProfile.MemVoltageOffsetMv;
+        PowerLimitMw = newProfile.PowerLimitMw;
+        FanCurveName = newProfile.FanCurveName;
+    }
+    
+    
     public bool Apply(GpuViewModel targetGpu)
     {
         try

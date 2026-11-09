@@ -469,10 +469,10 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
                 profile.FanCurveName = "";
             if (OcProfilesList.Any(x => x.Name == profile.Name))
             {
-                OcProfilesList.Remove(OcProfilesList.First(x => x.Name == profile.Name));
+                OcProfilesList.First(x => x.Name == profile.Name).UpdateProfile(profile);
             }
-            
-            OcProfilesList.Add(profile);
+            else
+                OcProfilesList.Add(profile);
         }
             
         
