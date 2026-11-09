@@ -343,7 +343,7 @@
                                 <StackPanel HorizontalAlignment="Stretch" DockPanel.Dock="Bottom" Orientation="Horizontal">
                                     <Label  VerticalAlignment="Center" Content="{x:Static lang:Resources.TunerCoreOffset}"/>
                                     <Label IsVisible="{Binding IsTunerCoreOffset}" VerticalAlignment="Center" Content="+"/>
-                                    <Label IsVisible="{Binding IsTunerCoreRange}" VerticalAlignment="Center" Content="{Binding SelectedGpu.LatestGpuMetrics.AppliedCoreMinClockMhz, FallbackValue=0}"/>
+                                    <Label IsVisible="{Binding IsTunerCoreRange}" VerticalAlignment="Center" Foreground="LightGreen" FontWeight="Bold" Content="{Binding SelectedGpu.LatestGpuMetrics.AppliedCoreMinClockMhz, FallbackValue=0}"/>
                                     <Label IsVisible="{Binding IsTunerCoreRange}" VerticalAlignment="Center" Content="-"/>
                                     <Label VerticalAlignment="Center" Foreground="LightGreen" FontWeight="Bold" 
                                            Content="{Binding SelectedGpu.LatestGpuMetrics.AppliedCoreOverclockMhz, FallbackValue=0}"/> 
@@ -356,7 +356,7 @@
                                 <StackPanel HorizontalAlignment="Stretch" DockPanel.Dock="Bottom" Orientation="Horizontal">
                                     <Label  VerticalAlignment="Center" Content="{x:Static lang:Resources.TunerMemoryOffset}"/>
                                     <Label IsVisible="{Binding IsTunerCoreOffset}" VerticalAlignment="Center" Content="+"/>
-                                    <Label IsVisible="{Binding IsTunerCoreRange}" VerticalAlignment="Center" Content="{Binding SelectedGpu.LatestGpuMetrics.AppliedMemoryMinClockMhz, FallbackValue=0}"/>
+                                    <Label IsVisible="{Binding IsTunerCoreRange}" VerticalAlignment="Center" Foreground="LightGreen" FontWeight="Bold" Content="{Binding SelectedGpu.LatestGpuMetrics.AppliedMemoryMinClockMhz, FallbackValue=0}"/>
                                     <Label IsVisible="{Binding IsTunerCoreRange}" VerticalAlignment="Center" Content="-"/>
                                                 
                                     <Label VerticalAlignment="Center" Foreground="LightGreen" FontWeight="Bold" 
