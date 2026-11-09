@@ -2,7 +2,7 @@
 ## Formerly known as ssprea-nvidia-control
 
 
-Inspired by MSI Afterburner, sLimit is a highly customizable GUI overclocking tool for NVidia GPUs that supports Wayland and X11.
+Inspired by MSI Afterburner, sLimit is a highly customizable GUI overclocking tool for NVidia and AMD GPUs that supports Wayland and X11.
 
 ## Features
 
@@ -20,6 +20,8 @@ Inspired by MSI Afterburner, sLimit is a highly customizable GUI overclocking to
 ## Requirements
 
 - NVidia proprietary driver 555+
+  or
+- AmdSMI
 
 ## Future features:
 
