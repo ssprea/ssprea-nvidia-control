@@ -20,7 +20,6 @@ Inspired by MSI Afterburner, sLimit is a highly customizable GUI overclocking to
 ## Requirements
 
 - NVidia proprietary driver 555+
-  or
 - AmdSMI
 
 ## Future features:
@@ -40,9 +39,9 @@ Deb packages available in releases.
 
 There are two AUR packages available:
 
-Latest release version: https://aur.archlinux.org/packages/ssprea-nvidia-control
+Latest release version: https://aur.archlinux.org/packages/slimit-gpu
 
-Latest git commit: https://aur.archlinux.org/packages/ssprea-nvidia-control-git
+Latest git commit: https://aur.archlinux.org/packages/slimit-gpu-git
 
 ```
 git clone https://aur.archlinux.org/ssprea-nvidia-control.git
@@ -54,12 +53,12 @@ makepkg -si
 With yay:
 
 ```
-yay -S ssprea-nvidia-control
+yay -S slimit-gpu
 ```
 or
 
 ```
-yay -S ssprea-nvidia-control-git
+yay -S slimit-gpu-git
 ```
 
 
@@ -85,7 +84,7 @@ To build this tool you need to install Make and .NET SDK 9.0
 
 Build and install GUI , Daemon and CLI:
 ```bash
-  git clone https://github.com/ssprea/ssprea-nvidia-control.git
+  git clone https://github.com/ssprea/slimit-gpu.git
   cd ssprea-nvidia-control
   make publish
   sudo make installall
@@ -93,11 +92,11 @@ Build and install GUI , Daemon and CLI:
 
 Build deb packages to install with dpkg:
 ```bash
-  git clone https://github.com/ssprea/ssprea-nvidia-control.git
+  git clone https://github.com/ssprea/slimit-gpu.git
   cd ssprea-nvidia-control
   make deb
 ```
-The packages will be located in `ssprea-nvidia-control/ssprea-nvidia-control/bin/Release/deb/` for the gui and `ssprea-nvidia-control/ssprea-nvidia-control-cli/bin/Release/deb/` for the cli.
+The packages will be located in `slimit/SLimit.Gui/bin/Release/deb/` for the gui and `slimit/SLimit.Cli/bin/Release/deb/` for the cli.
 
 You can install them using `sudo dpkg -i <package_path>`
 
