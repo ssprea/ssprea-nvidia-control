@@ -31,7 +31,7 @@ public class ThemeService
     public ThemeService()
     {
         if (Application.Current is null)
-            throw new Exception("Application.Current is null");
+            throw new InvalidOperationException("Application.Current is null");
         
         _currentApplication = Application.Current;
         LoadedUserThemes = new();
