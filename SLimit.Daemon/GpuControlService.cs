@@ -1,3 +1,4 @@
+using GpuSSharp.Libs.AmdSmi;
 using GpuSSharp.Types;
 using Grpc.Core;
 using Newtonsoft.Json;
@@ -49,6 +50,51 @@ public class GpuControlService : GpuControl.GpuControlBase
         {
             StatusCode = success ? 0 : 2,
             Message = success ? $"Fan curve successfully set" : "Error while applying fan curve"
+        });
+    }
+    
+    public override Task<DaemonStatusReply> GpuResetClocks(
+        GpuIdMessage request,
+        ServerCallContext context)
+    {
+        Log.Information("Received GPU Clocks Reset Request for GPU: {gpuId}", request.GpuId);
+        
+        var gpu = Program.GpuService?.GetGpuByPcieId(request.GpuId);
+
+        if (gpu is null)
+        {
+            Log.Error("Could not find GPU with ID {gpuId}", request.GpuId);
+            return Task.FromResult(new DaemonStatusReply
+            {
+                StatusCode = 1,
+                Message = $"Requested GPU ID {request.GpuId} does not exist."
+            });
+        }
+
+        var success = false;
+        var message = "Error while resetting GPU clocks.";
+        
+        
+        if (gpu is AmdSmiGpu amdGpu)
+        {
+            success = amdGpu.ResetGpuPerformanceLevel();
+            if (success)
+                message = "GPU clocks successfully reset";
+        }
+        else
+        {
+            message = "Only AMD GPUs support this action.";
+        }
+        
+        if (!success)
+            Log.Error("Error while applying power limit");
+            
+        
+        return Task.FromResult(new DaemonStatusReply
+        {
+            
+            StatusCode = success ? 0 : 2,
+            Message = message
         });
     }
     

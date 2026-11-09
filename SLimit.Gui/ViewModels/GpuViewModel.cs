@@ -74,8 +74,28 @@ public partial class GpuViewModel : ViewModelBase, IDisposable
 
     // private bool SetCoreClockOffset(int clockOffsetMhz) =>
     //     SnvctlCliTool.RunSudoCliCommand($"-c {clockOffsetMhz}", DevicePciAddress) is not null;
-    
-    
+
+
+
+    public bool ResetGpuClocks()
+    {
+        if (Program.DaemonSession is null || Vendor != GpuVendor.Amd)
+            return false;
+        
+        var reply = Program.DaemonSession.Client?.GpuResetClocks(new GpuIdMessage()
+        {
+            GpuId = DevicePciAddress,
+        });
+        
+        Log.Information("Sent reset gpu request to daemon: GPU: {gpuId}",DevicePciAddress);
+        if (reply is not null && reply.StatusCode != 0)
+        {
+            Log.Error("Error reply from daemon! : {replyMsg}",reply.Message);
+            return false;
+        }
+
+        return true;
+    }
     
     public bool SetPowerLimit(int limitMw)
     {

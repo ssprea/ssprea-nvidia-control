@@ -13,6 +13,7 @@ using Avalonia;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DynamicData;
+using GpuSSharp.Libs.AmdSmi;
 using GpuSSharp.Types;
 using LiveChartsCore;
 using LiveChartsCore.Defaults;
@@ -420,8 +421,19 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
     
     public void ResetTunerOptions()
     {
-        if (SelectedGpu is not null)
-            LoadOcProfileToTuner(new OcProfile("",GetDefaultTune(SelectedGpu.Capabilities.CoreClockTuningMode,SelectedGpu.ClockCoreMinMhz,SelectedGpu.ClockCoreMaxMhz) ,GetDefaultTune(SelectedGpu.Capabilities.MemoryClockTuningMode,SelectedGpu.ClockMemMinMhz,SelectedGpu.ClockMemMaxMhz),SelectedGpu?.LatestGpuMetrics?.PowerLimitCurrentMilliW ?? 100000,0,0, (FanCurve?)null));
+        if (SelectedGpu is null)
+            return;
+
+
+        if (IsTunerCoreRange || IsTunerMemRange)
+        {
+            //reset gpu and read default values
+            SelectedGpu.ResetGpuClocks();
+        }
+        
+        
+        LoadOcProfileToTuner(new OcProfile("",GetDefaultTune(SelectedGpu.Capabilities.CoreClockTuningMode,SelectedGpu.ClockCoreMinMhz,SelectedGpu.ClockCoreMaxMhz) ,GetDefaultTune(SelectedGpu.Capabilities.MemoryClockTuningMode,SelectedGpu.ClockMemMinMhz,SelectedGpu.ClockMemMaxMhz),SelectedGpu?.GpuPowerLimitDefaultMilliW ?? 100000,0,0, (FanCurve?)null));
+
     }
     
     

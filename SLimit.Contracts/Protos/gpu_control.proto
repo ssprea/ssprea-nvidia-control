@@ -7,6 +7,7 @@ option csharp_namespace = "SLimit.Contracts";
 service GpuControl {
     rpc GpuApplyCoreTune (ClockSetRequest) returns (DaemonStatusReply);
     rpc GpuApplyMemoryTune (ClockSetRequest) returns (DaemonStatusReply);
+    rpc GpuResetClocks (GpuIdMessage) returns (DaemonStatusReply);
     rpc GpuApplyPowerLimit (PowerLimitSetRequest) returns (DaemonStatusReply);
     rpc GpuApplyVoltageOffset (VoltageOffsetSetRequest) returns (DaemonStatusReply);
     rpc GpuApplyFanCurve (FancurveSetRequest) returns (DaemonStatusReply);
@@ -18,6 +19,8 @@ service GpuControl {
     rpc SystemDeleteStartupProfile (GpuIdMessage) returns (DaemonStatusReply);
     rpc SystemGetStartupProfileInfo (GpuIdMessage) returns (StartupProfileStatusReply);
 }
+
+
 
 message StartupProfileStatusReply {
     DaemonStatusReply status = 1;

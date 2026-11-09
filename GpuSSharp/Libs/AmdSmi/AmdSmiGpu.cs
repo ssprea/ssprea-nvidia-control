@@ -348,7 +348,7 @@ public class AmdSmiGpu : IGpu
 
     }
 
-    private bool ResetGpuPerformanceLevel()
+    public bool ResetGpuPerformanceLevel()
     {
         return AmdSmiWrapper.amdsmi_set_gpu_perf_level(_processorHandle, AmdsmiDevPerfLevel.AMDSMI_DEV_PERF_LEVEL_AUTO) == AmdsmiStatus.AMDSMI_STATUS_SUCCESS;
     }
