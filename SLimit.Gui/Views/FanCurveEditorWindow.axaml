@@ -68,17 +68,17 @@
                         
                     </DataGrid>
                     
-                    <DockPanel LastChildFill="False" DockPanel.Dock="Left"  Margin="3">
-                         
-                        <Button VerticalAlignment="Top" 
-                                Command="{Binding AddPointCommand}" Content="{x:Static lang:Resources.TextFanCurveAddPoint}"
-                                DockPanel.Dock="Left"/>
-                        
-                        <Button Classes="danger"  VerticalAlignment="Top" 
-                                Command="{Binding RemovePointCommand}" CommandParameter="{Binding #PointsDataGrid.SelectedItem}"
-                                Content="{x:Static lang:Resources.TextFanCurveDeletePoint}"
-                                DockPanel.Dock="Right"/>
-                    </DockPanel>
+                    <!-- <DockPanel LastChildFill="False" DockPanel.Dock="Left"  Margin="3"> -->
+                    <!--       -->
+                    <!--     <Button VerticalAlignment="Top"  -->
+                    <!--             Command="{Binding AddPointCommand}" Content="{x:Static lang:Resources.TextFanCurveAddPoint}" -->
+                    <!--             DockPanel.Dock="Left"/> -->
+                    <!--      -->
+                    <!--     <Button Classes="danger"  VerticalAlignment="Top"  -->
+                    <!--             Command="{Binding RemovePointCommand}" CommandParameter="{Binding #PointsDataGrid.SelectedItem}" -->
+                    <!--             Content="{x:Static lang:Resources.TextFanCurveDeletePoint}" -->
+                    <!--             DockPanel.Dock="Right"/> -->
+                    <!-- </DockPanel> -->
                     
                 </DockPanel>
             </Border>  

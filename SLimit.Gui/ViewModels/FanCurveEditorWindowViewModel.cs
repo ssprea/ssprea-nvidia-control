@@ -58,7 +58,7 @@ public partial class FanCurveEditorWindowViewModel : ViewModelBase
         {
             MessageBoxManager.GetMessageBoxStandard("Error!", "The maximum amount of curve points is 5",
                 ButtonEnum.Ok, Icon.Error
-            );
+            ).ShowAsync();
         }
     }
 

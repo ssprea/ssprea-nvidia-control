@@ -84,11 +84,6 @@ public class FanCurve
             },
             new FanCurvePoint()
             {
-                Temperature = 45,
-                FanSpeed = 0
-            },
-            new FanCurvePoint()
-            {
                 Temperature = 55,
                 FanSpeed = 20
             },
@@ -104,7 +99,7 @@ public class FanCurve
             },
             new FanCurvePoint()
             {
-                Temperature = 90,
+                Temperature = 100,
                 FanSpeed = 100
             });
     }
@@ -115,6 +110,21 @@ public class FanCurve
             new FanCurvePoint()
             {
                 Temperature = 0,
+                FanSpeed = speed
+            },
+            new FanCurvePoint()
+            {
+                Temperature = 40,
+                FanSpeed = speed
+            },
+            new FanCurvePoint()
+            {
+                Temperature = 60,
+                FanSpeed = speed
+            },
+            new FanCurvePoint()
+            {
+                Temperature = 80,
                 FanSpeed = speed
             },
             new FanCurvePoint()
