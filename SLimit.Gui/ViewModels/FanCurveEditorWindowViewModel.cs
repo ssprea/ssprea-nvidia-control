@@ -52,7 +52,14 @@ public partial class FanCurveEditorWindowViewModel : ViewModelBase
 
     public void AddPointCommand()
     {
-        CurrentFanCurve?.BaseFanCurve.CurvePoints.Add(new FanCurvePoint());
+        if (CurrentFanCurve?.BaseFanCurve.CurvePoints.Count < 5)
+            CurrentFanCurve?.BaseFanCurve.CurvePoints.Add(new FanCurvePoint());
+        else
+        {
+            MessageBoxManager.GetMessageBoxStandard("Error!", "The maximum amount of curve points is 5",
+                ButtonEnum.Ok, Icon.Error
+            );
+        }
     }
 
     public void SaveButtonClicked()
