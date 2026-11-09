@@ -432,7 +432,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         }
         
         
-        LoadOcProfileToTuner(new OcProfile("",GetDefaultTune(SelectedGpu.Capabilities.CoreClockTuningMode,SelectedGpu.ClockCoreMinMhz,SelectedGpu.ClockCoreMaxMhz) ,GetDefaultTune(SelectedGpu.Capabilities.MemoryClockTuningMode,SelectedGpu.ClockMemMinMhz,SelectedGpu.ClockMemMaxMhz),SelectedGpu?.GpuPowerLimitDefaultMilliW ?? 100000,0,0, (FanCurve?)null));
+        LoadOcProfileToTuner(new OcProfile("",GetDefaultTune(SelectedGpu.Capabilities.CoreClockTuningMode,SelectedGpu.LatestGpuMetrics?.AppliedCoreMinClockMhz ?? 0,SelectedGpu.LatestGpuMetrics?.AppliedCoreOverclockMhz ?? 0) ,GetDefaultTune(SelectedGpu.Capabilities.MemoryClockTuningMode,SelectedGpu.LatestGpuMetrics?.AppliedMemoryMinClockMhz ?? 0,SelectedGpu.LatestGpuMetrics?.AppliedMemoryOverclockMhz ?? 0),SelectedGpu?.GpuPowerLimitDefaultMilliW ?? 100000,0,0, (FanCurve?)null));
 
     }
     
