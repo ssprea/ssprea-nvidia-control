@@ -6,7 +6,7 @@
         xmlns:models="clr-namespace:SLimit.Gui.Models"
         mc:Ignorable="d" d:DesignWidth="1514" d:DesignHeight="825"
         Width="1255" Height="660"
-        MinHeight="660" MinWidth="400"
+        MinHeight="480" MinWidth="400"
         xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
         xmlns:liveChartsCore="clr-namespace:LiveChartsCore;assembly=LiveChartsCore"
         xmlns:skiaSharpView="clr-namespace:LiveChartsCore.SkiaSharpView;assembly=LiveChartsCore.SkiaSharpView"
@@ -49,18 +49,6 @@
     
         
         
-            <!-- <Border Grid.Row="1" Grid.Column="2" Grid.RowSpan="2"  -->
-            <!--              -->
-            <!--         BorderThickness="5" -->
-            <!--          -->
-            <!-- > -->
-            <!--          -->
-            <!--      -->
-            <!--          -->
-            <!-- </Border> -->
-            
-            <!-- <ComboBox Grid.Row="0" Grid.Column="0" SelectedItem="{Binding SelectedLocalizerLang}" ItemsSource="{Binding LocalizerLangs}"> -->
-            <!-- </ComboBox> -->
             
         
             
@@ -111,12 +99,12 @@
                             
                             <Border Grid.Column="3" Grid.Row="0">
                                 
-                                <Label   HorizontalAlignment="Right"> MHz </Label>
+                                <Label VerticalAlignment="Center"  HorizontalAlignment="Right"> MHz </Label>
                             </Border>
                             
                             <!--MEM CLOCK-->
                             <Border Grid.Column="0" Grid.Row="1">
-                                <Label  VerticalAlignment="Center" FontSize="12" HorizontalAlignment="Right"> MEM CLCK </Label>
+                                <Label  FontSize="12" HorizontalAlignment="Right"> MEM CLCK </Label>
                             </Border>
                                 
                             <Border Grid.Column="1" Grid.Row="1" >
@@ -249,7 +237,7 @@
                             DockPanel.Dock="Top"
                     >
                     
-                            <!--PROFILES MAIN STACKPANEL-->
+                            <!--PROFILES MAIN UNIFORMGRID-->
                         <UniformGrid Columns="1" >
                         
                             <UniformGrid.Styles>
@@ -262,13 +250,18 @@
                                     <!-- <Setter Property="Padding" Value="0,10,0,10"/> -->
                                     <Setter Property="Margin" Value="10,0,10,0"/>
                                 </Style>
+                                
+                                <Style Selector="Button">
+                                    <Setter Property="Padding" Value="8,2,8,2"/>
+                                    <!-- <Setter Property="Margin" Value="10,0,10,0"/> -->
+                                </Style>
                             </UniformGrid.Styles>
                             
                             <Label DockPanel.Dock="Top" Classes="h1" VerticalAlignment="Stretch" HorizontalAlignment="Center" Content="{x:Static lang:Resources.ProfilesSection}"/>
                             
                             <Border DockPanel.Dock="Top"  VerticalAlignment="Top"  Classes="panelItem" >
                                 <StackPanel  Orientation="Horizontal" Spacing="3">
-                                    <CheckBox IsChecked="{Binding IsStartupProfileChecked}" Command="{Binding SaveStartupProfileCommand}" CommandParameter="{Binding #CurrentSelectedProfileCombobox.SelectedItem}" VerticalAlignment="Top" FontSize="12" HorizontalAlignment="Stretch" Content="{x:Static lang:Resources.CheckboxStartupProfile}">
+                                    <CheckBox IsChecked="{Binding IsStartupProfileChecked}" Command="{Binding SaveStartupProfileCommand}" CommandParameter="{Binding #CurrentSelectedProfileCombobox.SelectedItem}" VerticalAlignment="Center" FontSize="12" HorizontalAlignment="Stretch" Content="{x:Static lang:Resources.CheckboxStartupProfile}">
                                         <ToolTip.Tip>
                                             <TextBlock Text="{x:Static lang:Resources.TooltipSaveStartupProfile}"/>
                                         </ToolTip.Tip>
@@ -331,7 +324,7 @@
                                 </Style>
                                 
                                 <Style Selector="Border.panelItem">
-                                    <!-- <Setter Property="Padding" Value="0,10,0,10"/> -->
+                                    <Setter Property="Padding" Value="2,0,2,0"/>
                                     <Setter Property="Margin" Value="5,2,5,0"/>
                                 </Style>
                             </UniformGrid.Styles>
@@ -780,7 +773,7 @@
                                             <Border Classes="panelItem" Grid.Row="4" DockPanel.Dock="Top"   Padding="4" HorizontalAlignment="Stretch" VerticalAlignment="Center">
                                                 <DockPanel HorizontalAlignment="Stretch">
                                 
-                                                    <Button DockPanel.Dock="Left" CornerRadius="10" Content="{x:Static lang:Resources.ButtonApply}" Command="{Binding ApplyTempTunerSettings}"/>
+                                                    <Button DockPanel.Dock="Left"  CornerRadius="10" Content="{x:Static lang:Resources.ButtonApply}" Command="{Binding ApplyTempTunerSettings}"/>
                                                     <Button DockPanel.Dock="Left" CornerRadius="10" Content="{x:Static lang:Resources.ButtonReset}" Command="{Binding ResetTunerOptions}"/>
                                                 
                                                     <Button DockPanel.Dock="Right" CornerRadius="10" Content="{x:Static lang:Resources.ButtonSave}" Command="{Binding SaveTempTunerSettingsToProfileAndUpdateFileAsync}">
