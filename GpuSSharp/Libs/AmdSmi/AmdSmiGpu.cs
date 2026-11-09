@@ -258,8 +258,8 @@ public class AmdSmiGpu : IGpu
         var minResult = AmdSmiWrapper.amdsmi_set_gpu_clk_limit(_processorHandle, clockType, AmdsmiClkLimitType.CLK_LIMIT_MIN, minClock);
         var maxResult = AmdSmiWrapper.amdsmi_set_gpu_clk_limit(_processorHandle, clockType, AmdsmiClkLimitType.CLK_LIMIT_MAX, maxClock);
         
-        Console.WriteLine("min: "+minResult);
-        Console.WriteLine("max: "+maxResult);
+        // Console.WriteLine("min: "+minResult);
+        // Console.WriteLine("max: "+maxResult);
         
         return (minResult == AmdsmiStatus.AMDSMI_STATUS_SUCCESS && maxResult == AmdsmiStatus.AMDSMI_STATUS_SUCCESS);
     }
@@ -317,7 +317,7 @@ public class AmdSmiGpu : IGpu
 
             var status = AmdSmiWrapper.amdsmi_set_gpu_fan_speed(_processorHandle, i, nativeSpeed);
 
-            Console.WriteLine ("speed: "+status+"  id: "+i + "speed: "+nativeSpeed);
+            // Console.WriteLine ("speed: "+status+"  id: "+i + "speed: "+nativeSpeed);
             
             if (status != AmdsmiStatus.AMDSMI_STATUS_SUCCESS)
                 return false;

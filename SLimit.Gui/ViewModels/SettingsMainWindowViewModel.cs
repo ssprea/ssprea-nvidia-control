@@ -147,7 +147,7 @@ public partial class SettingsMainWindowViewModel : ViewModelBase
     {
         
         
-        Console.WriteLine(theme);
+        // Console.WriteLine(theme);
         switch (theme)
         {
             case "System":

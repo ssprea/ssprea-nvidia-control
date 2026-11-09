@@ -29,7 +29,7 @@ public static class AmdSysfsWrapper
         {
             var (temperature, percent) = curvePoints[i];
             File.WriteAllText(sysfsPath, $"{i} {(temperature <25  ? 25 : temperature)} {(percent <15 ? 15 : percent)}\n");
-            Console.WriteLine($"{i} {temperature} {percent}\n");
+            // Console.WriteLine($"{i} {temperature} {percent}\n");
         }
 
         File.WriteAllText(sysfsPath, "c\n");

@@ -128,11 +128,11 @@ public class GpuService
 
         uint socketCount = 0;
         
-        Console.WriteLine("get sockets 1: "+AmdSmiWrapper.amdsmi_get_socket_handles(ref socketCount, null));
+        // Console.WriteLine("get sockets 1: "+AmdSmiWrapper.amdsmi_get_socket_handles(ref socketCount, null));
         
         IntPtr[]? socketHandlesBuffer = new IntPtr[socketCount];
         
-        Console.WriteLine("get sockets 2: "+AmdSmiWrapper.amdsmi_get_socket_handles(ref socketCount, socketHandlesBuffer));
+        // Console.WriteLine("get sockets 2: "+AmdSmiWrapper.amdsmi_get_socket_handles(ref socketCount, socketHandlesBuffer));
         
 
         // Console.WriteLine("sockets count: " +socketHandlesBuffer.Length);
@@ -142,11 +142,11 @@ public class GpuService
         {
             uint processorCount = 0;
             
-            Console.WriteLine("get processors 1: "+AmdSmiWrapper.amdsmi_get_processor_handles(handle,ref processorCount, null));
+            // Console.WriteLine("get processors 1: "+AmdSmiWrapper.amdsmi_get_processor_handles(handle,ref processorCount, null));
             
             IntPtr[]? processorHandlesBuffer = new IntPtr[processorCount];
             
-            Console.WriteLine("get processors 2: "+AmdSmiWrapper.amdsmi_get_processor_handles(handle,ref processorCount, processorHandlesBuffer));
+            // Console.WriteLine("get processors 2: "+AmdSmiWrapper.amdsmi_get_processor_handles(handle,ref processorCount, processorHandlesBuffer));
 
             foreach (var procHandle in processorHandlesBuffer)
             {
