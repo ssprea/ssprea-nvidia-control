@@ -655,7 +655,17 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
             var startupProfileName = resp.ProfileName;
             
             SelectedStartupProfile = OcProfilesList.FirstOrDefault(x => x.Name == startupProfileName);
+
+            //check if startup profile sent by daemon actually exists in gui profile list
+            if (SelectedStartupProfile is null)
+            {
+                _ = MessageBoxManager.GetMessageBoxStandard(Resources.MsgBoxTitleError,
+                    $"Profile '{startupProfileName}' {Resources.MsgBoxBodyCorruptedStartupProfile}", ButtonEnum.Ok,Icon.Error).ShowAsync();
+                return;
+            }
+                
             SelectedOcProfile = SelectedStartupProfile;
+            
             await LoadSelectedOcProfileToTuner(gpu);
         }
         

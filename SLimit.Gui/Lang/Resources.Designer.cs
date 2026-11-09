@@ -644,5 +644,11 @@ namespace SLimit.Gui.Lang {
                 return ResourceManager.GetString("SelectGpuShort", resourceCulture);
             }
         }
+        
+        public static string MsgBoxBodyCorruptedStartupProfile {
+            get {
+                return ResourceManager.GetString("MsgBoxBodyCorruptedStartupProfile", resourceCulture);
+            }
+        }
     }
 }

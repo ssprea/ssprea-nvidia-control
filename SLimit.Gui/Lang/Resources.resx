@@ -375,4 +375,7 @@
     <data name="SelectGpuShort" xml:space="preserve">
         <value>GPU:</value>
     </data>
+    <data name="MsgBoxBodyCorruptedStartupProfile" xml:space="preserve">
+        <value>was set as the startup profile but it was not found in the profiles list. Your ~/.snvctl-gui folder is probably corrupted and you could have lost many other settings. To fix this, disable the startup profile and set another profile instead of the corrupted one.</value>
+    </data>
 </root>

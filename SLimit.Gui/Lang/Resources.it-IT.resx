@@ -345,4 +345,7 @@
     <data name="SelectGpuShort" xml:space="preserve">
         <value>GPU:</value>
     </data>
+    <data name="MsgBoxBodyCorruptedStartupProfile" xml:space="preserve">
+        <value>era stato impostato come profilo di avvio ma non è stato trovato nella lista di profili. Questo significa che la cartella ~/.snvctl-gui è probabilmente corrotta e potresti aver perso altre impostazioni. Per risolvere disabilita il profilo di avvio e cambialo con un altro.</value>
+    </data>
 </root>
