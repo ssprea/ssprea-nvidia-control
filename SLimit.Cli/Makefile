@@ -21,7 +21,7 @@ run: build
 deb: publish
 	mkdir -p bin/Release/deb/slimit-cli_$(VERSION)-$(PKGN)_amd64/usr/local/bin
 	mkdir -p bin/Release/deb/slimit-cli_$(VERSION)-$(PKGN)_amd64/DEBIAN
-	echo -e 'Package: slimit-cli\nVersion: $(VERSION)-$(PKGN)\nDepends: \nArchitecture: amd64\nMaintainer: ssprea <ssprea@proton.me>\nDescription: A CLI tool to manage NVidia GPUs overclock, fans and power limit. Supports both Wayland and X11' > bin/Release/deb/slimit-cli_$(VERSION)-$(PKGN)_amd64/DEBIAN/control
+	echo -e 'Package: slimit-cli\nVersion: $(VERSION)-$(PKGN)\nDepends: slimit-daemon\nArchitecture: amd64\nMaintainer: ssprea <ssprea@proton.me>\nDescription: A CLI tool to manage NVidia GPUs overclock, fans and power limit. Supports both Wayland and X11' > bin/Release/deb/slimit-cli_$(VERSION)-$(PKGN)_amd64/DEBIAN/control
 	
 	cp bin/Release/net10.0/linux-x64/publish/SLimit.Cli bin/Release/deb/slimit-cli_$(VERSION)-$(PKGN)_amd64/usr/local/bin/snvctl
 
