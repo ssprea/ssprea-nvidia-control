@@ -1,0 +1,30 @@
+
+name: slimit
+arch: amd64
+platform: linux
+
+version: ${VERSION}
+release: 2
+
+maintainer: "ssprea <ssprea@proton.me>"
+vendor: ssprea
+
+homepage: https://github.com/ssprea/slimit
+
+description: sLimit GPU control - Daemon
+
+section: utils
+priority: optional
+
+depends:
+  - systemd
+
+contents:
+  - src: ${BUILD_DAEMON_PATH}/${DAEMON_APPHOST}
+    dst: /usr/local/bin/slimitd
+    type: tree
+
+
+
+  - src: SLimit.Daemon/SystemdServices/slimitd.service
+    dst: /usr/lib/systemd/system/slimitd.service

@@ -1,0 +1,34 @@
+
+name: slimit
+arch: amd64
+platform: linux
+
+version: ${VERSION}
+release: 2
+
+maintainer: "ssprea <ssprea@proton.me>"
+vendor: ssprea
+
+homepage: https://github.com/ssprea/slimit
+
+description: sLimit GPU control - Graphical Interface
+
+section: utils
+priority: optional
+
+depends:
+  - systemd
+
+contents:
+  - src: ${BUILD_GUI_PATH}/${GUI_APPHOST}
+    dst: /usr/local/bin/slimit-gui
+    type: tree
+    
+    
+  - src: SLimit.Gui/Assets/SLimit.desktop
+    dst: /usr/share/applications/SLimit.desktop
+    type: tree
+    
+  
+  - src: SLimit.Gui/SystemdServices/snvctl-gui.service
+    dst: /usr/lib/systemd/user/snvctl-gui.service
