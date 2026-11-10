@@ -11,15 +11,9 @@ permissions:
   contents: write
 
 env:
-  
-  SLIMIT_GUI_PROJECT: SLimit.Gui/SLimit.Gui.csproj
-  SLIMIT_DAEMON_PROJECT: SLimit.Daemon/SLimit.Daemon.csproj
-  SLIMIT_CLI_PROJECT: SLimit.Cli/SLimit.Cli.csproj
   BUILD_PACKAGES: ./packages
   
-  GUI_APPHOST: SLimit.Gui
-  DAEMON_APPHOST: SLimit.Daemon
-  CLI_APPHOST: SLimit.Cli
+
 
 jobs:
   package:
@@ -68,20 +62,20 @@ jobs:
       
       - name: Generate checksums
         run: |
-          cd "$BUILD_PACKAGES"
+          cd "${BUILD_PACKAGES}"
           sha256sum *.deb *.rpm > SHA256SUMS
 
       
       - name: Show packages
         run: |
-          ls -lh "$BUILD_PACKAGES"
+          ls -lh "${BUILD_PACKAGES}"
 
       
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: slimit-linux-packages
-          path: "$BUILD_PACKAGES"
+          path: "${BUILD_PACKAGES}"
           if-no-files-found: error
 
     
@@ -92,6 +86,6 @@ jobs:
           generate_release_notes: true
           overwrite_files: true
           files: |
-            "$BUILD_PACKAGES/*.deb"
-            "$BUILD_PACKAGES/*.rpm"
-            "$BUILD_PACKAGES/SHA256SUMS"
+            "${BUILD_PACKAGES}/*.deb"
+            "${BUILD_PACKAGES}/*.rpm"
+            "${BUILD_PACKAGES}/SHA256SUMS"
