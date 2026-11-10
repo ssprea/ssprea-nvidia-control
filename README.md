@@ -44,7 +44,7 @@ Latest release version: https://aur.archlinux.org/packages/slimit-gpu
 Latest git commit: https://aur.archlinux.org/packages/slimit-gpu-git
 
 ```
-git clone https://aur.archlinux.org/ssprea-nvidia-control.git
+git clone https://aur.archlinux.org/slimit-gpu.git
 cd ssprea-nvidia-control
 makepkg -si
 ```
@@ -79,7 +79,7 @@ After that you can just run it as an administrator.
 
 ### Building:
 
-To build this tool you need to install Make and .NET SDK 9.0
+To build this tool you need to install Make and .NET SDK 10.0
 
 
 Build and install GUI , Daemon and CLI:
