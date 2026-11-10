@@ -1,0 +1,174 @@
+name: Package for Linux on release
+
+on:
+  push:
+    tags:
+      - '*'
+
+  # Permette di provare la build anche manualmente
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  # Modifica questi percorsi in base alla tua repository
+  SLIMIT_GUI_PROJECT: src/SLimit.Gui/SLimit.Gui.csproj
+  SLIMIT_DAEMON_PROJECT: src/SLimit.Daemon/SLimit.Daemon.csproj
+  SLIMIT_CLI_PROJECT: src/SLimit.Cli/SLimit.Cli.csproj
+
+  # Nomi degli eseguibili prodotti da dotnet publish
+  GUI_APPHOST: SLimit.Gui
+  DAEMON_APPHOST: SLimit.Daemon
+  CLI_APPHOST: SLimit.Cli
+
+jobs:
+  package:
+    name: Build Linux packages
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      # .NET 10
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.0.x
+
+      #for nfpm
+      - name: Setup Go
+        uses: actions/setup-go@v7
+        with:
+          go-version: '1.26.4'
+
+      
+      - name: Determine version
+        shell: bash
+        run: |
+          if [[ "$GITHUB_REF_TYPE" == "tag" ]]; then
+            VERSION="${GITHUB_REF_NAME#v}"
+          else
+            VERSION="0.0.0-dev.${GITHUB_RUN_NUMBER}"
+          fi
+
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+          echo "Building sLimit version: $VERSION"
+
+      
+      - name: Prepare directories
+        run: |
+          mkdir -p dist/root/usr/lib/slimit/gui
+          mkdir -p dist/root/usr/lib/slimit/daemon
+          mkdir -p dist/root/usr/lib/slimit/cli
+          mkdir -p dist/packages
+
+      
+      - name: Publish GUI
+        run: |
+          dotnet publish "$SLIMIT_GUI_PROJECT" \
+            --configuration Release \
+            -r linux-x64 \
+            -p:SelfContained=true \
+            -p:PublishSingleFile=true \
+            -p:IncludeAllContentForSelfExtract=true
+            -p:UseAppHost=true \
+            -p:Version="$VERSION" \
+            -p:ContinuousIntegrationBuild=true \
+            --output dist/root/usr/lib/slimit/gui
+
+      
+      - name: Publish daemon
+        run: |
+          dotnet publish "$SLIMIT_DAEMON_PROJECT" \
+            --configuration Release \
+            -r linux-x64 \
+            -p:SelfContained=true \
+            -p:PublishSingleFile=true \
+            -p:IncludeAllContentForSelfExtract=true
+            -p:UseAppHost=true \
+            -p:Version="$VERSION" \
+            -p:ContinuousIntegrationBuild=true \
+            --output dist/root/usr/lib/slimit/daemon
+
+      
+      - name: Publish CLI
+        run: |
+          dotnet publish "$SLIMIT_CLI_PROJECT" \
+            --configuration Release \
+            -r linux-x64 \
+            -p:SelfContained=true \
+            -p:PublishSingleFile=true \
+            -p:IncludeAllContentForSelfExtract=true
+            -p:UseAppHost=true \
+            -p:Version="$VERSION" \
+            -p:ContinuousIntegrationBuild=true \
+            --output dist/root/usr/lib/slimit/cli
+
+      
+      - name: Verify published binaries
+        shell: bash
+        run: |
+          for binary in \
+            "dist/root/usr/lib/slimit/gui/$GUI_APPHOST" \
+            "dist/root/usr/lib/slimit/daemon/$DAEMON_APPHOST" \
+            "dist/root/usr/lib/slimit/cli/$CLI_APPHOST"
+          do
+            if [[ ! -x "$binary" ]]; then
+              echo "ERROR: executable not found: $binary"
+              exit 1
+            fi
+          done
+
+      
+      - name: Install nfpm
+        run: |
+          go install github.com/goreleaser/nfpm/v2/cmd/nfpm@v2.48.0
+          echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
+
+      
+      - name: Package DEB
+        run: |
+          nfpm package \
+            --config nfpm.yaml \
+            --packager deb \
+            --target dist/packages
+
+      - name: Package RPM
+        run: |
+          nfpm package \
+            --config nfpm.yaml \
+            --packager rpm \
+            --target dist/packages
+
+      
+      - name: Generate checksums
+        run: |
+          cd dist/packages
+          sha256sum *.deb *.rpm > SHA256SUMS
+
+      
+      - name: Show packages
+        run: |
+          ls -lh dist/packages/
+
+      
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: slimit-linux-packages
+          path: dist/packages/*
+          if-no-files-found: error
+
+      # Pubblica su GitHub Releases solo se siamo su un tag
+      - name: Publish GitHub Release
+        if: github.ref_type == 'tag'
+        uses: softprops/action-gh-release@v3
+        with:
+          generate_release_notes: true
+          overwrite_files: true
+          files: |
+            dist/packages/*.deb
+            dist/packages/*.rpm
+            dist/packages/SHA256SUMS
