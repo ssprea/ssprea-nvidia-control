@@ -1,9 +1,8 @@
 name: Package for Linux on release
 
 on:
-  push:
-    tags:
-      - '*'
+  release:
+    types: [released]
 
   
   workflow_dispatch:
@@ -16,12 +15,7 @@ env:
   SLIMIT_GUI_PROJECT: SLimit.Gui/SLimit.Gui.csproj
   SLIMIT_DAEMON_PROJECT: SLimit.Daemon/SLimit.Daemon.csproj
   SLIMIT_CLI_PROJECT: SLimit.Cli/SLimit.Cli.csproj
-
-  BUILD_CLI_PATH: build/cli
-  BUILD_DAEMON_PATH: build/daemon
-  BUILD_GUI_PATH: build/gui
-  BUILD_PACKAGES: build/packages
-
+  BUILD_PACKAGES: ./packages
   
   GUI_APPHOST: SLimit.Gui
   DAEMON_APPHOST: SLimit.Daemon
@@ -49,6 +43,11 @@ jobs:
           go-version: '1.26.4'
 
       
+      - name: Install nfpm
+        run: |
+          go install github.com/goreleaser/nfpm/v2/cmd/nfpm@latest
+          echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
+      
       - name: Determine version
         shell: bash
         run: |
@@ -61,92 +60,11 @@ jobs:
           echo "VERSION=$VERSION" >> "$GITHUB_ENV"
           echo "Building sLimit version: $VERSION"
 
-      
-      - name: Prepare directories
-        run: |
-          mkdir -p "$BUILD_GUI_PATH"
-          mkdir -p "$BUILD_DAEMON_PATH"
-          mkdir -p "$BUILD_CLI_PATH"
-          mkdir -p "$BUILD_PACKAGES"
+      - name: Run make deb
+        run: make deb
 
-      
-      - name: Publish GUI
-        run: |
-          dotnet publish "$SLIMIT_GUI_PROJECT" \
-            --configuration Release \
-            -r linux-x64 \
-            -p:SelfContained=true \
-            -p:PublishSingleFile=true \
-            -p:IncludeAllContentForSelfExtract=true
-            -p:UseAppHost=true \
-            -p:Version="$VERSION" \
-            -p:ContinuousIntegrationBuild=true \
-            --output "$BUILD_GUI_PATH"
-
-      
-      - name: Publish daemon
-        run: |
-          dotnet publish "$SLIMIT_DAEMON_PROJECT" \
-            --configuration Release \
-            -r linux-x64 \
-            -p:SelfContained=true \
-            -p:PublishSingleFile=true \
-            -p:IncludeAllContentForSelfExtract=true
-            -p:UseAppHost=true \
-            -p:Version="$VERSION" \
-            -p:ContinuousIntegrationBuild=true \
-            --output "$BUILD_DAEMON_PATH"
-
-      
-      - name: Publish CLI
-        run: |
-          dotnet publish "$SLIMIT_CLI_PROJECT" \
-            --configuration Release \
-            -r linux-x64 \
-            -p:SelfContained=true \
-            -p:PublishSingleFile=true \
-            -p:IncludeAllContentForSelfExtract=true
-            -p:UseAppHost=true \
-            -p:Version="$VERSION" \
-            -p:ContinuousIntegrationBuild=true \
-            --output "$BUILD_CLI_PATH"
-
-      
-      - name: Verify published binaries
-        shell: bash
-        run: |
-          for binary in \
-            "$BUILD_GUI_PATH/$GUI_APPHOST" \
-            "$BUILD_DAEMON_PATH/$DAEMON_APPHOST" \
-            "$BUILD_CLI_PATH/$CLI_APPHOST"
-          do
-            if [[ ! -x "$binary" ]]; then
-              echo "ERROR: executable not found: $binary"
-              exit 1
-            fi
-          done
-
-      
-      - name: Install nfpm
-        run: |
-          go install github.com/goreleaser/nfpm/v2/cmd/nfpm@v2.48.0
-          echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
-
-      
-      - name: Package DEB
-        run: |
-          nfpm package \
-            --config nfpm.yaml \
-            --packager deb \
-            --target "$BUILD_PACKAGES"
-
-      - name: Package RPM
-        run: |
-          nfpm package \
-            --config nfpm.yaml \
-            --packager rpm \
-            --target "$BUILD_PACKAGES"
-
+      - name: Run make rpm
+        run: make rpm
       
       - name: Generate checksums
         run: |
