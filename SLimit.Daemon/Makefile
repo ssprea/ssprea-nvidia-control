@@ -1,6 +1,7 @@
 
 clean:
 	dotnet clean 
+	rm packages/*
 
 restore:
 	dotnet restore
@@ -19,15 +20,12 @@ run: build
 	dotnet run --configuration Release
 
 deb: publish
-	mkdir -p bin/Release/deb/slimit-daemon_$(VERSION)-$(PKGN)_amd64/usr/local/bin
-	mkdir -p bin/Release/deb/slimit-daemon_$(VERSION)-$(PKGN)_amd64/usr/lib/systemd/system
-	mkdir -p bin/Release/deb/slimit-daemon_$(VERSION)-$(PKGN)_amd64/DEBIAN
-	echo -e 'Package: slimit-daemon\nVersion: $(VERSION)-$(PKGN)\nDepends: \nArchitecture: amd64\nMaintainer: ssprea <ssprea@proton.me>\nDescription: Daemon tool for SLimit utility' > bin/Release/deb/slimit-daemon_$(VERSION)-$(PKGN)_amd64/DEBIAN/control
-	
-	cp bin/Release/net10.0/linux-x64/publish/SLimit.Daemon bin/Release/deb/slimit-daemon_$(VERSION)-$(PKGN)_amd64/usr/local/bin/slimitd
-	cp SystemdServices/slimitd.service bin/Release/deb/slimit-daemon_$(VERSION)-$(PKGN)_amd64/usr/lib/systemd/system/slimitd.service
+	mkdir -p packages
+	nfpm package -p deb -t packages
 
-	dpkg-deb --build --root-owner-group bin/Release/deb/slimit-daemon_$(VERSION)-$(PKGN)_amd64
+rpm: publish
+	mkdir -p packages
+	nfpm package -p rpm -t packages
 
 install:
 	mkdir -p $(DESTDIR)/usr/local/bin/

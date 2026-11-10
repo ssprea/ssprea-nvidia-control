@@ -40,9 +40,35 @@ uninstallall: uninstallgui uninstallcli uninstalldaemon
 reinstallall: uninstallcli installgui
 
 deb:
+	mkdir -p packages
+
 	make -C SLimit.Cli deb VERSION=$(VERSION) PKGN=$(PKGN)
 	make -C SLimit.Daemon deb VERSION=$(VERSION) PKGN=$(PKGN)
 	make -C SLimit.Gui deb VERSION=$(VERSION) PKGN=$(PKGN)
+
+	cp SLimit.Cli/packages/*.deb packages/
+	cp SLimit.Daemon/packages/*.deb packages/
+	cp SLimit.Gui/packages/*.deb packages/
+
+rpm:
+	mkdir -p packages
+
+	make -C SLimit.Cli rpm VERSION=$(VERSION) PKGN=$(PKGN)
+	make -C SLimit.Daemon rpm VERSION=$(VERSION) PKGN=$(PKGN)
+	make -C SLimit.Gui rpm VERSION=$(VERSION) PKGN=$(PKGN)
+
+	cp SLimit.Cli/packages/*.rpm packages/
+	cp SLimit.Daemon/packages/*.rpm packages/
+	cp SLimit.Gui/packages/*.rpm packages/
+
+
+clean:
+	make -C SLimit.Cli clean
+	make -C SLimit.Daemon clean
+	make -C SLimit.Gui clean
+	rm packages/*
+
+
 
 #appimage: OUTDIR ?= packages/AppImage/AppDir
 #appimage: DESTDIR ?= ../$(OUTDIR)

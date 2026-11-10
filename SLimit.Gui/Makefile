@@ -1,6 +1,7 @@
 
 clean:
-	dotnet clean 
+	dotnet clean
+	rm packages/*
 
 restore:
 	dotnet restore
@@ -20,19 +21,12 @@ run: build
 	dotnet run --configuration Release
 
 deb: publish
-	mkdir -p bin/Release/deb/slimit-gui_$(VERSION)-$(PKGN)_amd64/usr/local/bin
-	mkdir -p bin/Release/deb/slimit-gui_$(VERSION)-$(PKGN)_amd64/usr/share/applications
-	mkdir -p bin/Release/deb/slimit-gui_$(VERSION)-$(PKGN)_amd64/usr/share/slimit-gui
-	mkdir -p bin/Release/deb/slimit-gui_$(VERSION)-$(PKGN)_amd64/DEBIAN
-	mkdir -p $(DESTDIR)/usr/lib/systemd/user
-	echo -e 'Package: slimit-gui\nVersion: $(VERSION)-$(PKGN)\nDepends: slimit-daemon\nArchitecture: amd64\nMaintainer: ssprea <ssprea@proton.me>\nDescription: A Unified GPUs management tool to overclock, control fans and power limit. Supports both Wayland and X11' > bin/Release/deb/slimit-gui_$(VERSION)-$(PKGN)_amd64/DEBIAN/control
-	
-	cp bin/Release/net10.0/linux-x64/publish/SLimit.Gui bin/Release/deb/slimit-gui_$(VERSION)-$(PKGN)_amd64/usr/local/bin/slimit-gui
-	cp Assets/SLimit.desktop bin/Release/deb/slimit-gui_$(VERSION)-$(PKGN)_amd64/usr/share/applications/SLimit.desktop
-	cp SystemdServices/snvctl-gui.service $(DESTDIR)/usr/lib/systemd/user/snvctl-gui.service
+	mkdir -p packages
+	nfpm package -p deb -t packages
 
-
-	dpkg-deb --build --root-owner-group bin/Release/deb/slimit-gui_$(VERSION)-$(PKGN)_amd64
+rpm: publish
+	mkdir -p packages
+	nfpm package -p rpm -t packages
 
 
 	
