@@ -1,10 +1,10 @@
 
-name: slimit
+name: slimit-gui
 arch: amd64
 platform: linux
 
 version: ${VERSION}
-release: 2
+release: ${PKGREL}
 
 maintainer: "ssprea <ssprea@proton.me>"
 vendor: ssprea
@@ -20,7 +20,7 @@ depends:
   - systemd
 
 contents:
-  - src: ${BUILD_GUI_PATH}/${GUI_APPHOST}
+  - src: SLimit.Gui/bin/Release/net10.0/linux-x64/publish/SLimit.Gui
     dst: /usr/local/bin/slimit-gui
     type: tree
     

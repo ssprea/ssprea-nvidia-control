@@ -1,10 +1,10 @@
 
-name: slimit
+name: slimit-daemon
 arch: amd64
 platform: linux
 
 version: ${VERSION}
-release: 2
+release: ${PKGREL}
 
 maintainer: "ssprea <ssprea@proton.me>"
 vendor: ssprea
@@ -16,15 +16,19 @@ description: sLimit GPU control - Daemon
 section: utils
 priority: optional
 
-depends:
-  - systemd
-
 contents:
-  - src: ${BUILD_DAEMON_PATH}/${DAEMON_APPHOST}
+  - src: SLimit.Daemon/bin/Release/net10.0/linux-x64/publish/SLimit.Daemon
     dst: /usr/local/bin/slimitd
     type: tree
 
-
-
   - src: SLimit.Daemon/SystemdServices/slimitd.service
     dst: /usr/lib/systemd/system/slimitd.service
+
+
+overrides:
+  rpm:
+    scripts:
+      postinstall: nfpm/post-install-daemon.sh
+  deb:
+    scripts:
+      postinstall: nfpm/post-install-daemon.sh

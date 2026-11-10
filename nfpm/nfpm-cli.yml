@@ -1,9 +1,9 @@
 
-name: slimit
+name: slimit-cli
 arch: amd64
 platform: linux
 
-version: ${VERSION}
+version: 2.0.0
 release: 2
 
 maintainer: "ssprea <ssprea@proton.me>"
@@ -20,6 +20,6 @@ depends:
   - systemd
 
 contents:
-  - src: ${BUILD_CLI_PATH}/${CLI_APPHOST}
+  - src: SLimit.Cli/bin/Release/net10.0/linux-x64/publish/SLimit.Cli
     dst: /usr/local/bin/snvctl
     type: tree
