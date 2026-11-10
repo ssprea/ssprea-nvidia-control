@@ -1,0 +1,26 @@
+
+name: slimit-cli
+arch: amd64
+platform: linux
+
+version: ${VERSION}
+release: ${PKGN}
+
+maintainer: "ssprea <ssprea@proton.me>"
+vendor: ssprea
+
+homepage: https://github.com/ssprea/slimit
+
+description: sLimit GPU control - Command line tool
+
+section: utils
+priority: optional
+
+depends:
+  - slimit-daemon
+
+contents:
+  - src: bin/Release/net10.0/linux-x64/publish/SLimit.Cli
+    dst: /usr/local/bin/snvctl
+    type: tree
+
