@@ -5,19 +5,24 @@ on:
     tags:
       - '*'
 
-  # Permette di provare la build anche manualmente
+  
   workflow_dispatch:
 
 permissions:
   contents: write
 
 env:
-  # Modifica questi percorsi in base alla tua repository
-  SLIMIT_GUI_PROJECT: src/SLimit.Gui/SLimit.Gui.csproj
-  SLIMIT_DAEMON_PROJECT: src/SLimit.Daemon/SLimit.Daemon.csproj
-  SLIMIT_CLI_PROJECT: src/SLimit.Cli/SLimit.Cli.csproj
+  
+  SLIMIT_GUI_PROJECT: SLimit.Gui/SLimit.Gui.csproj
+  SLIMIT_DAEMON_PROJECT: SLimit.Daemon/SLimit.Daemon.csproj
+  SLIMIT_CLI_PROJECT: SLimit.Cli/SLimit.Cli.csproj
 
-  # Nomi degli eseguibili prodotti da dotnet publish
+  BUILD_CLI_PATH: build/cli
+  BUILD_DAEMON_PATH: build/daemon
+  BUILD_GUI_PATH: build/gui
+  BUILD_PACKAGES: build/packages
+
+  
   GUI_APPHOST: SLimit.Gui
   DAEMON_APPHOST: SLimit.Daemon
   CLI_APPHOST: SLimit.Cli
@@ -59,10 +64,10 @@ jobs:
       
       - name: Prepare directories
         run: |
-          mkdir -p dist/root/usr/lib/slimit/gui
-          mkdir -p dist/root/usr/lib/slimit/daemon
-          mkdir -p dist/root/usr/lib/slimit/cli
-          mkdir -p dist/packages
+          mkdir -p "$BUILD_GUI_PATH"
+          mkdir -p "$BUILD_DAEMON_PATH"
+          mkdir -p "$BUILD_CLI_PATH"
+          mkdir -p "$BUILD_PACKAGES"
 
       
       - name: Publish GUI
@@ -76,7 +81,7 @@ jobs:
             -p:UseAppHost=true \
             -p:Version="$VERSION" \
             -p:ContinuousIntegrationBuild=true \
-            --output dist/root/usr/lib/slimit/gui
+            --output "$BUILD_GUI_PATH"
 
       
       - name: Publish daemon
@@ -90,7 +95,7 @@ jobs:
             -p:UseAppHost=true \
             -p:Version="$VERSION" \
             -p:ContinuousIntegrationBuild=true \
-            --output dist/root/usr/lib/slimit/daemon
+            --output "$BUILD_DAEMON_PATH"
 
       
       - name: Publish CLI
@@ -104,16 +109,16 @@ jobs:
             -p:UseAppHost=true \
             -p:Version="$VERSION" \
             -p:ContinuousIntegrationBuild=true \
-            --output dist/root/usr/lib/slimit/cli
+            --output "$BUILD_CLI_PATH"
 
       
       - name: Verify published binaries
         shell: bash
         run: |
           for binary in \
-            "dist/root/usr/lib/slimit/gui/$GUI_APPHOST" \
-            "dist/root/usr/lib/slimit/daemon/$DAEMON_APPHOST" \
-            "dist/root/usr/lib/slimit/cli/$CLI_APPHOST"
+            "$BUILD_GUI_PATH/$GUI_APPHOST" \
+            "$BUILD_DAEMON_PATH/$DAEMON_APPHOST" \
+            "$BUILD_CLI_PATH/$CLI_APPHOST"
           do
             if [[ ! -x "$binary" ]]; then
               echo "ERROR: executable not found: $binary"
@@ -133,35 +138,35 @@ jobs:
           nfpm package \
             --config nfpm.yaml \
             --packager deb \
-            --target dist/packages
+            --target "$BUILD_PACKAGES"
 
       - name: Package RPM
         run: |
           nfpm package \
             --config nfpm.yaml \
             --packager rpm \
-            --target dist/packages
+            --target "$BUILD_PACKAGES"
 
       
       - name: Generate checksums
         run: |
-          cd dist/packages
+          cd "$BUILD_PACKAGES"
           sha256sum *.deb *.rpm > SHA256SUMS
 
       
       - name: Show packages
         run: |
-          ls -lh dist/packages/
+          ls -lh "$BUILD_PACKAGES"
 
       
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: slimit-linux-packages
-          path: dist/packages/*
+          path: "$BUILD_PACKAGES"
           if-no-files-found: error
 
-      # Pubblica su GitHub Releases solo se siamo su un tag
+    
       - name: Publish GitHub Release
         if: github.ref_type == 'tag'
         uses: softprops/action-gh-release@v3
@@ -169,6 +174,6 @@ jobs:
           generate_release_notes: true
           overwrite_files: true
           files: |
-            dist/packages/*.deb
-            dist/packages/*.rpm
-            dist/packages/SHA256SUMS
+            "$BUILD_PACKAGES/*.deb"
+            "$BUILD_PACKAGES/*.rpm"
+            "$BUILD_PACKAGES/SHA256SUMS"
