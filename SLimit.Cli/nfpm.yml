@@ -3,8 +3,8 @@ name: slimit-cli
 arch: amd64
 platform: linux
 
-version: 2.0.0
-release: 2
+version: ${VERSION}
+release: ${PKGREL}
 
 maintainer: "ssprea <ssprea@proton.me>"
 vendor: ssprea
