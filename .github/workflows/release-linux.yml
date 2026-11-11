@@ -107,8 +107,7 @@ jobs:
 
       - name: Install tools for APT repo update
         run: |
-          sudo apt-get update
-          sudo apt-get install -y apt-utils dpkg-dev gnupg
+          sudo apt-get install -y apt-utils dpkg-dev gnupg gzip
 
       - name: Import APT GPG key
         run: printf '%s\n' "$APT_REPO_GPG_PRIVATE_KEY" | gpg --batch --import
