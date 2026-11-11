@@ -88,3 +88,14 @@ jobs:
             "./packages/*.deb"
             "./packages/*.rpm"
             "./packages/SHA256SUMS"
+
+
+      - name: Checkout APT repository
+        uses: actions/checkout@v7
+        with:
+          repository: ssprea/snvctl-apt-repo
+          ref: main
+          token: ${{ secrets.APT_REPO_ACCESS_TOKEN }}
+          path: apt-repo
+
+      
