@@ -72,7 +72,7 @@ jobs:
 
       
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: slimit-linux-packages
           path: ./packages
@@ -102,5 +102,27 @@ jobs:
       
 
             
+      - name: quanto vale la tua auto
+        run: pwd
+
+      - name: Install tools for APT repo update
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y apt-utils dpkg-dev gnupg
+
+      - name: Import APT GPG key
+        run: printf '%s\n' "$APT_GPG_PRIVATE_KEY" | gpg --batch --import
+
+      - name: Copy deb packages to APT repo
+        run: cp packages/*.deb apt-repo/ubuntu/
+
+      - name: Update and sign APT repo
+        run: |
+          cd apt-repo
+          chmod +x ./update.sh
+          ./update.sh
+          ls
+          ls ubuntu
+
       - name: quanto vale la tua auto
         run: pwd
