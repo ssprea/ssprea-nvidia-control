@@ -10,8 +10,7 @@ on:
 permissions:
   contents: write
 
-env:
-  BUILD_PACKAGES: ./packages
+
   
 
 
@@ -62,20 +61,20 @@ jobs:
       
       - name: Generate checksums
         run: |
-          cd "${BUILD_PACKAGES}"
+          cd ./packages
           sha256sum *.deb *.rpm > SHA256SUMS
 
       
       - name: Show packages
         run: |
-          ls -lh "${BUILD_PACKAGES}"
+          ls -lh ./packages
 
       
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: slimit-linux-packages
-          path: "${BUILD_PACKAGES}"
+          path: ./packages
           if-no-files-found: error
 
     
@@ -86,6 +85,6 @@ jobs:
           generate_release_notes: true
           overwrite_files: true
           files: |
-            "${BUILD_PACKAGES}/*.deb"
-            "${BUILD_PACKAGES}/*.rpm"
-            "${BUILD_PACKAGES}/SHA256SUMS"
+            "./packages/*.deb"
+            "./packages/*.rpm"
+            "./packages/SHA256SUMS"
