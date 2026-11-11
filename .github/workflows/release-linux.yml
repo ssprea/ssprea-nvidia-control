@@ -67,6 +67,7 @@ jobs:
       
       - name: Show packages
         run: |
+          pwd
           ls -lh ./packages
 
       
@@ -99,3 +100,7 @@ jobs:
           path: apt-repo
 
       
+
+            
+      - name: quanto vale la tua auto
+        run: pwd
