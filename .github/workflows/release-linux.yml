@@ -38,7 +38,7 @@ jobs:
       
       - name: Install nfpm
         run: |
-          go install github.com/goreleaser/nfpm/v2/cmd/nfpm@2.48.0
+          go install github.com/goreleaser/nfpm/v2/cmd/nfpm@v2.48.0
           echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
       
       - name: Determine version
