@@ -38,7 +38,7 @@ jobs:
       
       - name: Install nfpm
         run: |
-          go install github.com/goreleaser/nfpm/v2/cmd/nfpm@latest
+          go install github.com/goreleaser/nfpm/v2/cmd/nfpm@2.48.0
           echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
       
       - name: Determine version
@@ -110,8 +110,11 @@ jobs:
           sudo apt-get install -y apt-utils dpkg-dev gnupg gzip
 
       - name: Import APT GPG key
-        run: printf '%s\n' ' ${{ secrets.APT_REPO_GPG_PRIVATE_KEY }} ' | gpg --batch --import
+        run: echo -n "$GPG_SIGNING_KEY" | gpg --import
+        env:
+          GPG_SIGNING_KEY: ${{ secrets.APT_REPO_GPG_PRIVATE_KEY }}
 
+        
       - name: Copy deb packages to APT repo
         run: cp packages/*.deb apt-repo/ubuntu/
 
