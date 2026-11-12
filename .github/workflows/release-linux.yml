@@ -110,7 +110,7 @@ jobs:
           sudo apt-get install -y apt-utils dpkg-dev gnupg gzip
 
       - name: Import APT GPG key
-        run: printf '%s\n' "${{ secrets.APT_REPO_GPG_PRIVATE_KEY }}" | gpg --batch --import
+        run: printf '%s\n' "$secrets.APT_REPO_GPG_PRIVATE_KEY" | gpg --batch --import
 
       - name: Copy deb packages to APT repo
         run: cp packages/*.deb apt-repo/ubuntu/
